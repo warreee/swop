@@ -1,0 +1,114 @@
+<project default="all">
+    <property name="handin-dir" location="groupXX"/>
+    <property name="doc-dir" location="javadoc"/>
+    <property name="uml-dir" location="uml"/>
+
+    <property name="out-main" location="out\production"/>
+    <property name="out-test" location="out\test"/>
+
+    <property name="bin-dir" location="jar"/>
+    <property name="base-src" location="src"/>
+    <property name="src-dir" location="src\main\be\swop\tman"/>
+    <property name="test-dir" location="src\test\be\swop\tman"/>
+
+    <property name="test-report-dir" location="testreport" />
+
+    <path id="junit.class.path">
+        <pathelement location="lib/junit-4.12.jar" />
+        <pathelement location="lib/hamcrest-core-1.3.jar" />
+        <pathelement location="${out-main}" />
+    </path>
+
+    <target name="init">
+        <mkdir dir="${out-main}"/>
+        <mkdir dir="${out-test}"/>
+        <mkdir dir="${bin-dir}"/>
+        <mkdir dir="${doc-dir}"/>
+        <!--    <mkdir dir="${test-report-dir}" />-->
+    </target>
+    <target name="clean-init">
+        <delete dir="${out-main}"/>
+        <delete dir="${out-test}"/>
+        <delete dir="${bin-dir}"/>
+        <delete dir="${doc-dir}"/>
+        <!--    <delete dir="${test-report-dir}" /> -->
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${src-dir}" destdir="${out-main}">
+            <!-- <classpath refid="junit.class.path" /> -->
+        </javac>
+        <javac srcdir="${test-dir}" destdir="${out-test}">
+            <classpath refid="junit.class.path" />
+        </javac>
+    </target>
+
+    <target name="clean-compile">
+        <delete>
+            <fileset dir="${out-main}" includes="**/*.class"/>
+        </delete>
+        <delete>
+            <fileset dir="${out-test}" includes="**/*.class"/>
+        </delete>
+    </target>
+
+    <target name="javadoc" depends="compile" description="generate documentation">
+        <javadoc packagenames="src" sourcepath="${src-dir}" destdir="${doc-dir}">
+            <fileset dir="${src-dir}">
+                <include name="**" />
+            </fileset>
+        </javadoc>
+    </target>
+    <target name="jar" depends="compile">
+        <jar destfile="${bin-dir}/system.jar"
+             basedir="${out-main}">
+            <manifest>
+                <attribute name="Main-Class" value=" be.swop.tman.Main"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="clean-jar">
+        <delete file="${bin-dir}/system.jar"/>
+    </target>
+    <target name="run" depends="jar">
+        <java classname="Main" fork="true">
+            <classpath path="${bin-dir}/system.jar"/>
+        </java>
+    </target>
+    <target name="HandIn" depends="jar,javadoc">
+        <mkdir dir="${handin-dir}"/>
+        <copy file="${bin-dir}/system.jar" todir="${handin-dir}"/>
+        <copy todir="${handin-dir}/src">
+            <fileset dir="${base-src}"/>
+        </copy>
+        <copy todir="${handin-dir}/docs">
+            <fileset dir="${doc-dir}"/>
+        </copy>
+        <copy todir="${handin-dir}/diagrams">
+            <fileset dir="${uml-dir}"/>
+        </copy>
+    </target>
+    <target name="clean-HandIn">
+        <delete dir="${handin-dir}"/>
+
+    </target>
+
+    <target name="all" depends="run,HandIn"/>
+    <target name="clean" depends="clean-init,clean-HandIn,clean-jar"/>
+
+    <!-- <target name="junit" depends="compile">
+         <junit printsummary="on" fork="true" haltonfailure="no">
+             <classpath refid="junit.class.path"/>
+             <classpath>
+                 <pathelement location="${out-test}"/>
+             </classpath>
+             <formatter type="xml"/>
+             <batchtest todir="${test-report-dir}">
+                 <fileset dir="${test-dir}">
+                     <include name="*.java"/>
+                 </fileset>
+             </batchtest>
+         </junit>
+     </target>-->
+</project>
