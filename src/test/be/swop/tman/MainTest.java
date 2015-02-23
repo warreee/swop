@@ -1,5 +1,6 @@
-package be.swop.tman;
+package test.be.swop.tman;
 
+import main.be.swop.tman.Main;
 import org.junit.Before;
 import org.junit.Test;
 
