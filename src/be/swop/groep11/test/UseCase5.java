@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-public class UseCaseTree {
+public class UseCase5 {
 
     @Before
     public void setUp() throws Exception {
