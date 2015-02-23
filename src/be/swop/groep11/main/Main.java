@@ -1,4 +1,4 @@
-package main.be.swop.tman;
+package be.swop.groep11.main;
 
 public class Main {
     /**

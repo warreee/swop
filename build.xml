@@ -1,5 +1,5 @@
 <project default="all">
-    <property name="handin-dir" location="groupXX"/>
+    <property name="handin-dir" location="group11"/>
     <property name="doc-dir" location="javadoc"/>
     <property name="uml-dir" location="uml"/>
 
@@ -8,8 +8,8 @@
 
     <property name="bin-dir" location="jar"/>
     <property name="base-src" location="src"/>
-    <property name="src-dir" location="src\main\be\swop\tman"/>
-    <property name="test-dir" location="src\test\be\swop\tman"/>
+    <property name="src-dir" location="src\be\swop\groep11\main"/>
+    <property name="test-dir" location="src\be\swop\groep11\test"/>
 
     <property name="test-report-dir" location="testreport" />
 
@@ -63,7 +63,7 @@
         <jar destfile="${bin-dir}/system.jar"
              basedir="${out-main}">
             <manifest>
-                <attribute name="Main-Class" value=" be.swop.tman.Main"/>
+                <attribute name="Main-Class" value="be.swop.groep11.main.Main"/>
             </manifest>
         </jar>
     </target>
