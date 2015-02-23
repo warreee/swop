@@ -61,6 +61,21 @@ public class UseCase1 {
         assertTrue("Project status is finished: ", testProject.getStatus().equals(ProjectStatus.FINISHED));
     }
 
+    /**
+     * We voegen een project toe en daarna een taak aan dit project.
+     * We proberen het project te finishen.
+     * We kijken of dit gefaald is.
+     */
+    @Test
+    public void projectNotFinishedTest() throws Exception {
+        addProjectsToProjectManager(1);
+        Project testProject = projectManager.getProjects().get(0);
+        addTasksToProject(testProject, 1);
+        assertFalse("Project status is not finished: ", testProject.getStatus().equals(ProjectStatus.FINISHED));
+        testProject.finish();
+        assertFalse("Project status is not finished: ", testProject.getStatus().equals(ProjectStatus.FINISHED));
+    }
+
 
 
     /////////////////////////////////////////HELPER FUNCTIONS///////////////////////////////////////////////////////////
