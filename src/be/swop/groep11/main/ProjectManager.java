@@ -2,8 +2,6 @@ package be.swop.groep11.main;
 
 
 import com.google.common.collect.ImmutableList;
-
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 
 /**
