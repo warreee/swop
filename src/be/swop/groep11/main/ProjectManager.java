@@ -10,12 +10,19 @@ import java.util.ArrayList;
  */
 public class ProjectManager {
 
-    private ArrayList<Project> projects = new ArrayList<Project>();
+    private ArrayList<Project> projects = new ArrayList<>();
 
     public ImmutableList<Project> getProjects() {
         return ImmutableList.copyOf(projects);
     }
 
+    public Project addNewProject(String name, String description,LocalDateTime creationTime, LocalDateTime duetime, User user) throws IllegalArgumentException{
+        Project proj = new Project(name, description, creationTime, duetime, user);
+        this.projects.add(proj);
+        return proj;
+    }
+
+    @Deprecated
     public void addProject(String name, String description, LocalDateTime creationTime, LocalDateTime duetime, User user) {
         if (Project.isValidStartTimeEndTime(creationTime, duetime)){
             throw new IllegalArgumentException("Eindtijd kan niet voor starttijd liggen.");

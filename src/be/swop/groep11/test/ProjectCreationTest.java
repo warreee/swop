@@ -11,22 +11,23 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
 
-public class UseCase2 {
+public class ProjectCreationTest {
 
     private ProjectManager projectManager;
     private LocalDateTime now;
     private User user;
+    private String name,description;
+    private LocalDateTime dueTime,creationTime;
 
     @Before
     public void setUp() throws Exception {
-        projectManager = new ProjectManager();
-        LocalDateTime now = LocalDateTime.now();
-        String name = "Test Project";
-        String description = "Test Description";
-        LocalDateTime creationTime = now;
-        LocalDateTime dueTime = now.plusDays(2);
-        User user = new User("Test User");
-        projectManager.addProject(name, description, creationTime, dueTime, user);
+        this.projectManager = new ProjectManager();
+        this.now = LocalDateTime.now();
+        this.name = "Test Project";
+        this.description = "Test Description";
+        this.creationTime = now;
+        this.dueTime = now.plusDays(2);
+        this.user = new User("Test User");
     }
 
     /**
@@ -34,7 +35,7 @@ public class UseCase2 {
      */
     @Test
     public void testProjectName() throws Exception {
-        Project project = projectManager.getProjects().get(0);
+        Project project =  projectManager.addNewProject(this.name, description, creationTime, dueTime, user);
         assertTrue(project.getName().equals("Test Project"));
     }
 
@@ -43,7 +44,7 @@ public class UseCase2 {
      */
     @Test
     public void testProjectDescription() throws Exception {
-        Project project = projectManager.getProjects().get(0);
+        Project project =  projectManager.addNewProject(this.name, description, creationTime, dueTime, user);
         assertTrue(project.getDescription().equals("Test Description"));
     }
 
@@ -52,7 +53,7 @@ public class UseCase2 {
      */
     @Test
     public void testProjectCreationTime() throws Exception {
-        Project project = projectManager.getProjects().get(0);
+        Project project =  projectManager.addNewProject(this.name, description, creationTime, dueTime, user);
         assertTrue(project.getCreationTime().equals(now));
     }
 
@@ -61,7 +62,7 @@ public class UseCase2 {
      */
     @Test
     public void testProjectDueTime() throws Exception {
-        Project project = projectManager.getProjects().get(0);
+        Project project =  projectManager.addNewProject(this.name, description, creationTime, dueTime, user);
         assertTrue(project.getDueTime().equals(now.plusDays(2)));
     }
 
@@ -70,7 +71,7 @@ public class UseCase2 {
      */
     @Test
     public void testProjectStatus() throws Exception {
-        Project project = projectManager.getProjects().get(0);
+        Project project =  projectManager.addNewProject(this.name, description, creationTime, dueTime, user);
         assertTrue(project.getStatus().equals(ProjectStatus.ONGOING));
     }
 
@@ -79,7 +80,7 @@ public class UseCase2 {
      */
     @Test
     public void testProjectCreator() throws Exception {
-        Project project = projectManager.getProjects().get(0);
+        Project project =  projectManager.addNewProject(this.name, description, creationTime, dueTime, user);
         assertTrue(project.getCreator().equals(user));
     }
 
@@ -90,11 +91,8 @@ public class UseCase2 {
     public void validName() throws Exception {
         String validName = "Test";
         assertTrue("\"Test\" is een geldige naam: ", Project.isValidName(validName));
-        String description = "Test Description";
-        LocalDateTime creationTime = now;
-        LocalDateTime dueTime = now.plusDays(2);
-        User user = new User("Test User");
-        projectManager.addProject(validName, description, creationTime, dueTime, user);
+        projectManager.addNewProject(validName, description, creationTime, dueTime, user);
+
     }
 
     /**
@@ -105,11 +103,8 @@ public class UseCase2 {
     public void emptyName() throws Exception {
         String invalidName = "";
         assertFalse("\"\" is geen geldige naam: ", Project.isValidName(invalidName));
-        String description = "Test Description";
-        LocalDateTime creationTime = now;
-        LocalDateTime dueTime = now.plusDays(2);
-        User user = new User("Test User");
-        projectManager.addProject(invalidName, description, creationTime, dueTime, user);
+        projectManager.addNewProject(invalidName, description, creationTime, dueTime, user);
+
     }
 
     /*

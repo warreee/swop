@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
 
-public class UseCase1 {
+public class ProjectManagerTest {
     private ProjectManager projectManager;
     @Before
     public void setUp() throws Exception {
@@ -24,14 +24,32 @@ public class UseCase1 {
         assertTrue("Geen projecten in Tman: ", projectManager.getProjects().isEmpty());
     }
 
+    @Test
+    public void addIllegalProjectTest() throws Exception {
+
+    }
+
+    @Test
+    public void addExistingProjectTest() throws Exception {
+
+    }
+
     /**
+     * Make sure that added projects are present in ProjectManager
+     * @throws Exception
+     */
+    @Test
+    public void addMultipleProjectsTest() throws Exception {
+
+
+    }
+/**
     *  We voegen 4 projecten toe en kijken na dat:
     * - Er 4 projecten bestaan
     * Hierna voegen we er nog een toe en kijken na dat:
     * - Er 5 projecten bestaan
     * Hierna testen we of de stati van deze 5 projecten overeenkomen met ONGOING aangezien dit de standaard status is.
      */
-
     @Test
     public void multipleProjectsTest() throws Exception {
         addProjectsToProjectManager(4);
@@ -93,7 +111,7 @@ public class UseCase1 {
             LocalDateTime creationTime = LocalDateTime.now();
             LocalDateTime duetime = creationTime.plusDays(2);
             User user = new User("Test User");
-            projectManager.addProject(name, description, creationTime, duetime, user);
+            projectManager.addNewProject(name, description, creationTime, duetime, user);
         }
     }
 
