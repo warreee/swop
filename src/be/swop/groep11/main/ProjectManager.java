@@ -12,6 +12,10 @@ public class ProjectManager {
 
     private ArrayList<Project> projects = new ArrayList<>();
 
+    /**
+     *
+     * @return een immutable list van de interne projecten lijst.
+     */
     public ImmutableList<Project> getProjects() {
         return ImmutableList.copyOf(projects);
     }
