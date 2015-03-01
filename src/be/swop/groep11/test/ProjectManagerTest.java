@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.*;
 
 public class ProjectManagerTest {
-    private ProjectManager projectManager;
+    private ProjectRepository projectManager;
     @Before
     public void setUp() throws Exception {
-        projectManager = new ProjectManager();
+        projectManager = new ProjectRepository();
     }
 
 
@@ -35,7 +35,7 @@ public class ProjectManagerTest {
     }
 
     /**
-     * Make sure that added projects are present in ProjectManager
+     * Make sure that added projects are present in ProjectRepository
      * @throws Exception
      */
     @Test

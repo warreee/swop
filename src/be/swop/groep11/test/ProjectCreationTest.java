@@ -1,6 +1,6 @@
 package be.swop.groep11.test;
 
-import be.swop.groep11.main.ProjectManager;
+import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectStatus;
 import be.swop.groep11.main.User;
@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 public class ProjectCreationTest {
 
-    private ProjectManager projectManager;
+    private ProjectRepository projectManager;
     private LocalDateTime now;
     private User user;
     private String name,description;
@@ -21,7 +21,7 @@ public class ProjectCreationTest {
 
     @Before
     public void setUp() throws Exception {
-        this.projectManager = new ProjectManager();
+        this.projectManager = new ProjectRepository();
         this.now = LocalDateTime.now();
         this.name = "Test Project";
         this.description = "Test Description";
