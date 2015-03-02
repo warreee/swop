@@ -1,12 +1,12 @@
-package be.swop.groep11.main.cli.handler;
+package be.swop.groep11.main.handler;
 
 
-import be.swop.groep11.main.cli.Command;
+import be.swop.groep11.main.commands.Command;
 
 /**
  * Created by Ronald on 28/02/2015.
  */
-public class ShowProjectsHandler implements Handler{
+public class ShowProjectsHandler extends Handler {
     public static ShowProjectsHandler getHandler() {
         return handler;
     }
