@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 public enum Command {
     //TODO Set global available commands.
     //TODO move to currentHandler.
+    //TODO methode die voor een command zegt voor welke andere commands het een sub commando is.
     SHOWPROJECTS("Show Projects") {
         @Override
         void setPossibleSubCommands() {
@@ -143,7 +144,6 @@ public enum Command {
     private int numParam;
 
     Handler handler;
-
     List<Command> possibleSubCommands;
 
     private CommandParam[] parameters;
