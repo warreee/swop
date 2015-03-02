@@ -1,6 +1,5 @@
 package be.swop.groep11.main;
 
-import be.swop.groep11.main.cli.IllegalCommandException;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
@@ -75,7 +74,7 @@ public class Task {
      */
     public void setAcceptableDeviation(double acceptableDeviation) throws IllegalArgumentException {
         if (! isValidAcceptableDeviation(acceptableDeviation))
-            throw new IllegalCommandException("Ongeldige aanvaardbare marge");
+            throw new IllegalArgumentException("Ongeldige aanvaardbare marge");
         this.acceptableDeviation = acceptableDeviation;
     }
 
@@ -105,7 +104,7 @@ public class Task {
      */
     public void setStartTime(Instant startTime) throws IllegalArgumentException {
         if (! isValidStartTime(startTime))
-            throw new IllegalCommandException("Ongeldige starttijd");
+            throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
     }
 
@@ -132,7 +131,7 @@ public class Task {
      */
     public void setEndTime(Instant endTime) throws IllegalArgumentException {
         if (! isValidEndTime(endTime))
-            throw new IllegalCommandException("Ongeldige eindtijd");
+            throw new IllegalArgumentException("Ongeldige eindtijd");
         this.endTime = endTime;
     }
 
