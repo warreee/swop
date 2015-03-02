@@ -1,4 +1,4 @@
-package be.swop.groep11.main.cli;
+package be.swop.groep11.main.commands;
 
 /**
  * Created by Ronald on 28/02/2015.

@@ -1,4 +1,7 @@
-package be.swop.groep11.main.cli;
+package be.swop.groep11.main;
+
+import be.swop.groep11.main.commands.Command;
+import be.swop.groep11.main.commands.IllegalCommandException;
 
 import java.io.BufferedReader;
 import java.io.IOException;

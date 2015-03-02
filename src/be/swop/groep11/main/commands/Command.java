@@ -1,7 +1,7 @@
-package be.swop.groep11.main.cli;
+package be.swop.groep11.main.commands;
 
 import be.swop.groep11.main.cli.handler.Handler;
-import be.swop.groep11.main.cli.handler.ShowProjectsHandler;
+import be.swop.groep11.main.handler.ShowProjectsHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
