@@ -1,7 +1,9 @@
 package be.swop.groep11.main;
 
 import be.swop.groep11.main.commands.Command;
+import be.swop.groep11.main.commands.CommandOutput;
 import be.swop.groep11.main.commands.IllegalCommandException;
+import be.swop.groep11.main.handler.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,16 +14,49 @@ import java.util.Queue;
 /**
  * Created by Ronald on 22/02/2015.
  */
-public class CLI {
+public class CommandLine {
+
+
     public static void main(String[] args){
-//        Pattern pat = Pattern.compile("((?i)(select task))\\s*(\\d+|[a-zA-Z]+)");
-//        Matcher mat = pat.matcher("SELECT task ");
-//        System.out.println( mat.matches());
-
-
-        CLI cli = new CLI();
+        CommandLine cli = new CommandLine();
         cli.startCommandLoop();
     }
+
+    public CommandLine() {
+        this.mainHandler = new MainHandler();
+        this.advanceTimeHandler = new AdvanceTimeHandler();
+        this.inputParserHandler = new InputParserHandler();
+        this.newProjectHandler = new NewProjectHandler();
+        this.newTaskHandler = new NewTaskHandler();
+        this.showProjectsHandler = new ShowProjectsHandler();
+        this.updateTaskHandler = new UpdateTaskHandler();
+
+        this.commandOutput = new CommandOutput();
+
+        advanceTimeHandler.addObserver(commandOutput);
+        inputParserHandler.addObserver(commandOutput);
+        newProjectHandler.addObserver(commandOutput);
+        newTaskHandler.addObserver(commandOutput);
+        showProjectsHandler.addObserver(commandOutput);
+        updateTaskHandler.addObserver(commandOutput);
+        mainHandler.addObserver(commandOutput);
+
+        setCurrentHandler(mainHandler);
+    }
+
+    private void setCurrentHandler(Handler handler) {
+        if(canHaveAsCurrentHandler(mainHandler)){
+            this.currentHandler = handler;
+        }
+    }
+
+    private boolean canHaveAsCurrentHandler(MainHandler mainHandler) {
+        //TODO implement
+        return true;
+    }
+
+    private Handler currentHandler;
+
 
     private void startCommandLoop(){
         try {
@@ -64,8 +99,8 @@ public class CLI {
 //                            quit = true;
 //                            break;
 //                    }
-                    cmd.resolve();
-                    foo();
+                    cmd.resolve(currentHandler);
+//                    foo();
                 } catch (IllegalCommandException e) {
                     System.out.println("Catching exception");
                     System.out.println("Invalid input: " + e.getInput().toString());
@@ -98,5 +133,14 @@ public class CLI {
             toPrint = queue.poll();
         }
     }
+
+    private final AdvanceTimeHandler advanceTimeHandler;
+    private final InputParserHandler inputParserHandler;
+    private final NewProjectHandler newProjectHandler;
+    private final NewTaskHandler newTaskHandler;
+    private final ShowProjectsHandler showProjectsHandler;
+    private final UpdateTaskHandler updateTaskHandler;
+    private final CommandOutput commandOutput;
+    private final MainHandler mainHandler;
 }
 

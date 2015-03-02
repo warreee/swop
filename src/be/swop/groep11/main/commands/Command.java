@@ -1,7 +1,6 @@
 package be.swop.groep11.main.commands;
 
-import be.swop.groep11.main.cli.handler.Handler;
-import be.swop.groep11.main.handler.ShowProjectsHandler;
+import be.swop.groep11.main.handler.Handler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +22,6 @@ public enum Command {
             super.setPossibleSubCommands();
             this.possibleSubCommands.addAll(Arrays.asList(SELECTPROJECT));
         }
-
-        @Override
-        void setHandler() {
-            this.handler = ShowProjectsHandler.getHandler();
-        }
     },
     SELECTPROJECT("select project",
             new CommandParam[]{
@@ -42,11 +36,6 @@ public enum Command {
             this.possibleSubCommands.addAll(Arrays.asList(SELECTTASK));
 
         }
-
-        @Override
-        void setHandler() {
-
-        }
     },
     SELECTTASK("select task",
             new CommandParam[]{
@@ -58,11 +47,6 @@ public enum Command {
             super.setPossibleSubCommands();
 
         }
-
-        @Override
-        void setHandler() {
-
-        }
     },
     NEWPROJECTS("New Project") {
         @Override
@@ -70,21 +54,11 @@ public enum Command {
             super.setPossibleSubCommands();
 
         }
-
-        @Override
-        void setHandler() {
-
-        }
     },
     NEWTASK("New Task") {
         @Override
         void setPossibleSubCommands() {
             super.setPossibleSubCommands();
-
-        }
-
-        @Override
-        void setHandler() {
 
         }
     },
@@ -95,20 +69,11 @@ public enum Command {
 
         }
 
-        @Override
-        void setHandler() {
-
-        }
     },
     ADVANCETIME("Advance Time") {
         @Override
         void setPossibleSubCommands() {
             super.setPossibleSubCommands();
-
-        }
-
-        @Override
-        void setHandler() {
 
         }
     },
@@ -118,23 +83,14 @@ public enum Command {
             super.setPossibleSubCommands();
         }
 
-        @Override
-        void setHandler() {
-
-        }
     },
     CANCEL("cancel") {
         @Override
         void setPossibleSubCommands() {
 //            super.setPossibleSubCommands();
-            System.out.println("printing");
-            System.out.println(getAllCommands());
+//            System.out.println("printing");
+//            System.out.println(getAllCommands());
             this.possibleSubCommands.addAll(Arrays.asList( getAllCommands()));
-        }
-
-        @Override
-        void setHandler() {
-
         }
     };
 
@@ -143,7 +99,6 @@ public enum Command {
     private boolean hasParam;
     private int numParam;
 
-    Handler handler;
     List<Command> possibleSubCommands;
 
     private CommandParam[] parameters;
@@ -183,18 +138,22 @@ public enum Command {
     public List<Command> getPossibleSubCommands(){
         return this.possibleSubCommands;
     }
-    abstract void setHandler();
 
     void setLastCommand(Command lastCommand) {
         Command.lastCommand = lastCommand;
     }
 
-    public void resolve() {
-//            System.out.println("base");
-        if(handler != null) {
+    public Handler resolve(Handler handler) {
+        if(isValidHandler(handler)){
             handler.resolveCommand(this);
             setLastCommand(this);
         }
+        return null;
+    }
+
+    private boolean isValidHandler(Handler handler) {
+        //TODO implementeer isValidHandler!
+        return true;
     }
 
     /**
