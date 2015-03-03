@@ -167,9 +167,9 @@ public class Task {
     }
 
     /**
-     * Lijst van alle dependency constraints van deze taak
+     * Set van alle dependency constraints van deze taak
      */
-    private List<DependencyConstraint> dependencyConstraints;
+    private Set<DependencyConstraint> dependencyConstraints;
 
     /**
      * Geeft een immutable list van alle dependency constraints van de taak.
@@ -180,21 +180,23 @@ public class Task {
 
     /**
      * Voegt een dependency constraint toe voor deze taak.
+     * @param dependingOn De taak waarvan deze taak moet afhangen
      */
-    public void addDependencyConstraint(DependencyConstraint dependencyConstraint) {
-        dependencyConstraints.add(dependencyConstraint);
+    public void addNewDependencyConstraint(Task dependingOn) {
+        dependencyConstraints.add(new DependencyConstraint(this, dependingOn));
     }
 
     /**
      * Verwijdert een dependency constraint van deze taak.
+     * @param dependingOn De dependingOn taak van de te verwijderen dependency constraint
      */
-    public void removeDependencyConstraint(DependencyConstraint dependencyConstraint) {
-        dependencyConstraints.remove(dependencyConstraint);
+    public void removeDependencyConstraint(Task dependingOn) {
+        dependencyConstraints.remove(new DependencyConstraint(this, dependingOn));
     }
 
     /**
      * Constructor om een nieuwe taak te maken.
-     * @param description De opschrijving van de nieuwe taak
+     * @param description De omschrijving van de nieuwe taak
      * @param estimatedDuration  De verwachte eindtijd van de nieuwe taak
      * @param acceptableDeviation De aanvaardbare marge van de nieuwe taak
      * @param project Het project waarbij de nieuwe taak hoort
@@ -207,7 +209,7 @@ public class Task {
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
-        this.dependencyConstraints = new ArrayList<DependencyConstraint>();
+        this.dependencyConstraints = new HashSet<>();
         this.project = project;
     }
 
