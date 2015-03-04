@@ -1,7 +1,5 @@
 package be.swop.groep11.main;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.Set;
 
 /**
@@ -42,12 +40,14 @@ public class DependencyConstraint {
      * Controleer of een taak (task) van een geldige taak (dependingOn) afhangt.
      * @param task De afhankelijke taak
      * @param dependingOn De taak waarvan gecontroleerd moet worden of task daarvan afhankelijk kan zijn
-     * @return true alss een taak een geldige dependingOn taak is voor de task,
+     * @return true alss task van dependingOn kan afhangen,
      * (alss het toevoegen van de dependency constraint geen lussen veroorzaakt in de "dependency graph")
      */
-    public boolean isValidDependingOn(Task task, Task dependingOn) {
-        Set<Task> dependentTasks = task.getDependentTasks();
-        if (dependentTasks.contains(dependingOn))
+    public static boolean isValidDependingOn(Task task, Task dependingOn) {
+        Set<Task> dependingOnTasks = dependingOn.getDependingOnTasks();
+        if (dependingOnTasks.contains(task))
+            // dan hangt dependingOn af van task,
+            // dus nu zeggen dat task afhankelijk is van dependingOn zou een lus veroorzaken
             return false;
         return true;
     }

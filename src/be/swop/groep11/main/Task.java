@@ -3,10 +3,8 @@ package be.swop.groep11.main;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,9 +27,20 @@ public class Task {
 
     /**
      * Wijzigt de beschrijving van de taak.
+     * @throws java.lang.IllegalArgumentException De beschrijving is niet geldig.
      */
-    public void setDescription(String description) {
+    public void setDescription(String description) throws IllegalArgumentException {
+        if (! isValidDescription(description))
+            throw new IllegalArgumentException("Ongeldige beschrijving");
         this.description = description;
+    }
+
+    /**
+     * Controleert of een beschrijving geldig is.
+     * @return true alss de beschrijving niet null en niet leeg is
+     */
+    public static boolean isValidDescription(String description) {
+        return description != null && !description.isEmpty();
     }
 
     /**
@@ -82,19 +91,19 @@ public class Task {
      * Controleert of een aanvaardbare marge geldig is voor deze taak.
      * @return true alss de vaardbare marge geldig is (i.e. acceptableDeviation >= 0)
      */
-    public boolean isValidAcceptableDeviation(double acceptableDeviation) {
+    public static boolean isValidAcceptableDeviation(double acceptableDeviation) {
         return acceptableDeviation >= 0;
     }
 
     /**
      * Starttijd en eindtijd
      */
-    private Instant startTime, endTime;
+    private LocalDateTime startTime, endTime;
 
     /**
      * Geeft de starttijd van de taak of null als de taak geen starttijd heeft.
      */
-    public Instant getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
@@ -102,26 +111,16 @@ public class Task {
      * Wijzigt de starttijd van de taak.
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
      */
-    public void setStartTime(Instant startTime) throws IllegalArgumentException {
-        if (! isValidStartTime(startTime))
+    public void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
+        if (! isValidStartTimeEndTime(startTime,getEndTime()))
             throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
     }
 
     /**
-     * Controleert of een starttijd geldig is voor deze taak.
-     * @return true alss de starttijd geldig is (i.e. niet na eindtijd)
-     */
-    public boolean isValidStartTime(Instant startTime) {
-        if (getEndTime() != null)
-            return startTime.compareTo(getEndTime()) <= 0;
-        return true;
-    }
-
-    /**
      * Geeft de eindtijd van de taak of null als de taak geen eindtijd heeft.
      */
-    public Instant getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
@@ -129,20 +128,20 @@ public class Task {
      * Wijzigt de eindtijd van de taak.
      * @throws java.lang.IllegalArgumentException De eindtijd is niet geldig.
      */
-    public void setEndTime(Instant endTime) throws IllegalArgumentException {
-        if (! isValidEndTime(endTime))
+    public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
+        if (! isValidStartTimeEndTime(getStartTime(), endTime))
             throw new IllegalArgumentException("Ongeldige eindtijd");
         this.endTime = endTime;
     }
 
     /**
-     * Controleert of een eindtijd geldig is voor deze taak.
-     * @return true alss de eindtijd geldig is (i.e. niet voor starttijd)
+     * Controleert of een gegeven starttijd en eindtijd geldig zijn.
+     * @param startTime De starttijd die gecontroleerd moet worden.
+     * @param endTime De eindtijd die gecontroleerd moet worden.
+     * @return true alss startTime null is, of endTime null is, of startTime voor endTime ligt
      */
-    public boolean isValidEndTime(Instant endTime) {
-        if (getStartTime() != null)
-            return getStartTime().compareTo(endTime) <= 0;
-        return true;
+    public static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime) {
+        return startTime == null || endTime == null || startTime.isBefore(endTime);
     }
 
     /**
@@ -162,7 +161,7 @@ public class Task {
      * @param project Het gegeven project
      * @return true alss het project geldig is (i.e. als het project nog niet geëindigd is)
      */
-    public boolean isValidProject(Project project) {
+    public static boolean isValidProject(Project project) {
         return project != null && project.getStatus() != ProjectStatus.FINISHED;
     }
 
@@ -195,6 +194,20 @@ public class Task {
     }
 
     /**
+     * Geeft een set van alle taken waarvan deze taak (recursief) afhankelijk is.
+     */
+    public Set<Task> getDependingOnTasks() {
+        HashSet<Task> dependentTasks = new HashSet<>();
+        for (DependencyConstraint dependencyConstraint : this.dependencyConstraints) {
+            // voeg de dependingOn taak van de dependency constraint toe
+            dependentTasks.add(dependencyConstraint.getDependingOn());
+            // voeg alle afhankelijke taken van de dependingOn taak toe
+            dependentTasks.addAll(dependencyConstraint.getDependingOn().getDependingOnTasks());
+        }
+        return dependentTasks;
+    }
+
+    /**
      * Constructor om een nieuwe taak te maken.
      * @param description De omschrijving van de nieuwe taak
      * @param estimatedDuration  De verwachte eindtijd van de nieuwe taak
@@ -211,20 +224,6 @@ public class Task {
         setAcceptableDeviation(acceptableDeviation);
         this.dependencyConstraints = new HashSet<>();
         this.project = project;
-    }
-
-    /**
-     * Geeft een set van alle taken die (recursief) afhankelijk zijn van deze taak.
-     */
-    public Set<Task> getDependentTasks() {
-        HashSet<Task> dependentTasks = new HashSet<>();
-        for (DependencyConstraint dependencyConstraint : this.dependencyConstraints) {
-            // voeg de dependingOn taak van de dependency constraint toe
-            dependentTasks.add(dependencyConstraint.getDependingOn());
-            // voeg alle afhankelijke taken van de dependingOn taak toe
-            dependentTasks.addAll(dependencyConstraint.getDependingOn().getDependentTasks());
-        }
-        return dependentTasks;
     }
 
     public void finish() {
