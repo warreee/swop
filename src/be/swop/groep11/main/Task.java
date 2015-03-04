@@ -250,9 +250,9 @@ public class Task {
     }
 
     /**
-     * Alternatieve taak en taak waarvoor deze taak alternatief is (kunnen beide null zijn)
+     * Alternatieve taal (kan null zijn)
      */
-    private Task alternativeTask, alternativeFor;
+    private Task alternativeTask;
 
     /**
      * Geeft de alternatieve taak van deze taak,
@@ -270,22 +270,6 @@ public class Task {
         if (this.status != TaskStatus.FAILED)
             throw new IllegalArgumentException("Kan nog geen alternatieve taak zetten: taak niet gefaald");
         this.alternativeTask = alternativeTask;
-        alternativeTask.setAlternativeFor(this);
-    }
-
-    /**
-     * Geeft de taak waarvoor deze taak een alternatieve taak is,
-     * of null indien deze taak geen alternatieve taak is.
-     */
-    public Task getAlternativeFor() {
-        return alternativeFor;
-    }
-
-    /**
-     * Wijzigt de taak waarvoor deze taak een alternatieve taak is.
-     */
-    private void setAlternativeFor(Task alternativeFor) {
-        this.alternativeFor = alternativeFor;
     }
 
     public void finish() {
