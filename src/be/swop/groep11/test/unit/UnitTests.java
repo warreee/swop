@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({})
+@SuiteClasses({TaskTest.class, DependencyConstraintTest.class})
 /**
  * Created by Ronald on 28/02/2015.
  * Dit functioneert als verzameling voor alle Unit Tests.
