@@ -226,6 +226,68 @@ public class Task {
         this.project = project;
     }
 
+    /**
+     * Status van de taak
+     */
+    private TaskStatus status;
+
+    /**
+     * Geeft de status van deze taak.
+     */
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * Wijzigt de status van deze taak.
+     * @param status De nieuwe status
+     * @throws java.lang.IllegalArgumentException De nieuwe status is ongeldig voor deze taak
+     */
+    public void setStatus(TaskStatus status) throws IllegalArgumentException {
+        if (! TaskStatus.canChangeStatus(status, this))
+            throw new IllegalArgumentException("Ongeldige status");
+        this.status = status;
+    }
+
+    /**
+     * Alternatieve taak en taak waarvoor deze taak alternatief is (kunnen beide null zijn)
+     */
+    private Task alternativeTask, alternativeFor;
+
+    /**
+     * Geeft de alternatieve taak van deze taak,
+     * of null indien deze taak geen alternatieve taak heeft
+     */
+    public Task getAlternativeTask() {
+        return alternativeTask;
+    }
+
+    /**
+     * Wjizigt de alternatieve taak van deze taak.
+     * @throws java.lang.IllegalArgumentException De status van deze taak is niet FAILED
+     */
+    public void setAlternativeTask(Task alternativeTask) {
+        if (this.status != TaskStatus.FAILED)
+            throw new IllegalArgumentException("Kan nog geen alternatieve taak zetten: taak niet gefaald");
+        this.alternativeTask = alternativeTask;
+        alternativeTask.setAlternativeFor(this);
+    }
+
+    /**
+     * Geeft de taak waarvoor deze taak een alternatieve taak is,
+     * of null indien deze taak geen alternatieve taak is.
+     */
+    public Task getAlternativeFor() {
+        return alternativeFor;
+    }
+
+    /**
+     * Wijzigt de taak waarvoor deze taak een alternatieve taak is.
+     */
+    private void setAlternativeFor(Task alternativeFor) {
+        this.alternativeFor = alternativeFor;
+    }
+
     public void finish() {
     }
 
