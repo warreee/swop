@@ -11,6 +11,7 @@ import java.io.IOException;
 public class UpdateTaskController extends Controller {
     public UpdateTaskController(View view) {
         super(view);
+        this.escapeCommand = Command.CANCEL;
     }
 
     @Override

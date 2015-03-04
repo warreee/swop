@@ -21,21 +21,26 @@ public class MainController extends Controller {
         switch (cmd) {
             case SHOWPROJECTS:
                 CommandLine.getCMDL().getShowProjectsController().run();
+                result = true; //indien run volledig gedaan, betekend dat de focus terug op de MainController is
                 break;
             case CANCEL:
                 view.print("CANCEL");
                 break;
             case NEWPROJECTS:
                 CommandLine.getCMDL().getNewProjectController().run();
+                result = true;
                 break;
             case ADVANCETIME:
                 CommandLine.getCMDL().getAdvanceTimeController().run();
+                result = true;
                 break;
             case UPDATETASK:
                 CommandLine.getCMDL().getUpdateTaskController().run();
+                result = true;
                 break;
             case NEWTASK:
                 CommandLine.getCMDL().getNewTaskController().run();
+                result = true;
                 break;
         }
         return result;
@@ -43,6 +48,6 @@ public class MainController extends Controller {
 
     @Override
     protected String getControllerInfo() {
-        return "MainController info";
+        return "MainController";
     }
 }

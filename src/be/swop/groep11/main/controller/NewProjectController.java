@@ -5,12 +5,11 @@ import be.swop.groep11.main.view.View;
 
 import java.io.IOException;
 
-/**
- * Created by Ronald on 2/03/2015.
- */
+
 public class NewProjectController extends Controller {
     public NewProjectController(View view) {
         super(view);
+        this.escapeCommand = Command.CANCEL;
     }
 
     @Override

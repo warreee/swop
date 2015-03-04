@@ -11,6 +11,7 @@ import java.io.IOException;
 public class AdvanceTimeController extends Controller {
     public AdvanceTimeController(View view) {
         super(view);
+        this.escapeCommand = Command.CANCEL;
     }
 
     @Override

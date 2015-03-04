@@ -53,14 +53,15 @@ public abstract class Controller{
         view.print(printAcceptedCommands());
         try {
             while(!wantsToQuit ){
+                if(returnedFromController){
+                    view.print("Je bent terug in de " + getControllerInfo());
+                }
                 try {
                     cmd = Command.getCommand(view.prompt(""));
-                    returnedFromController =resolveCommand(cmd);
-                    if(returnedFromController){
-                        view.print("Je bent terug in de " + getControllerInfo());
-                    }
+                    returnedFromController = resolveCommand(cmd);
+
                 } catch (IllegalCommandException e) {
-                    view.print("Er ging iets mis: " + e.getInput().toString());
+                    view.print("Er ging iets mis: " + e.getInput());
                 }
             }
         } catch (IOException e) {
