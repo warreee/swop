@@ -1,11 +1,7 @@
 package be.swop.groep11.main.commands;
 
-import be.swop.groep11.main.handler.Handler;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,104 +9,31 @@ import java.util.regex.Pattern;
  * Created by Ronald on 28/02/2015.
  */
 public enum Command {
-    //TODO Set global available commands.
-    //TODO move to currentHandler.
-    //TODO methode die voor een command zegt voor welke andere commands het een sub commando is.
-    SHOWPROJECTS("Show Projects") {
-        @Override
-        void setPossibleSubCommands() {
-            super.setPossibleSubCommands();
-            this.possibleSubCommands.addAll(Arrays.asList(SELECTPROJECT));
-        }
-    },
+
     SELECTPROJECT("select project",
-            new CommandParam[]{
-            CommandParam.NUMBERS,
-            CommandParam.LETTERS},
-            new String[]{
-            "PID",
-            "FOO"}) {
-        @Override
-        void setPossibleSubCommands() {
-            super.setPossibleSubCommands();
-            this.possibleSubCommands.addAll(Arrays.asList(SELECTTASK));
-
-        }
-    },
-    SELECTTASK("select task",
-            new CommandParam[]{
-            CommandParam.NUMBERS},
-            new String[]{
-            "TID"}) {
-        @Override
-        void setPossibleSubCommands() {
-            super.setPossibleSubCommands();
-
-        }
-    },
-    NEWPROJECTS("New Project") {
-        @Override
-        void setPossibleSubCommands() {
-            super.setPossibleSubCommands();
-
-        }
-    },
-    NEWTASK("New Task") {
-        @Override
-        void setPossibleSubCommands() {
-            super.setPossibleSubCommands();
-
-        }
-    },
-    UPDATETASK("Update Task") {
-        @Override
-        void setPossibleSubCommands() {
-            super.setPossibleSubCommands();
-
-        }
-
-    },
-    ADVANCETIME("Advance Time") {
-        @Override
-        void setPossibleSubCommands() {
-            super.setPossibleSubCommands();
-
-        }
-    },
-    EXIT("exit") {
-        @Override
-        void setPossibleSubCommands() {
-            super.setPossibleSubCommands();
-        }
-
-    },
-    CANCEL("cancel") {
-        @Override
-        void setPossibleSubCommands() {
-//            super.setPossibleSubCommands();
-//            System.out.println("printing");
-//            System.out.println(getAllCommands());
-            this.possibleSubCommands.addAll(Arrays.asList( getAllCommands()));
-        }
-    };
+            new CommandParam[]{CommandParam.NUMBERS},
+            new String[]{"PID"}),
+    EXIT("exit"),
+    CANCEL("cancel"),
+    HELP("help"),
+    NEWPROJECTS("New Project"),
+    ADVANCETIME("Advance Time"),
+    UPDATETASK("Update Task"),
+    NEWTASK("New Task"),
+    SHOWPROJECTS("Show Projects");
 
     private Pattern commandPattern;
     private String commandString;
     private boolean hasParam;
     private int numParam;
 
-    List<Command> possibleSubCommands;
-
     private CommandParam[] parameters;
     private String[] parameterNames;
     private HashMap<String,String> parameterToValue;
 
-    private static Command lastCommand = CANCEL;
-
     Command(String commandString, CommandParam[] params, String[] parameterNames){
         setParameters(params, parameterNames);
         this.commandString = commandString;
-
 
         String regex = "((?i)("+ commandString +"))"; //Niet hoofdletter gevoelig
         if(hasParam){
@@ -127,33 +50,6 @@ public enum Command {
 
     Command(String s) {
         this(s, new CommandParam[]{CommandParam.NONE},new String[]{""});
-    }
-
-    void setPossibleSubCommands(){
-        this.possibleSubCommands.addAll(Arrays.asList(CANCEL,EXIT));
-    }
-    static Command[] getAllCommands(){
-        return Command.class.getEnumConstants();
-    }
-    public List<Command> getPossibleSubCommands(){
-        return this.possibleSubCommands;
-    }
-
-    void setLastCommand(Command lastCommand) {
-        Command.lastCommand = lastCommand;
-    }
-
-    public Handler resolve(Handler handler) {
-        if(isValidHandler(handler)){
-            handler.resolveCommand(this);
-            setLastCommand(this);
-        }
-        return null;
-    }
-
-    private boolean isValidHandler(Handler handler) {
-        //TODO implementeer isValidHandler!
-        return true;
     }
 
     /**
@@ -182,7 +78,6 @@ public enum Command {
      *
      */
     public static Command getCommand(String input)throws IllegalCommandException {
-
         Command result = null;
         for (Command cmd : Command.values()) {
             Matcher matcher = cmd.commandPattern.matcher(input);
@@ -210,22 +105,10 @@ public enum Command {
         }
         if(result == null)
             throw new IllegalCommandException(input);
-
-        if(!lastCommand.isPossibleSubCommand(result))
-            throw new IllegalArgumentException("incorrect sub command");//TODO vervang door nieuwe CommandException (nog aan te maken)
         return result;
     }
 
-    private boolean isPossibleSubCommand(Command command) {
-        if(this.possibleSubCommands == null){
-            this.possibleSubCommands = new ArrayList<Command>();
-            this.setPossibleSubCommands();
-        }
-        return this.possibleSubCommands.contains(command);
-    }
-
     private void setParam(String paramName ,String str){
-//        System.out.println("param: " + paramName + " String: " + str);
         this.parameterToValue.replace(paramName, str);
     }
 
@@ -247,16 +130,13 @@ public enum Command {
         }
     }
 
-    public void printParams(){
-        if(!hasParam){
-            System.out.println("Has no params.");
-        }else{
-            System.out.println(parameterToValue.toString());
-        }
-    }
-
     @Override
     public String toString() {
+        //TODO indien parameters aanwezig zijn moeten die ook vermeld worden!
+        return commandString;
+    }
+
+    public String toVerboseString() {
         String result = "Command{" + commandPattern;
         result = (parameters.length > 0) ? result + ", parameters=" + Arrays.toString(parameters) : result;
         result = result +'}';
