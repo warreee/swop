@@ -208,6 +208,14 @@ public class Task {
     }
 
     /**
+     * Geeft een lijst van alle taken die van deze taak afhankelijk zijn.
+     */
+    public Set<Task> getDependentTasks() {
+        // TODO: implement method
+        return null;
+    }
+
+    /**
      * Constructor om een nieuwe taak te maken.
      * @param description De omschrijving van de nieuwe taak
      * @param estimatedDuration  De verwachte eindtijd van de nieuwe taak
@@ -243,7 +251,7 @@ public class Task {
      * @param status De nieuwe status
      * @throws java.lang.IllegalArgumentException De nieuwe status is ongeldig voor deze taak
      */
-    public void setStatus(TaskStatus status) throws IllegalArgumentException {
+    private void setStatus(TaskStatus status) throws IllegalArgumentException {
         if (! TaskStatus.canChangeStatus(status, this))
             throw new IllegalArgumentException("Ongeldige status");
         this.status = status;
@@ -264,15 +272,37 @@ public class Task {
 
     /**
      * Wjizigt de alternatieve taak van deze taak.
-     * @throws java.lang.IllegalArgumentException De status van deze taak is niet FAILED
+     * @throws java.lang.Exception De status van deze taak is niet TaskStatus.FAILED
      */
-    public void setAlternativeTask(Task alternativeTask) {
+    public void setAlternativeTask(Task alternativeTask) throws Exception {
         if (this.status != TaskStatus.FAILED)
-            throw new IllegalArgumentException("Kan nog geen alternatieve taak zetten: taak niet gefaald");
+            throw new Exception("Kan nog geen alternatieve taak zetten: taak niet gefaald"); // TODO: wat voor exception hier?
         this.alternativeTask = alternativeTask;
     }
 
-    public void finish() {
+    /**
+     * Beëindigt deze taak: en maakt de afhankelijke taken beschikbaar.
+     */
+    public void finish() throws Exception {
+        setEndTime(LocalDateTime.now());
+        setStatus(TaskStatus.FINISHED);
+        makeDependentTasksAvailable();
+    }
+
+    /**
+     * Verandert de status van deze taak in TaskStatus.FAILED
+     */
+    public void fail() throws Exception {
+        setStatus(TaskStatus.FAILED);
+    }
+
+    /**
+     * Zet de status van alle afhankelijke taken op AVAILABLE.
+     */
+    private void makeDependentTasksAvailable() {
+        Set<Task> dependentTasks = this.getDependentTasks();
+        for (Task task : dependentTasks)
+            task.setStatus(TaskStatus.AVAILABLE);
     }
 
 }
