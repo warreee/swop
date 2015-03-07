@@ -1,4 +1,4 @@
-package be.swop.groep11.main.view;
+package be.swop.groep11.main.ui;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,11 +9,11 @@ import java.util.Observer;
 /**
  * Created by Ronald on 4/03/2015.
  */
-public abstract class View implements Observer {
+public class SimpleTUI implements Observer {
 
     private final BufferedReader br;
 
-    public View(Reader reader){
+    public SimpleTUI(Reader reader){
         this.br = new BufferedReader(reader);
     }
 
