@@ -1,4 +1,4 @@
-package be.swop.groep11.main.commands;
+package be.swop.groep11.main.ui.commands;
 
 import java.util.Arrays;
 import java.util.HashMap;

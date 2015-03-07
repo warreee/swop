@@ -1,8 +1,8 @@
-package be.swop.groep11.main.controller;
+package be.swop.groep11.main.ui.handler;
 
-import be.swop.groep11.main.commands.Command;
-import be.swop.groep11.main.commands.IllegalCommandException;
-import be.swop.groep11.main.view.View;
+import be.swop.groep11.main.ui.commands.Command;
+import be.swop.groep11.main.ui.commands.IllegalCommandException;
+import be.swop.groep11.main.ui.SimpleTUI;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,15 +10,15 @@ import java.util.Collections;
 import java.util.List;
 
 
-public abstract class Controller{
-    protected final View view;
+public abstract class Handler {
+    protected final SimpleTUI simpleTUI;
     protected Command escapeCommand;
 
     private List<Command> acceptedCommands;
     private boolean wantsToQuit;
 
-    protected Controller(View view) {
-        this.view = view;
+    protected Handler(SimpleTUI simpleTUI) {
+        this.simpleTUI = simpleTUI;
         this.escapeCommand = Command.EXIT;
         this.acceptedCommands = new ArrayList<>();
         this.wantsToQuit = false;
@@ -35,8 +35,8 @@ public abstract class Controller{
                 System.exit(0);
                 break;
             case HELP:
-                view.print(getControllerInfo());
-                view.print(printAcceptedCommands());
+                simpleTUI.print(getControllerInfo());
+                simpleTUI.print(printAcceptedCommands());
                 break;
         }
         return wantsToQuit;
@@ -50,18 +50,18 @@ public abstract class Controller{
     public void run(){
         Command cmd;
         boolean returnedFromController = false;
-        view.print(printAcceptedCommands());
+        simpleTUI.print(printAcceptedCommands());
         try {
             while(!wantsToQuit ){
                 if(returnedFromController){
-                    view.print("Je bent terug in de " + getControllerInfo());
+                    simpleTUI.print("Je bent terug in de " + getControllerInfo());
                 }
                 try {
-                    cmd = Command.getCommand(view.prompt(""));
+                    cmd = Command.getCommand(simpleTUI.prompt(""));
                     returnedFromController = resolveCommand(cmd);
 
                 } catch (IllegalCommandException e) {
-                    view.print("Er ging iets mis: " + e.getInput());
+                    simpleTUI.print("Er ging iets mis: " + e.getInput());
                 }
             }
         } catch (IOException e) {
@@ -69,7 +69,7 @@ public abstract class Controller{
             e.printStackTrace();
         }
     }
-    //TODO ondersteuning voor intro bericht wanneer nieuwe controller actief wordt.
+    //TODO ondersteuning voor intro bericht wanneer nieuwe handler actief wordt.
     protected String printAcceptedCommands() {
         StringBuilder sb = new StringBuilder();
         sb.append("Dit zijn de mogelijke commands:" + "\n");

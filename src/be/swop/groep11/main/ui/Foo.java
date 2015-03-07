@@ -1,15 +1,15 @@
-package be.swop.groep11.main.model;
+package be.swop.groep11.main.ui;
 
 import java.util.Observable;
 
 /**
  * Created by Ronald on 4/03/2015.
  */
-public class TaskMan extends Observable{
+public class Foo extends Observable{
 
     private String property;
 
-    public TaskMan() {
+    public Foo() {
     }
 
     public String getProperty() {
