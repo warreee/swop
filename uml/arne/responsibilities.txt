@@ -1,0 +1,56 @@
+Verantwoordelijkheden van de klassen:
+
+********************************
+          DOMAIN LAYER          
+********************************
+
+    TaskMan:
+        * Systeemtijd: bijhouden + updaten
+        * ProjectRepository: aanmaken + bijhouden
+
+    ProjectRepository:
+        * Lijst van projecten bijhouden
+        * Nieuwe projecten aanmaken + verwijderen
+
+    Project:
+        * Lijst van taken bijhouden
+        * Nieuwe taken aanmaken + verwijderen
+        * Status bijhouden + updaten
+        * Creator (User) bijhouden
+
+    User:
+        /
+
+    ProjectStatus:
+        * Voorstellen van een project status
+        * Controleren of een status een geldige nieuwe status voor een gegeven project is
+
+    Task:
+        * Lijst van dependency constraints bijhouden
+        * Dependency constraints aanmaken + verwijderen
+        * Alternatieve taak bijhouden (indien status=FAILED)
+
+    TaskStatus:
+        * Voorstellen van een taak status
+        * Controleren of een status een geldige nieuwe status voor een gegeven taak is
+
+    DependencyConstraint:
+        * Voorstellen van de afhankelijkheid van een taak (task) van een andere taak (dependingOn)
+
+    ----------------------------------------------------------------------------------------------
+
+    (interface) UserInterface:
+        * Voorstellen van de methodes die een gebruikersinterface moet implementeren
+        * Vb. void showProjectList() ==> lijst van projecten tonen aan de gebruiker
+        * Vb. Map<String,String> showProjectCreationForm() ==> formulier tonen + ingevulde data teruggeven
+
+    ...Controller:
+        * Bevat de methodes voor use cases:
+            die methodes zorgen dat de stappen in de juiste volgorde gebeuren
+
+********************************
+       PRESENTATION LAYER       
+********************************
+
+    CommandLineInterface:
+        * Implementatie van de methodes van UserInterface voor een command line interface
