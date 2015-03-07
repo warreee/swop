@@ -4,19 +4,19 @@ import be.swop.groep11.main.TaskMan;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
 
 public class TaskManTest {
 
     private TaskMan taskMan;
-    private Instant newTime;
+    private LocalDateTime newTime;
 
     @Before
     public void setUp() throws Exception {
         taskMan = new TaskMan();
-        newTime = Instant.now().plusSeconds(10);
+        newTime = LocalDateTime.now().plusSeconds(10);
 
     }
 
@@ -33,7 +33,7 @@ public class TaskManTest {
 
     @Test (expected = IllegalArgumentException.class)
      public void UpdateSystemTime_invalid_earlierTime() throws Exception {
-        Instant newTime = taskMan.getCurrentSystemTime().minusSeconds(10);
+        LocalDateTime newTime = taskMan.getCurrentSystemTime().minusSeconds(10);
         taskMan.updateSystemTime(newTime);
     }
 

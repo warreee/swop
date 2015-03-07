@@ -1,7 +1,6 @@
 package be.swop.groep11.main;
 
 import com.google.common.collect.ImmutableList;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -202,7 +201,7 @@ public class Task {
      * @return true alss het project geldig is (i.e. als het project nog niet geëindigd is)
      */
     public static boolean isValidProject(Project project) {
-        return project != null && project.getStatus() != ProjectStatus.FINISHED;
+        return project != null && project.getProjectStatus() != ProjectStatus.FINISHED;
     }
 
     /**

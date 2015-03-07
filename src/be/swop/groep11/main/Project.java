@@ -11,12 +11,14 @@ import java.util.ArrayList;
 public class Project {
 
     private String name, description;
-    private LocalDateTime creationTime, dueTime;
+    private LocalDateTime creationTime;
+    private LocalDateTime dueTime;
     private User creator;
-    private ProjectStatus status;
+    private ProjectStatus projectStatus;
+    private final int projectID;
     private ArrayList<Task> tasks = new ArrayList<>();
 
-    //TODO: Het aanmaken van eigen Exception definities? (Zoals bij OGP)
+
 
     /**
      *
@@ -27,59 +29,40 @@ public class Project {
      * @param creator
      * @throws IllegalArgumentException
      */
-    public Project(String name, String description, LocalDateTime creationTime, LocalDateTime duetime, User creator) throws IllegalArgumentException{
-        setName(name);
+    public Project(int projectID,String name, String description, LocalDateTime creationTime, LocalDateTime duetime, User creator) throws IllegalArgumentException{
+        if(!isValidProjectID(projectID)){
+            throw new IllegalArgumentException("Incorrect ProjectID: " + projectID);
+        }
+        this.projectID = projectID;
+        setProjectName(name);
         setCreationAndDueTime(creationTime,duetime);
-//        setCreationTime(creationTime);
-//        setDueTime(duetime);
         setCreator(creator);
         setDescription(description);
     }
 
 
-    public void addTask(String name, String description, double acceptableDeviation, LocalDateTime startTime, LocalDateTime endTime) {
+    public void addNewTask(String name, String description, double acceptableDeviation, LocalDateTime startTime, LocalDateTime endTime) {
+        //TODO add new task
     }
 
-    /**
-     * @return Een ImmutableList die alle taken in volgorde van de interne lijst bevat.
-     */
-    public ImmutableList<Task> getTasks() {
-        return ImmutableList.copyOf(this.tasks);
-    }
+
 
     public void finish() {
-    }
-
-    public static boolean isValidName(String validName) {
-        return !validName.isEmpty();
-    }
-    public static boolean isValidDescription(String description) {
-        return description != null && !description.isEmpty();
-    }
-
-    public static boolean isValidUser(User user) {
-        return user != null;
-    }
-    /**
-     * @param startTime De starttijd die gecontroleerd moet worden.
-     * @param endTime De eindtijd die gecontroleerd moet worden.
-     * @return false als startTime of endTime null is of als endTime voor startTime ligt.
-     */
-    public static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime){
-        boolean result = startTime !=null && endTime != null && startTime.isBefore(endTime);
-        return result;
+        //TODO project status change to finished
     }
 
     /**
      * @param name De naam die dit project moet dragen.
      * @throws java.lang.IllegalArgumentException Deze exception wordt gegooid als het argument null is.
      */
-    public void setName(String name) throws IllegalArgumentException {
-        if(!isValidName(name)){
+    public void setProjectName(String name) throws IllegalArgumentException {
+        if(!isValidProjectName(name)){
             throw new IllegalArgumentException("Projectnaam kan niet 'null' zijn.");
         }
         this.name = name;
     }
+
+
 
     /**
      * @param description De omschrijving die dit project moet dragen.
@@ -90,33 +73,6 @@ public class Project {
             throw new IllegalArgumentException("Geen geldige omschrijving.");
         }
         this.description = description;
-    }
-
-    /**
-     * @param creationTime De starttijd die dit project moet dragen. Kan niet null zijn.
-     * @throws java.lang.IllegalArgumentException Dit wordt gegooid indien
-     */
-    @Deprecated
-    public void setCreationTime(LocalDateTime creationTime) throws IllegalArgumentException {
-        if(creationTime == null){
-            throw new IllegalArgumentException("Starttijd kan niet 'null' zijn.");
-        }
-        if(getDueTime() != null && ! isValidStartTimeEndTime(creationTime, getDueTime())){
-            throw new IllegalArgumentException("Starttijd kan niet voor eindtijd liggen.");
-        }
-        this.creationTime = creationTime;
-    }
-
-    // TODO: deze methode faalt altijd. Fix dit.
-    @Deprecated
-    public void setDueTime(LocalDateTime dueTime) throws IllegalArgumentException {
-        if(dueTime == null){
-            throw new IllegalArgumentException("Eindtijd kan niet 'null' zijn.");
-        }
-        if(getCreationTime() != null && ! isValidStartTimeEndTime(getCreationTime(), dueTime)){
-            throw new IllegalArgumentException("Eindtijd kan niet voor starttijd liggen.");
-        }
-        this.dueTime = dueTime;
     }
 
     /**
@@ -133,8 +89,8 @@ public class Project {
         this.dueTime = dueTime;
     }
 
-    protected void setStatus(ProjectStatus status) {
-        this.status = status;
+    protected void setProjectStatus(ProjectStatus projectStatus) {
+        this.projectStatus = projectStatus;
     }
 
     protected void setTasks(ArrayList<Task> tasks) {
@@ -146,6 +102,44 @@ public class Project {
             throw new IllegalArgumentException("Geen geldige user.");
         }
         this.creator = creator;
+    }
+
+    /**
+     *
+     * @param projectName
+     * @return Waar indien projectName niet leeg.
+     */
+    public static boolean isValidProjectName(String projectName) {
+        return projectName != null &&!projectName.isEmpty();
+    }
+
+    public static boolean isValidDescription(String description) {
+        return description != null && !description.isEmpty();
+    }
+
+    public static boolean isValidUser(User user) {
+        return user != null;
+    }
+
+    /**
+     * Controleer of het gegeven projectID valid is.
+     * @param ID projectID
+     * @return waar indien ID positief is.
+     */
+    public static boolean isValidProjectID(int ID){
+        if(ID < 0)
+            return false;
+        return true;
+    }
+
+    /**
+     * @param startTime De starttijd die gecontroleerd moet worden.
+     * @param endTime De eindtijd die gecontroleerd moet worden.
+     * @return false als startTime of endTime null is of als endTime voor startTime ligt.
+     */
+    public static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime){
+        boolean result = startTime !=null && endTime != null && startTime.isBefore(endTime);
+        return result;
     }
 
     public String getDescription() {
@@ -168,7 +162,19 @@ public class Project {
         return creator;
     }
 
-    public ProjectStatus getStatus() {
-        return status;
+    public ProjectStatus getProjectStatus() {
+        return projectStatus;
     }
+
+    public int getProjectID() {
+        return projectID;
+    }
+
+    /**
+     * @return Een ImmutableList die alle taken in volgorde van de interne lijst bevat.
+     */
+    public ImmutableList<Task> getTasks() {
+        return ImmutableList.copyOf(this.tasks);
+    }
+
 }

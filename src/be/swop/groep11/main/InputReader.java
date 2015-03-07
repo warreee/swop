@@ -7,9 +7,8 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by warreee on 2/03/15.

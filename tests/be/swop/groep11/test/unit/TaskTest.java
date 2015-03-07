@@ -16,7 +16,7 @@ public class TaskTest {
 
     @Before
     public void setUp() throws Exception {
-        project = new Project("Test project", "Test beschrijving",
+        project = new Project(0,"Test project", "Test beschrijving",
                     LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015,3,4,16,0),
                     new User("Alfred J. Kwak"));
         task = new Task("Test taak", Duration.ofHours(8), 0.1, project);

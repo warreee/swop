@@ -57,7 +57,7 @@ public class ProjectManagerTest {
         addProjectsToProjectManager(1);
         assertTrue("5 projects in Tman: ", projectManager.getProjects().size() == 5);
         for(Project p: projectManager.getProjects()){
-            assertTrue("Projectstatus is ongoing: ", p.getStatus().equals(ProjectStatus.ONGOING));
+            assertTrue("Projectstatus is ongoing: ", p.getProjectStatus().equals(ProjectStatus.ONGOING));
         }
     }
 
@@ -73,10 +73,10 @@ public class ProjectManagerTest {
         Project testProject = projectManager.getProjects().get(0);
         addTasksToProject(testProject, 1);
         Task testTask = testProject.getTasks().get(0);
-        testTask.finish();
-        assertFalse("Project status is not finished: ", testProject.getStatus().equals(ProjectStatus.FINISHED));
+//        testTask.finish();
+        assertFalse("Project status is not finished: ", testProject.getProjectStatus().equals(ProjectStatus.FINISHED));
         testProject.finish();
-        assertTrue("Project status is finished: ", testProject.getStatus().equals(ProjectStatus.FINISHED));
+        assertTrue("Project status is finished: ", testProject.getProjectStatus().equals(ProjectStatus.FINISHED));
     }
 
     /**
@@ -89,9 +89,9 @@ public class ProjectManagerTest {
         addProjectsToProjectManager(1);
         Project testProject = projectManager.getProjects().get(0);
         addTasksToProject(testProject, 1);
-        assertFalse("Project status is not finished: ", testProject.getStatus().equals(ProjectStatus.FINISHED));
+        assertFalse("Project status is not finished: ", testProject.getProjectStatus().equals(ProjectStatus.FINISHED));
         testProject.finish();
-        assertFalse("Project status is not finished: ", testProject.getStatus().equals(ProjectStatus.FINISHED));
+        assertFalse("Project status is not finished: ", testProject.getProjectStatus().equals(ProjectStatus.FINISHED));
     }
 
 
@@ -127,7 +127,7 @@ public class ProjectManagerTest {
             double acceptableDeviation = 0.05;
             LocalDateTime startTime = LocalDateTime.now();
             LocalDateTime endTime = LocalDateTime.now();
-            project.addTask(name, description, acceptableDeviation, startTime, endTime);
+            project.addNewTask(name, description, acceptableDeviation, startTime, endTime);
         }
     }
 }

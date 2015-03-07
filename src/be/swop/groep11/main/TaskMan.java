@@ -1,6 +1,6 @@
 package be.swop.groep11.main;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * Created by Ronald on 7/03/2015.
@@ -12,7 +12,7 @@ public class TaskMan {
      * alsook een nieuwe ProjectRepository.
      */
     public TaskMan(){
-        this(Instant.now());
+        this(LocalDateTime.now());
     }
     /**
      * Initialiseren van TaskMan met als huidige systeem tijd de gegeven systeemtijd
@@ -22,7 +22,7 @@ public class TaskMan {
      *           | De gegeven systeemtijd is niet geldig.
      *           | !canHaveAsSystemTime(systemTime)
      */
-    private TaskMan(Instant currentSystemTime) throws IllegalArgumentException {
+    private TaskMan(LocalDateTime currentSystemTime) throws IllegalArgumentException {
         this.projectRepository = new ProjectRepository();
         setCurrentSystemTime(currentSystemTime);
     }
@@ -43,7 +43,7 @@ public class TaskMan {
      *           | De gegeven systeemtijd is niet geldig.
      *           | !canHaveAsSystemTime(systemTime)
      */
-    public void updateSystemTime(Instant systemTime) throws IllegalArgumentException{
+    public void updateSystemTime(LocalDateTime systemTime) throws IllegalArgumentException{
             setCurrentSystemTime(systemTime);
     }
 
@@ -59,7 +59,7 @@ public class TaskMan {
      *          | newSystemTime != null &&
      *          | getCurrentSystemTime().isBefore(newSystemTime))
      */
-    private boolean canHaveAsSystemTime(Instant newSystemTime) {
+    private boolean canHaveAsSystemTime(LocalDateTime newSystemTime) {
         if(newSystemTime == null){
             return false;
         }
@@ -73,7 +73,7 @@ public class TaskMan {
         return false;
     }
 
-    private void setCurrentSystemTime(Instant currentSystemTime) throws IllegalArgumentException {
+    private void setCurrentSystemTime(LocalDateTime currentSystemTime) throws IllegalArgumentException {
         if(canHaveAsSystemTime(currentSystemTime)) {
             this.currentSystemTime = currentSystemTime;
         }
@@ -85,9 +85,9 @@ public class TaskMan {
     /**
      * @return Geeft de huidige systeemtijd terug.
      */
-    public Instant getCurrentSystemTime() {
+    public LocalDateTime getCurrentSystemTime() {
         return currentSystemTime;
     }
 
-    private Instant currentSystemTime;
+    private LocalDateTime currentSystemTime;
 }
