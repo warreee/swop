@@ -1,6 +1,7 @@
 package be.swop.groep11.main;
 
 import com.google.common.collect.ImmutableList;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -12,6 +13,25 @@ import java.util.Set;
  * Een taak behoort tot 1 project en heeft een lijst van dependency constraints.
  */
 public class Task {
+
+    /**
+     * Constructor om een nieuwe taak te maken.
+     * @param description De omschrijving van de nieuwe taak
+     * @param estimatedDuration  De verwachte eindtijd van de nieuwe taak
+     * @param acceptableDeviation De aanvaardbare marge van de nieuwe taak
+     * @param project Het project waarbij de nieuwe taak hoort
+     * @throws java.lang.IllegalArgumentException Ongeldige verwachte eindtijd, ongeldige aanvaardbare marge
+     *                                            of ongeldig project
+     */
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project) throws IllegalArgumentException {
+        if (! isValidProject(project))
+            throw new IllegalArgumentException("Ongeldig project");
+        setDescription(description);
+        setEstimatedDuration(estimatedDuration);
+        setAcceptableDeviation(acceptableDeviation);
+        this.dependencyConstraints = new HashSet<>();
+        this.project = project;
+    }
 
     /**
      * Beschrijving
@@ -112,7 +132,7 @@ public class Task {
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
      */
     public void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
-        if (! isValidStartTimeEndTime(startTime,getEndTime()))
+        if (! isValidStartTime(startTime, getEndTime()))
             throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
     }
@@ -126,22 +146,42 @@ public class Task {
 
     /**
      * Wijzigt de eindtijd van de taak.
+     * Indien de taak nog niet op geëindigd of op gefaald stond, past deze methode ook de status aan
+     * wanneer endTime <= huidige systeemtijd (van TaskMan)
+     * @param endTime De nieuwe eindtijd van deze taak
+     * @param systemTime De huidige systeemtijd
      * @throws java.lang.IllegalArgumentException De eindtijd is niet geldig.
      */
-    public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
-        if (! isValidStartTimeEndTime(getStartTime(), endTime))
+    public void setEndTime(LocalDateTime endTime, LocalDateTime systemTime) throws IllegalArgumentException {
+        if (! isValidEndTime(getStartTime(), endTime, systemTime))
             throw new IllegalArgumentException("Ongeldige eindtijd");
         this.endTime = endTime;
+        if (getStatus() != TaskStatus.FINISHED && status != TaskStatus.FINISHED)
+            this.setStatus(TaskStatus.FINISHED);
     }
 
     /**
-     * Controleert of een gegeven starttijd en eindtijd geldig zijn.
-     * @param startTime De starttijd die gecontroleerd moet worden.
-     * @param endTime De eindtijd die gecontroleerd moet worden.
+     * Controleert of een starttijd geldig is voor een bepaalde eindtijd.
+     * @param startTime De starttijd om te controleren
+     * @param endTime De eindttijd
      * @return true alss startTime null is, of endTime null is, of startTime voor endTime ligt
      */
-    public static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime) {
+    public static boolean isValidStartTime(LocalDateTime startTime, LocalDateTime endTime) {
         return startTime == null || endTime == null || startTime.isBefore(endTime);
+    }
+
+    /**
+     * Controleert of een starttijd geldig is voor een bepaalde eindtijd en de huidige systeemtijd.
+     * @param startTime De starttijd om te controleren
+     * @param endTime De eindttijd
+     * @param systemTime De huidige systeemtijd.
+     * @return true als endTime == null,
+     *    <br> true als (startTime == null of startTime ligt voor endTime) en endTime ligt voor endTime,
+     *    <br> false in andere gevallen
+     */
+    public static boolean isValidEndTime(LocalDateTime startTime, LocalDateTime endTime, LocalDateTime systemTime) {
+        return endTime == null
+                || ( (startTime == null || startTime.isBefore(endTime)) && (endTime.isBefore(systemTime)) );
     }
 
     /**
@@ -216,25 +256,6 @@ public class Task {
     }
 
     /**
-     * Constructor om een nieuwe taak te maken.
-     * @param description De omschrijving van de nieuwe taak
-     * @param estimatedDuration  De verwachte eindtijd van de nieuwe taak
-     * @param acceptableDeviation De aanvaardbare marge van de nieuwe taak
-     * @param project Het project waarbij de nieuwe taak hoort
-     * @throws java.lang.IllegalArgumentException Ongeldige verwachte eindtijd, ongeldige aanvaardbare marge
-     *                                            of ongeldig project
-     */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project) throws IllegalArgumentException {
-        if (! isValidProject(project))
-            throw new IllegalArgumentException("Ongeldig project");
-        setDescription(description);
-        setEstimatedDuration(estimatedDuration);
-        setAcceptableDeviation(acceptableDeviation);
-        this.dependencyConstraints = new HashSet<>();
-        this.project = project;
-    }
-
-    /**
      * Status van de taak
      */
     private TaskStatus status;
@@ -252,7 +273,7 @@ public class Task {
      * @throws java.lang.IllegalArgumentException De nieuwe status is ongeldig voor deze taak
      */
     private void setStatus(TaskStatus status) throws IllegalArgumentException {
-        if (! TaskStatus.canChangeStatus(status, this))
+        if (! TaskStatus.isValidNewStatus(status, this))
             throw new IllegalArgumentException("Ongeldige status");
         this.status = status;
     }
@@ -272,32 +293,76 @@ public class Task {
 
     /**
      * Wjizigt de alternatieve taak van deze taak.
-     * @throws java.lang.Exception De status van deze taak is niet TaskStatus.FAILED
+     * @throws java.lang.Exception alternativeTask kan niet als alternatieve taak voor deze taak gezet worden.
      */
     public void setAlternativeTask(Task alternativeTask) throws Exception {
-        if (this.status != TaskStatus.FAILED)
-            throw new Exception("Kan nog geen alternatieve taak zetten: taak niet gefaald"); // TODO: wat voor exception hier?
+        if (! canSetAlternativeTask(this, alternativeTask))
+            throw new Exception("Kan de alternatieve taak niet wijzigen");
         this.alternativeTask = alternativeTask;
     }
 
     /**
-     * Beëindigt deze taak: en maakt de afhankelijke taken beschikbaar.
+     * Controleert of een taak als alternatieve taak voor een gegeven taak kan ingesteld worden.
+     * @param task De gegeven taak
+     * @param alternativeTask De alternatieve taak
+     * @return true alss (task is gefaald en alternativeTask != task) of (alternativeTask == null)
      */
-    public void finish() throws Exception {
-        setEndTime(LocalDateTime.now());
-        setStatus(TaskStatus.FINISHED);
-        makeDependentTasksAvailable();
+    public static boolean canSetAlternativeTask(Task task, Task alternativeTask) {
+        return task != null
+                && ( (task.getStatus() == TaskStatus.FAILED && task != alternativeTask) || (alternativeTask == null) );
     }
 
     /**
-     * Verandert de status van deze taak in TaskStatus.FAILED
+     * Geeft de status waarmee de taak geëindigd is: vroeg / op tijd / te laat
+     * @return -2 als de taak nog niet geëindigd is,
+     *     <br>-1 als de taak vroeg geëindigd is,
+     *     <br> 0 als de taak op tijd geëindigd is,
+     *     <br> 1 als de taak te laat geëindigd is.
      */
-    public void fail() throws Exception {
-        setStatus(TaskStatus.FAILED);
+    public int getFinishedStatus() {
+        if (getStatus() != TaskStatus.FINISHED)
+            return -2;
+
+        long durationInSeconds = getDuration().getSeconds();
+        long estimatedDurationInSeconds = this.getEstimatedDuration().getSeconds();
+
+        if (durationInSeconds < (1-acceptableDeviation)*estimatedDurationInSeconds)
+            return -1;
+        else if (durationInSeconds > (1+acceptableDeviation)*estimatedDurationInSeconds)
+            return 1;
+        else
+            return 0;
     }
 
     /**
-     * Zet de status van alle afhankelijke taken op AVAILABLE.
+     * Geeft de delay van deze taak.
+     * @return De delay van deze taak,
+     *         of null indien deze taak nog niet geëindigd is.
+     *         (De delay van een taak is steeds positief)
+     */
+    public Duration getDelay() {
+        if (getStatus() != TaskStatus.FINISHED)
+            return null;
+
+        Duration delay = getDuration().minus(getEstimatedDuration());
+        if (delay.isNegative()) // geen negatieve delays!
+            return Duration.ofSeconds(0);
+        return delay;
+    }
+
+    /**
+     * Geeft de duur van deze taak, indien de starttijd en eindtijd niet null zijn.
+     * @return De duur van deze taak,
+     *         of null als de starttijd of eindtijd van deze taak null is.
+     */
+    public Duration getDuration() {
+        if (getStartTime() == null || getEndTime() == null)
+            return null;
+        return Duration.between(getStartTime(),getEndTime());
+    }
+
+    /**
+     * Maakt de afhankelijke taken (if any) van deze taak beschikbaar.
      */
     private void makeDependentTasksAvailable() {
         Set<Task> dependentTasks = this.getDependentTasks();
