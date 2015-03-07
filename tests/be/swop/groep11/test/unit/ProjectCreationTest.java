@@ -1,4 +1,4 @@
-package be.swop.groep11.test;
+package unit;
 
 import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.Project;

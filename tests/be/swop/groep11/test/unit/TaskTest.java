@@ -1,7 +1,6 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.Project;
-import be.swop.groep11.main.ProjectStatus;
 import be.swop.groep11.main.Task;
 import be.swop.groep11.main.User;
 import org.junit.Before;
@@ -9,8 +8,6 @@ import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-
-import static org.junit.Assert.*;
 
 public class TaskTest {
 

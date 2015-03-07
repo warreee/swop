@@ -7,7 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * Created by Ronald on 23/02/2015.
  */
 @RunWith(Suite.class)
-@SuiteClasses({ProjectManagerTest.class,ProjectCreationTest.class,UseCase3.class,UseCase4.class,UseCase5.class,MainTest.class})
+@SuiteClasses({be.swop.groep11.test.unit.UnitTests.class, be.swop.groep11.test.integration.IntegrationTests.class})
 public class AllTests {
 
 }
