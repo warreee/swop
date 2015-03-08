@@ -12,18 +12,12 @@ import java.util.ArrayList;
  */
 public class Project {
 
-    private String name, description;
-    private LocalDateTime creationTime;
-    private LocalDateTime dueTime;
-    private User creator;
-    private ProjectStatus projectStatus;
-    private final int projectID;
-    private ArrayList<Task> tasks = new ArrayList<>();
+
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////CONSTRUCTORS/////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
     /**
      * Standaard constructor voor een nieuw project.
@@ -66,10 +60,10 @@ public class Project {
     ///////////////////////////////////////GETTERS AND SETTERS//////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private String name;
 
-
-    public void finish() {
-        setProjectStatus(ProjectStatus.FINISHED);
+    public String getName() {
+        return this.name;
     }
 
     /**
@@ -83,7 +77,21 @@ public class Project {
         this.name = name;
     }
 
+    public void finish() {
+        setProjectStatus(ProjectStatus.FINISHED);
+    }
 
+
+
+    private String description;
+
+    /**
+     * Geeft de beschrijving terug van dit project.
+     * @return de beschrijving van dit project.
+     */
+    public String getDescription() {
+        return this.description;
+    }
 
     /**
      * @param description De omschrijving die dit project moet dragen.
@@ -94,6 +102,15 @@ public class Project {
             throw new IllegalArgumentException("Geen geldige omschrijving.");
         }
         this.description = description;
+    }
+
+
+
+    private LocalDateTime creationTime;
+    private LocalDateTime dueTime;
+
+    public LocalDateTime getDueTime() {
+        return this.dueTime;
     }
 
     /**
@@ -110,12 +127,40 @@ public class Project {
         this.dueTime = dueTime;
     }
 
+
+    private ProjectStatus projectStatus;
+
+    public ProjectStatus getProjectStatus() {
+        return this.projectStatus;
+    }
+
+
+    public LocalDateTime getCreationTime() {
+        return this.creationTime;
+    }
+
     protected void setProjectStatus(ProjectStatus projectStatus) {
         this.projectStatus = projectStatus;
     }
 
+
+    private ArrayList<Task> tasks = new ArrayList<>();
+
+    /**
+     * @return Een ImmutableList die alle taken in volgorde van de interne lijst bevat.
+     */
+    public ImmutableList<Task> getTasks() {
+        return ImmutableList.copyOf(this.tasks);
+    }
+    // TODO waarom protected?
     protected void setTasks(ArrayList<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    private User creator;
+
+    public User getCreator() {
+        return this.creator;
     }
 
     public void setCreator(User creator) throws IllegalArgumentException{
@@ -124,6 +169,16 @@ public class Project {
         }
         this.creator = creator;
     }
+
+    private final int projectID;
+
+    public int getProjectID() {
+        return this.projectID;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////METHODES//////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      *
@@ -163,46 +218,15 @@ public class Project {
         return result;
     }
 
-    public String getDescription() {
-        return description;
-    }
 
-    public String getName() {
-        return name;
-    }
-
-    public LocalDateTime getCreationTime() {
-        return creationTime;
-    }
-
-    public LocalDateTime getDueTime() {
-        return this.dueTime;
-    }
-
-    public User getCreator() {
-        return creator;
-    }
-
-    public ProjectStatus getProjectStatus() {
-        return projectStatus;
-    }
-
-    public int getProjectID() {
-        return projectID;
-    }
 
     /**
-     * @return Een ImmutableList die alle taken in volgorde van de interne lijst bevat.
+     * Voegt een taak toe aan dit project.
+     * @param description
+     * @param acceptableDeviation
+     * @param estimatedDuration
+     * @param project
      */
-    public ImmutableList<Task> getTasks() {
-        return ImmutableList.copyOf(this.tasks);
-    }
-
-
-    public ProjectStatus getStatus() {
-        return this.projectStatus;
-    }
-
     public void addTask(String description, double acceptableDeviation, Duration estimatedDuration, Project project) {
         Task task = new Task(description, estimatedDuration, acceptableDeviation, this);
         tasks.add(task);
