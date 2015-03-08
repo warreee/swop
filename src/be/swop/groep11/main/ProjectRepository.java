@@ -42,7 +42,7 @@ public class ProjectRepository {
      */
     public int addNewProject(String name, String description,LocalDateTime creationTime, LocalDateTime duetime, User user) throws IllegalArgumentException{
         Project proj = new Project(nextProjectID,name, description, creationTime, duetime, user);
-        addToProjectsMap(proj.getProjectID(),proj);
+        addToProjectsMap(proj);
         int result = nextProjectID;
         nextProjectID++;
         return result;
@@ -50,11 +50,10 @@ public class ProjectRepository {
 
     /**
      * Voeg het project toe aan de Map projectsMap
-     * @param projectID projectID als sleutel voor de Map projectsMap
      * @param project   project als waarde geassocieerd met de sleutel projectID
      */
-    private void addToProjectsMap(int projectID,Project project){
-        projectsMap.put(projectID,project);
+    private void addToProjectsMap(Project project){
+        projectsMap.put(project.getProjectID(),project);
     }
 
     /**
