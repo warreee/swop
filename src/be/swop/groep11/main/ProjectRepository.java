@@ -53,7 +53,7 @@ public class ProjectRepository {
      * @param project   project als waarde geassocieerd met de sleutel projectID
      */
     private void addToProjectsMap(Project project){
-        projectsMap.put(project.getProjectID(),project);
+        projectsMap.put(project.getProjectID(), project);
     }
 
     /**

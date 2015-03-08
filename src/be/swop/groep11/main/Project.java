@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by warreee on 23/02/15.
@@ -149,10 +150,20 @@ public class Project {
 
     private final int projectID;
 
+    /**
+     * Interne variabele die de volgende id van een nieuwe task bevat.
+     */
+    private int nextTaskId = 0;
+
+    private HashMap<Integer, Task> newTasks = new HashMap<>();
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////METHODES//////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     *
+     */
     public void finish() {
         setProjectStatus(ProjectStatus.FINISHED);
     }
@@ -198,22 +209,25 @@ public class Project {
      * @param description           Omschrijving van de taak
      * @param acceptableDeviation   Aanvaardbare afwijking (tijd) in percent
      * @param estimatedDuration     Schatting nodige tijd
-     * @param project               Het project waarvan deze taak lid is.
      * @return                      TaskID van de net aangemaakte Task
      */
-    public int addNewTask(String description, double acceptableDeviation, Duration estimatedDuration, Project project) {
+    public int addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) {
         Task task = new Task(description, estimatedDuration, acceptableDeviation, this);
         tasks.add(task);
+        newTasks.put(nextTaskId, task);
         //TODO implementeer met taskID
-        return 0;
+        return nextTaskId++;
     }
         /**
-         * @param TaskID
-         * @return Geeft de taak geassocieerd met TaskID terug.
+         * @param taskID
+         * @return Geeft de taak geassocieerd met taskID terug.
          * @throws java.lang.IllegalArgumentException
-         *          | Indien geen taak geassocieerd met TaskID.
+         *          | Indien geen taak geassocieerd met taskID.
          */
-    public Task getTaskByID(int TaskID){
-        return null;
+    public Task getTaskByID(int taskID){
+        if(!newTasks.containsKey(taskID)){
+            throw new IllegalArgumentException("De taak met de opgegeven ID bestaat niet.");
+        }
+        return newTasks.get(taskID);
     }
 }
