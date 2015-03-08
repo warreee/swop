@@ -2,6 +2,7 @@ package be.swop.groep11.main;
 
 import com.google.common.collect.ImmutableList;
 
+import javax.sound.midi.Sequencer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -18,7 +19,27 @@ public class Project {
     private final int projectID;
     private ArrayList<Task> tasks = new ArrayList<>();
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////CONSTRUCTORS/////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+    /**
+     * Standaard constructor voor een nieuw project.
+     * @param name
+     * @param description
+     * @param creationTime
+     * @param duetime
+     * @param creator
+     * @throws IllegalArgumentException
+     */
+    public Project(int projectID, String name, String description, LocalDateTime creationTime, LocalDateTime duetime, User creator) throws IllegalArgumentException{
+        this.projectID = projectID;
+        // Een project staat standaard op ONGOING
+        ProjectStatus status = ProjectStatus.ONGOING;
+
+        new Project(projectID, name, description, creationTime, duetime, creator, status);
+    }
 
     /**
      *
@@ -29,7 +50,7 @@ public class Project {
      * @param creator
      * @throws IllegalArgumentException
      */
-    public Project(int projectID,String name, String description, LocalDateTime creationTime, LocalDateTime duetime, User creator) throws IllegalArgumentException{
+    public Project(int projectID,String name, String description, LocalDateTime creationTime, LocalDateTime duetime, User creator, ProjectStatus status) throws IllegalArgumentException{
         if(!isValidProjectID(projectID)){
             throw new IllegalArgumentException("Incorrect ProjectID: " + projectID);
         }
@@ -40,6 +61,9 @@ public class Project {
         setDescription(description);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////GETTERS AND SETTERS//////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public void addNewTask(String name, String description, double acceptableDeviation, LocalDateTime startTime, LocalDateTime endTime) {
         //TODO add new task
@@ -48,7 +72,7 @@ public class Project {
 
 
     public void finish() {
-        //TODO project status change to finished
+        setProjectStatus(ProjectStatus.FINISHED);
     }
 
     /**
@@ -177,4 +201,11 @@ public class Project {
         return ImmutableList.copyOf(this.tasks);
     }
 
+
+    public ProjectStatus getStatus() {
+        return this.projectStatus;
+    }
+
+    public void addTask(String name, String description, double acceptableDeviation, LocalDateTime startTime, LocalDateTime endTime) {
+    }
 }
