@@ -162,9 +162,15 @@ public class Project {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     *
+     * Probeert om dit project te beëindigen.
      */
     public void finish() {
+        for(Task t: newTasks.values()){
+            if(t.getStatus().equals(TaskStatus.AVAILABLE) || t.getStatus().equals(TaskStatus.UNAVAILABLE)){
+                // Er is een taak die nog uitgevoerd moet worden. De projectStatus kan dus niet finished zijn.
+                return;
+            }
+        }
         setProjectStatus(ProjectStatus.FINISHED);
     }
 
