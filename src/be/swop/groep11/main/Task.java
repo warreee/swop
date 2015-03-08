@@ -82,6 +82,9 @@ public class Task {
     public void setEstimatedDuration(Duration estimatedDuration) throws IllegalArgumentException {
         if (estimatedDuration == null)
             throw new IllegalArgumentException("Verwachte duur mag niet null zijn");
+        if (estimatedDuration.isNegative()){
+            throw new IllegalArgumentException("Verwachte duur kan niet negatief zijn.");
+        }
         this.estimatedDuration = estimatedDuration;
     }
 
