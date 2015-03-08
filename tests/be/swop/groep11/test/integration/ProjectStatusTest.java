@@ -4,15 +4,19 @@ import be.swop.groep11.main.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
 
-public class ProjectRepositoryTest {
-    private ProjectRepository projectManager;
+public class ProjectStatusTest {
+
+    //TODO veranderen van naam & specificeren welk gedrag er getest wordt. Ivm basic functionaliteit projectRepository zie unit tests.
+
+    private ProjectRepository projectRepository;
     @Before
     public void setUp() throws Exception {
-        projectManager = new ProjectRepository();
+        projectRepository = new ProjectRepository();
     }
 
 
@@ -21,28 +25,9 @@ public class ProjectRepositoryTest {
      */
     @Test
     public void noProjectsTest() throws Exception {
-        assertTrue("Geen projecten in Tman: ", projectManager.getProjects().isEmpty());
+        assertTrue("Geen projecten in Tman: ", projectRepository.getProjects().isEmpty());
     }
 
-    @Test
-    public void addIllegalProjectTest() throws Exception {
-
-    }
-
-    @Test
-    public void addExistingProjectTest() throws Exception {
-
-    }
-
-    /**
-     * Make sure that added projects are present in ProjectRepository
-     * @throws Exception
-     */
-    @Test
-    public void addMultipleProjectsTest() throws Exception {
-
-
-    }
 /**
     *  We voegen 4 projecten toe en kijken na dat:
     * - Er 4 projecten bestaan
@@ -53,11 +38,11 @@ public class ProjectRepositoryTest {
     @Test
     public void multipleProjectsTest() throws Exception {
         addProjectsToProjectManager(4);
-        assertTrue("4 projecten in Tman: ", projectManager.getProjects().size() == 4);
+        assertTrue("4 projecten in Tman: ", projectRepository.getProjects().size() == 4);
         addProjectsToProjectManager(1);
-        assertTrue("5 projects in Tman: ", projectManager.getProjects().size() == 5);
-        for(Project p: projectManager.getProjects()){
-            assertTrue("Projectstatus is ongoing: ", p.getStatus().equals(ProjectStatus.ONGOING));
+        assertTrue("5 projects in Tman: ", projectRepository.getProjects().size() == 5);
+        for(Project p: projectRepository.getProjects()){
+            assertTrue("Projectstatus is ongoing: ", p.getProjectStatus().equals(ProjectStatus.ONGOING));
         }
     }
 
@@ -70,13 +55,13 @@ public class ProjectRepositoryTest {
     @Test
     public void projectFinishedTest() throws Exception {
         addProjectsToProjectManager(1);
-        Project testProject = projectManager.getProjects().get(0);
+        Project testProject = projectRepository.getProjects().get(0);
         addTasksToProject(testProject, 1);
         Task testTask = testProject.getTasks().get(0);
         //testTask.finish();
-        assertFalse("Project status is not finished: ", testProject.getStatus().equals(ProjectStatus.FINISHED));
+        assertFalse("Project status is not finished: ", testProject.getProjectStatus().equals(ProjectStatus.FINISHED));
         testProject.finish();
-        assertTrue("Project status is finished: ", testProject.getStatus().equals(ProjectStatus.FINISHED));
+        assertTrue("Project status is finished: ", testProject.getProjectStatus().equals(ProjectStatus.FINISHED));
     }
 
     /**
@@ -87,11 +72,11 @@ public class ProjectRepositoryTest {
     @Test
     public void projectNotFinishedTest() throws Exception {
         addProjectsToProjectManager(1);
-        Project testProject = projectManager.getProjects().get(0);
+        Project testProject = projectRepository.getProjects().get(0);
         addTasksToProject(testProject, 1);
-        assertFalse("Project status is not finished: ", testProject.getStatus().equals(ProjectStatus.FINISHED));
+        assertFalse("Project status is not finished: ", testProject.getProjectStatus().equals(ProjectStatus.FINISHED));
         testProject.finish();
-        assertFalse("Project status is not finished: ", testProject.getStatus().equals(ProjectStatus.FINISHED));
+        assertFalse("Project status is not finished: ", testProject.getProjectStatus().equals(ProjectStatus.FINISHED));
     }
 
 
@@ -100,7 +85,7 @@ public class ProjectRepositoryTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Deze methode voegt numberOfProjects aantal projecten toe aan projectManager.
+     * Deze methode voegt numberOfProjects aantal projecten toe aan projectRepository.
      * @param numberOfProjects Het aantal toe te voegen projecten.
      */
     private void addProjectsToProjectManager(long numberOfProjects){
@@ -111,7 +96,7 @@ public class ProjectRepositoryTest {
             LocalDateTime creationTime = LocalDateTime.now();
             LocalDateTime duetime = creationTime.plusDays(2);
             User user = new User("Test User");
-            projectManager.addNewProject(name, description, creationTime, duetime, user);
+            projectRepository.addNewProject(name, description, creationTime, duetime, user);
         }
     }
 
@@ -127,7 +112,7 @@ public class ProjectRepositoryTest {
             double acceptableDeviation = 0.05;
             LocalDateTime startTime = LocalDateTime.now();
             LocalDateTime endTime = LocalDateTime.now();
-            project.addTask(description, acceptableDeviation, startTime, endTime);
+            project.addNewTask(description, acceptableDeviation, Duration.ofHours(8),project);
         }
     }
 }
