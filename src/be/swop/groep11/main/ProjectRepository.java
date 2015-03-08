@@ -44,7 +44,7 @@ public class ProjectRepository {
         Project proj = new Project(nextProjectID,name, description, creationTime, duetime, user);
         addToProjectsMap(proj.getProjectID(),proj);
         int result = nextProjectID;
-        nextProjectID += 1;
+        nextProjectID++;
         return result;
     }
 

@@ -77,7 +77,7 @@ public class Task {
 
     /**
      * Wijzigt de verwachte duur van de taak.
-     * @throws java.lang.IllegalArgumentException De verwachte duur is null
+     * @throws java.lang.IllegalArgumentException De verwachte duur is null of de verwachteduur is negatief.
      */
     public void setEstimatedDuration(Duration estimatedDuration) throws IllegalArgumentException {
         if (estimatedDuration == null)
@@ -169,6 +169,7 @@ public class Task {
      * @param endTime De eindttijd
      * @return true alss startTime null is, of endTime null is, of startTime voor endTime ligt
      */
+    // TODO: nu kan een starttijd null zijn. Is dit wel gewenst?
     public static boolean isValidStartTime(LocalDateTime startTime, LocalDateTime endTime) {
         return startTime == null || endTime == null || startTime.isBefore(endTime);
     }
@@ -266,6 +267,7 @@ public class Task {
     /**
      * Geeft de status van deze taak.
      */
+    // TODO: kan een methode van buiten nu de interne var niet wijzigen?
     public TaskStatus getStatus() {
         return status;
     }
@@ -290,6 +292,7 @@ public class Task {
      * Geeft de alternatieve taak van deze taak,
      * of null indien deze taak geen alternatieve taak heeft
      */
+    // TODO: kan een methode van buiten nu de interne var niet wijzigen?
     public Task getAlternativeTask() {
         return alternativeTask;
     }
@@ -367,6 +370,7 @@ public class Task {
     /**
      * Maakt de afhankelijke taken (if any) van deze taak beschikbaar.
      */
+    //TODO: een taak kan van meerdere taken afhangen. Dit is hier niet geïmplementeerd.
     private void makeDependentTasksAvailable() {
         Set<Task> dependentTasks = this.getDependentTasks();
         for (Task task : dependentTasks)
