@@ -127,7 +127,7 @@ public class ProjectRepositoryTest {
             double acceptableDeviation = 0.05;
             LocalDateTime startTime = LocalDateTime.now();
             LocalDateTime endTime = LocalDateTime.now();
-            project.addTask(name, description, acceptableDeviation, startTime, endTime);
+            project.addTask(description, acceptableDeviation, startTime, endTime);
         }
     }
 }

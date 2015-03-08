@@ -22,6 +22,7 @@ public class Task {
      * @throws java.lang.IllegalArgumentException Ongeldige verwachte eindtijd, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
+    //TODO hoe zit het met de status, moet die ook niet worden toegevoegd?
     public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project) throws IllegalArgumentException {
         if (! isValidProject(project))
             throw new IllegalArgumentException("Ongeldig project");

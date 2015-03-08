@@ -3,6 +3,7 @@ package be.swop.groep11.main;
 import com.google.common.collect.ImmutableList;
 
 import javax.sound.midi.Sequencer;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -64,10 +65,6 @@ public class Project {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////GETTERS AND SETTERS//////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void addNewTask(String name, String description, double acceptableDeviation, LocalDateTime startTime, LocalDateTime endTime) {
-        //TODO add new task
-    }
 
 
 
@@ -206,6 +203,8 @@ public class Project {
         return this.projectStatus;
     }
 
-    public void addTask(String name, String description, double acceptableDeviation, LocalDateTime startTime, LocalDateTime endTime) {
+    public void addTask(String description, double acceptableDeviation, Duration estimatedDuration, Project project) {
+        Task task = new Task(description, estimatedDuration, acceptableDeviation, this);
+        tasks.add(task);
     }
 }
