@@ -43,9 +43,9 @@ public class ProjectRepository {
     public int addNewProject(String name, String description,LocalDateTime creationTime, LocalDateTime duetime, User user) throws IllegalArgumentException{
         Project proj = new Project(nextProjectID,name, description, creationTime, duetime, user);
         addToProjectsMap(proj);
-        int result = nextProjectID;
-        nextProjectID++;
-        return result;
+        //int result = nextProjectID;
+        return nextProjectID++;
+        //return result;
     }
 
     /**
