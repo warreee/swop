@@ -18,10 +18,12 @@ public class Task {
      *
      * @param taskID                De taskID van de nieuwe taak
      * @param description           De omschrijving van de nieuwe taak
-     * @param estimatedDuration     De verwachte eindtijd van de nieuwe taak
+     * @param estimatedDuration     De verwachte duur van de nieuwe taak
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
      * @param project               Het project waarbij de nieuwe taak hoort
-     * @throws IllegalArgumentException
+     * @throws java.lang.IllegalArgumentException
+     *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
+     *                                            of ongeldig project
      */
     public Task(int taskID, String description, Duration estimatedDuration, double acceptableDeviation, Project project) throws IllegalArgumentException {
         this(taskID,description,estimatedDuration,acceptableDeviation,project,null);
@@ -33,12 +35,12 @@ public class Task {
      *
      * @param taskID                De taskID van de nieuwe taak
      * @param description           De omschrijving van de nieuwe taak
-     * @param estimatedDuration     De verwachte eindtijd van de nieuwe taak
+     * @param estimatedDuration     De verwachte duur van de nieuwe taak
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
      * @param project               Het project waarbij de nieuwe taak hoort
      * @param dependencies          De taskIDs van taken waarvan deze nieuwe taak afhankelijk is.
      * @throws java.lang.IllegalArgumentException
-     *                              Ongeldige verwachte eindtijd, ongeldige aanvaardbare marge
+     *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
     public Task(int taskID, String description, Duration estimatedDuration, double acceptableDeviation, Project project,int...dependencies)throws IllegalArgumentException {
@@ -73,6 +75,7 @@ public class Task {
     public String getDescription() {
         return description;
     }
+
     /**
      * Wijzigt de beschrijving van de taak.
      * @throws java.lang.IllegalArgumentException De beschrijving is niet geldig.
@@ -89,7 +92,6 @@ public class Task {
     public static boolean isValidDescription(String description) {
         return description != null && !description.isEmpty();
     }
-
     /**
      * Verwachte duur
      */
@@ -169,18 +171,15 @@ public class Task {
     }
     /**
      * Wijzigt de eindtijd van de taak.
-     * Indien de taak nog niet op geëindigd of op gefaald stond, past deze methode ook de status aan
-     * wanneer endTime <= huidige systeemtijd (van TaskMan)
      * @param endTime De nieuwe eindtijd van deze taak
-     * @param systemTime De huidige systeemtijd
      * @throws java.lang.IllegalArgumentException De eindtijd is niet geldig.
      */
-    public void setEndTime(LocalDateTime endTime, LocalDateTime systemTime) throws IllegalArgumentException {
-        if (! isValidEndTime(getStartTime(), endTime, systemTime))
+    public void setEndTime(LocalDateTime endTime /*, LocalDateTime systemTime */) throws IllegalArgumentException {
+        if (! isValidEndTime(getStartTime(), endTime /*, systemTime */))
             throw new IllegalArgumentException("Ongeldige eindtijd");
         this.endTime = endTime;
-        if (getStatus() != TaskStatus.FINISHED && status != TaskStatus.FINISHED)
-            this.setStatus(TaskStatus.FINISHED);
+        /* if (getStatus() != TaskStatus.FINISHED && status != TaskStatus.FINISHED)
+            this.setStatus(TaskStatus.FINISHED); */
     }
 
     /**
@@ -196,16 +195,15 @@ public class Task {
 
     /**
      * Controleert of een starttijd geldig is voor een bepaalde eindtijd en de huidige systeemtijd.
-     * @param startTime De starttijd om te controleren
-     * @param endTime De eindttijd
-     * @param systemTime De huidige systeemtijd.
+     * @param startTime De starttijd
+     * @param endTime De eindttijd om te controleren
      * @return true als endTime == null,
-     *    <br> true als (startTime == null of startTime ligt voor endTime) en endTime ligt voor endTime,
+     *    <br> true als startTime == null of startTime ligt voor endTime,
      *    <br> false in andere gevallen
      */
-    public static boolean isValidEndTime(LocalDateTime startTime, LocalDateTime endTime, LocalDateTime systemTime) {
+    public static boolean isValidEndTime(LocalDateTime startTime, LocalDateTime endTime /*, LocalDateTime systemTime */) {
         return endTime == null
-                || ( (startTime == null || startTime.isBefore(endTime)) && (endTime.isBefore(systemTime)) );
+                || ( (startTime == null || startTime.isBefore(endTime)) /* && (endTime.isBefore(systemTime)) */ );
     }
 
     /**
@@ -238,7 +236,7 @@ public class Task {
      * Geeft aan de gegeven taskID een mogelijk id kan zijn voor een taak.
      */
     public static boolean isValidTaskID(int taskID){
-        return taskID > 0;
+        return taskID >= 0;
     }
 
     /**
@@ -279,14 +277,14 @@ public class Task {
      * Geeft een set van alle taken waarvan deze taak (recursief) afhankelijk is.
      */
     public Set<Task> getDependingOnTasks() {
-        HashSet<Task> dependentTasks = new HashSet<>();
+        HashSet<Task> dependingOnTasks = new HashSet<>();
         for (DependencyConstraint dependencyConstraint : this.dependencyConstraints) {
             // voeg de dependingOn taak van de dependency constraint toe
-            dependentTasks.add(dependencyConstraint.getDependingOn());
-            // voeg alle afhankelijke taken van de dependingOn taak toe
-            dependentTasks.addAll(dependencyConstraint.getDependingOn().getDependingOnTasks());
+            dependingOnTasks.add(dependencyConstraint.getDependingOn());
+            // voeg alle taken toe waarvan de dependingOn taak afhankelijk is
+            dependingOnTasks.addAll(dependencyConstraint.getDependingOn().getDependingOnTasks());
         }
-        return dependentTasks;
+        return dependingOnTasks;
     }
 
     private void addnewDependencies(int[] dependencies) {
@@ -319,7 +317,7 @@ public class Task {
      * @param status De nieuwe status
      * @throws java.lang.IllegalArgumentException De nieuwe status is ongeldig voor deze taak
      */
-    private void setStatus(TaskStatus status) throws IllegalArgumentException {
+    public void setStatus(TaskStatus status) throws IllegalArgumentException {
         if (! TaskStatus.isValidNewStatus(status, this))
             throw new IllegalArgumentException("Ongeldige status");
         this.status = status;
@@ -385,11 +383,11 @@ public class Task {
     /**
      * Geeft de delay van deze taak.
      * @return De delay van deze taak,
-     *         of null indien deze taak nog niet geëindigd is.
+     *         of null indien de duur van deze taak null is.
      *         (De delay van een taak is steeds positief)
      */
     public Duration getDelay() {
-        if (getStatus() != TaskStatus.FINISHED)
+        if (getDuration() == null)
             return null;
 
         Duration delay = getDuration().minus(getEstimatedDuration());
