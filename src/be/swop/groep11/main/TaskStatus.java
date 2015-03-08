@@ -25,31 +25,33 @@ public enum TaskStatus {
      *
      *      FAILED -> FAILED
      *
-     * @param status De nieuwe status om te checken
+     * @param newStatus De nieuwe status om te checken
      * @param task De taak
-     * @return true alss status een geldige nieuwe status is voor een taak
+     * @return true als status een geldige nieuwe status is voor een taak
      */
-    public static boolean isValidNewStatus(TaskStatus status, Task task) {
+    public static boolean isValidNewStatus(TaskStatus newStatus, Task task) {
         TaskStatus currentStatus = task.getStatus();
         switch (currentStatus) {
             case AVAILABLE:
-                if (status == FINISHED || status == FAILED)
+                if (newStatus == FINISHED || newStatus == FAILED)
                     return task.getStartTime() != null && task.getEndTime() != null;
                 return true;
             case UNAVAILABLE:
-                if (status == AVAILABLE) {
+                if (newStatus == AVAILABLE) {
                     for (Task dependingOn : task.getDependingOnTasks())
                         if (task.getStatus() != FINISHED)
                             return false;
                     return true;
                 }
-                return status == UNAVAILABLE;
+                return newStatus == UNAVAILABLE;
             case FINISHED:
-                return status == FINISHED;
+                return newStatus == FINISHED;
             case FAILED:
-                return status == FAILED;
+                return newStatus == FAILED;
         }
         return false;
     }
+
+
 
 }

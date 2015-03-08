@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -122,15 +121,8 @@ public class Project {
      * @return Een ImmutableList die alle taken in volgorde van de interne lijst bevat.
      */
     public ImmutableList<Task> getTasks() {
-        return ImmutableList.copyOf(this.tasks);
+        return ImmutableList.copyOf(tasks.values());
     }
-    // TODO waarom protected?
-    // TODO Task moet nog als een Map<Integer,Task> geïmplementeerd worden, zodat men getTaskByID(ID) kan uitvoeren.
-    protected void setTasks(ArrayList<Task> tasks) {
-        this.tasks = tasks;
-    }
-
-    private ArrayList<Task> tasks = new ArrayList<>();
 
     public User getCreator() {
         return this.creator;
@@ -158,7 +150,7 @@ public class Project {
     /**
      * Interne hashmap die alle taken bijhoud.
      */
-    private HashMap<Integer, Task> newTasks = new HashMap<>();
+    private HashMap<Integer, Task> tasks = new HashMap<>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////METHODES//////////////////////////////////////////////////////////
@@ -168,7 +160,7 @@ public class Project {
      * Probeert om dit project te beëindigen.
      */
     public void finish() {
-        for(Task t: newTasks.values()){
+        for(Task t: tasks.values()){
             if(t.getStatus().equals(TaskStatus.AVAILABLE) || t.getStatus().equals(TaskStatus.UNAVAILABLE)){
                 // Er is een taak die nog uitgevoerd moet worden. De projectStatus kan dus niet finished zijn.
                 return;
@@ -196,11 +188,11 @@ public class Project {
 
     /**
      * Controleer of het gegeven projectID valid is.
-     * @param ID projectID
+     * @param projectID projectID
      * @return waar indien ID positief is.
      */
-    public static boolean isValidProjectID(int ID){
-        return ID < 0;
+    public static boolean isValidProjectID(int projectID){
+        return projectID > 0;
     }
 
     /**
@@ -221,9 +213,8 @@ public class Project {
      * @return                      TaskID van de net aangemaakte Task
      */
     public int addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) {
-        Task task = new Task(description, estimatedDuration, acceptableDeviation, this);
-        tasks.add(task);
-        newTasks.put(nextTaskId, task);
+        Task task = new Task(nextTaskId, description, estimatedDuration, acceptableDeviation, this);
+        tasks.put(nextTaskId, task);
         return nextTaskId++;
     }
         /**
@@ -233,9 +224,19 @@ public class Project {
          *          | Indien geen taak geassocieerd met taskID.
          */
     public Task getTaskByID(int taskID){
-        if(!newTasks.containsKey(taskID)){
+        if(!tasks.containsKey(taskID)){
             throw new IllegalArgumentException("De taak met de opgegeven ID bestaat niet.");
         }
-        return newTasks.get(taskID);
+        return tasks.get(taskID);
+    }
+
+    /**
+     * Check of dat er een taak met taskID aanwezig is.
+     *
+     * @param taskID    Het taskID dat men zoekt.
+     * @return          Waar indien taskID aanwezig.
+     */
+    public boolean hasTask(int taskID){
+        return tasks.containsKey(taskID);
     }
 }

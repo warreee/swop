@@ -15,23 +15,52 @@ public class Task {
 
     /**
      * Constructor om een nieuwe taak te maken.
-     * @param description De omschrijving van de nieuwe taak
-     * @param estimatedDuration  De verwachte eindtijd van de nieuwe taak
-     * @param acceptableDeviation De aanvaardbare marge van de nieuwe taak
-     * @param project Het project waarbij de nieuwe taak hoort
-     * @throws java.lang.IllegalArgumentException Ongeldige verwachte eindtijd, ongeldige aanvaardbare marge
+     *
+     * @param taskID                De taskID van de nieuwe taak
+     * @param description           De omschrijving van de nieuwe taak
+     * @param estimatedDuration     De verwachte eindtijd van de nieuwe taak
+     * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
+     * @param project               Het project waarbij de nieuwe taak hoort
+     * @throws IllegalArgumentException
+     */
+    public Task(int taskID, String description, Duration estimatedDuration, double acceptableDeviation, Project project) throws IllegalArgumentException {
+        this(taskID,description,estimatedDuration,acceptableDeviation,project,null);
+    }
+
+    /**
+     * Constructor om een nieuwe taak te maken.
+     *
+     *
+     * @param taskID                De taskID van de nieuwe taak
+     * @param description           De omschrijving van de nieuwe taak
+     * @param estimatedDuration     De verwachte eindtijd van de nieuwe taak
+     * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
+     * @param project               Het project waarbij de nieuwe taak hoort
+     * @param dependencies          De taskIDs van taken waarvan deze nieuwe taak afhankelijk is.
+     * @throws java.lang.IllegalArgumentException
+     *                              Ongeldige verwachte eindtijd, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
-    //TODO hoe zit het met de status, moet die ook niet worden toegevoegd?
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project) throws IllegalArgumentException {
-        if (! isValidProject(project))
+    public Task(int taskID, String description, Duration estimatedDuration, double acceptableDeviation, Project project,int...dependencies)throws IllegalArgumentException {
+        if(! isValidTaskID(taskID)){
+            throw new IllegalArgumentException("Ongeldig taak ID: " + taskID);
+        }
+        this.taskID = taskID;
+
+        if (! canHaveAsProject(project))
             throw new IllegalArgumentException("Ongeldig project");
+
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
         this.dependencyConstraints = new HashSet<>();
         this.project = project;
+
+        addnewDependencies(dependencies);
+        //TODO set init TaskStatus
     }
+
+
 
     /**
      * Beschrijving
@@ -44,7 +73,6 @@ public class Task {
     public String getDescription() {
         return description;
     }
-
     /**
      * Wijzigt de beschrijving van de taak.
      * @throws java.lang.IllegalArgumentException De beschrijving is niet geldig.
@@ -54,7 +82,6 @@ public class Task {
             throw new IllegalArgumentException("Ongeldige beschrijving");
         this.description = description;
     }
-
     /**
      * Controleert of een beschrijving geldig is.
      * @return true alss de beschrijving niet null en niet leeg is
@@ -74,7 +101,6 @@ public class Task {
     public Duration getEstimatedDuration() {
         return estimatedDuration;
     }
-
     /**
      * Wijzigt de verwachte duur van de taak.
      * @throws java.lang.IllegalArgumentException De verwachte duur is null of de verwachteduur is negatief.
@@ -92,14 +118,12 @@ public class Task {
      * Aanvaardbare marge
      */
     private double acceptableDeviation;
-
     /**
      * Geeft de aanvaardbare marge van de taak.
      */
     public double getAcceptableDeviation() {
         return acceptableDeviation;
     }
-
     /**
      * Wijzigt de aanvaardbare marge van de taak.
      * @throws java.lang.IllegalArgumentException De aanvaardbare marge is niet geldig.
@@ -109,13 +133,12 @@ public class Task {
             throw new IllegalArgumentException("Ongeldige aanvaardbare marge");
         this.acceptableDeviation = acceptableDeviation;
     }
-
     /**
      * Controleert of een aanvaardbare marge geldig is voor deze taak.
      * @return true alss de vaardbare marge geldig is (i.e. acceptableDeviation >= 0)
      */
     public static boolean isValidAcceptableDeviation(double acceptableDeviation) {
-        return acceptableDeviation >= 0;
+        return acceptableDeviation >= 0 && acceptableDeviation <= 1;
     }
 
     /**
@@ -129,7 +152,6 @@ public class Task {
     public LocalDateTime getStartTime() {
         return startTime;
     }
-
     /**
      * Wijzigt de starttijd van de taak.
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
@@ -139,14 +161,12 @@ public class Task {
             throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
     }
-
     /**
      * Geeft de eindtijd van de taak of null als de taak geen eindtijd heeft.
      */
     public LocalDateTime getEndTime() {
         return endTime;
     }
-
     /**
      * Wijzigt de eindtijd van de taak.
      * Indien de taak nog niet op geëindigd of op gefaald stond, past deze methode ook de status aan
@@ -199,15 +219,35 @@ public class Task {
     public Project getProject() {
         return project;
     }
-
     /**
      * Controleert of een gegeven project een geldig project is voor deze taak.
-     * @param project Het gegeven project
-     * @return true alss het project geldig is (i.e. als het project nog niet geëindigd is)
+     *
+     * @param project   Het gegeven project
+     * @return          Waar als het project geldig is (i.e. als het project nog niet geëindigd is) en
+     *                  nog associatie bestaat tussen het project en een taak met hetzelfde taskID als deze taak.
      */
-    public static boolean isValidProject(Project project) {
-        return project != null && project.getProjectStatus() != ProjectStatus.FINISHED;
+    public boolean canHaveAsProject(Project project) {
+        return project != null &&
+                project.getProjectStatus() != ProjectStatus.FINISHED &&
+                project.hasTask(this.taskID);
     }
+
+    private final int taskID;
+
+    /**
+     * Geeft aan de gegeven taskID een mogelijk id kan zijn voor een taak.
+     */
+    public static boolean isValidTaskID(int taskID){
+        return taskID > 0;
+    }
+
+    /**
+     * Geeft de taskID van deze taak.
+     */
+    public int getTaskID() {
+        return this.taskID;
+    }
+
 
     /**
      * Set van alle dependency constraints van deze taak
@@ -220,7 +260,6 @@ public class Task {
     public ImmutableList<DependencyConstraint> getDependencyConstraints() {
         return ImmutableList.copyOf(dependencyConstraints);
     }
-
     /**
      * Voegt een dependency constraint toe voor deze taak.
      * @param dependingOn De taak waarvan deze taak moet afhangen
@@ -228,7 +267,6 @@ public class Task {
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyConstraints.add(new DependencyConstraint(this, dependingOn));
     }
-
     /**
      * Verwijdert een dependency constraint van deze taak.
      * @param dependingOn De dependingOn taak van de te verwijderen dependency constraint
@@ -249,6 +287,10 @@ public class Task {
             dependentTasks.addAll(dependencyConstraint.getDependingOn().getDependingOnTasks());
         }
         return dependentTasks;
+    }
+
+    private void addnewDependencies(int[] dependencies) {
+        //TODO implementeer, gegeven een reeks taskIDs waarvan deze taak afhankelijk van is
     }
 
     /**

@@ -112,7 +112,7 @@ public class ProjectStatusTest {
             double acceptableDeviation = 0.05;
             LocalDateTime startTime = LocalDateTime.now();
             LocalDateTime endTime = LocalDateTime.now();
-            project.addNewTask(description, acceptableDeviation, Duration.ofHours(8),project);
+            project.addNewTask(description, acceptableDeviation, Duration.ofHours(8));
         }
     }
 }

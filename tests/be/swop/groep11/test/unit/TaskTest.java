@@ -13,13 +13,14 @@ public class TaskTest {
 
     private Task task;
     private Project project;
-
+    private int taskID;
     @Before
     public void setUp() throws Exception {
+        taskID = 0;
         project = new Project(0,"Test project", "Test beschrijving",
                     LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015,3,4,16,0),
                     new User("Alfred J. Kwak"));
-        task = new Task("Test taak", Duration.ofHours(8), 0.1, project);
+        task = new Task(taskID,"Test taak", Duration.ofHours(8), 0.1, project);
     }
 
     /*
@@ -28,27 +29,27 @@ public class TaskTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Null() throws Exception {
-        Task invalidTask = new Task(null, Duration.ofHours(8), 0.1, project);
+        Task invalidTask = new Task(taskID,null, Duration.ofHours(8), 0.1, project);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Empty() throws Exception {
-        Task invalidTask = new Task("", Duration.ofHours(8), 0.1, project);
+        Task invalidTask = new Task(taskID,"", Duration.ofHours(8), 0.1, project);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void newTask_InvalidAcceptableDeviation_Negative() throws Exception {
-        Task invalidTask = new Task("Test taak", Duration.ofHours(8), -0.1, project);
+        Task invalidTask = new Task(taskID,"Test taak", Duration.ofHours(8), -0.1, project);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void newTask_InvalidProject_Null() throws Exception {
-        Task invalidTask = new Task("Test taak", Duration.ofHours(8), 0.1, null);
+        Task invalidTask = new Task(taskID,"Test taak", Duration.ofHours(8), 0.1, null);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void newTask_InvalidProject_Finished() throws Exception {
         project.finish();
-        Task invalidTask = new Task("Test taak", Duration.ofHours(8), 0.1, project);
+        Task invalidTask = new Task(taskID,"Test taak", Duration.ofHours(8), 0.1, project);
     }
 }
