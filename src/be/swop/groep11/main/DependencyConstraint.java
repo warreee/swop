@@ -44,6 +44,8 @@ public class DependencyConstraint {
      * (alss het toevoegen van de dependency constraint geen lussen veroorzaakt in de "dependency graph")
      */
     public static boolean isValidDependingOn(Task task, Task dependingOn) {
+        if (task == dependingOn)
+            return false;
         Set<Task> dependingOnTasks = dependingOn.getDependingOnTasks();
         if (dependingOnTasks.contains(task))
             // dan hangt dependingOn af van task,
