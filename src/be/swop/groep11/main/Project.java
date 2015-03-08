@@ -155,6 +155,9 @@ public class Project {
      */
     private int nextTaskId = 0;
 
+    /**
+     * Interne hashmap die alle taken bijhoud.
+     */
     private HashMap<Integer, Task> newTasks = new HashMap<>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -221,7 +224,6 @@ public class Project {
         Task task = new Task(description, estimatedDuration, acceptableDeviation, this);
         tasks.add(task);
         newTasks.put(nextTaskId, task);
-        //TODO implementeer met taskID
         return nextTaskId++;
     }
         /**
