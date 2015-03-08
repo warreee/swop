@@ -163,7 +163,7 @@ public class Project {
      * @return Waar indien projectName niet leeg.
      */
     public static boolean isValidProjectName(String projectName) {
-        return projectName != null &&!projectName.isEmpty();
+        return projectName != null && !projectName.isEmpty();
     }
 
     public static boolean isValidDescription(String description) {
@@ -180,9 +180,7 @@ public class Project {
      * @return waar indien ID positief is.
      */
     public static boolean isValidProjectID(int ID){
-        if(ID < 0)
-            return false;
-        return true;
+        return ID < 0;
     }
 
     /**
@@ -191,8 +189,7 @@ public class Project {
      * @return false als startTime of endTime null is of als endTime voor startTime ligt.
      */
     public static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime){
-        boolean result = startTime !=null && endTime != null && startTime.isBefore(endTime);
-        return result;
+        return startTime !=null && endTime != null && startTime.isBefore(endTime);
     }
 
 
