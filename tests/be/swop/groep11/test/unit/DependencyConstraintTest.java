@@ -38,6 +38,7 @@ public class DependencyConstraintTest {
         assertFalse(DependencyConstraint.isValidDependingOn(task4,task2));
         assertTrue(DependencyConstraint.isValidDependingOn(task2,task4));
         assertFalse(DependencyConstraint.isValidDependingOn(task2,task1));
+        assertFalse(DependencyConstraint.isValidDependingOn(task1,task1));
     }
 
 }
