@@ -51,6 +51,10 @@ public class DependencyConstraint {
             // dan hangt dependingOn af van task,
             // dus nu zeggen dat task afhankelijk is van dependingOn zou een lus veroorzaken
             return false;
+        if(! task.getProject().equals(dependingOn.getProject())){
+            // De 2 taken moeten aan hetzelfde project toebehoren.
+            return false;
+        }
         return true;
     }
 
