@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Houdt een lijst van projecten bij en heeft de verantwoordelijkheid om nieuwe projecten te maken en een project op
@@ -12,12 +14,10 @@ import java.util.HashMap;
  */
 public class ProjectRepository {
 
-    private int nextProjectID;
-    private HashMap<Integer,Project> projectsMap;
+    private Set<Project> projects;
 
     public ProjectRepository() {
-        this.nextProjectID = 0;
-        this.projectsMap = new HashMap<>();
+        this.projects = new HashSet<>();
     }
 
     /**
@@ -25,7 +25,7 @@ public class ProjectRepository {
      * @return Immutable list van de interne projecten lijst
      */
     public ImmutableList<Project> getProjects() {
-        return ImmutableList.copyOf(projectsMap.values());
+        return ImmutableList.copyOf(projects);
     }
 
     /**
@@ -40,33 +40,10 @@ public class ProjectRepository {
      * @return int ProjectID of new project
      * @throws IllegalArgumentException De opgegeven parameters voor het project zijn ongeldig.
      */
-    public int addNewProject(String name, String description,LocalDateTime creationTime, LocalDateTime duetime, User user) throws IllegalArgumentException{
-        Project proj = new Project(nextProjectID,name, description, creationTime, duetime, user);
-        addToProjectsMap(proj);
-        //int result = nextProjectID;
-        return nextProjectID++;
-        //return result;
+    public Project addNewProject(String name, String description,LocalDateTime creationTime, LocalDateTime duetime, User user) throws IllegalArgumentException{
+        Project proj = new Project(name, description, creationTime, duetime, user);
+        projects.add(proj);
+        return proj;
     }
 
-    /**
-     * Voeg het project toe aan de Map projectsMap
-     * @param project   project als waarde geassocieerd met de sleutel projectID
-     */
-    private void addToProjectsMap(Project project){
-        projectsMap.put(project.getProjectID(), project);
-    }
-
-    /**
-     * @param projectID
-     * @return Geeft het project geassocieerd met projectID terug.
-     * @throws java.lang.IllegalArgumentException
-     *          | Indien geen project geassocieerd met projectID
-     */
-    public Project getProjectByID(int projectID) throws IllegalArgumentException{
-        Project result = projectsMap.get(projectID);
-        if(result == null){
-            throw new IllegalArgumentException("Geen project gevonden voor het ID: " + projectID);
-        }
-        return result;
-    }
 }

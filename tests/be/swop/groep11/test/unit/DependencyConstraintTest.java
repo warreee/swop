@@ -18,13 +18,13 @@ public class DependencyConstraintTest {
 
     @Before
     public void setUp() throws Exception {
-        Project project = new Project(0,"Test project", "Test beschrijving",
+        Project project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015,3,4,16,0),
                 new User("Alfred J. Kwak"));
-        task1 = new Task(1,"Taak 1", Duration.ofHours(8), 0.1, project);
-        task2 = new Task(2,"Taak 2", Duration.ofHours(6), 0.1, project);
-        task3 = new Task(3,"Taak 3", Duration.ofHours(7), 0.5, project);
-        task4 = new Task(4,"Taak 4", Duration.ofHours(2), 0.0, project);
+        task1 = new Task("Taak 1", Duration.ofHours(8), 0.1, project);
+        task2 = new Task("Taak 2", Duration.ofHours(6), 0.1, project);
+        task3 = new Task("Taak 3", Duration.ofHours(7), 0.5, project);
+        task4 = new Task("Taak 4", Duration.ofHours(2), 0.0, project);
         task1.addNewDependencyConstraint(task2);
         task1.addNewDependencyConstraint(task3);
         task2.addNewDependencyConstraint(task3);

@@ -35,66 +35,61 @@ public class ProjectTest {
 
     @Test
     public void NewProject_valid() throws Exception {
-        new Project(ID,name, description, create,due,user);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void NewProject_invalid_ProjectID() throws Exception {
-        new Project(-1,name, description, create,due,user);
+        new Project(name, description, create,due,user);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void NewProject_invalid_Name() throws Exception {
-        new Project(ID,"", description, create,due,user);
+        new Project("", description, create,due,user);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_NameNull() throws Exception {
-        new Project(ID,null,description, create,due,user);
+        new Project(null,description, create,due,user);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_Description() throws Exception {
-        new Project(ID,name, "", create, due, user);
+        new Project(name, "", create, due, user);
     }
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_DescriptionNull() throws Exception {
-        new Project(ID,name, null, create,due,user);
+        new Project(name, null, create,due,user);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationTimeAfterDueTime() throws Exception {
-        new Project(ID,name, description, LocalDateTime.now().plusSeconds(3600),LocalDateTime.now(),user);
+        new Project(name, description, LocalDateTime.now().plusSeconds(3600),LocalDateTime.now(),user);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationEqualDue() throws Exception {
-        new Project(ID,name, description, LocalDateTime.now(), LocalDateTime.now(), user);
+        new Project(name, description, LocalDateTime.now(), LocalDateTime.now(), user);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_DueTimeBeforeCreationTime() throws Exception {
         //DueTime mag niet voor creation time zijn.
-        new Project(ID,name, description, LocalDateTime.now(),LocalDateTime.now().minusSeconds(60),user);
+        new Project(name, description, LocalDateTime.now(),LocalDateTime.now().minusSeconds(60),user);
     }
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationAndDueNull() throws Exception {
-        new  Project(ID,name, description, null,null,user);
+        new  Project(name, description, null,null,user);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationTimeNull() throws Exception {
-        new Project(ID,name, description, null,due,user);
+        new Project(name, description, null,due,user);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_DueTimeNull() throws Exception {
         //DueTime mag niet null zijn
-        new Project(ID,name, description, create,null,user);
+        new Project(name, description, create,null,user);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_User() throws Exception {
-       new Project(ID,name, description, create,due,null);
+       new Project(name, description, create,due,null);
     }
 }
