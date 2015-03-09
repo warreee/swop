@@ -4,6 +4,7 @@ import be.swop.groep11.main.Project;
 import be.swop.groep11.main.Task;
 import com.google.common.collect.ImmutableList;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -22,7 +23,7 @@ public interface UserInterface {
      * @param projects Lijst van projecten
      * @return Nummer van geselecteerde project in lijst
      */
-    public int selectProjectFromList(ImmutableList<Project> projects);
+    public int selectProjectFromList(ImmutableList<Project> projects) throws IOException;
 
     /**
      * Toont een formulier en geeft de ingevulde waardes van de velden terug.
