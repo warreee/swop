@@ -18,7 +18,7 @@ public class TaskTest {
 
     @Before
     public void setUp() throws Exception {
-        project = new Project(0,"Test project", "Test beschrijving",
+        project = new Project(1,"Test project", "Test beschrijving",
                     LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015,3,4,16,0),
                     new User("Alfred J. Kwak"));
         project.addNewTask("Test taak", 0.1, Duration.ofHours(8));
@@ -65,6 +65,9 @@ public class TaskTest {
 
     @Test (expected = Exception.class)
     public void newTask_InvalidProject_Finished() throws Exception {
+        task1.setStatus2(TaskStatus.FINISHED);
+        task2.setStatus2(TaskStatus.FINISHED);
+        task3.setStatus2(TaskStatus.FINISHED);
         project.finish();
         Task invalidTask = new Task(0,"Test taak", Duration.ofHours(8), 0.1, project);
     }
