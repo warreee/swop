@@ -222,7 +222,7 @@ public class Task {
      *
      * @param project   Het gegeven project
      * @return          Waar als het project geldig is (i.e. als het project nog niet geëindigd is) en
-     *                  nog associatie bestaat tussen het project en een taak met hetzelfde taskID als deze taak.
+     *                  nog geen associatie bestaat tussen het project en een taak met hetzelfde taskID als deze taak.
      */
     public boolean canHaveAsProject(Project project) {
         return project != null &&
