@@ -3,6 +3,7 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.ProjectStatus;
+import be.swop.groep11.main.Task;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -23,9 +24,15 @@ public class ProjectController {
         return projectRepository.getProjects();
     }
 
-    public ProjectStatus getProjectStatus(Project project){
-        return project.getProjectStatus();
+    public Project getProjectFromList (int index){
+        return getAllProjects().get(index);
     }
+
+    public Task getTaskFromProject(int index, Project project){
+        return project.getTasks().get(index);
+    }
+
+
 
 
 }
