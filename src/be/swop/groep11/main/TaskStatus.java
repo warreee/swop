@@ -41,7 +41,7 @@ public enum TaskStatus {
             case UNAVAILABLE:
                 if (newStatus == AVAILABLE) {
                     for (Task dependingOn : task.getDependingOnTasks())
-                        if (task.getStatus() != FINISHED)
+                        if (dependingOn.getStatus() != FINISHED)
                             return false;
                     return true;
                 }
