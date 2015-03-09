@@ -35,18 +35,7 @@ public class ProjectRepositoryTest {
        //TODO test implementeren immutable list
     }
 
-    @Test
-    public void GetProjectByID_valid() throws Exception {
-        int ID = projRep.addNewProject(name, description, create,due,user);
-        Project proj = projRep.getProjectByID(ID);
-        assertEquals(ID,proj.getProjectID());
-    }
-
-    @Test (expected = IllegalArgumentException.class)
-    public void GetProjectByID_invalid() throws Exception {
-        Project proj = projRep.getProjectByID(111);
-    }
-
+    /*
     @Test
     public void AddNewProject_valid() throws Exception {
 
@@ -59,6 +48,7 @@ public class ProjectRepositoryTest {
         assertEquals(name,proj.getName());
         assertEquals(description,proj.getDescription());
     }
+    */
 
    //SEE ProjectTest voor alle unit test voor het aanmaken van een project.
 }

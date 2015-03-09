@@ -18,49 +18,45 @@ public class TaskTest {
 
     @Before
     public void setUp() throws Exception {
-        project = new Project(1,"Test project", "Test beschrijving",
+        project = new Project("Test project", "Test beschrijving",
                     LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015,3,4,16,0),
                     new User("Alfred J. Kwak"));
         project.addNewTask("Test taak", 0.1, Duration.ofHours(8));
         project.addNewTask("Test taak 1", 0, Duration.ofMinutes(30));
         project.addNewTask("Test taak 2", 0.2, Duration.ofHours(16));
-        task1 = project.getTaskByID(0);
-        task2 = project.getTaskByID(1);
-        task3 = project.getTaskByID(2);
+        task1 = project.getTasks().get(0);
+        task2 = project.getTasks().get(1);
+        task3 = project.getTasks().get(2);
     }
 
     /*
         Aanmaken van taak: geldige input controleren
      */
 
-    @Test (expected = IllegalArgumentException.class)
-    public void newTask_InvalidTaskID_Negative() throws Exception {
-        Task invalidTask = new Task(-1,"Test taak", Duration.ofHours(8), 0.1, project);
-    }
 
     @Test (expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Null() throws Exception {
-        Task invalidTask = new Task(0,null, Duration.ofHours(8), 0.1, project);
+        Task invalidTask = new Task(null, Duration.ofHours(8), 0.1, project);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Empty() throws Exception {
-        Task invalidTask = new Task(0,"", Duration.ofHours(8), 0.1, project);
+        Task invalidTask = new Task("", Duration.ofHours(8), 0.1, project);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void newTask_InvalidDuration_Negative() throws Exception {
-        Task invalidTask = new Task(0,"Test taak", Duration.ofHours(-1), 0.1, project);
+        Task invalidTask = new Task("Test taak", Duration.ofHours(-1), 0.1, project);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void newTask_InvalidAcceptableDeviation_Negative() throws Exception {
-        Task invalidTask = new Task(0,"Test taak", Duration.ofHours(8), -0.1, project);
+        Task invalidTask = new Task("Test taak", Duration.ofHours(8), -0.1, project);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void newTask_InvalidProject_Null() throws Exception {
-        Task invalidTask = new Task(0,"Test taak", Duration.ofHours(8), 0.1, null);
+        Task invalidTask = new Task("Test taak", Duration.ofHours(8), 0.1, null);
     }
 
     @Test (expected = Exception.class)
@@ -69,7 +65,7 @@ public class TaskTest {
         task2.setStatus(TaskStatus.FINISHED);
         task3.setStatus(TaskStatus.FINISHED);
         project.finish();
-        Task invalidTask = new Task(0,"Test taak", Duration.ofHours(8), 0.1, project);
+        Task invalidTask = new Task("Test taak", Duration.ofHours(8), 0.1, project);
     }
 
 

@@ -35,7 +35,7 @@ public class UseCaseShowProjects {
     @Test
     public void test() throws Exception {
 
-        projectRepository.getProjectByID(0);
+        projectRepository.getProjects().get(0);
         System.out.println("test");
     }
 }
