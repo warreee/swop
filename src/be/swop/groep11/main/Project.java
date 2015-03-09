@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableList;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Created by warreee on 23/02/15.
@@ -20,7 +22,7 @@ public class Project {
      * @param name          Naam van het project
      * @param description   Omschrijving van het project
      * @param creationTime  Creation time voor het project
-     * @param duetime       Due time voor het project
+     * @param dueTime       Due time voor het project
      * @param creator       Wie het project heeft aangemaakt
      * @throws IllegalArgumentException
      *                      | !isValidDescription(description)
@@ -29,17 +31,13 @@ public class Project {
      *                      | !isValidUser(creator)
      *                      | !isValidProjectID(projectID)
      */
-    public Project(int projectID, String name, String description, LocalDateTime creationTime, LocalDateTime duetime, User creator) throws IllegalArgumentException{
-        this(projectID, name, description, creationTime, duetime, creator, ProjectStatus.ONGOING);
+    public Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, User creator) throws IllegalArgumentException{
+        this(name, description, creationTime, dueTime, creator, ProjectStatus.ONGOING);
     }
 
-    private Project(int projectID,String name, String description, LocalDateTime creationTime, LocalDateTime duetime, User creator, ProjectStatus projectStatus) throws IllegalArgumentException{
-        if(!isValidProjectID(projectID)){
-            throw new IllegalArgumentException("Incorrect ProjectID: " + projectID);
-        }
-        this.projectID = projectID;
+    private Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, User creator, ProjectStatus projectStatus) throws IllegalArgumentException{
         setProjectName(name);
-        setCreationAndDueTime(creationTime,duetime);
+        setCreationAndDueTime(creationTime, dueTime);
         setCreator(creator);
         setDescription(description);
         setProjectStatus(projectStatus);
@@ -121,7 +119,7 @@ public class Project {
      * @return Een ImmutableList die alle taken in volgorde van de interne lijst bevat.
      */
     public ImmutableList<Task> getTasks() {
-        return ImmutableList.copyOf(tasks.values());
+        return ImmutableList.copyOf(tasks.iterator());
     }
 
     public User getCreator() {
@@ -136,21 +134,10 @@ public class Project {
 
     private User creator;
 
-    public int getProjectID() {
-        return this.projectID;
-    }
-
-    private final int projectID;
-
     /**
-     * Interne variabele die de volgende id van een nieuwe task bevat.
+     * Interne hashSet die alle taken bijhoud.
      */
-    private int nextTaskId = 0;
-
-    /**
-     * Interne hashmap die alle taken bijhoud.
-     */
-    private HashMap<Integer, Task> tasks = new HashMap<>();
+    private HashSet<Task> tasks = new HashSet<>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////METHODES//////////////////////////////////////////////////////////
@@ -160,8 +147,9 @@ public class Project {
      * Probeert om dit project te beëindigen.
      */
     public void finish() {
-        for(Task t: tasks.values()){
-            if(t.getStatus().equals(TaskStatus.AVAILABLE) || t.getStatus().equals(TaskStatus.UNAVAILABLE)){
+        // TODO: exception gooien als het niet kan gefinished worden?
+        for (Task t : tasks) {
+            if (t.getStatus().equals(TaskStatus.AVAILABLE) || t.getStatus().equals(TaskStatus.UNAVAILABLE)) {
                 // Er is een taak die nog uitgevoerd moet worden. De projectStatus kan dus niet finished zijn.
                 return;
             }
@@ -212,31 +200,9 @@ public class Project {
      * @param estimatedDuration     Schatting nodige tijd
      * @return                      TaskID van de net aangemaakte Task
      */
-    public int addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) {
-        Task task = new Task(nextTaskId, description, estimatedDuration, acceptableDeviation, this);
-        tasks.put(nextTaskId, task);
-        return nextTaskId++;
-    }
-        /**
-         * @param taskID
-         * @return Geeft de taak geassocieerd met taskID terug.
-         * @throws java.lang.IllegalArgumentException
-         *          | Indien geen taak geassocieerd met taskID.
-         */
-    public Task getTaskByID(int taskID){
-        if(!tasks.containsKey(taskID)){
-            throw new IllegalArgumentException("De taak met de opgegeven ID bestaat niet.");
-        }
-        return tasks.get(taskID);
-    }
-
-    /**
-     * Check of dat er een taak met taskID aanwezig is.
-     *
-     * @param taskID    Het taskID dat men zoekt.
-     * @return          Waar indien taskID aanwezig.
-     */
-    public boolean hasTask(int taskID){
-        return tasks.containsKey(taskID);
+    // TODO: exception gooien als nieuwe taak faalt.
+    public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) {
+        Task task = new Task(description, estimatedDuration, acceptableDeviation, this);
+        tasks.add(task);
     }
 }
