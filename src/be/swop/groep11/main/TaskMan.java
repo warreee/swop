@@ -66,11 +66,8 @@ public class TaskMan {
         if(this.currentSystemTime == null){
             return true;
         }
-        if(this.currentSystemTime != null){
-            //waar indien currentSystemTime vroeger is als newSystemTime
-            return currentSystemTime.isBefore(newSystemTime);
-        }
-        return false;
+        //waar indien currentSystemTime vroeger is als newSystemTime
+        return currentSystemTime.isBefore(newSystemTime);
     }
 
     private void setCurrentSystemTime(LocalDateTime currentSystemTime) throws IllegalArgumentException {
