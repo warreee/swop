@@ -323,11 +323,6 @@ public class Task {
         this.status = status;
     }
 
-    // TODO gewoon om de testen van tasktest te kunnen runnen, moet nog worden aangepast
-    public void setStatus2(TaskStatus status) throws IllegalArgumentException {
-
-        this.status = status;
-    }
 
     /**
      * Alternatieve taal (kan null zijn)

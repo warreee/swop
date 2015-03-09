@@ -65,9 +65,9 @@ public class TaskTest {
 
     @Test (expected = Exception.class)
     public void newTask_InvalidProject_Finished() throws Exception {
-        task1.setStatus2(TaskStatus.FINISHED);
-        task2.setStatus2(TaskStatus.FINISHED);
-        task3.setStatus2(TaskStatus.FINISHED);
+        task1.setStatus(TaskStatus.FINISHED);
+        task2.setStatus(TaskStatus.FINISHED);
+        task3.setStatus(TaskStatus.FINISHED);
         project.finish();
         Task invalidTask = new Task(0,"Test taak", Duration.ofHours(8), 0.1, project);
     }
