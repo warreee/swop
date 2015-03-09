@@ -1,4 +1,4 @@
-package be.swop.groep11.test;
+package be.swop.groep11.test.integration;
 
 import org.junit.Before;
 import org.junit.Test;

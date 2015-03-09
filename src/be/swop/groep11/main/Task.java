@@ -26,7 +26,7 @@ public class Task {
      *                                            of ongeldig project
      */
     public Task(int taskID, String description, Duration estimatedDuration, double acceptableDeviation, Project project) throws IllegalArgumentException {
-        this(taskID,description,estimatedDuration,acceptableDeviation,project,null);
+        this(taskID, description, estimatedDuration, acceptableDeviation, project, null);
     }
 
     /**
@@ -51,7 +51,9 @@ public class Task {
 
         if (! canHaveAsProject(project))
             throw new IllegalArgumentException("Ongeldig project");
-
+        /*//TODO set init TaskStatus
+        if (dependencies == null)
+            setStatus(TaskStatus.AVAILABLE);*/
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
@@ -59,7 +61,7 @@ public class Task {
         this.project = project;
 
         addnewDependencies(dependencies);
-        //TODO set init TaskStatus
+
     }
 
 

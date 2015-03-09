@@ -1,11 +1,11 @@
-package be.swop.groep11.test;
+package be.swop.groep11.test.integration;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-public class UseCase4 {
+public class UseCase3 {
 
     @Before
     public void setUp() throws Exception {
