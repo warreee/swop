@@ -205,4 +205,13 @@ public class Project {
         Task task = new Task(description, estimatedDuration, acceptableDeviation, this);
         tasks.add(task);
     }
+
+    /**
+     * Controleert of de gegeven taak bij dit project hoort.
+     * @param task De taak die gecontroleert moet worden.
+     * @return true asa dit project deze task bevat, anders false.
+     */
+    public boolean hasTask(Task task){
+        return tasks.contains(task);
+    }
 }
