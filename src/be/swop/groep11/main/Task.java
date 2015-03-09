@@ -294,11 +294,17 @@ public class Task {
     }
 
     /**
-     * Geeft een lijst van alle taken die van deze taak afhankelijk zijn.
+     * Geeft een set van alle taken die van deze taak afhankelijk zijn.
      */
     public Set<Task> getDependentTasks() {
-        // TODO: implement method
-        return null;
+        HashSet<Task> dependentTasks = new HashSet<>();
+        Project project = this.getProject();
+        ImmutableList<Task> tasks = project.getTasks();
+        for (Task task : tasks) {
+            if (task.getDependingOnTasks().contains(this))
+                dependentTasks.add(task);
+        }
+        return dependentTasks;
     }
 
     /**
