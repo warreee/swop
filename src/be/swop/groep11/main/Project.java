@@ -192,7 +192,7 @@ public class Project {
      * @return waar indien ID positief is.
      */
     public static boolean isValidProjectID(int projectID){
-        return projectID > 0;
+        return projectID >= 0;
     }
 
     /**

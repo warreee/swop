@@ -31,6 +31,8 @@ public enum TaskStatus {
      */
     public static boolean isValidNewStatus(TaskStatus newStatus, Task task) {
         TaskStatus currentStatus = task.getStatus();
+        if (currentStatus == null)
+            return true;
         switch (currentStatus) {
             case AVAILABLE:
                 if (newStatus == FINISHED || newStatus == FAILED)

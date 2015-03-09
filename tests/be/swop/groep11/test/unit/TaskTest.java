@@ -63,7 +63,7 @@ public class TaskTest {
         Task invalidTask = new Task(0,"Test taak", Duration.ofHours(8), 0.1, null);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = Exception.class)
     public void newTask_InvalidProject_Finished() throws Exception {
         project.finish();
         Task invalidTask = new Task(0,"Test taak", Duration.ofHours(8), 0.1, project);
@@ -79,11 +79,11 @@ public class TaskTest {
         task1.setStatus(TaskStatus.FAILED);
         task1.setAlternativeTask(task2);
     }
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = Exception.class)
     public void SetAlternativeTask_notFailed() throws Exception {
         task1.setAlternativeTask(task2);
     }
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = Exception.class)
     public void SetAlternativeTask_sameTask() throws Exception {
         task1.setStatus(TaskStatus.FAILED);
         task1.setAlternativeTask(task1);
