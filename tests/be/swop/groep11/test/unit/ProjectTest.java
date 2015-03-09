@@ -26,7 +26,7 @@ public class ProjectTest {
         name = "name";
         description = "description";
 
-        ID=0;
+        ID=1;
     }
 
     //VRAAG: is dit de juiste plaats voor deze testen, of horen deze bij ProjectRepositoryTests
