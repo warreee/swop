@@ -1,11 +1,10 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.Project;
-import be.swop.groep11.main.ProjectRepository;
-import be.swop.groep11.main.ProjectStatus;
-import be.swop.groep11.main.Task;
+import be.swop.groep11.main.*;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
+
+import java.time.LocalDateTime;
 
 /**
  * Created by warreee on 3/9/15.
@@ -34,7 +33,7 @@ public class ProjectController {
      * Geeft een immutable lijst terug van alle projecten
      */
     public ImmutableList<Project> getAllProjects(){
-        return projectRepository.getProjects();
+        return this.projectRepository.getProjects();
     }
 
     public Project getProjectFromList (int index){
@@ -45,7 +44,9 @@ public class ProjectController {
         return project.getTasks().get(index);
     }
 
-
+    public void createProject(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, User user) {
+        projectRepository.addNewProject(name, description, creationTime, dueTime, user);
+    }
 
 
 }
