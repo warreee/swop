@@ -377,6 +377,7 @@ public class Task {
     public Duration getDuration() {
         if (getStartTime() == null || getEndTime() == null)
             return null;
+        // TODO: heeft een dag niet maar 8 uren?
         return Duration.between(getStartTime(),getEndTime());
     }
 

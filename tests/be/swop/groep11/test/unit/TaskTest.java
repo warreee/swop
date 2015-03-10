@@ -76,6 +76,8 @@ public class TaskTest {
     @Test
     public void SetAlternativeTask_valid() throws Exception {
         task1.setStatus(TaskStatus.FAILED);
+        // TODO: we zetten hier een alternatieve taak zonder van de originele taak een start/eindtijd op te geven.
+        // mag dit?
         task1.setAlternativeTask(task2);
     }
     @Test (expected = Exception.class)
@@ -97,23 +99,23 @@ public class TaskTest {
     }
     @Test
     public void FinishedStatus_early() throws Exception {
-        task1.setStatus(TaskStatus.FINISHED);
         task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
         task1.setEndTime(LocalDateTime.of(2015,3,8,12,0));
+        task1.setStatus(TaskStatus.FINISHED);
         assertTrue(task1.getFinishedStatus() == -1);
     }
     @Test
     public void FinishedStatus_onTime() throws Exception {
-        task1.setStatus(TaskStatus.FINISHED);
         task1.setStartTime(LocalDateTime.of(2015,3,8,8,32));
         task1.setEndTime(LocalDateTime.of(2015,3,8,16,35));
+        task1.setStatus(TaskStatus.FINISHED);
         assertTrue(task1.getFinishedStatus() == 0);
     }
     @Test
     public void FinishedStatus_late() throws Exception {
-        task1.setStatus(TaskStatus.FINISHED);
         task1.setStartTime(LocalDateTime.of(2015,3,8,8,32));
         task1.setEndTime(LocalDateTime.of(2015,3,9,12,38));
+        task1.setStatus(TaskStatus.FINISHED);
         assertTrue(task1.getFinishedStatus() == 1);
     }
 
@@ -122,16 +124,16 @@ public class TaskTest {
      */
     @Test
     public void Delay_EarlyFinishedTask() {
-        task1.setStatus(TaskStatus.FINISHED);
         task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
         task1.setEndTime(LocalDateTime.of(2015,3,8,12,0));
+        task1.setStatus(TaskStatus.FINISHED);
         assertTrue(task1.getDelay().equals(Duration.ofDays(0)));
     }
     @Test
     public void Delay_FinishedAfterEstimatedDuration() {
-        task1.setStatus(TaskStatus.FINISHED);
         task1.setStartTime(LocalDateTime.of(2015, 3, 8, 8, 32));
         task1.setEndTime(LocalDateTime.of(2015, 3, 8, 16, 35));
+        task1.setStatus(TaskStatus.FINISHED);
         assertTrue(task1.getDelay().equals(Duration.ofMinutes(3)));
     }
 }

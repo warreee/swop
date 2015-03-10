@@ -70,6 +70,7 @@ public class Project {
     public String getDescription() {
         return this.description;
     }
+
     /**
      * @param description De omschrijving die dit project moet dragen.
      * @throws java.lang.IllegalArgumentException Deze exception wordt gegooid als het argument null is.
@@ -89,6 +90,7 @@ public class Project {
     public LocalDateTime getDueTime() {
         return this.dueTime;
     }
+
     /**
      * Set creationTime en dueTime voor het project
      * @param creationTime
@@ -109,6 +111,7 @@ public class Project {
     public ProjectStatus getProjectStatus() {
         return this.projectStatus;
     }
+
     private void setProjectStatus(ProjectStatus projectStatus) {
         this.projectStatus = projectStatus;
     }
