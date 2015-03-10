@@ -22,6 +22,7 @@ public interface UserInterface {
      * Selecteert een project uit een lijst van projecten.
      * @param projects Lijst van projecten
      * @return Nummer van geselecteerde project in lijst
+     * @throws java.io.IOException Fout met kiezen van project
      */
     public int selectProjectFromList(ImmutableList<Project> projects) throws IOException;
 

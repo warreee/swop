@@ -22,9 +22,13 @@ public class CommandLineInterface implements UserInterface {
 
     private BufferedReader br;
 
-    private ProjectController projectsController;
+    /**
+     * Controllers
+     */
+    private ProjectController projectController;
     private TaskController taskController;
 
+    // TODO: documentatie van main methode... hoe?
     public static void main(String[] args) {
 
         // maak een nieuwe CommandLineInterface aan
@@ -39,6 +43,7 @@ public class CommandLineInterface implements UserInterface {
             while (! exit) {
                 String commandString = br.readLine();
                 Command command = Command.getCommand(commandString);
+                executeCommand(command, cli);
             }
 
             br.close();
@@ -49,6 +54,18 @@ public class CommandLineInterface implements UserInterface {
         }
     }
 
+    private static void executeCommand(Command command, CommandLineInterface cli) {
+        switch (command) {
+            case SHOWPROJECTS:
+                 cli.getProjectController().showProjects();
+                 break;
+        }
+    }
+
+    /**
+     * Constructor om een nieuwe commandline gebruikersinterface te maken.
+     * Maakt een nieuw TaskMan object aan en initialiseert de controllers.
+     */
     public CommandLineInterface() {
 
         // maak een nieuwe taskMan aan
@@ -56,10 +73,14 @@ public class CommandLineInterface implements UserInterface {
         ProjectRepository projectRepository = taskMan.getProjectRepository();
 
         // maak de controllers aan
-        projectsController = new ProjectController(projectRepository);
+        projectController = new ProjectController(projectRepository, this);
         taskController = new TaskController();
     }
 
+    /**
+     * Toont een tekstweergave van een lijst projecten.
+     * Implementeert showProjectList in UserInterface
+     */
     @Override
     public void showProjectList(ImmutableList<Project> projects) {
         String format = "%4s %-35s %-20s %n";
@@ -70,11 +91,15 @@ public class CommandLineInterface implements UserInterface {
         }
     }
 
+    /**
+     * Laat de gebruiker een project selecteren uit een lijst van projecten
+     * en geeft het nummer van het geselecteerde project in de lijst terug.
+     * Implementeert selectProjectFromList in UserInterface
+     */
     @Override
     public int selectProjectFromList(ImmutableList<Project> projects) throws IOException {
         showProjectList(projects);
-        Scanner in = new Scanner(System.in);
-        int nr = in.nextInt();
+        int nr = Integer.parseInt(br.readLine());
         return nr;
     }
 
@@ -103,4 +128,17 @@ public class CommandLineInterface implements UserInterface {
 
     }
 
+    /**
+     * Geeft de project controller voor deze command line gebruikersinterface
+     */
+    private ProjectController getProjectController() {
+        return projectController;
+    }
+
+    /**
+     * Geeft de task controller voor deze command line gebruikersinterface
+     */
+    private TaskController getTaskController() {
+        return taskController;
+    }
 }

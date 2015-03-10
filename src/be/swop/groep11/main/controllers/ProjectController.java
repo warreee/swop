@@ -4,6 +4,7 @@ import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.ProjectStatus;
 import be.swop.groep11.main.Task;
+import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -11,11 +12,23 @@ import com.google.common.collect.ImmutableList;
  */
 public class ProjectController {
 
-    public ProjectController(ProjectRepository projectRepository){
+    private UserInterface ui;
+
+    public ProjectController(ProjectRepository projectRepository, UserInterface ui){
         this.projectRepository = projectRepository;
+        this.ui = ui;
     }
 
     ProjectRepository projectRepository;
+
+    /**
+     * Voert de stappen voor de use case "Show Projects" uit.
+     */
+    public void showProjects() {
+        // TODO: implementatie aanpassen
+        ImmutableList<Project> projects = getAllProjects();
+        ui.showProjectList(projects);
+    }
 
     /**
      * Geeft een immutable lijst terug van alle projecten
