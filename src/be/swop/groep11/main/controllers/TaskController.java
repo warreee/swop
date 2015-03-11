@@ -7,6 +7,7 @@ import be.swop.groep11.main.TaskStatus;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.UserInterface;
+import be.swop.groep11.main.ui.commands.CancelException;
 import com.google.common.collect.ImmutableList;
 import sun.invoke.empty.Empty;
 
@@ -99,7 +100,7 @@ public class TaskController {
     }
     */
 
-    public ImmutableList<Task> getAllTasks(){
+    private ImmutableList<Task> getAllTasks(){
         List<Task> tasks = new ArrayList<Task>();
         ImmutableList<Project> projects = projectRepository.getProjects();
         for (Project project : projects) {

@@ -59,6 +59,8 @@ public class AdvanceTimeScenarioTest {
         LocalDateTime newSystemTime = ui.requestDatum("Nieuwe systeemtijd");
         //step 4
         taskMan.updateSystemTime(newSystemTime);
+
+        //TODO check if updated correctly
     }
 }
 
