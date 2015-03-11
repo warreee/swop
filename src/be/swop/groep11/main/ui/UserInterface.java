@@ -5,7 +5,6 @@ import be.swop.groep11.main.Task;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 
 /**
  * Interface die de methodes bevat die een gebruikersinterface moet implementeren
@@ -22,7 +21,8 @@ public interface UserInterface {
      * Selecteert een project uit een lijst van projecten.
      * @param projects Lijst van projecten
      * @return Nummer van geselecteerde project in lijst
-     * @throws be.swop.groep11.main.ui.EmptyListException Fout met kiezen van project
+     * @throws be.swop.groep11.main.ui.EmptyListException De lijst van projecten is leeg.
+     * @throws be.swop.groep11.main.ui.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
     public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException;
 
@@ -33,7 +33,7 @@ public interface UserInterface {
      * @return De invoer van de gebruiker
      * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    public String requestString(String request)throws CancelException;
+    public String requestString(String request) throws CancelException;
 
     /**
      * Vraagt een geheel getal als invoer van de gebruiker.
@@ -82,6 +82,8 @@ public interface UserInterface {
      * Selecteert een taak uit een lijst van taken.
      * @param tasks Lijst van taken
      * @return Nummer van geselecteerde taak in lijst
+     * @throws be.swop.groep11.main.ui.EmptyListException De lijst van taken is leeg.
+     * @throws be.swop.groep11.main.ui.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
     public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
 

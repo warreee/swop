@@ -32,13 +32,30 @@ public class DependencyConstraintTest {
     }
 
     @Test
-    public void InvalidDependingOn() throws Exception {
+    public void isValidDependingOnTest() throws Exception {
         assertFalse(DependencyConstraint.isValidDependingOn(task4,task1));
         assertTrue(DependencyConstraint.isValidDependingOn(task1,task4));
         assertFalse(DependencyConstraint.isValidDependingOn(task4,task2));
         assertTrue(DependencyConstraint.isValidDependingOn(task2,task4));
         assertFalse(DependencyConstraint.isValidDependingOn(task2,task1));
         assertFalse(DependencyConstraint.isValidDependingOn(task1,task1));
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void cyclicDependencyAddTest() throws Exception {
+        // Voeg een cyclische dependency toe.
+        task3.addNewDependencyConstraint(task2);
+    }
+
+    @Test
+    public void dependancyEqualsTest() throws Exception {
+        DependencyConstraint d1 = new DependencyConstraint(task1, task2);
+        DependencyConstraint d2 = new DependencyConstraint(task1, task2);
+        DependencyConstraint d3 = new DependencyConstraint(task1, task3);
+        assertTrue(d1.equals(d2));
+        assertTrue(d1.equals(d1));
+        assertFalse(d1.equals(null));
+        assertFalse(d1.equals(d3));
     }
 
 }

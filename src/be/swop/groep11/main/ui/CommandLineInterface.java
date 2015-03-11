@@ -88,19 +88,17 @@ public class CommandLineInterface implements UserInterface {
                 System.out.println(Command.HELP.name());
                 break;
             case NEWPROJECTS:
-                System.out.println(Command.NEWPROJECTS.name());
                 getProjectController().createProject();
                 break;
             case ADVANCETIME:
-                System.out.println(Command.ADVANCETIME.name());
                 getAdvanceTimeController().advanceTime();
                 break;
             case UPDATETASK:
                 System.out.println(Command.UPDATETASK.name());
+                // TODO
                 break;
             case CREATETASK:
-                System.out.println(Command.CREATETASK.name());
-
+                getTaskController().createTask();
                 break;
             case SHOWPROJECTS:
                 getProjectController().showProjects();
@@ -220,6 +218,7 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showProjectList(ImmutableList<Project> projects) {
+        // TODO: meer info tonen
         String format = "%4s %-35s %-20s %n";
         System.out.printf(format, "nr.", "Naam", "Status");
         for (int i=0; i<projects.size(); i++) {
@@ -240,10 +239,14 @@ public class CommandLineInterface implements UserInterface {
         }
         showProjectList(projects);
 
-        int nr = getNumberBetween(0, projects.size());
-        Project proj = projects.get(nr);
-
-        return proj;
+        try {
+            int nr = getNumberBetween(0, projects.size()-1);
+            Project proj = projects.get(nr);
+            return proj;
+        }
+        catch (IllegalInputException e) {
+            return selectProjectFromList(projects);
+        }
     }
 
     /**
@@ -252,6 +255,7 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showTaskList(ImmutableList<Task> tasks) {
+        // TODO: meer info tonen?
         String format = "%4s %-35s %-20s %n";
         System.out.printf(format, "nr.", "Omschrijving", "Status");
         for (int i=0; i<tasks.size(); i++) {
@@ -260,27 +264,65 @@ public class CommandLineInterface implements UserInterface {
         }
     }
 
+    /**
+     * Laat de gebruiker een taak selecteren uit een lijst van taken
+     * en geeft het nummer van de geselecteerde taak in de lijst terug.
+     * Implementeert selectTaskFromList in UserInterface
+     */
     @Override
-    public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException,IllegalInputException,CancelException {
+    public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException {
         if(tasks.isEmpty()){
             throw new EmptyListException("Geen taken aanwezig!");
         }
         showTaskList(tasks);
 
-        int nr = getNumberBetween(0, tasks.size());
-        Task task = tasks.get(nr);
-
-        return task;
+        try {
+            int nr = getNumberBetween(0, tasks.size());
+            Task task = tasks.get(nr);
+            return task;
+        }
+        catch (IllegalInputException e) {
+            return selectTaskFromList(tasks);
+        }
     }
 
+    /**
+     * Toont een tekstweergave van de details van een project.
+     * Implementeert showProjectDetails uit UserInterface
+     */
     @Override
     public void showProjectDetails(Project project) {
-
+        System.out.println("*** Project details ***");
+        String format = "%-25s %s %n";
+        System.out.printf(format, "Naam: ", project.getName());
+        System.out.printf(format, "Beschrijving: ", project.getDescription());
+        System.out.printf(format, "Status: ", project.getProjectStatus().name());
+        System.out.printf(format, "Creation time: ",
+                project.getCreationTime().getYear() + "-"
+                +project.getCreationTime().getMonth() + "-"
+                +project.getCreationTime().getDayOfMonth() + " "
+                +project.getCreationTime().getHour() + ":"
+                +project.getCreationTime().getMinute());
+        System.out.printf(format, "Due time: ",
+                project.getDueTime().getYear() + "-"
+                        +project.getDueTime().getMonth() + "-"
+                        +project.getDueTime().getDayOfMonth() + " "
+                        +project.getDueTime().getHour() + ":"
+                        +project.getDueTime().getMinute());
+        // TODO
     }
 
+    /**
+     * Toont een tekstweergave van de details van een taak.
+     * Implementeert showTaskDetails uit UserInterface
+     */
     @Override
     public void showTaskDetails(Task task) {
-
+        System.out.println("*** Taak details ***");
+        String format = "%-25s %s %n";
+        System.out.printf(format, "Beschrijving: ", task.getDescription());
+        System.out.printf(format, "Status: ", task.getStatus().name());
+        // TODO
     }
 
     private void checkCancel(String str) throws CancelException{
@@ -289,15 +331,15 @@ public class CommandLineInterface implements UserInterface {
         }
     }
 
-    private int getNumberBetween(int min,int max)throws IllegalInputException,CancelException{
-        int num = requestNumber("Gelieve een getal te geven.");
+    private int getNumberBetween(int min,int max)throws IllegalInputException, CancelException{
+        int num = requestNumber("Gelieve een getal tussen "  + min + " & " + max + " te geven.");
         if(!(num <= max && num >= min)){
-            throw new IllegalInputException("Nummer niet tussen "  + min + " & " + max + "!");
+            throw new IllegalInputException("Getal niet tussen "  + min + " & " + max + "");
         }
         return num;
     }
 
-    public String requestInput(String request) {
+    private String requestInput(String request) {
         System.out.println(request);
         String result = "";
         try {
