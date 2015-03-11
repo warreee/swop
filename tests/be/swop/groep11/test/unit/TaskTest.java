@@ -72,7 +72,6 @@ public class TaskTest {
     /*
         Tests voor alternatieve taken
      */
-
     @Test
     public void SetAlternativeTask_valid() throws Exception {
         task1.setStatus(TaskStatus.FAILED);
@@ -80,10 +79,12 @@ public class TaskTest {
         // mag dit?
         task1.setAlternativeTask(task2);
     }
+
     @Test (expected = Exception.class)
     public void SetAlternativeTask_notFailed() throws Exception {
         task1.setAlternativeTask(task2);
     }
+
     @Test (expected = Exception.class)
     public void SetAlternativeTask_sameTask() throws Exception {
         task1.setStatus(TaskStatus.FAILED);
@@ -97,6 +98,7 @@ public class TaskTest {
     public void FinishedStatus_notFinished() throws Exception {
         assertTrue(task1.getFinishedStatus() == -2);
     }
+
     @Test
     public void FinishedStatus_early() throws Exception {
         task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
@@ -104,6 +106,7 @@ public class TaskTest {
         task1.setStatus(TaskStatus.FINISHED);
         assertTrue(task1.getFinishedStatus() == -1);
     }
+
     @Test
     public void FinishedStatus_onTime() throws Exception {
         task1.setStartTime(LocalDateTime.of(2015,3,8,8,32));
