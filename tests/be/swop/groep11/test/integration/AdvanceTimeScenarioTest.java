@@ -21,29 +21,39 @@ public class AdvanceTimeScenarioTest {
     }
 
     @Test
-    public void updateTime_valid() throws Exception {
+    public void updateTime_validTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now){
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 return now.plusDays(1);
             }
         };
-
-        //Step 1: User has indicated he wants to modify the system time.
-        //Stap 2 & 3:
-        LocalDateTime newSystemTime = ui.requestDatum("Nieuwe systeemtijd");
-        //step 4
-        taskMan.updateSystemTime(newSystemTime);
+        advanceTime(ui);
     }
 
     @Test (expected = IllegalArgumentException.class)
-    public void updateTime_invalid_beforeCurrentSystemTime() throws Exception {
+    public void updateTime_invalidNewSystemTimeTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 return now.minusDays(1);
             }
         };
+        advanceTime(ui);
+    }
+
+    @Test (expected = CancelException.class)
+    public void updateTime_CancelTest() throws Exception {
+        EmptyTestUI ui = new EmptyTestUI(now) {
+            @Override
+            public LocalDateTime requestDatum(String request) throws CancelException {
+                throw new CancelException("Cancel");
+            }
+        };
+        advanceTime(ui);
+    }
+
+    private void advanceTime(EmptyTestUI ui){
         //Step 1: User has indicated he wants to modify the system time.
         //Stap 2 & 3:
         LocalDateTime newSystemTime = ui.requestDatum("Nieuwe systeemtijd");

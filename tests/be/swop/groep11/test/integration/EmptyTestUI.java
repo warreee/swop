@@ -5,6 +5,7 @@ import be.swop.groep11.main.Task;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.CancelException;
+import be.swop.groep11.main.ui.commands.Command;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
@@ -28,10 +29,6 @@ abstract class EmptyTestUI implements UserInterface {
         return null;
     }
 
-    @Override
-    public String requestString(String request) throws CancelException {
-        return null;
-    }
 
     @Override
     public int requestNumber(String request) throws CancelException {
@@ -43,10 +40,21 @@ abstract class EmptyTestUI implements UserInterface {
         return 0;
     }
 
+    /**
+     * Laat de gebruiker een string ingeven.
+     * Implementeert requestString in UserInterface
+     */
+    @Override
+    public String requestString(String request) throws CancelException {
+        return "";
+    }
+
+
     @Override
     public LocalDateTime requestDatum(String request) throws CancelException {
         return null;
     }
+
 
     @Override
     public void printMessage(String message) {
@@ -76,6 +84,12 @@ abstract class EmptyTestUI implements UserInterface {
     @Override
     public void showTaskDetails(Task task) {
 
+    }
+
+    protected void checkCancel(String str) throws CancelException{
+        if(Command.checkCancel(str)){
+            throw new CancelException("Cancel nu!");
+        }
     }
 
 }
