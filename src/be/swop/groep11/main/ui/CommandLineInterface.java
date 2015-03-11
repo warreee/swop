@@ -97,8 +97,7 @@ public class CommandLineInterface implements UserInterface {
                 getAdvanceTimeController().advanceTime();
                 break;
             case UPDATETASK:
-                System.out.println(Command.UPDATETASK.name());
-                // TODO
+                getTaskController().updateTask();
                 break;
             case CREATETASK:
                 getTaskController().createTask();
@@ -243,6 +242,8 @@ public class CommandLineInterface implements UserInterface {
         if(projects.isEmpty()){
             throw new EmptyListException("Geen projecten aanwezig");
         }
+
+        System.out.println("Kies een project:");
         showProjectList(projects);
 
         try {
@@ -280,10 +281,12 @@ public class CommandLineInterface implements UserInterface {
         if(tasks.isEmpty()){
             throw new EmptyListException("Geen taken aanwezig");
         }
+
+        System.out.println("Kies een taak:");
         showTaskList(tasks);
 
         try {
-            int nr = getNumberBetween(0, tasks.size());
+            int nr = getNumberBetween(0, tasks.size()-1);
             Task task = tasks.get(nr);
             return task;
         }
@@ -316,7 +319,6 @@ public class CommandLineInterface implements UserInterface {
                         +project.getDueTime().getDayOfMonth() + " "
                         +project.getDueTime().getHour() + ":"
                         +project.getDueTime().getMinute());
-        // TODO
     }
 
     /**
@@ -344,7 +346,7 @@ public class CommandLineInterface implements UserInterface {
         Duration estimatedDuration = task.getEstimatedDuration();
         long estimatedDurationHours = estimatedDuration.getSeconds() / (60*60);
         long estimatedDurationMinutes = (estimatedDuration.getSeconds() % (60*60)) / 60;
-        System.out.printf(format, "Geschatte duur: ", estimatedDurationHours + ":" + estimatedDurationMinutes);
+        System.out.printf(format, "Geschatte duur: ", estimatedDurationHours + "u" + estimatedDurationMinutes + "min");
 
         double acceptDevPercent = task.getAcceptableDeviation()*100;
         System.out.printf(format, "Aanvaardbare afwijking: ", acceptDevPercent+"%");
@@ -367,8 +369,13 @@ public class CommandLineInterface implements UserInterface {
                             +task.getEndTime().getMinute());
         }
 
-        System.out.println("Afhankelijke taken:");
-        showTaskList(ImmutableList.copyOf(task.getDependentTasks()));
+        System.out.println("Afhankelijk van:");
+        if (! task.getDependingOnTasks().isEmpty()) {
+            showTaskList(ImmutableList.copyOf(task.getDependingOnTasks()));
+        }
+        else {
+            System.out.println("Deze taak hangt niet van andere taken af");
+        }
     }
 
     private void checkCancel(String str) throws CancelException{
