@@ -3,6 +3,7 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.Project;
 import be.swop.groep11.main.Task;
 import be.swop.groep11.main.TaskStatus;
+import be.swop.groep11.main.ui.CancelException;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 
@@ -13,16 +14,25 @@ import java.time.Duration;
  */
 public class TaskController {
 
-    Project project;
-    UserInterface ui;
+    private Project project;
+    private UserInterface ui;
 
     public TaskController(Project project, UserInterface ui){
+
         this.project = project;
         this.ui = ui;
     }
 
-    public void createTask(String description, int acceptableDeviation, Duration estimatedDuration){
-        project.addNewTask(description, acceptableDeviation, estimatedDuration);
+    public void createTask(){
+        try {
+            String description = ui.requestString("Taak beschrijving");
+            Double acceptableDeviation = requestDouble("Taak: toegestane afwijking");
+            Duration estimatedDuration = Duration.ofHours(Integer.valueOf(ui.requestNumber("Taak: geschatte duur")).longValue());
+            project.addNewTask(description, acceptableDeviation, estimatedDuration);
+
+        } catch (CancelException e) {
+            ui.printException(e);
+        }
     }
 
     public ImmutableList<Task> getAllTasks(){
