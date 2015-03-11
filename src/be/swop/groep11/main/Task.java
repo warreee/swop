@@ -37,8 +37,6 @@ public class Task {
         this.project = project;
     }
 
-
-
     /**
      * Beschrijving
      */

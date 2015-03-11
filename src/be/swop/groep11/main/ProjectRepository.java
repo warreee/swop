@@ -4,7 +4,6 @@ package be.swop.groep11.main;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,21 +28,18 @@ public class ProjectRepository {
     }
 
     /**
-     * Maakt een nieuw project aan en voegt het toe aan de Map van projecten.
-     * Met als sleutel het projectID en als waarde het project.
+     * Maakt een nieuw project aan en voegt het toe aan de Set van projecten.
      *
-     * @param name De naam van het project
-     * @param description De beschrijving van het project
-     * @param creationTime De aanmaaktijd van het project
-     * @param duetime De eindtijd van het project
-     * @param user De gebruiker die het project aanmaakt (de creator van het project)
-     * @return int ProjectID of new project
+     * @param name          De naam van het project
+     * @param description   De beschrijving van het project
+     * @param creationTime  De aanmaaktijd van het project
+     * @param duetime       De eindtijd van het project
+     * @param user          De gebruiker die het project aanmaakt (de creator van het project)*
      * @throws IllegalArgumentException De opgegeven parameters voor het project zijn ongeldig.
      */
-    public Project addNewProject(String name, String description,LocalDateTime creationTime, LocalDateTime duetime, User user) throws IllegalArgumentException{
+    public void addNewProject(String name, String description,LocalDateTime creationTime, LocalDateTime duetime, User user) throws IllegalArgumentException{
         Project proj = new Project(name, description, creationTime, duetime, user);
         projects.add(proj);
-        return proj;
     }
 
 }

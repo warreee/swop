@@ -1,18 +1,20 @@
 package be.swop.groep11.main.ui;
 
-import be.swop.groep11.main.Project;
-import be.swop.groep11.main.ProjectRepository;
-import be.swop.groep11.main.Task;
-import be.swop.groep11.main.TaskMan;
+import be.swop.groep11.main.*;
+import be.swop.groep11.main.controllers.AdvanceTimeController;
 import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.ui.commands.Command;
+import be.swop.groep11.main.ui.commands.IllegalCommandException;
+import be.swop.groep11.main.ui.commands.Param;
 import com.google.common.collect.ImmutableList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * Commandline gebruikersinterface die UserInterface implementeert.
@@ -26,6 +28,7 @@ public class CommandLineInterface implements UserInterface {
      */
     private ProjectController projectController;
     private TaskController taskController;
+    private AdvanceTimeController advanceTimeController;
 
     // TODO: documentatie van main methode... hoe?
     public static void main(String[] args) {
@@ -34,31 +37,7 @@ public class CommandLineInterface implements UserInterface {
         CommandLineInterface cli = new CommandLineInterface();
 
         // lees commando's
-
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-            boolean exit = false;
-            while (! exit) {
-                String commandString = br.readLine();
-                Command command = Command.getCommand(commandString);
-                executeCommand(command, cli);
-            }
-
-            br.close();
-        }
-
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void executeCommand(Command command, CommandLineInterface cli) {
-        switch (command) {
-            case SHOWPROJECTS:
-                 cli.getProjectController().showProjects();
-                 break;
-        }
+        cli.run();
     }
 
     /**
@@ -66,16 +45,112 @@ public class CommandLineInterface implements UserInterface {
      * Maakt een nieuw TaskMan object aan en initialiseert de controllers.
      */
     public CommandLineInterface() {
+        this.br = new BufferedReader(new InputStreamReader(System.in));
+        this.exit = false;
 
         // maak een nieuwe taskMan aan
         TaskMan taskMan = new TaskMan();
         ProjectRepository projectRepository = taskMan.getProjectRepository();
 
         // maak de controllers aan
-        projectController = new ProjectController(projectRepository, this);
-        taskController = new TaskController();
+        User user = new User("ROOT");
+        this.projectController = new ProjectController(projectRepository, user, this);
+//        this.taskController = new TaskController();
+//        this.advanceTimeController = new AdvanceTimeController();
     }
 
+    private void run(){
+        try {
+
+            while (! exit) {
+                try {
+                    String commandString = null;
+                    commandString = br.readLine();
+                    Command com = Command.getInput(commandString);
+                    executeCommand(com);
+
+                }catch (IllegalCommandException ec){
+                    System.out.println(ec.getInput());
+                }
+            }
+        br.close();
+        } catch (IOException e) {
+        e.printStackTrace();
+        }
+
+    }
+
+    private  void executeCommand(Command command) {
+        switch (command) {
+            case EXIT:
+                exit = true;
+                break;
+            case HELP:
+                System.out.println(Command.HELP.name());
+                break;
+            case NEWPROJECTS:
+                System.out.println(Command.NEWPROJECTS.name());
+                getProjectController().createProject();
+                break;
+            case ADVANCETIME:
+                System.out.println(Command.ADVANCETIME.name());
+                break;
+            case UPDATETASK:
+                System.out.println(Command.UPDATETASK.name());
+                break;
+            case CREATETASK:
+                System.out.println(Command.CREATETASK.name());
+
+                break;
+            case SHOWPROJECTS:
+                getProjectController().showProjects();
+                break;
+        }
+    }
+
+    private boolean exit;
+
+    @Override
+    public void printMessage(String message) {
+        System.out.printf("\n" + message + "\n");
+    }
+
+    @Override
+    public void printException(Exception e) {
+        System.out.printf("\n" + e.getMessage() + "\n" + "Use case gestopt!" + "\n");
+    }
+
+    @Override
+    public int requestNumber(String request) throws IllegalInputException,CancelException{
+        String input = requestInput(request);
+        checkCancel(input);
+
+        Param param = Param.getParameter(input);
+        if(param != Param.NUMBERS){
+            throw new IllegalInputException("Verkeerde input!");
+        }
+        return Integer.parseInt(input);
+    }
+    @Override
+    public String requestString(String request)throws IllegalInputException,CancelException{
+        String input = requestInput(request);
+        checkCancel(input);
+        Param param = Param.getParameter(input);
+        if(param != Param.LETTERS){
+            throw new IllegalInputException("Verkeerde input! geen woord");
+        }
+        return input;
+    }
+
+    @Override
+    public LocalDateTime requestDatum(String request) throws DateTimeParseException {
+        String input = requestInput(request + " formaat: yyyy-MM-dd HH:mm");
+        checkCancel(input);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime dateTime = LocalDateTime.parse(input, formatter);
+        return dateTime;
+    }
     /**
      * Toont een tekstweergave van een lijst projecten.
      * Implementeert showProjectList in UserInterface
@@ -96,25 +171,39 @@ public class CommandLineInterface implements UserInterface {
      * Implementeert selectProjectFromList in UserInterface
      */
     @Override
-    public int selectProjectFromList(ImmutableList<Project> projects) throws IOException {
+    public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException,IllegalInputException,CancelException{
+        if(projects.isEmpty()){
+            throw new EmptyListException("Geen projecten aanwezig!");
+        }
         showProjectList(projects);
-        int nr = Integer.parseInt(br.readLine());
-        return nr;
-    }
 
-    @Override
-    public Map<String, String> showForm(String... fields) {
-        return null;
+        int nr = getNumberBetween(0, projects.size());
+        Project proj = projects.get(nr);
+
+        return proj;
     }
 
     @Override
     public void showTaskList(ImmutableList<Task> tasks) {
-
+        String format = "%4s %-35s %-20s %n";
+        System.out.printf(format, "nr.", "Omschrijving", "Status");
+        for (int i=0; i<tasks.size(); i++) {
+            Task task = tasks.get(i);
+            System.out.printf(format, i, task.getDescription(), task.getStatus());
+        }
     }
 
     @Override
-    public int selectTaskFromList(ImmutableList<Task> tasks) {
-        return 0;
+    public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException,IllegalInputException,CancelException {
+        if(tasks.isEmpty()){
+            throw new EmptyListException("Geen taken aanwezig!");
+        }
+        showTaskList(tasks);
+
+        int nr = getNumberBetween(0, tasks.size());
+        Task task = tasks.get(nr);
+
+        return task;
     }
 
     @Override
@@ -126,6 +215,32 @@ public class CommandLineInterface implements UserInterface {
     public void showTaskDetails(Task task) {
 
     }
+
+    private void checkCancel(String str) throws CancelException{
+        if(Command.checkCancel(str)){
+            throw new CancelException("Cancel nu!");
+        }
+    }
+
+    private int getNumberBetween(int min,int max)throws IllegalInputException,CancelException{
+        int num = requestNumber("Gelieve een getal te geven.");
+        if(!(num <= max && num >= min)){
+            throw new IllegalInputException("Nummer niet tussen "  + min + " & " + max + "!");
+        }
+        return num;
+    }
+
+    public String requestInput(String request) {
+        System.out.println(request);
+        String result = "";
+        try {
+            result = br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
 
     /**
      * Geeft de project controller voor deze command line gebruikersinterface

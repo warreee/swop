@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({})
+@SuiteClasses({ProjectStatusTest.class,UseCaseShowProjects.class})
 /**
  * Dit functioneert als verzameling voor alle IntegrationTests.
  */
