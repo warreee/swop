@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -116,8 +117,7 @@ public class CommandLineInterface implements UserInterface {
 
     @Override
     public void printException(Exception e) {
-        System.out.println("\n" + e.getMessage());
-        System.out.println("Use case gestopt!\n");
+        System.out.printf(e.getMessage() + "\n" + "Commando gestopt!" + "\n");
     }
 
     /**
@@ -220,12 +220,15 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showProjectList(ImmutableList<Project> projects) {
-        // TODO: meer info tonen
-        String format = "%4s %-35s %-20s %n";
+        String format = "%4s %-35s %-20s %-20s %n";
         System.out.printf(format, "nr.", "Naam", "Status");
         for (int i=0; i<projects.size(); i++) {
             Project project = projects.get(i);
-            System.out.printf(format, i, project.getName(), project.getProjectStatus().name());
+            System.out.printf(format,
+                    i,
+                    project.getName(),
+                    project.getProjectStatus().name(),
+                    "(on time / over time)"); // TODO: hier is nog geen methode voor in Project!!!!!!!
         }
     }
 
@@ -237,9 +240,10 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException{
         if(projects.isEmpty()){
-            throw new EmptyListException("Geen projecten aanwezig!");
+            throw new EmptyListException("Geen projecten aanwezig");
         }
         showProjectList(projects);
+
         try {
             int nr = getNumberBetween(0, projects.size()-1);
             Project proj = projects.get(nr);
@@ -273,7 +277,7 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException {
         if(tasks.isEmpty()){
-            throw new EmptyListException("Geen taken aanwezig!");
+            throw new EmptyListException("Geen taken aanwezig");
         }
         showTaskList(tasks);
 
@@ -297,7 +301,8 @@ public class CommandLineInterface implements UserInterface {
         String format = "%-25s %s %n";
         System.out.printf(format, "Naam: ", project.getName());
         System.out.printf(format, "Beschrijving: ", project.getDescription());
-        System.out.printf(format, "Status: ", project.getProjectStatus().name());
+        System.out.printf(format, "Status: ", project.getProjectStatus().name()); // TODO: ook tonen of project on time / over time is !!!!
+        // TODO: eventueel hoeveel uren over tijd tonen !!!!
         System.out.printf(format, "Creation time: ",
                 project.getCreationTime().getYear() + "-"
                 +project.getCreationTime().getMonth() + "-"
@@ -322,8 +327,47 @@ public class CommandLineInterface implements UserInterface {
         System.out.println("*** Taak details ***");
         String format = "%-25s %s %n";
         System.out.printf(format, "Beschrijving: ", task.getDescription());
-        System.out.printf(format, "Status: ", task.getStatus().name());
-        // TODO
+
+        String finishedStatus = "";
+        if (task.getFinishedStatus() == -1) {
+            finishedStatus = "early";
+        }
+        else if (task.getFinishedStatus() == 0) {
+            finishedStatus = "on time";
+        }
+        else if (task.getFinishedStatus() == 1) {
+            finishedStatus = "late";
+        }
+        System.out.printf(format, "Status: ", task.getStatus().name() + " " + finishedStatus);
+
+        Duration estimatedDuration = task.getEstimatedDuration();
+        long estimatedDurationHours = estimatedDuration.getSeconds() / (60*60);
+        long estimatedDurationMinutes = (estimatedDuration.getSeconds() % (60*60)) / 60;
+        System.out.printf(format, "Geschatte duur: ", estimatedDurationHours + ":" + estimatedDurationMinutes);
+
+        double acceptDevPercent = task.getAcceptableDeviation()*100;
+        System.out.printf(format, "Aanvaardbare afwijking: ", acceptDevPercent+"%");
+
+        if (task.getStartTime() != null) {
+            System.out.printf(format, "Starttijd: ",
+                    task.getStartTime().getYear() + "-"
+                            +task.getStartTime().getMonth() + "-"
+                            +task.getStartTime().getDayOfMonth() + " "
+                            +task.getStartTime().getHour() + ":"
+                            +task.getStartTime().getMinute());
+        }
+
+        if (task.getEndTime() != null) {
+            System.out.printf(format, "Eindtijd: ",
+                    task.getEndTime().getYear() + "-"
+                            +task.getEndTime().getMonth() + "-"
+                            +task.getEndTime().getDayOfMonth() + " "
+                            +task.getEndTime().getHour() + ":"
+                            +task.getEndTime().getMinute());
+        }
+
+        System.out.println("Afhankelijke taken:");
+        showTaskList(ImmutableList.copyOf(task.getDependentTasks()));
     }
 
     private void checkCancel(String str) throws CancelException{
