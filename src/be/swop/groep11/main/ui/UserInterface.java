@@ -2,6 +2,7 @@ package be.swop.groep11.main.ui;
 
 import be.swop.groep11.main.Project;
 import be.swop.groep11.main.Task;
+import be.swop.groep11.main.ui.commands.CancelException;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ public interface UserInterface {
      * @param projects Lijst van projecten
      * @return Nummer van geselecteerde project in lijst
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van projecten is leeg.
-     * @throws be.swop.groep11.main.ui.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     * @throws be.swop.groep11.main.ui.commands.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
     public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException;
 
@@ -83,7 +84,7 @@ public interface UserInterface {
      * @param tasks Lijst van taken
      * @return Nummer van geselecteerde taak in lijst
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van taken is leeg.
-     * @throws be.swop.groep11.main.ui.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     * @throws be.swop.groep11.main.ui.commands.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
     public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
 

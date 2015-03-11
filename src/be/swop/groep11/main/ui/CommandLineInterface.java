@@ -4,6 +4,7 @@ import be.swop.groep11.main.*;
 import be.swop.groep11.main.controllers.AdvanceTimeController;
 import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.controllers.TaskController;
+import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.commands.Command;
 import be.swop.groep11.main.ui.commands.IllegalCommandException;
 import com.google.common.collect.ImmutableList;
@@ -115,7 +116,8 @@ public class CommandLineInterface implements UserInterface {
 
     @Override
     public void printException(Exception e) {
-        System.out.printf("\n" + e.getMessage() + "\n" + "Use case gestopt!" + "\n");
+        System.out.println("\n" + e.getMessage());
+        System.out.println("Use case gestopt!\n");
     }
 
     /**
@@ -238,7 +240,6 @@ public class CommandLineInterface implements UserInterface {
             throw new EmptyListException("Geen projecten aanwezig!");
         }
         showProjectList(projects);
-
         try {
             int nr = getNumberBetween(0, projects.size()-1);
             Project proj = projects.get(nr);

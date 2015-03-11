@@ -4,9 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * Created by warreee on 23/02/15.
@@ -177,14 +175,6 @@ public class Project {
         return user != null;
     }
 
-    /**
-     * Controleer of het gegeven projectID valid is.
-     * @param projectID projectID
-     * @return waar indien ID positief is.
-     */
-    public static boolean isValidProjectID(int projectID){
-        return projectID >= 0;
-    }
 
     /**
      * @param startTime De starttijd die gecontroleerd moet worden.

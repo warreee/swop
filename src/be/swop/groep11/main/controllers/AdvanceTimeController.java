@@ -1,7 +1,7 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.TaskMan;
-import be.swop.groep11.main.ui.CancelException;
+import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.UserInterface;
 
 import java.time.LocalDateTime;

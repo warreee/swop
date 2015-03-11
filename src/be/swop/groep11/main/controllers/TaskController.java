@@ -3,7 +3,7 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.Project;
 import be.swop.groep11.main.Task;
 import be.swop.groep11.main.TaskStatus;
-import be.swop.groep11.main.ui.CancelException;
+import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;

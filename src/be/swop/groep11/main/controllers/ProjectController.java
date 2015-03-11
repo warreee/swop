@@ -4,7 +4,7 @@ import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.Task;
 import be.swop.groep11.main.User;
-import be.swop.groep11.main.ui.CancelException;
+import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -52,8 +52,10 @@ public class ProjectController {
             LocalDateTime creationTime = ui.requestDatum("Datum van aanmaken");
             LocalDateTime dueTime = ui.requestDatum("Deadline datum");
             projectRepository.addNewProject(projectName, description ,creationTime, dueTime, user);
-
-        } catch (CancelException e) {
+        } catch (IllegalArgumentException e) {
+            ui.printException(e);
+            createProject();
+        }catch (CancelException e) {
             ui.printException(e);
         }
 

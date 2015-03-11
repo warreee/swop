@@ -22,7 +22,7 @@ public class TaskMan {
      *           | De gegeven systeemtijd is niet geldig.
      *           | !canHaveAsSystemTime(systemTime)
      */
-    private TaskMan(LocalDateTime currentSystemTime) throws IllegalArgumentException {
+    public TaskMan(LocalDateTime currentSystemTime) throws IllegalArgumentException {
         this.projectRepository = new ProjectRepository();
         setCurrentSystemTime(currentSystemTime);
     }
