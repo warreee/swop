@@ -6,12 +6,10 @@ import be.swop.groep11.main.Task;
 import be.swop.groep11.main.User;
 import be.swop.groep11.main.ui.CancelException;
 import be.swop.groep11.main.ui.EmptyListException;
-import be.swop.groep11.main.ui.IllegalInputException;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 
 /**
  * Created by warreee on 3/9/15.
