@@ -41,7 +41,7 @@ public class TaskController {
             Project project = ui.selectProjectFromList(projectRepository.getProjects());
             String description = ui.requestString("Beschrijving:");
             Double acceptableDeviation = ui.requestDouble("Aanvaardbare afwijking in procent:") / 100;
-            Duration estimatedDuration = Duration.ofHours(Integer.valueOf(ui.requestNumber("Geschatte duur:")).longValue());
+            Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf(ui.requestNumber("Geschatte duur in minuten:")).longValue());
 
             project.addNewTask(description, acceptableDeviation, estimatedDuration);
             ui.printMessage("Taak toegevoegd");
