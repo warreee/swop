@@ -85,12 +85,19 @@ public class Task {
      * @throws java.lang.IllegalArgumentException De verwachte duur is null of de verwachteduur is negatief.
      */
     public void setEstimatedDuration(Duration estimatedDuration) throws IllegalArgumentException {
-        if (estimatedDuration == null)
-            throw new IllegalArgumentException("Verwachte duur mag niet null zijn");
-        if (estimatedDuration.isNegative()){
-            throw new IllegalArgumentException("Verwachte duur kan niet negatief zijn.");
-        }
+        if (!isValidEstimatedDuration(estimatedDuration))
+            throw new IllegalArgumentException("Ongeldige tijdsduur.");
         this.estimatedDuration = estimatedDuration;
+    }
+
+    /**
+     * Controleert of de gegeven verwachte tijdsduur geldig is.
+     *
+     * @param estimatedDuration De te controleren tijdsduur.
+     * @return                  Waar indien de tijdsduur niet null, niet negatief en niet gelijk aan 0 is.
+     */
+    public static boolean isValidEstimatedDuration(Duration estimatedDuration){
+        return estimatedDuration != null && !estimatedDuration.isNegative() && !estimatedDuration.isZero();
     }
 
     /**
@@ -118,10 +125,11 @@ public class Task {
 
     /**
      * Controleert of een aanvaardbare marge geldig is voor deze taak.
-     * @return true alss de vaardbare marge geldig is (i.e. acceptableDeviation >= 0)
+     *
+     * @return  Waar indien de aanvaardbare marge geldig is (i.e. acceptableDeviation >= 0)
      */
     public static boolean isValidAcceptableDeviation(double acceptableDeviation) {
-        return acceptableDeviation >= 0 && acceptableDeviation <= 1;
+        return acceptableDeviation >= 0;
     }
 
     /**

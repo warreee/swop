@@ -4,12 +4,9 @@ import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.Task;
 import be.swop.groep11.main.TaskStatus;
-import be.swop.groep11.main.ui.commands.CancelException;
-import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;
+import be.swop.groep11.main.ui.commands.CancelException;
 import com.google.common.collect.ImmutableList;
-import com.sun.javaws.exceptions.InvalidArgumentException;
-import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

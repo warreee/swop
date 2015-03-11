@@ -176,6 +176,8 @@ public class CreateProjectScenarioTest {
         LocalDateTime dueTime = ui.requestDatum("due");
         //Step 4
         projectRepository.addNewProject(projectName, description ,creationTime, dueTime, user);
+
+        //TODO check if added correctly
     }
 
 
