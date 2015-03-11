@@ -89,7 +89,7 @@ public class CommandLineInterface implements UserInterface {
             case HELP:
                 System.out.println(Command.HELP.name());
                 break;
-            case NEWPROJECTS:
+            case CREATEPROJECT:
                 getProjectController().createProject();
                 break;
             case ADVANCETIME:

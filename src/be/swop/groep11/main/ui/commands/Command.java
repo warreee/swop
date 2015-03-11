@@ -11,7 +11,7 @@ public enum Command {
     EXIT("exit"),
     CANCEL("cancel"),
     HELP("help"),
-    NEWPROJECTS("New Project"),
+    CREATEPROJECT("Create Project"),
     ADVANCETIME("Advance Time"),
     UPDATETASK("Update Task"),
     CREATETASK("Create Task"),
