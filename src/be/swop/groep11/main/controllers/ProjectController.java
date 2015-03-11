@@ -12,20 +12,25 @@ import com.google.common.collect.ImmutableList;
 import java.time.LocalDateTime;
 
 /**
- * Created by warreee on 3/9/15.
+ * Bevat de stappen om de use cases "Show Projects" en "Create Project" uit te voeren.
  */
 public class ProjectController {
 
     private UserInterface ui;
     private final User user;
+    private ProjectRepository projectRepository;
 
+    /**
+     * Constructor om een nieuwe project controller te maken.
+     * @param projectRepository Project repository om projecten aan toe te voegen
+     * @param user Gebruiker die projecten aanmaakt
+     * @param ui Gebruikersinterface
+     */
     public ProjectController(ProjectRepository projectRepository,User user, UserInterface ui){
         this.projectRepository = projectRepository;
         this.ui = ui;
         this.user = user;
     }
-
-    ProjectRepository projectRepository;
 
     /**
      * Voert de stappen voor de use case "Show Projects" uit.
@@ -44,18 +49,22 @@ public class ProjectController {
         }
     }
 
+    /**
+     * Voert de stappen voor de use case "Create Project" uit.
+     */
     public void createProject(){
         try {
-            String projectName = ui.requestString("Project naam");
-            String description = ui.requestString("Project description");
+            String projectName = ui.requestString("Project naam:");
+            String description = ui.requestString("Project beschrijving:");
+            LocalDateTime creationTime = ui.requestDatum("Creation time:");
+            LocalDateTime dueTime = ui.requestDatum("Due time:");
 
-            LocalDateTime creationTime = ui.requestDatum("Datum van aanmaken");
-            LocalDateTime dueTime = ui.requestDatum("Deadline datum");
             projectRepository.addNewProject(projectName, description ,creationTime, dueTime, user);
+            ui.printMessage("Taak toegevoegd");
         } catch (IllegalArgumentException e) {
             ui.printException(e);
             createProject();
-        }catch (CancelException e) {
+        } catch (CancelException e) {
             ui.printException(e);
         }
 
