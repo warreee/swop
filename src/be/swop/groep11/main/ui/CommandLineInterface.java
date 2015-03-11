@@ -152,7 +152,7 @@ public class CommandLineInterface implements UserInterface {
      * Implementeert requestDouble in UserInterface
      */
     @Override
-    public int requestDouble(String request) throws CancelException {
+    public double requestDouble(String request) throws CancelException {
         String input = requestInput(request);
         checkCancel(input);
 
@@ -161,7 +161,7 @@ public class CommandLineInterface implements UserInterface {
             input = requestInput(request);
             checkCancel(input);
         }
-        return Integer.parseInt(input);
+        return Double.parseDouble(input);
     }
 
     private static boolean isDouble(String string) {

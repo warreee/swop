@@ -51,7 +51,7 @@ public interface UserInterface {
      * @return De invoer van de gebruiker
      * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    public int requestDouble(String request) throws CancelException;
+    public double requestDouble(String request) throws CancelException;
 
     /**
      * Vraagt een datum en tijd als invoer van de gebruiker.
