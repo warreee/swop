@@ -139,4 +139,17 @@ public class TaskTest {
         task1.setNewStatus(TaskStatus.FINISHED);
         assertTrue(task1.getDelay().equals(Duration.ofMinutes(3)));
     }
+
+    /**
+     * HasTask
+     */
+
+    @Test
+    public void hasTaskTest(){
+        assertTrue(project.hasTask(task2));
+        // Deze task heeft een referentie naar project, maar is niet aan project toegevoegd.
+        Task t = new Task("beschrijving", Duration.ofHours(8), 0.1, project);
+        assertFalse(project.hasTask(t));
+
+    }
 }
