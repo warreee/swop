@@ -191,10 +191,10 @@ public class Project {
      * @param description           Omschrijving van de taak
      * @param acceptableDeviation   Aanvaardbare afwijking (tijd) in percent
      * @param estimatedDuration     Schatting nodige tijd
-     * @return                      TaskID van de net aangemaakte Task
+     * @throws java.lang.IllegalArgumentException
+     *                              Ongeldige parameters voor taak
      */
-    // TODO: exception gooien als nieuwe taak faalt.
-    public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) {
+    public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) throws IllegalArgumentException {
         Task task = new Task(description, estimatedDuration, acceptableDeviation, this);
         tasks.add(task);
     }
