@@ -4,8 +4,8 @@ package be.swop.groep11.main;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.AbstractList;
+import java.util.ArrayList;
 
 /**
  * Houdt een lijst van projecten bij en heeft de verantwoordelijkheid om nieuwe projecten te maken en een project op
@@ -13,10 +13,10 @@ import java.util.Set;
  */
 public class ProjectRepository {
 
-    private Set<Project> projects;
+    private ArrayList<Project> projects;
 
     public ProjectRepository() {
-        this.projects = new HashSet<>();
+        projects = new ArrayList<>();
     }
 
     /**
