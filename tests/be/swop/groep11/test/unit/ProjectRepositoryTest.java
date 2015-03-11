@@ -32,15 +32,19 @@ public class ProjectRepositoryTest {
 
     @Test
     public void GetProjectsList() throws Exception {
-       //TODO test implementeren immutable list
+        projRep.addNewProject(name, description, create,due,user);
+        projRep.addNewProject(name, description, create,due,user);
+        projRep.addNewProject(name, description, create,due,user);
+
+        assertEquals(3, projRep.getProjects().size());
     }
 
-    /*
-    @Test
-    public void AddNewProject_valid() throws Exception {
 
-        int ID = projRep.addNewProject(name, description, create,due,user);
-        Project proj = projRep.getProjectByID(ID);
+    @Test
+    public void AddNewProjectValidTest() throws Exception {
+
+        projRep.addNewProject(name, description, create,due,user);
+        Project proj = projRep.getProjects().get(projRep.getProjects().size()-1);
 
         assertEquals(create,proj.getCreationTime());
         assertEquals(due,proj.getDueTime());
@@ -48,7 +52,22 @@ public class ProjectRepositoryTest {
         assertEquals(name,proj.getName());
         assertEquals(description,proj.getDescription());
     }
-    */
+
+    @Test (expected = IllegalArgumentException.class)
+    public void AddNewProjectInvalidTimesTest() throws Exception {
+        projRep.addNewProject(name, description, due, create, user);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void AddNewProjectInvalidNameTest() throws Exception {
+        projRep.addNewProject(null, description, create, due, user);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void AddNewProjectInvalidDescriptionTest() throws Exception {
+        projRep.addNewProject(name, null, create, due, user);
+    }
+
 
    //SEE ProjectTest voor alle unit test voor het aanmaken van een project.
 }
