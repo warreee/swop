@@ -7,7 +7,7 @@ import be.swop.groep11.main.ui.UserInterface;
 import java.time.LocalDateTime;
 
 /**
- * Created by warreee on 3/9/15.
+ * Bevat de stappen om de use case "Advance Time" uit te voeren.
  */
 public class AdvanceTimeController {
 
@@ -21,7 +21,7 @@ public class AdvanceTimeController {
 
     public void advanceTime(){
         try {
-            LocalDateTime newSystemTime = ui.requestDatum("Nieuwe systeemtijd");
+            LocalDateTime newSystemTime = ui.requestDatum("Nieuwe systeemtijd:");
             taskMan.updateSystemTime(newSystemTime);
         } catch (IllegalArgumentException e) {
             ui.printException(e);
