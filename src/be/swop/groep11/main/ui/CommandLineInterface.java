@@ -194,7 +194,7 @@ public class CommandLineInterface implements UserInterface {
         String input = requestInput(request + " formaat: yyyy-mm-dd hh:mm");
         checkCancel(input);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd hh:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         while (! isValidDateTimeFormat(input, formatter)) {
             System.out.println("Ongeldig formaat");
             input = requestInput(request + " formaat: yyyy-mm-dd hh:mm");

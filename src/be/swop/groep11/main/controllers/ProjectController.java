@@ -41,7 +41,7 @@ public class ProjectController {
             ImmutableList<Task> tasks = project.getTasks();
             Task task = ui.selectTaskFromList(tasks);
             ui.showTaskDetails(task);
-        } catch (EmptyListException e) {
+        } catch (EmptyListException|CancelException e) {
             ui.printException(e);
         }
     }
