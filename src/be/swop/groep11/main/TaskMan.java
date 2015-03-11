@@ -44,8 +44,7 @@ public class TaskMan {
      *           | !canHaveAsSystemTime(systemTime)
      */
     public void updateSystemTime(LocalDateTime systemTime) throws IllegalArgumentException{
-            setCurrentSystemTime(systemTime);
-        //TODO Update all domain object that depend on this clock
+        setCurrentSystemTime(systemTime);
     }
 
     /**
