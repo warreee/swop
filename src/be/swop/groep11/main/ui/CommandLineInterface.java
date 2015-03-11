@@ -56,7 +56,7 @@ public class CommandLineInterface implements UserInterface {
         // maak de controllers aan
         User user = new User("ROOT");
         this.projectController = new ProjectController(projectRepository, user, this);
-//        this.taskController = new TaskController();
+        this.taskController = new TaskController(this);
         this.advanceTimeController = new AdvanceTimeController(taskMan,this);
     }
 
@@ -74,11 +74,12 @@ public class CommandLineInterface implements UserInterface {
                     System.out.println(ec.getInput());
                 }
             }
-        br.close();
-        } catch (IOException e) {
-        e.printStackTrace();
-        }
 
+            br.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private  void executeCommand(Command command) {
@@ -117,7 +118,7 @@ public class CommandLineInterface implements UserInterface {
 
     @Override
     public void printException(Exception e) {
-        System.out.printf(e.getMessage() + "\n" + "Commando gestopt!" + "\n");
+        System.out.printf(e.getMessage() + "\n");
     }
 
     /**
@@ -221,7 +222,7 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public void showProjectList(ImmutableList<Project> projects) {
         String format = "%4s %-35s %-20s %-20s %n";
-        System.out.printf(format, "nr.", "Naam", "Status");
+        System.out.printf(format, "nr.", "Naam", "Status", "");
         for (int i=0; i<projects.size(); i++) {
             Project project = projects.get(i);
             System.out.printf(format,
@@ -305,13 +306,13 @@ public class CommandLineInterface implements UserInterface {
         // TODO: eventueel hoeveel uren over tijd tonen !!!!
         System.out.printf(format, "Creation time: ",
                 project.getCreationTime().getYear() + "-"
-                +project.getCreationTime().getMonth() + "-"
+                +project.getCreationTime().getMonthValue() + "-"
                 +project.getCreationTime().getDayOfMonth() + " "
                 +project.getCreationTime().getHour() + ":"
                 +project.getCreationTime().getMinute());
         System.out.printf(format, "Due time: ",
                 project.getDueTime().getYear() + "-"
-                        +project.getDueTime().getMonth() + "-"
+                        +project.getDueTime().getMonthValue() + "-"
                         +project.getDueTime().getDayOfMonth() + " "
                         +project.getDueTime().getHour() + ":"
                         +project.getDueTime().getMinute());
@@ -351,7 +352,7 @@ public class CommandLineInterface implements UserInterface {
         if (task.getStartTime() != null) {
             System.out.printf(format, "Starttijd: ",
                     task.getStartTime().getYear() + "-"
-                            +task.getStartTime().getMonth() + "-"
+                            +task.getStartTime().getMonthValue() + "-"
                             +task.getStartTime().getDayOfMonth() + " "
                             +task.getStartTime().getHour() + ":"
                             +task.getStartTime().getMinute());
@@ -360,7 +361,7 @@ public class CommandLineInterface implements UserInterface {
         if (task.getEndTime() != null) {
             System.out.printf(format, "Eindtijd: ",
                     task.getEndTime().getYear() + "-"
-                            +task.getEndTime().getMonth() + "-"
+                            +task.getEndTime().getMonthValue() + "-"
                             +task.getEndTime().getDayOfMonth() + " "
                             +task.getEndTime().getHour() + ":"
                             +task.getEndTime().getMinute());

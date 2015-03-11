@@ -1,41 +1,58 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.Project;
+import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.Task;
 import be.swop.groep11.main.TaskStatus;
 import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
+import com.sun.javaws.exceptions.InvalidArgumentException;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by warreee on 3/9/15.
+ * Bevat de stappen om de use cases "Create Task" en "Update Task Status" uit te voeren.
  */
 public class TaskController {
 
-    private Project project;
+    private ProjectRepository projectRepository;
     private UserInterface ui;
 
-    public TaskController(Project project, UserInterface ui){
-
-        this.project = project;
+    /**
+     * Constructor om een nieuwe task controller te maken.
+     * @param ui Gebruikersinterface
+     */
+    public TaskController(ProjectRepository projectRepository, UserInterface ui) {
         this.ui = ui;
     }
 
+    /**
+     * Voert de stappen voor de use case "Create Task" uit.
+     */
     public void createTask(){
         try {
-            String description = ui.requestString("Taak beschrijving");
-            Double acceptableDeviation = ui.requestDouble("Taak: toegestane afwijking");
-            Duration estimatedDuration = Duration.ofHours(Integer.valueOf(ui.requestNumber("Taak: geschatte duur")).longValue());
-            project.addNewTask(description, acceptableDeviation, estimatedDuration);
+            String description = ui.requestString("Beschrijving:");
+            Double acceptableDeviation = ui.requestDouble("Aanvaardbare afwijking in procent:") / 100;
+            Duration estimatedDuration = Duration.ofHours(Integer.valueOf(ui.requestNumber("Geschatte duur:")).longValue());
+            ui.printMessage("Kies een project waartoe de taak moet behoren:");
+            Project project = ui.selectProjectFromList(projectRepository.getProjects());
 
-        } catch (CancelException e) {
+            project.addNewTask(description, acceptableDeviation, estimatedDuration);
+        }
+        catch (IllegalArgumentException e) {
+            ui.printException(e);
+        }
+        catch (CancelException e) {
             ui.printException(e);
         }
     }
 
+    /*
     public void showTasks(){
         try{
             ImmutableList<Task> tasks = project.getTasks();
@@ -45,12 +62,15 @@ public class TaskController {
             ui.printException(e);
         }
     }
+    */
 
     public ImmutableList<Task> getAllTasks(){
-        return project.getTasks();
+        List<Task> tasks = new ArrayList<Task>();
+        ImmutableList<Project> projects = projectRepository.getProjects();
+        for (Project project : projects) {
+            tasks.addAll(project.getTasks());
+        }
+        return ImmutableList.copyOf(tasks);
     }
 
-    public void updateStatus(Task task, TaskStatus status){
-        task.setStatus(status);
-    }
 }
