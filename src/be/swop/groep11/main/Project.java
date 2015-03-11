@@ -119,7 +119,7 @@ public class Project {
     private ProjectStatus projectStatus;
 
     /**
-     * @return Een ImmutableList die alle taken in volgorde van de interne lijst bevat.
+     * @return Een ImmutableList die alle taken bevat. Niet persee in volgorde van toevoegen.
      */
     public ImmutableList<Task> getTasks() {
         return ImmutableList.copyOf(tasks.iterator());
