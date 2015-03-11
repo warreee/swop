@@ -45,6 +45,7 @@ public class TaskMan {
      */
     public void updateSystemTime(LocalDateTime systemTime) throws IllegalArgumentException{
             setCurrentSystemTime(systemTime);
+        //TODO Update all domain object that depend on this clock
     }
 
     /**
@@ -71,12 +72,11 @@ public class TaskMan {
     }
 
     private void setCurrentSystemTime(LocalDateTime currentSystemTime) throws IllegalArgumentException {
-        if(canHaveAsSystemTime(currentSystemTime)) {
-            this.currentSystemTime = currentSystemTime;
-        }
-        else{
+        if(!canHaveAsSystemTime(currentSystemTime)) {
             throw new IllegalArgumentException("Ongeldige systeemtijd");
         }
+
+        this.currentSystemTime = currentSystemTime;
     }
 
     /**

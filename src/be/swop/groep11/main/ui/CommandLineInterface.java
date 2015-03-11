@@ -6,7 +6,6 @@ import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.ui.commands.Command;
 import be.swop.groep11.main.ui.commands.IllegalCommandException;
-import be.swop.groep11.main.ui.commands.Param;
 import com.google.common.collect.ImmutableList;
 
 import java.io.BufferedReader;
@@ -55,8 +54,8 @@ public class CommandLineInterface implements UserInterface {
         // maak de controllers aan
         User user = new User("ROOT");
         this.projectController = new ProjectController(projectRepository, user, this);
-//        this.taskController = new TaskController(); // TODO
-//        this.advanceTimeController = new AdvanceTimeController(); // TODO
+//        this.taskController = new TaskController();
+        this.advanceTimeController = new AdvanceTimeController(taskMan,this);
     }
 
     private void run(){
@@ -94,6 +93,7 @@ public class CommandLineInterface implements UserInterface {
                 break;
             case ADVANCETIME:
                 System.out.println(Command.ADVANCETIME.name());
+                getAdvanceTimeController().advanceTime();
                 break;
             case UPDATETASK:
                 System.out.println(Command.UPDATETASK.name());
@@ -321,5 +321,9 @@ public class CommandLineInterface implements UserInterface {
      */
     private TaskController getTaskController() {
         return taskController;
+    }
+
+    public AdvanceTimeController getAdvanceTimeController() {
+        return advanceTimeController;
     }
 }
