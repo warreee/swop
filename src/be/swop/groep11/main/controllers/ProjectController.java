@@ -41,7 +41,7 @@ public class ProjectController {
             ImmutableList<Task> tasks = project.getTasks();
             Task task = ui.selectTaskFromList(tasks);
             ui.showTaskDetails(task);
-        } catch (EmptyListException e) {
+        } catch (CancelException | EmptyListException e) {
             ui.printException(e);
         }
     }
@@ -53,33 +53,13 @@ public class ProjectController {
 
             LocalDateTime creationTime = ui.requestDatum("Datum van aanmaken");
             LocalDateTime dueTime = ui.requestDatum("Deadline datum");
-            projectRepository.addNewProject(projectName,description,creationTime,dueTime,user);
+            projectRepository.addNewProject(projectName, description ,creationTime, dueTime, user);
 
-        } catch (IllegalInputException|DateTimeParseException|CancelException e) {
+        } catch (CancelException e) {
             ui.printException(e);
         }
 
     }
-
-    /**
-     * Geeft een immutable lijst terug van alle projecten
-     */
-    //overbodig
-    private ImmutableList<Project> getAllProjects(){
-        return projectRepository.getProjects();
-    }
-
-    //overbodig
-    private Project getProjectFromList (int index){
-        return getAllProjects().get(index);
-    }
-
-    //overbodig
-    private Task getTaskFromProject(int index, Project project){
-        return project.getTasks().get(index);
-    }
-
-
 
 
 }

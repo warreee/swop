@@ -26,7 +26,7 @@ public class TaskController {
     public void createTask(){
         try {
             String description = ui.requestString("Taak beschrijving");
-            Double acceptableDeviation = requestDouble("Taak: toegestane afwijking");
+            Double acceptableDeviation = ui.requestDouble("Taak: toegestane afwijking");
             Duration estimatedDuration = Duration.ofHours(Integer.valueOf(ui.requestNumber("Taak: geschatte duur")).longValue());
             project.addNewTask(description, acceptableDeviation, estimatedDuration);
 
