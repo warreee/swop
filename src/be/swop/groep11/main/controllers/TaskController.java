@@ -87,7 +87,7 @@ public class TaskController {
     }
     */
 
-    public ImmutableList<Task> getAllTasks(){
+    private ImmutableList<Task> getAllTasks(){
         List<Task> tasks = new ArrayList<Task>();
         ImmutableList<Project> projects = projectRepository.getProjects();
         for (Project project : projects) {
