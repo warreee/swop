@@ -12,11 +12,12 @@ import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Bevat de stappen om de use cases "Create Task" en "Update Task Status" uit te voeren.
+ * Bevat de stappen om de use cases "Create Task" en "Update Task" uit te voeren.
  */
 public class TaskController {
 
@@ -43,6 +44,29 @@ public class TaskController {
             Project project = ui.selectProjectFromList(projectRepository.getProjects());
 
             project.addNewTask(description, acceptableDeviation, estimatedDuration);
+        }
+        catch (IllegalArgumentException e) {
+            ui.printException(e);
+        }
+        catch (CancelException e) {
+            ui.printException(e);
+        }
+    }
+
+    /**
+     * Voert de stappen voor de use case "Update Task" uit.
+     */
+    public void updateTask() {
+        try {
+            Task task = ui.selectTaskFromList(this.getAllTasks());
+
+            LocalDateTime startTime = ui.requestDatum("Starttijd:");
+            LocalDateTime endTime = ui.requestDatum("Eindtijd:");
+            String status = ui.requestString("Status:");
+
+            task.setStartTime(startTime);
+            task.setEndTime(endTime);
+            task.setNewStatus(TaskStatus.valueOf(status));
         }
         catch (IllegalArgumentException e) {
             ui.printException(e);

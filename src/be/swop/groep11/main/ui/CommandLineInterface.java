@@ -56,7 +56,7 @@ public class CommandLineInterface implements UserInterface {
         // maak de controllers aan
         User user = new User("ROOT");
         this.projectController = new ProjectController(projectRepository, user, this);
-        this.taskController = new TaskController(this);
+        this.taskController = new TaskController(projectRepository, this);
         this.advanceTimeController = new AdvanceTimeController(taskMan,this);
     }
 
@@ -261,12 +261,12 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showTaskList(ImmutableList<Task> tasks) {
-        // TODO: meer info tonen?
-        String format = "%4s %-35s %-20s %n";
-        System.out.printf(format, "nr.", "Omschrijving", "Status");
+        String format = "%4s %-35s %-20s %-35s %n";
+        System.out.printf(format, "nr.", "Omschrijving", "Status", "Project");
         for (int i=0; i<tasks.size(); i++) {
             Task task = tasks.get(i);
-            System.out.printf(format, i, task.getDescription(), task.getStatus());
+            System.out.printf(format, i, task.getDescription(), task.getStatus(),
+                    task.getProject().getName());
         }
     }
 

@@ -288,10 +288,21 @@ public class Task {
      * @param status De nieuwe status
      * @throws java.lang.IllegalArgumentException De nieuwe status is ongeldig voor deze taak
      */
-    public void setStatus(TaskStatus status) throws IllegalArgumentException {
+    private void setStatus(TaskStatus status) throws IllegalArgumentException {
         if (! TaskStatus.isValidNewStatus(status, this))
             throw new IllegalArgumentException("Ongeldige status");
         this.status = status;
+    }
+
+    /**
+     * Wijzigt de status van deze taak.
+     * @param status De nieuwe status
+     * @throws java.lang.IllegalArgumentException Kan de status alleen op FINISHED of FAILED zetten.
+     */
+    public void setNewStatus(TaskStatus status) {
+        if (status != TaskStatus.FAILED && status != TaskStatus.FINISHED)
+            throw new IllegalArgumentException("Kan status alleen op FINISHED of FAILED zetten");
+        setStatus(status);
     }
 
 
