@@ -29,6 +29,7 @@ public class TaskController {
      * @param ui Gebruikersinterface
      */
     public TaskController(ProjectRepository projectRepository, UserInterface ui) {
+        this.projectRepository = projectRepository;
         this.ui = ui;
     }
 
@@ -44,6 +45,7 @@ public class TaskController {
             Project project = ui.selectProjectFromList(projectRepository.getProjects());
 
             project.addNewTask(description, acceptableDeviation, estimatedDuration);
+            ui.printMessage("Taak toegevoegd");
         }
         catch (IllegalArgumentException e) {
             ui.printException(e);
@@ -67,6 +69,7 @@ public class TaskController {
             task.setStartTime(startTime);
             task.setEndTime(endTime);
             task.setNewStatus(TaskStatus.valueOf(status));
+            ui.printMessage("Taak geupdated");
         }
         catch (IllegalArgumentException e) {
             ui.printException(e);

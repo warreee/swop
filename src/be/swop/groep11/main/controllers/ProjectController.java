@@ -60,7 +60,7 @@ public class ProjectController {
             LocalDateTime dueTime = ui.requestDatum("Due time:");
 
             projectRepository.addNewProject(projectName, description ,creationTime, dueTime, user);
-            ui.printMessage("Taak toegevoegd");
+            ui.printMessage("Project toegevoegd");
         } catch (IllegalArgumentException e) {
             ui.printException(e);
             createProject();
