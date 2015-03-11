@@ -55,8 +55,8 @@ public class CommandLineInterface implements UserInterface {
         // maak de controllers aan
         User user = new User("ROOT");
         this.projectController = new ProjectController(projectRepository, user, this);
-//        this.taskController = new TaskController();
-//        this.advanceTimeController = new AdvanceTimeController();
+//        this.taskController = new TaskController(); // TODO
+//        this.advanceTimeController = new AdvanceTimeController(); // TODO
     }
 
     private void run(){
@@ -120,37 +120,100 @@ public class CommandLineInterface implements UserInterface {
         System.out.printf("\n" + e.getMessage() + "\n" + "Use case gestopt!" + "\n");
     }
 
+    /**
+     * Laat de gebruiker een geheel getal ingeven.
+     * Implementeert requestNumber in UserInterface
+     */
     @Override
-    public int requestNumber(String request) throws IllegalInputException,CancelException{
+    public int requestNumber(String request) throws CancelException {
         String input = requestInput(request);
         checkCancel(input);
 
-        Param param = Param.getParameter(input);
-        if(param != Param.NUMBERS){
-            throw new IllegalInputException("Verkeerde input!");
+        while (! isInteger(input)){
+            System.out.println("Ongeldige invoer: moet een geheel getal zijn");
+            input = requestInput(request);
+            checkCancel(input);
         }
         return Integer.parseInt(input);
     }
+
+    private static boolean isInteger(String string) {
+        try {
+            int d = Integer.parseInt(string);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Laat de gebruiker een double ingeven.
+     * Implementeert requestDouble in UserInterface
+     */
     @Override
-    public String requestString(String request)throws IllegalInputException,CancelException{
+    public int requestDouble(String request) throws CancelException {
         String input = requestInput(request);
         checkCancel(input);
-        Param param = Param.getParameter(input);
-        if(param != Param.LETTERS){
-            throw new IllegalInputException("Verkeerde input! geen woord");
+
+        while (! isDouble(input)){
+            System.out.println("Ongeldige invoer: moet een double zijn");
+            input = requestInput(request);
+            checkCancel(input);
         }
+        return Integer.parseInt(input);
+    }
+
+    private static boolean isDouble(String string) {
+        try {
+            double d = Double.parseDouble(string);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Laat de gebruiker een string ingeven.
+     * Implementeert requestString in UserInterface
+     */
+    @Override
+    public String requestString(String request) throws CancelException {
+        String input = requestInput(request);
+        checkCancel(input);
         return input;
     }
 
+    /**
+     * Laat de gebruiker een dataum ingeven.
+     * Implementeert requestDatum in UserInterface
+     */
     @Override
-    public LocalDateTime requestDatum(String request) throws DateTimeParseException {
-        String input = requestInput(request + " formaat: yyyy-MM-dd HH:mm");
+    public LocalDateTime requestDatum(String request) throws CancelException {
+        String input = requestInput(request + " formaat: yyyy-mm-dd hh:mm");
         checkCancel(input);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd hh:mm");
+        while (! isValidDateTimeFormat(input, formatter)) {
+            System.out.println("Ongeldig formaat");
+            input = requestInput(request + " formaat: yyyy-mm-dd hh:mm");
+            checkCancel(input);
+        }
         LocalDateTime dateTime = LocalDateTime.parse(input, formatter);
         return dateTime;
     }
+
+    private static boolean isValidDateTimeFormat(String string, DateTimeFormatter formatter) {
+        try {
+            LocalDateTime dateTime = LocalDateTime.parse(string,formatter);
+            return true;
+        }
+        catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+
     /**
      * Toont een tekstweergave van een lijst projecten.
      * Implementeert showProjectList in UserInterface
@@ -171,7 +234,7 @@ public class CommandLineInterface implements UserInterface {
      * Implementeert selectProjectFromList in UserInterface
      */
     @Override
-    public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException,IllegalInputException,CancelException{
+    public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException{
         if(projects.isEmpty()){
             throw new EmptyListException("Geen projecten aanwezig!");
         }
@@ -183,6 +246,10 @@ public class CommandLineInterface implements UserInterface {
         return proj;
     }
 
+    /**
+     * Toont een tekstversie van een lijst van taken aan de gebruiker
+     * @param tasks Lijst van taken
+     */
     @Override
     public void showTaskList(ImmutableList<Task> tasks) {
         String format = "%4s %-35s %-20s %n";

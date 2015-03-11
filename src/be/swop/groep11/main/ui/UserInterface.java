@@ -16,36 +16,66 @@ public interface UserInterface {
      * Toont een lijst van projecten.
      * @param projects Lijst van projecten
      */
-//    overbodig?
     public void showProjectList(ImmutableList<Project> projects);
 
     /**
      * Selecteert een project uit een lijst van projecten.
      * @param projects Lijst van projecten
      * @return Nummer van geselecteerde project in lijst
-     * @throws java.io.IOException Fout met kiezen van project
+     * @throws be.swop.groep11.main.ui.EmptyListException Fout met kiezen van project
      */
-    public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException;
+    public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException;
 
-//    /**
-//     * Toont een formulier en geeft de ingevulde waardes van de velden terug.
-//     * @param fields Namen van de velden van het formulier
-//     * @return Een map waarbij de veldnamen aan de ingevulde waarden gekoppeld worden: (veldnaam,waarde)
-//     */
-//    public Map<String,String> showForm(String... fields);
+    /**
+     * Vraagt een invoer van de gebruiker.
+     * Toont ook de beschrijving van de verwachte invoer.
+     * @param request Beschrijving van de verwachte invoer
+     * @return De invoer van de gebruiker
+     * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     */
+    public String requestString(String request)throws CancelException;
 
-    //Voorstel user input
-    public String requestString(String request)throws IllegalInputException,CancelException;
-    public int requestNumber(String request) throws IllegalInputException,CancelException;
-    public LocalDateTime requestDatum(String request) throws DateTimeParseException;
+    /**
+     * Vraagt een geheel getal als invoer van de gebruiker.
+     * Toont ook de beschrijving van de verwachte invoer.
+     * @param request Beschrijving van de verwachte invoer
+     * @return De invoer van de gebruiker
+     * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     */
+    public int requestNumber(String request) throws CancelException;
+
+    /**
+     * Vraagt een double als invoer van de gebruiker.
+     * Toont ook de beschrijving van de verwachte invoer.
+     * @param request Beschrijving van de verwachte invoer
+     * @return De invoer van de gebruiker
+     * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     */
+    public int requestDouble(String request) throws CancelException;
+
+    /**
+     * Vraagt een datum en tijd als invoer van de gebruiker.
+     * Toont ook de beschrijving van de verwachte invoer.
+     * @param request Beschrijving van de verwachte invoer
+     * @return De invoer van de gebruiker
+     * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     */
+    public LocalDateTime requestDatum(String request) throws CancelException;
+
+    /**
+     * Toont een boodschap aan de gebruiker.
+     */
     public void printMessage(String message);
+
+    /**
+     * Toont een exception aan de gebruiker
+     */
     public void printException(Exception e);
 
     /**
      * Toont een lijst van taken.
      * @param tasks Lijst van taken
      */
-    //overbodig?
     public void showTaskList(ImmutableList<Task> tasks);
 
     /**
@@ -53,7 +83,7 @@ public interface UserInterface {
      * @param tasks Lijst van taken
      * @return Nummer van geselecteerde taak in lijst
      */
-    public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException;
+    public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
 
     /**
      * Toont de details van een project.
