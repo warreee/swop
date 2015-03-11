@@ -4,12 +4,11 @@ import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.Task;
 import be.swop.groep11.main.TaskStatus;
-import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.EmptyListException;
+import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
-import com.sun.javaws.exceptions.InvalidArgumentException;
-import org.omg.CORBA.DynAnyPackage.Invalid;
+import sun.invoke.empty.Empty;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -38,18 +37,19 @@ public class TaskController {
      */
     public void createTask(){
         try {
+            Project project = ui.selectProjectFromList(projectRepository.getProjects());
             String description = ui.requestString("Beschrijving:");
             Double acceptableDeviation = ui.requestDouble("Aanvaardbare afwijking in procent:") / 100;
             Duration estimatedDuration = Duration.ofHours(Integer.valueOf(ui.requestNumber("Geschatte duur:")).longValue());
-            Project project = ui.selectProjectFromList(projectRepository.getProjects());
 
             project.addNewTask(description, acceptableDeviation, estimatedDuration);
             ui.printMessage("Taak toegevoegd");
         }
         catch (IllegalArgumentException e) {
             ui.printException(e);
+            createTask();
         }
-        catch (CancelException e) {
+        catch (EmptyListException|CancelException e) {
             ui.printException(e);
         }
     }
@@ -60,7 +60,15 @@ public class TaskController {
     public void updateTask() {
         try {
             Task task = ui.selectTaskFromList(this.getAllTasks());
+            updateTask(task);
+        }
+        catch (EmptyListException|CancelException e) {
+            ui.printException(e);
+        }
+    }
 
+    private void updateTask(Task task) {
+        try {
             LocalDateTime startTime = ui.requestDatum("Starttijd:");
             LocalDateTime endTime = ui.requestDatum("Eindtijd:");
             String status = ui.requestString("Status:");
@@ -72,6 +80,7 @@ public class TaskController {
         }
         catch (IllegalArgumentException e) {
             ui.printException(e);
+            updateTask(task);
         }
         catch (CancelException e) {
             ui.printException(e);
