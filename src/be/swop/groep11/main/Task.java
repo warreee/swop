@@ -373,9 +373,9 @@ public class Task {
      *         of null als de starttijd of eindtijd van deze taak null is.
      */
     public Duration getDuration() {
+        // We nemen als duration de echte tijd die gepasseerd is.
         if (getStartTime() == null || getEndTime() == null)
             return null;
-        // TODO: heeft een dag niet maar 8 uren?
         return Duration.between(getStartTime(),getEndTime());
     }
 

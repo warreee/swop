@@ -41,4 +41,10 @@ public class DependencyConstraintTest {
         assertFalse(DependencyConstraint.isValidDependingOn(task1,task1));
     }
 
+    @Test (expected = IllegalArgumentException.class)
+    public void cyclicDependencyAdd() throws Exception {
+        // Voeg een cyclische dependency toe.
+        task3.addNewDependencyConstraint(task2);
+    }
+
 }
