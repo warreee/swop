@@ -2,9 +2,11 @@ package be.swop.groep11.main;
 
 import com.google.common.collect.ImmutableList;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by warreee on 23/02/15.
@@ -211,13 +213,69 @@ public class Project {
     }
 
     /**
+     * @return  Waar indien de geschatte eind datum van het project na de verwachte eind datum valt.
+     */
+    public boolean isOverTime(){
+        return getEstimatedEndTime().isAfter(dueTime);
+    }
+
+    /**
      * Geeft een schatting voor de effectieve eind datum van het project.
      *
-     * @param currentSystemTime
-     * @return
+     * @return  De geschatte eind datum van het project, door het aantal nodige werkdagen te berekenen.
+     *          Tel het aantal werkdagen (plus nodige weekends) bij de begindatum van het project op.
      */
-    public LocalDateTime getEstimatedEndTime(LocalDateTime currentSystemTime){
-        //TODO implement
-        return null;
+    public LocalDateTime getEstimatedEndTime(){
+        int HOURS_PER_DAY = 8;
+        Duration max = Duration.ofDays(0);
+        for(Task task :getTasks()){
+            Set<Task> dependingOnTasks = task.getDependingOnTasks();
+            Duration temp = calculateTotalDuration(dependingOnTasks);
+            if(temp.compareTo(max) > 0){
+                max = temp;
+            }
+        }
+        long hours = max.toHours();
+        long workDays = (long)(hours / HOURS_PER_DAY)+1;
+
+        LocalDateTime currentWorkingDay = creationTime;
+        while(workDays > 0){
+            DayOfWeek currentDay = currentWorkingDay.getDayOfWeek();
+            long add = 1;
+            switch (currentDay) {
+//                case MONDAY:
+//                    add = 1;
+//                    break;
+                case SATURDAY:
+                    add = 3;
+                    break;
+                case SUNDAY:
+                    add = 2;
+                    break;
+            }
+            currentWorkingDay.plusDays(add);
+            workDays--;
+
+            }
+        return currentWorkingDay;
+        }
+
+    private Duration calculateTotalDuration(Set<Task> tasks){
+        LocalDateTime currentSystemTime = this.getProjectRepository().getTMSystem().getCurrentSystemTime();
+        Duration total = Duration.ofHours(0);
+        for(Task task :tasks){
+            TaskStatus status = task.getStatus();
+            if(status == TaskStatus.AVAILABLE ){
+                Duration add = task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration()  ;
+                total.plus(add);
+            }
+            else if(status == TaskStatus.UNAVAILABLE){
+                total.plus(task.getEstimatedDuration());
+            }
+            else if(status == TaskStatus.FINISHED || status == TaskStatus.FAILED){
+                total.plus(task.getDuration());
+            }
+        }
+        return total;
     }
 }
