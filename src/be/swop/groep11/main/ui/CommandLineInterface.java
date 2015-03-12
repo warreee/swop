@@ -1,7 +1,7 @@
 package be.swop.groep11.main.ui;
 
 import be.swop.groep11.main.*;
-import be.swop.groep11.main.System;
+import be.swop.groep11.main.TMSystem;
 import be.swop.groep11.main.controllers.AdvanceTimeController;
 import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.controllers.TaskController;
@@ -11,6 +11,7 @@ import be.swop.groep11.main.ui.commands.IllegalCommandException;
 import com.google.common.collect.ImmutableList;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Duration;
@@ -32,11 +33,19 @@ public class CommandLineInterface implements UserInterface {
     private TaskController taskController;
     private AdvanceTimeController advanceTimeController;
 
-    // TODO: documentatie van main methode... hoe?
+    /**
+     * Run de CommandLineInterface
+     * Wanneer als argument "yaml" wordt opgegeven, wordt het programma met het bestand input/input.tman
+     * geïnitialiseerd.
+     * @param args De systeem argumenten
+     */
     public static void main(String[] args) {
+        boolean readYamlFile = false;
+        if (args.length == 1 && args[0].equals("yaml"))
+            readYamlFile = true;
 
         // maak een nieuwe CommandLineInterface aan
-        CommandLineInterface cli = new CommandLineInterface();
+        CommandLineInterface cli = new CommandLineInterface(readYamlFile);
 
         // lees commando's
         cli.run();
@@ -45,20 +54,32 @@ public class CommandLineInterface implements UserInterface {
     /**
      * Constructor om een nieuwe commandline gebruikersinterface te maken.
      * Maakt een nieuw TaskMan object aan en initialiseert de controllers.
+     * Leest indien nodig ook het yaml bestand in.
+     * @param readYamlFile True als het yaml bestand moet ingelezen worden.
      */
-    public CommandLineInterface() {
+    public CommandLineInterface(boolean readYamlFile) {
         this.br = new BufferedReader(new InputStreamReader(java.lang.System.in));
         this.exit = false;
 
         // maak een nieuwe system aan
-        System system = new System();
-        ProjectRepository projectRepository = system.getProjectRepository();
+        TMSystem TMSystem = new TMSystem();
+        ProjectRepository projectRepository = TMSystem.getProjectRepository();
+
+        if (readYamlFile) {
+            // run inputreader
+            InputReader ir = new InputReader(projectRepository);
+            try {
+                ir.runInputReader();
+            } catch (FileNotFoundException e) {
+                printMessage("Yaml file niet gevonden");
+            }
+        }
 
         // maak de controllers aan
         User user = new User("ROOT");
         this.projectController = new ProjectController(projectRepository, user, this);
         this.taskController = new TaskController(projectRepository, this);
-        this.advanceTimeController = new AdvanceTimeController(system,this);
+        this.advanceTimeController = new AdvanceTimeController(TMSystem,this);
     }
 
     private void run(){
@@ -230,11 +251,14 @@ public class CommandLineInterface implements UserInterface {
         java.lang.System.out.printf(format, "nr.", "Naam", "Status", "");
         for (int i=0; i<projects.size(); i++) {
             Project project = projects.get(i);
+            String overTime = "on time";
+            if (project.isOverTime())
+                overTime = "over time";
             java.lang.System.out.printf(format,
                     i,
                     project.getName(),
                     project.getProjectStatus().name(),
-                    "(on time / over time)"); // TODO: hier is nog geen methode voor in Project!!!!!!!
+                    "("+overTime+")"); // TODO: hier is nog geen methode voor in Project!!!!!!!
         }
     }
 
@@ -268,12 +292,26 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showTaskList(ImmutableList<Task> tasks) {
-        String format = "%4s %-35s %-20s %-35s %n";
-        java.lang.System.out.printf(format, "nr.", "Omschrijving", "Status", "Project");
+        String format = "%4s %-35s %-20s %-15s %-35s %n";
+        java.lang.System.out.printf(format, "nr.", "Omschrijving", "Status", "On time?", "Project");
         for (int i=0; i<tasks.size(); i++) {
             Task task = tasks.get(i);
-            java.lang.System.out.printf(format, i, task.getDescription(), task.getStatus(),
-                    task.getProject().getName());
+
+            // add asterix?
+            String asterix = "";
+            if (task.isUnacceptablyOverTime()) {
+                asterix = " *";
+            }
+
+            // on time?
+            String onTime = "ja";
+            if (task.isOverTime()) {
+                long percentage = Math.round(task.getOverTimePercentage()*100);
+                onTime = "nee ("+percentage+"%)";
+            }
+
+            java.lang.System.out.printf(format, i, task.getDescription() + asterix, task.getStatus(),
+                    onTime, task.getProject().getName());
         }
     }
 
@@ -307,25 +345,19 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showProjectDetails(Project project) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         java.lang.System.out.println("*** Project details ***");
         String format = "%-25s %s %n";
         java.lang.System.out.printf(format, "Naam: ", project.getName());
         java.lang.System.out.printf(format, "Beschrijving: ", project.getDescription());
-        java.lang.System.out.printf(format, "Status: ", project.getProjectStatus().name()); // TODO: ook tonen of project on time / over time is !!!!
-        // TODO: eventueel hoeveel uren over tijd tonen !!!!
-        java.lang.System.out.printf(format, "Creation time: ",
-                project.getCreationTime().getYear() + "-"
-                +project.getCreationTime().getMonthValue() + "-"
-                +project.getCreationTime().getDayOfMonth() + " "
-                +project.getCreationTime().getHour() + ":"
-                +project.getCreationTime().getMinute());
-        java.lang.System.out.printf(format, "Due time: ",
-                project.getDueTime().getYear() + "-"
-                        +project.getDueTime().getMonthValue() + "-"
-                        +project.getDueTime().getDayOfMonth() + " "
-                        +project.getDueTime().getHour() + ":"
-                        +project.getDueTime().getMinute());
-        // TODO
+        java.lang.System.out.printf(format, "Status: ", project.getProjectStatus().name());
+        String onTime = "ja";
+        if (project.isOverTime()) {
+            onTime = "nee";
+        }
+        java.lang.System.out.printf(format, "Op tijd: ", onTime);
+        java.lang.System.out.printf(format, "Creation time: ", project.getCreationTime().format(formatter));
+        java.lang.System.out.printf(format, "Due time: ", project.getDueTime().format(formatter));
     }
 
     /**
@@ -334,6 +366,7 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showTaskDetails(Task task) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         java.lang.System.out.println("*** Taak details ***");
         String format = "%-25s %s %n";
         java.lang.System.out.printf(format, "Beschrijving: ", task.getDescription());
@@ -350,6 +383,14 @@ public class CommandLineInterface implements UserInterface {
         }
         java.lang.System.out.printf(format, "Status: ", task.getStatus().name() + " " + finishedStatus);
 
+        // on time?
+        String onTime = "ja";
+        if (task.isOverTime()) {
+            long percentage = Math.round(task.getOverTimePercentage()*100);
+            onTime = "nee ("+percentage+"%)";
+        }
+        java.lang.System.out.printf(format, "Momenteel on time: ", onTime);
+
         Duration estimatedDuration = task.getEstimatedDuration();
         long estimatedDurationHours = estimatedDuration.getSeconds() / (60*60);
         long estimatedDurationMinutes = (estimatedDuration.getSeconds() % (60*60)) / 60;
@@ -359,21 +400,11 @@ public class CommandLineInterface implements UserInterface {
         java.lang.System.out.printf(format, "Aanvaardbare afwijking: ", acceptDevPercent+"%");
 
         if (task.getStartTime() != null) {
-            java.lang.System.out.printf(format, "Starttijd: ",
-                    task.getStartTime().getYear() + "-"
-                            +task.getStartTime().getMonthValue() + "-"
-                            +task.getStartTime().getDayOfMonth() + " "
-                            +task.getStartTime().getHour() + ":"
-                            +task.getStartTime().getMinute());
+            java.lang.System.out.printf(format, "Starttijd: ", task.getStartTime().format(formatter));
         }
 
         if (task.getEndTime() != null) {
-            java.lang.System.out.printf(format, "Eindtijd: ",
-                    task.getEndTime().getYear() + "-"
-                            +task.getEndTime().getMonthValue() + "-"
-                            +task.getEndTime().getDayOfMonth() + " "
-                            +task.getEndTime().getHour() + ":"
-                            +task.getEndTime().getMinute());
+            java.lang.System.out.printf(format, "Eindtijd: ", task.getEndTime().format(formatter));
         }
 
         java.lang.System.out.println("Afhankelijk van:");
@@ -387,7 +418,7 @@ public class CommandLineInterface implements UserInterface {
 
     private void checkCancel(String str) throws CancelException{
         if(Command.checkCancel(str)){
-            throw new CancelException("Cancel nu!");
+            throw new CancelException("Canceled");
         }
     }
 
