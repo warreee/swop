@@ -474,7 +474,7 @@ public class Task {
      */
     public boolean isOverTime() {
         double percent = getOverTimePercentage();
-        return percent <= getAcceptableDeviation();
+        return !(percent <= getAcceptableDeviation());
     }
 
     /**
