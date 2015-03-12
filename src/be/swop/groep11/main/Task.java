@@ -466,10 +466,10 @@ public class Task {
     }
 
     /**
-     * Controleert of deze taak over tijd is.
-     * @return true als ...
+     * Controleert of deze taak momenteel over tijd is ten opzichte van de huidige tijd.
+     * @param currentTime De huidige tijd
      */
-    public boolean isOverTime() {
+    public boolean isOverTime(LocalDateTime currentTime) {
         return false; // TODO
     }
 
