@@ -122,9 +122,25 @@ public class InputReader  {
 
             }
         }
-
-
     }
+
+    private ProjectStatus stringToStatus(String strStatus) throws IllegalArgumentException{
+
+        ProjectStatus result = null;
+
+        try {
+            for (ProjectStatus status : ProjectStatus.values()){
+                if (strStatus.equalsIgnoreCase(status.toString())){
+                    result = status;
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return result;
+    }
+
 
     private LocalDateTime parseTime(String date){
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
