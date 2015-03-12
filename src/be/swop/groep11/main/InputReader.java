@@ -28,7 +28,7 @@ public class InputReader  {
     System system;
     ProjectRepository projectRepository;
     ArrayList<Project> projectList = new ArrayList<>();
-    ArrayList<Task> taskList;
+    ArrayList<Task> taskList = new ArrayList<>();
 
     public InputReader(UserInterface ui, ProjectRepository projectRepository) {
         this.ui = ui;
@@ -77,8 +77,8 @@ public class InputReader  {
                 for (int i = 0; i < subList.size(); i++) {
                     Map<String, String> mapTask = (Map<String, String>) subList.get(i);
                     Project projectX = projectList.get(Integer.valueOf(mapTask.get("project")));
-                    Task taskX = createTaskObject(mapTask, projectX);
-                    addOtherDetails(mapTask, taskX);
+                    addTaskToProject(mapTask, projectX); //De taak wordt in project aangemaakt
+                    addOtherDetails(mapTask, projectX.getTasks().get(i));
 
                 }
             }
@@ -95,7 +95,13 @@ public class InputReader  {
     }
 
     private void addOtherDetails(Map<String, String> mapTask, Task task) {
-
+        for (String property : mapTask.keySet()){
+            switch (property){
+                case "alternativeFor" :
+                    int alternativeTask = Integer.valueOf(mapTask.get("alternativeFor"));
+                    taskList.get(alternativeTask).setAlternativeTask(task);
+            }
+        }
 
 
     }
@@ -118,7 +124,7 @@ public class InputReader  {
 
     }
 
-    private Task createTaskObject(Map<String, String> propertiesList, Project project) {
+    private Task addTaskToProject(Map<String, String> propertiesList, Project project) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         try {

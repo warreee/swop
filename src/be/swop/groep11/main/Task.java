@@ -365,9 +365,9 @@ public class Task {
      * Zorgt ervoor dat de dependencies van deze taak overgebracht worden naar de alternatieve taak.
      * @throws java.lang.Exception alternativeTask kan niet als alternatieve taak voor deze taak gezet worden.
      */
-    public void setAlternativeTask(Task alternativeTask) throws Exception {
+    public void setAlternativeTask(Task alternativeTask) throws IllegalArgumentException {
         if (! canSetAlternativeTask(this, alternativeTask))
-            throw new Exception("Kan de alternatieve taak niet wijzigen");
+            throw new IllegalArgumentException("Kan de alternatieve taak niet wijzigen");
         for (Task task : getDependentTasks()) {
             for (DependencyConstraint dependencyConstraint : task.getDependencyConstraints()) {
                 if (dependencyConstraint.getDependingOn() == this ) {
