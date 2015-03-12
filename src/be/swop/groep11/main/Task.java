@@ -216,20 +216,12 @@ public class Task {
      *                  en de gegeven endTime niet null is en de huidige endTime
      */
     public boolean canHaveAsEndTime(LocalDateTime endTime) {
-        if(this.getStatus() != TaskStatus.AVAILABLE){
+        if(this.getStatus() != TaskStatus.AVAILABLE || endTime == null || !hasStartTime()){
             return false;
         }
-        if(!hasStartTime()){
-            return false;
-        }
-        if(endTime != null){
-            return startTime.isBefore(endTime);
-        }
-        Set<Task> tasks = getDependingOnTasks();
-        // TODO:
-        for()
-        assert false;
-        return false; // The code shouldn't get here.
+        // We moeten hier niet meer over alle dependingOn taken gaan aangezien we een starttijd vereisen.
+        // deze stattijd heeft dit al gecheckt.
+        return true;
     }
 
     /**
