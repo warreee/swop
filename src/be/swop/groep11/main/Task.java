@@ -220,7 +220,7 @@ public class Task {
      *                  nog geen associatie bestaat tussen het project en een taak met hetzelfde taskID als deze taak.
      */
     public boolean canHaveAsProject(Project project) {
-        return project != null && project.getProjectStatus() != ProjectStatus.FINISHED;
+        return project != null;
     }
 
     /**
@@ -342,6 +342,18 @@ public class Task {
     public static boolean canSetAlternativeTask(Task task, Task alternativeTask) {
         return task != null
                 && ( (task.getStatus() == TaskStatus.FAILED && task != alternativeTask) || (alternativeTask == null) );
+    }
+
+    /**
+     * Controleert of deze taak geëindigd is of de eventuele alternatieve taak geëindigd is.
+     * @return true als (deze taak is geëindigd) of (alternatieve taak != null en alternatieve taak is geëindigd)
+     */
+    public boolean getAlternativeFinished() {
+        if (this.getStatus() == TaskStatus.FINISHED)
+            return true;
+        if (this.getAlternativeTask() != null)
+            return getAlternativeTask().getAlternativeFinished();
+        return false;
     }
 
     public static enum FinishedStatus {

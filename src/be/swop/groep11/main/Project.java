@@ -31,15 +31,10 @@ public class Project {
      *                      | !isValidProjectID(projectID)
      */
     public Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, User creator) throws IllegalArgumentException{
-        this(name, description, creationTime, dueTime, creator, ProjectStatus.ONGOING);
-    }
-
-    private Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, User creator, ProjectStatus projectStatus) throws IllegalArgumentException{
         setProjectName(name);
         setCreationAndDueTime(creationTime, dueTime);
         setCreator(creator);
         setDescription(description);
-        setProjectStatus(projectStatus);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,15 +102,23 @@ public class Project {
     private LocalDateTime creationTime;
     private LocalDateTime dueTime;
 
+    /**
+     * Geeft de status van dit project: ONGOING of FINISHED.
+     * Een project is beëindigd als alle taken beëindigd zijn (ook beëindigd als alternatieve taak beëindigd is)
+     * en het project minstens 1 taak heeft.
+     * @return true als alle taken beëindigd zijn
+     */
     public ProjectStatus getProjectStatus() {
-        return this.projectStatus;
+        if (getTasks().size() == 0) {
+            return ProjectStatus.ONGOING;
+        }
+        for (Task task : this.getTasks()) {
+            if (! task.getAlternativeFinished()) {
+                return ProjectStatus.ONGOING;
+            }
+        }
+        return ProjectStatus.FINISHED;
     }
-
-    private void setProjectStatus(ProjectStatus projectStatus) {
-        this.projectStatus = projectStatus;
-    }
-
-    private ProjectStatus projectStatus;
 
     /**
      * @return Een ImmutableList die alle taken bevat. Niet persee in volgorde van toevoegen.
@@ -144,20 +147,6 @@ public class Project {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////METHODES//////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Probeert om dit project te beëindigen.
-     */
-    public void finish() {
-        // TODO: exception gooien als het niet kan gefinished worden?
-        for (Task t : tasks) {
-            if (t.getStatus().equals(TaskStatus.AVAILABLE) || t.getStatus().equals(TaskStatus.UNAVAILABLE)) {
-                // Er is een taak die nog uitgevoerd moet worden. De projectStatus kan dus niet finished zijn.
-                return;
-            }
-        }
-        setProjectStatus(ProjectStatus.FINISHED);
-    }
 
     /**
      *
