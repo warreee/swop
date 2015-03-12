@@ -15,7 +15,7 @@ public class TaskTest {
 
     @Before
     public void setUp() throws Exception {
-        be.swop.groep11.main.System system = new be.swop.groep11.main.System();
+        be.swop.groep11.main.System system = new be.swop.groep11.main.System(LocalDateTime.of(2015, 3, 8, 16, 0));
         ProjectRepository repo = new ProjectRepository(system);
         project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
@@ -189,6 +189,12 @@ public class TaskTest {
         task2.setEndTime(LocalDateTime.of(2015, 3, 8, 12, 0));
         task2.setNewStatus(TaskStatus.FINISHED);
         assertTrue(task1.getAlternativeFinished());
+    }
+
+    @Test
+    public void getOverTimePercentageTest() throws Exception {
+        assertEquals(task1.getOverTimePercentage(), 0.0, 1E-14);
+        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
     }
 
 }
