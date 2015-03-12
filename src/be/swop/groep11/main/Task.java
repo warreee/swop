@@ -450,6 +450,14 @@ public class Task {
     }
 
     /**
+     * Controleert of deze taak over tijd is.
+     * @return true als ...
+     */
+    public boolean isOverTime() {
+        return false; // TODO
+    }
+
+    /**
      * Maakt de afhankelijke taken (if any) van deze taak beschikbaar.
      */
     private void makeDependentTasksAvailable() {

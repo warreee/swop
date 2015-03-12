@@ -5,13 +5,13 @@ import java.time.LocalDateTime;
 /**
  * Created by Ronald on 7/03/2015.
  */
-public class TaskMan {
+public class System {
 
     /**
      * Initialiseren van TaskMan men huidige systeem tijd (machine)
      * alsook een nieuwe ProjectRepository.
      */
-    public TaskMan(){
+    public System(){
         this(LocalDateTime.now());
     }
     /**
@@ -22,7 +22,7 @@ public class TaskMan {
      *           | De gegeven systeemtijd is niet geldig.
      *           | !canHaveAsSystemTime(systemTime)
      */
-    public TaskMan(LocalDateTime currentSystemTime) throws IllegalArgumentException {
+    public System(LocalDateTime currentSystemTime) throws IllegalArgumentException {
         this.projectRepository = new ProjectRepository();
         setCurrentSystemTime(currentSystemTime);
     }
