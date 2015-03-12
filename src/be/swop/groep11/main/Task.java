@@ -13,6 +13,7 @@ import java.util.Set;
  */
 public class Task {
 
+    //TODO: methodes isOverTime en getOverTimePercentage en isUnacceptablyOverTime
     /**
      * Constructor om een nieuwe taak te maken.
      *
@@ -185,18 +186,25 @@ public class Task {
      *
      */
     public boolean canHaveAsStartTime(LocalDateTime startTime) {
-        boolean result = false;
         if(this.getStatus() != TaskStatus.AVAILABLE){
-            result = false;
-        }else if(startTime != null && hasEndTime()){
-            result = startTime.isBefore(endTime);
-        } else if(startTime != null && !hasEndTime()){
-            result = true;
+            return false;
         }
-        return result;
+        if(startTime == null) {
+            return false;
+        }
+        if(hasEndTime() && startTime.isAfter(endTime)){
+            return false;
+        }
+        Set<Task> tasks = getDependingOnTasks();
+        for(Task task: tasks){
+            if(startTime.isBefore(task.getEndTime())){
+                return false; // De gegeven starttijd ligt voor een eindtijd van een
+            }
+        }
+        return true;
     }
 
-    //TODO setEndTime & setStartTime tests
+    //TODO setEndTimetest
 
     /**
      * Controleer of de gegeven eind tijd een geldig tijdstip is voor deze taak..
@@ -207,17 +215,21 @@ public class Task {
      *                  Waar indien de status van deze taak AVAILABLE is en een huidige starttijd heeft,
      *                  en de gegeven endTime niet null is en de huidige endTime
      */
-    public boolean canHaveAsEndTime(LocalDateTime endTime /*, LocalDateTime systemTime */) {
-        boolean result = false;
+    public boolean canHaveAsEndTime(LocalDateTime endTime) {
         if(this.getStatus() != TaskStatus.AVAILABLE){
-            result = false;
-        }else if(!hasStartTime()){
-            result = false;
-        } else if(endTime != null){
-            result = startTime.isBefore(endTime);
+            return false;
         }
-
-        return result;
+        if(!hasStartTime()){
+            return false;
+        }
+        if(endTime != null){
+            return startTime.isBefore(endTime);
+        }
+        Set<Task> tasks = getDependingOnTasks();
+        // TODO:
+        for()
+        assert false;
+        return false; // The code shouldn't get here.
     }
 
     /**
