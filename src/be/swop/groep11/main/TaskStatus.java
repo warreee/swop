@@ -38,51 +38,7 @@ public enum TaskStatus {
                 return checkAvailable(newStatus, task);
 
             case UNAVAILABLE:
-                if (newStatus == UNAVAILABLE) {
-                    for (Task dependingOn : task.getDependingOnTasks()) {
-                        Task t = dependingOn;
-
-                        while(true){
-                            if(t.getStatus() == AVAILABLE){
-                                return true; // Als er een taak is die nog bezig is, dan mag het nog.
-                            }
-                            if(t.getStatus() == UNAVAILABLE){
-                                return true; // Een afhankelijke taak is nog niet klaar, dan deze zeker niet.
-                            }
-                            if(t.getStatus() == FINISHED){
-                                break;
-                            }
-                            if(t.getStatus() == FAILED){
-                                t = t.getAlternativeTask();
-                                if(t == null){
-                                    return true; // Voor een gefaalde taak is geen alternatieve taak ingesteld.
-                                }
-                            }
-                        }
-                    }
-                    return false;
-                }
-
-                if (newStatus == AVAILABLE){
-
-                    for (Task dependingOn : task.getDependingOnTasks()) {
-                        Task t = dependingOn;
-                        while(true){
-                            if(t.getStatus() == FINISHED){
-                                break;
-                            } else if(t.getStatus() == FAILED){
-                                t = t.getAlternativeTask();
-                                if(t == null){
-                                    return false; // Voor een gefaalde taak is geen alternatieve taak ingesteld.
-                                }
-                            } else {
-                                return false; // Als de status van t niet FAILED of FINISHED is, mag er niet worden overgegaan.
-                            }
-                        }
-                    }
-                    return true;
-                }
-                return false; // De enige mogelijke overgang is UNAVAILABLE -> AVAILABLE || UNAVAILABLE -> UNAVAILABLE
+                return checkUnavailable(newStatus, task);
             case FINISHED:
                 return newStatus == FINISHED;
             case FAILED:
@@ -91,6 +47,68 @@ public enum TaskStatus {
         return false;
     }
 
+    /**
+     * Controleer de overgang van UNVAILABLE -> *
+     *
+     * @param newStatus
+     * @param task
+     * @return true als het mag, anders false.
+     */
+    private static boolean checkUnavailable(TaskStatus newStatus, Task task) {
+        if (newStatus == UNAVAILABLE) {
+            for (Task dependingOn : task.getDependingOnTasks()) {
+                Task t = dependingOn;
+
+                while(true){
+                    if(t.getStatus() == AVAILABLE){
+                        return true; // Als er een taak is die nog bezig is, dan mag het nog.
+                    }
+                    if(t.getStatus() == UNAVAILABLE){
+                        return true; // Een afhankelijke taak is nog niet klaar, dan deze zeker niet.
+                    }
+                    if(t.getStatus() == FINISHED){
+                        break;
+                    }
+                    if(t.getStatus() == FAILED){
+                        t = t.getAlternativeTask();
+                        if(t == null){
+                            return true; // Voor een gefaalde taak is geen alternatieve taak ingesteld.
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        if (newStatus == AVAILABLE){
+
+            for (Task dependingOn : task.getDependingOnTasks()) {
+                Task t = dependingOn;
+                while(true){
+                    if(t.getStatus() == FINISHED){
+                        break;
+                    } else if(t.getStatus() == FAILED){
+                        t = t.getAlternativeTask();
+                        if(t == null){
+                            return false; // Voor een gefaalde taak is geen alternatieve taak ingesteld.
+                        }
+                    } else {
+                        return false; // Als de status van t niet FAILED of FINISHED is, mag er niet worden overgegaan.
+                    }
+                }
+            }
+            return true;
+        }
+        return false; // De enige mogelijke overgang is UNAVAILABLE -> AVAILABLE || UNAVAILABLE -> UNAVAILABLE
+    }
+
+    /**
+     * Controleert de overgang Available -> *
+     *
+     * @param newStatus
+     * @param task
+     * @return true als het mag, anders false.
+     */
     private static boolean checkAvailable(TaskStatus newStatus, Task task) {
         if (newStatus == FINISHED || newStatus == FAILED)
             return task.getStartTime() != null && task.getEndTime() != null;
