@@ -4,13 +4,14 @@ import be.swop.groep11.main.Project;
 import be.swop.groep11.main.Task;
 import be.swop.groep11.main.TaskStatus;
 import be.swop.groep11.main.User;
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class TaskStatusTest {

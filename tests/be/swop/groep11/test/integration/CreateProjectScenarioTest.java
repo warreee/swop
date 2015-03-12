@@ -1,6 +1,7 @@
 package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.ProjectRepository;
+import be.swop.groep11.main.System;
 import be.swop.groep11.main.User;
 import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.ui.commands.CancelException;
@@ -20,7 +21,7 @@ public class CreateProjectScenarioTest {
     @Before
     public void setUp() throws Exception {
         now = LocalDateTime.now();
-        projectRepository = new ProjectRepository();
+        projectRepository = new System().getProjectRepository();
         user = new User("Test");
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10),new User("TEST"));
