@@ -38,12 +38,17 @@ public class Project {
         setProjectRepository(repo);
     }
 
+    /**
+     * Geeft naam van het project terug.
+     */
     public String getName() {
         return this.name;
     }
+
     /**
-     * @param name De naam die dit project moet dragen.
-     * @throws IllegalArgumentException Deze exception wordt gegooid als het argument null is.
+     * @param name  De naam die dit project moet dragen.
+     * @throws IllegalArgumentException
+     *              Deze exception wordt gegooid indien !isValidProjectName(name)
      */
     public void setProjectName(String name) throws IllegalArgumentException {
         if(!isValidProjectName(name)){
@@ -56,15 +61,15 @@ public class Project {
 
     /**
      * Geeft de beschrijving terug van dit project.
-     * @return de beschrijving van dit project.
      */
     public String getDescription() {
         return this.description;
     }
 
     /**
-     * @param description De omschrijving die dit project moet dragen.
-     * @throws java.lang.IllegalArgumentException Deze exception wordt gegooid als het argument null is.
+     * @param description   De omschrijving die dit project moet dragen.
+     * @throws IllegalArgumentException
+     *                      Deze exception wordt gegooid indien !isValidDescription(description)
      */
     public void setDescription(String description) throws IllegalArgumentException {
         if(!isValidDescription(description)){
@@ -75,18 +80,27 @@ public class Project {
 
     private String description;
 
+    /**
+     * Geeft de datum van aanmaken terug.
+     */
     public LocalDateTime getCreationTime() {
         return this.creationTime;
     }
+
+    /**
+     * Geeft de door de gebruiker gedefinieerde eind datum terug
+     */
     public LocalDateTime getDueTime() {
         return this.dueTime;
     }
 
     /**
      * Set creationTime en dueTime voor het project
-     * @param creationTime
-     * @param dueTime
+     *
+     * @param creationTime  Het nieuwe aanmaak tijdstip
+     * @param dueTime       De nieuwe eind datum
      * @throws IllegalArgumentException
+     *                      Indien !isValidStartTimeEndTime(creationTime,dueTime)
      */
     public void setCreationAndDueTime(LocalDateTime creationTime,LocalDateTime dueTime) throws IllegalArgumentException{
         if(!isValidStartTimeEndTime(creationTime,dueTime)){
@@ -101,9 +115,9 @@ public class Project {
 
     /**
      * Geeft de status van dit project: ONGOING of FINISHED.
-     * Een project is beëindigd als alle taken beëindigd zijn (ook beëindigd als alternatieve taak beëindigd is)
+     * Een project is beëindigd indien alle taken beëindigd zijn (ook beëindigd indien alternatieve taak beëindigd is)
      * en het project minstens 1 taak heeft.
-     * @return true als alle taken beëindigd zijn
+     * @return Waar indien als alle taken geëindigd zijn
      */
     public ProjectStatus getProjectStatus() {
         if (getTasks().size() == 0) {
@@ -118,15 +132,25 @@ public class Project {
     }
 
     /**
-     * @return Een ImmutableList die alle taken bevat. Niet persee in volgorde van toevoegen.
+     * @return Een ImmutableList die alle taken bevat.
      */
     public ImmutableList<Task> getTasks() {
         return ImmutableList.copyOf(tasks.iterator());
     }
 
+    /**
+     * Geeft de User terug die dit project heeft aangemaakt.
+     */
     public User getCreator() {
         return this.creator;
     }
+
+    /**
+     * Zet een User als creator van dit project.
+     * @param creator   De nieuwe gebruiker.
+     * @throws IllegalArgumentException
+     *                  Gooi indien !isValidUser(creator)
+     */
     public void setCreator(User creator) throws IllegalArgumentException{
         if(!isValidUser(creator)){
             throw new IllegalArgumentException("Geen geldige user.");
@@ -134,12 +158,38 @@ public class Project {
         this.creator = creator;
     }
 
+    /**
+     * Geeft de ProjectRepository voor dit project.
+     */
     public ProjectRepository getProjectRepository() {
         return projectRepository;
     }
 
-    public void setProjectRepository(ProjectRepository projectRepository) {
+    /**
+     *
+     * @param projectRepository     De nieuwe projectRepository
+     * @throws IllegalArgumentException
+     *                              Throws indien !canHaveAsProjectRepository(projectRepository)
+     */
+    public void setProjectRepository(ProjectRepository projectRepository) throws IllegalArgumentException {
+        if(!canHaveAsProjectRepository(projectRepository)){
+            throw new IllegalArgumentException("Invalid repository.");
+        }
         this.projectRepository = projectRepository;
+    }
+
+    /**
+     * Geeft aan of de gegeven projectRepository een geldig repository is of niet.
+     * @param projectRepository De nieuwe projectRepository
+     * @return                  Waar indien this.projectRepository == null en projectRepository != null
+     */
+    public boolean canHaveAsProjectRepository(ProjectRepository projectRepository){
+        if(this.projectRepository == null){
+            return projectRepository != null;
+        }else if(projectRepository != null){
+            return false;
+        }
+        return false;
     }
 
     private ProjectRepository projectRepository;
@@ -153,23 +203,28 @@ public class Project {
      */
     private ArrayList<Task> tasks = new ArrayList<>();
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////METHODES//////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     /**
-     *
-     * @param projectName
-     * @return Waar indien projectName niet leeg.
+     * Controleer of de gegeven projectNaam een geldige projectNaam is.
+     * @param projectName   een projectNaam
+     * @return              Waar indien projectName niet leeg en niet null.
      */
     public static boolean isValidProjectName(String projectName) {
         return projectName != null && !projectName.isEmpty();
     }
-
+    /**
+     * Controleer of de gegeven description een geldige description is.
+     * @param description   Een description
+     * @return              Waar indien description niet leeg en niet null.
+     */
     public static boolean isValidDescription(String description) {
         return description != null && !description.isEmpty();
     }
 
+    /**
+     * Controleer of de gegeven User een geldige User kan zijn.
+     * @param user  De te controleren User.
+     * @return      Waar indien user geïnitialiseerd.
+     */
     public static boolean isValidUser(User user) {
         return user != null;
     }
@@ -177,8 +232,8 @@ public class Project {
 
     /**
      * @param startTime De starttijd die gecontroleerd moet worden.
-     * @param endTime De eindtijd die gecontroleerd moet worden.
-     * @return false als startTime of endTime null is of als endTime voor startTime ligt.
+     * @param endTime   De eindtijd die gecontroleerd moet worden.
+     * @return          Waar indien startTime, endTime niet null zijn. En bovendien startTime.isBefore(endTime)
      */
     public static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime){
         return startTime !=null && endTime != null && startTime.isBefore(endTime);
@@ -190,8 +245,8 @@ public class Project {
      * @param description           Omschrijving van de taak
      * @param acceptableDeviation   Aanvaardbare afwijking (tijd) in percent
      * @param estimatedDuration     Schatting nodige tijd
-     * @throws java.lang.IllegalArgumentException
-     *                              Ongeldige parameters voor taak
+     * @throws IllegalArgumentException
+     *                              Gooi indien één of meerdere van de parameters niet geldig zijn.
      */
     public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) throws IllegalArgumentException {
         Task task = new Task(description, estimatedDuration, acceptableDeviation, this);
@@ -199,9 +254,9 @@ public class Project {
     }
 
     /**
-     * Controleert of de gegeven taak bij dit project hoort.
-     * @param task De taak die gecontroleert moet worden.
-     * @return true asa dit project deze task bevat, anders false.
+     * Controleer of de gegeven taak bij dit project hoort.
+     * @param task  De taak die gecontroleerd moet worden.
+     * @return      Waar indien dit project de gegeven task bevat.
      */
     public boolean hasTask(Task task){
         return tasks.contains(task);
