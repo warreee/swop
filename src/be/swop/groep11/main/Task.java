@@ -470,11 +470,19 @@ public class Task {
     }
 
     /**
-     * Controleert of deze taak momenteel over tijd is ten opzichte van de huidige tijd.
-     * @param currentTime De huidige tijd
+     * Controleert of deze taak momenteel over tijd is.
      */
-    public boolean isOverTime(LocalDateTime currentTime) {
-        return false; // TODO
+    public boolean isOverTime() {
+        double percent = getOverTimePercentage();
+        return percent <= getAcceptableDeviation();
+    }
+
+    /**
+     * Controleert of deze taak momenteel onacceptable over tijd is. (Meer dan de accepteerbare variatie.)
+     */
+    public boolean isUnacceptablyOverTime(){
+        double percent = getOverTimePercentage();
+        return percent > getAcceptableDeviation();
     }
 
     /**
