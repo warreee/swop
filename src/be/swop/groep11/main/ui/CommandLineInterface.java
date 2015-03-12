@@ -112,7 +112,7 @@ public class CommandLineInterface implements UserInterface {
 
     @Override
     public void printMessage(String message) {
-        System.out.printf("\n" + message + "\n");
+        System.out.printf(message + "\n");
     }
 
     @Override

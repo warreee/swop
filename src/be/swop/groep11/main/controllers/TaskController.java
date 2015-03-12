@@ -43,7 +43,26 @@ public class TaskController {
             Double acceptableDeviation = ui.requestDouble("Aanvaardbare afwijking in procent:") / 100;
             Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf(ui.requestNumber("Geschatte duur in minuten:")).longValue());
 
+            List<Task> tasks = new ArrayList<Task>(project.getTasks());
+            List<Task> selectedTasks = new ArrayList<Task>();
+            while (ui.requestString("Voeg een afhankelijkheid toe? (Y/n)").equals("Y")) {
+                if (tasks.isEmpty()) {
+                    ui.printMessage("Geen taken om toe te voegen...");
+                    break;
+                }
+                else {
+                    ui.printMessage("Opmerking: de nieuwe taak zal van de hieronder gekozen taak afhangen.");
+                    Task task = ui.selectTaskFromList(ImmutableList.copyOf(tasks));
+                    tasks.remove(task);
+                    selectedTasks.add(task);
+                }
+            }
+
             project.addNewTask(description, acceptableDeviation, estimatedDuration);
+            Task task = project.getTasks().get(project.getTasks().size()-1);
+            for (Task dependingOn : selectedTasks) {
+                task.addNewDependencyConstraint(dependingOn);
+            }
             ui.printMessage("Taak toegevoegd");
         }
         catch (IllegalArgumentException e) {
@@ -72,7 +91,7 @@ public class TaskController {
         try {
             LocalDateTime startTime = ui.requestDatum("Starttijd:");
             LocalDateTime endTime = ui.requestDatum("Eindtijd:");
-            String status = ui.requestString("Status:");
+            String status = ui.requestString("Status (FAILED of FINISHED):");
 
             task.setStartTime(startTime);
             task.setEndTime(endTime);

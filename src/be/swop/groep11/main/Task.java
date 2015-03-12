@@ -237,18 +237,14 @@ public class Task {
 
     /**
      * Voegt een dependency constraint toe voor deze taak.
+     * Wijzigt ook de status van deze taak naar UNAVAILABLE indien nodig.
      * @param dependingOn De taak waarvan deze taak moet afhangen
      */
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyConstraints.add(new DependencyConstraint(this, dependingOn));
-    }
-
-    /**
-     * Verwijdert een dependency constraint van deze taak.
-     * @param dependingOn De dependingOn taak van de te verwijderen dependency constraint
-     */
-    public void removeDependencyConstraint(Task dependingOn) {
-        dependencyConstraints.remove(new DependencyConstraint(this, dependingOn));
+        if (TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE,this)) {
+            this.setStatus(TaskStatus.UNAVAILABLE);
+        }
     }
 
     /**
