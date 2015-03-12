@@ -27,14 +27,12 @@ public class InputReader  {
     User user = new User("InputReader");
     TMSystem TMSystem;
     ProjectRepository projectRepository;
-    ImmutableList<Project> projectList = projectRepository.getProjects();
+    ImmutableList<Project> projectList;
     ArrayList<Task> taskList = new ArrayList<>();
 
     public InputReader(ProjectRepository projectRepository) {
-
         this.projectRepository = projectRepository;
-        Map<Integer, Project> projectList = new HashMap<>();
-        Map<Integer, Task> taskList = new HashMap<>();
+        this.projectList = this.projectRepository.getProjects();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -145,7 +143,7 @@ public class InputReader  {
     private LocalDateTime parseTime(String date){
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         try {
-            return LocalDateTime.parse(date);
+            return LocalDateTime.parse(date, dateTimeFormatter);
 
         } catch (DateTimeParseException e) {
             System.out.println(e.getMessage());
