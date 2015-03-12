@@ -93,12 +93,15 @@ public class TaskController {
             LocalDateTime endTime = ui.requestDatum("Eindtijd (of laat leeg om eindtijd niet te wijzigen):");
             String status = ui.requestString("Status: FAILED of FINISHED (of laat leeg om starttijd niet te wijzigen):");
 
-            if (startTime != null)
+            if(startTime != null){
                 task.setStartTime(startTime);
-            if (endTime != null)
-             task.setEndTime(endTime);
-            if (! status.isEmpty())
-                task.setNewStatus(TaskStatus.valueOf(status));
+            }
+            if(task.hasStartTime() && endTime != null){
+                task.setEndTime(endTime);
+            }
+           if(!status.isEmpty()){
+               task.setNewStatus(TaskStatus.valueOf(status));
+           }
             if (startTime == null && endTime == null && status.isEmpty())
                 ui.printMessage("Geen updates gedaan");
             else
