@@ -50,7 +50,7 @@ public class ProjectRepository {
      * @throws IllegalArgumentException De opgegeven parameters voor het project zijn ongeldig.
      */
     public void addNewProject(String name, String description,LocalDateTime creationTime, LocalDateTime duetime, User user) throws IllegalArgumentException{
-        Project proj = new Project(name, description, creationTime, duetime, user);
+        Project proj = new Project(name, description, creationTime, duetime, user, this);
         projects.add(proj);
     }
 
