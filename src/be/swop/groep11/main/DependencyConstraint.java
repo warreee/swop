@@ -7,7 +7,8 @@ import java.util.Set;
  */
 public class DependencyConstraint {
 
-    private final Task task, dependingOn;
+    private final Task task;
+    private Task dependingOn;
 
     /**
      * Maakt een nieuwe dependency constraint aan.
@@ -34,6 +35,13 @@ public class DependencyConstraint {
      */
     public Task getDependingOn() {
         return dependingOn;
+    }
+
+    /**
+     * Zet de depedingOn taak van deze dependency constraint.
+     */
+    public void setDependingOn(Task dependingOn) {
+        this.dependingOn = dependingOn;
     }
 
     /**

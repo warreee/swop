@@ -331,6 +331,9 @@ public class Task {
     private void setStatus(TaskStatus status) throws IllegalArgumentException {
         if (! TaskStatus.isValidNewStatus(status, this))
             throw new IllegalArgumentException("Ongeldige status");
+        if (status == TaskStatus.FINISHED) {
+            this.makeDependentTasksAvailable();
+        }
         this.status = status;
     }
 
@@ -361,11 +364,19 @@ public class Task {
 
     /**
      * Wjizigt de alternatieve taak van deze taak.
+     * Zorgt ervoor dat de dependencies van deze taak overgebracht worden naar de alternatieve taak.
      * @throws java.lang.Exception alternativeTask kan niet als alternatieve taak voor deze taak gezet worden.
      */
     public void setAlternativeTask(Task alternativeTask) throws Exception {
         if (! canSetAlternativeTask(this, alternativeTask))
             throw new Exception("Kan de alternatieve taak niet wijzigen");
+        for (Task task : getDependentTasks()) {
+            for (DependencyConstraint dependencyConstraint : task.getDependencyConstraints()) {
+                if (dependencyConstraint.getDependingOn() == this) {
+                    dependencyConstraint.setDependingOn(alternativeTask);
+                }
+            }
+        }
         this.alternativeTask = alternativeTask;
     }
 
@@ -458,15 +469,14 @@ public class Task {
     }
 
     /**
-     * Maakt de afhankelijke taken (if any) van deze taak beschikbaar.
+     * Maakt de afhankelijke taken (if any) van deze taak AVAILABLE,
+     * indien dat mogelijk is.
+     * Als deze taak een alternatieve taak voor een andere taak is.
      */
     private void makeDependentTasksAvailable() {
         for (Task task : this.getDependentTasks()) {
-            try {
+            if (TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task)) {
                 task.setStatus(TaskStatus.AVAILABLE);
-            } catch (IllegalArgumentException e){
-                // Blijkbaar kon dit nog niet.
-                // Negeer dit dus.
             }
         }
     }
