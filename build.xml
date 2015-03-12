@@ -10,6 +10,7 @@
     <property name="base-src" location="src"/>
     <property name="src-dir" location="src/be/swop/groep11/main"/>
     <property name="test-dir" location="tests/be/swop/groep11/test"/>
+    <property name="input-dir" location="input"/>
 
     <property name="test-report-dir" location="testreport" />
 
@@ -86,6 +87,9 @@
         </copy>
         <copy todir="${handin-dir}/docs">
             <fileset dir="${doc-dir}"/>
+        </copy>
+        <copy todir="${handin-dir}/input">
+            <fileset dir="${input-dir}"/>
         </copy>
         <copy todir="${handin-dir}/diagrams">
             <fileset dir="${uml-dir}"/>
