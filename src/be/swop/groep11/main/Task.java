@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ import java.util.Set;
  */
 public class Task {
 
+    //TODO: methodes isOverTime en getOverTimePercentage en isUnacceptablyOverTime
     /**
      * Constructor om een nieuwe taak te maken.
      *
@@ -185,18 +187,24 @@ public class Task {
      *
      */
     public boolean canHaveAsStartTime(LocalDateTime startTime) {
-        boolean result = false;
         if(this.getStatus() != TaskStatus.AVAILABLE){
-            result = false;
-        }else if(startTime != null && hasEndTime()){
-            result = startTime.isBefore(endTime);
-        } else if(startTime != null && !hasEndTime()){
-            result = true;
+            return false;
         }
-        return result;
+        if(startTime == null) {
+            return false;
+        }
+        if(hasEndTime() && startTime.isAfter(endTime)){
+            return false;
+        }
+        Set<Task> tasks = getDependingOnTasks();
+        for(Task task: tasks){
+            if(startTime.isBefore(task.getEndTime())){
+                return false; // De gegeven starttijd ligt voor een eindtijd van een
+            }
+        }
+        return true;
     }
 
-    //TODO setEndTime & setStartTime tests
 
     /**
      * Controleer of de gegeven eind tijd een geldig tijdstip is voor deze taak..
@@ -207,17 +215,13 @@ public class Task {
      *                  Waar indien de status van deze taak AVAILABLE is en een huidige starttijd heeft,
      *                  en de gegeven endTime niet null is en de huidige endTime
      */
-    public boolean canHaveAsEndTime(LocalDateTime endTime /*, LocalDateTime systemTime */) {
-        boolean result = false;
-        if(this.getStatus() != TaskStatus.AVAILABLE){
-            result = false;
-        }else if(!hasStartTime()){
-            result = false;
-        } else if(endTime != null){
-            result = startTime.isBefore(endTime);
+    public boolean canHaveAsEndTime(LocalDateTime endTime) {
+        if(this.getStatus() != TaskStatus.AVAILABLE || endTime == null || !hasStartTime()){
+            return false;
         }
-
-        return result;
+        // We moeten hier niet meer over alle dependingOn taken gaan aangezien we een starttijd vereisen.
+        // deze stattijd heeft dit al gecheckt.
+        return true;
     }
 
     /**
@@ -466,11 +470,43 @@ public class Task {
     }
 
     /**
-     * Controleert of deze taak momenteel over tijd is ten opzichte van de huidige tijd.
-     * @param currentTime De huidige tijd
+     * Controleert of deze taak momenteel over tijd is.
      */
-    public boolean isOverTime(LocalDateTime currentTime) {
-        return false; // TODO
+    public boolean isOverTime() {
+        double percent = getOverTimePercentage();
+        return percent <= getAcceptableDeviation();
+    }
+
+    /**
+     * Controleert of deze taak momenteel onacceptable over tijd is. (Meer dan de accepteerbare variatie.)
+     */
+    public boolean isUnacceptablyOverTime(){
+        double percent = getOverTimePercentage();
+        return percent > getAcceptableDeviation();
+    }
+
+    /**
+     * Berekent hoeveel een project overtijd is zonder rekening te houden met de acceptable deviation.
+     * @return 0.1 staat voor 10%, 0.2 staat voor 20%.
+     */
+    public double getOverTimePercentage(){
+        LocalDateTime systemTime = getProject().getProjectRepository().getSystem().getCurrentSystemTime();
+        if(!hasStartTime()){
+            return 0.0; // Project is nog niet gestart. Dus over time is 0.
+        }
+        double minutes;
+        if(hasStartTime() && hasEndTime()) {
+            minutes = startTime.until(endTime, ChronoUnit.MINUTES);
+        } else {
+            minutes = startTime.until(systemTime, ChronoUnit.MINUTES);
+        }
+        double dur = getEstimatedDuration().toMinutes();
+        double percent = (minutes / dur) - 1.0;
+        if(percent <= 0.0){
+            return 0.0;
+        } else {
+            return percent;
+        }
     }
 
     /**
