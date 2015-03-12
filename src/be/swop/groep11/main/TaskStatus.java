@@ -31,9 +31,8 @@ public enum TaskStatus {
      */
     public static boolean isValidNewStatus(TaskStatus newStatus, Task task) {
         TaskStatus currentStatus = task.getStatus();
-        // TODO mag deze eerste test hier wel?
         if (currentStatus == null)
-            return true;
+            return newStatus == AVAILABLE; // status van nieuwe taak = AVAILABLE
         switch (currentStatus) {
             case AVAILABLE:
                 if (newStatus == FINISHED || newStatus == FAILED)
