@@ -145,12 +145,14 @@ public class Task {
         return startTime;
     }
 
+    //TODO Geen start en eind tijd terwijl TaakStatus Unavailable.
+
     /**
      * Wijzigt de starttijd van de taak.
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
      */
     public void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
-        if (! isValidStartTime(startTime, getEndTime()))
+        if (! canHaveAsStartTime(startTime, getEndTime()))
             throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
     }
@@ -169,7 +171,7 @@ public class Task {
      * @throws java.lang.IllegalArgumentException De eindtijd is niet geldig.
      */
     public void setEndTime(LocalDateTime endTime /*, LocalDateTime systemTime */) throws IllegalArgumentException {
-        if (! isValidEndTime(getStartTime(), endTime /*, systemTime */))
+        if (! canHaveAsEndTime(getStartTime(), endTime /*, systemTime */))
             throw new IllegalArgumentException("Ongeldige eindtijd");
         this.endTime = endTime;
         /* if (getStatus() != TaskStatus.FINISHED && status != TaskStatus.FINISHED)
@@ -182,9 +184,20 @@ public class Task {
      * @param endTime De eindttijd
      * @return true alss startTime null is, of endTime null is, of startTime voor endTime ligt
      */
-    public static boolean isValidStartTime(LocalDateTime startTime, LocalDateTime endTime) {
-        return startTime == null || endTime == null || startTime.isBefore(endTime);
+    public boolean canHaveAsStartTime(LocalDateTime startTime, LocalDateTime endTime) {
+        boolean result = false;
+        if(this.getStatus() != TaskStatus.AVAILABLE){
+            result = false;
+        }else if(this.startTime == null && endTime != null){
+            result = startTime != null && startTime.isBefore(endTime);
+        } else if(this.startTime == null && endTime == null){
+            result = startTime != null;
+        }
+        return result;
+        //TODO fix documentatie
+//        return startTime == null || endTime == null || startTime.isBefore(endTime);
     }
+    //TODO setEndTime & setStartTime tests
 
     /**
      * Controleert of een starttijd geldig is voor een bepaalde eindtijd en de huidige systeemtijd.
@@ -194,9 +207,20 @@ public class Task {
      *    <br> true als startTime == null of startTime ligt voor endTime,
      *    <br> false in andere gevallen
      */
-    public static boolean isValidEndTime(LocalDateTime startTime, LocalDateTime endTime /*, LocalDateTime systemTime */) {
-        return endTime == null
-                || ( (startTime == null || startTime.isBefore(endTime)) /* && (endTime.isBefore(systemTime)) */ );
+    public boolean canHaveAsEndTime(LocalDateTime startTime, LocalDateTime endTime /*, LocalDateTime systemTime */) {
+        boolean result = false;
+        if(this.getStatus() != TaskStatus.AVAILABLE){
+            result = false;
+        }else if(this.startTime == null){
+            result = false;
+        } else if(this.endTime == null && endTime != null){
+            result = startTime.isBefore(endTime);
+        }
+
+        return result;
+
+//        return endTime == null
+//                || ( (startTime == null || startTime.isBefore(endTime)) /* && (endTime.isBefore(systemTime)) */ );
     }
 
     /**
@@ -216,8 +240,7 @@ public class Task {
      * Controleert of een gegeven project een geldig project is voor deze taak.
      *
      * @param project   Het gegeven project
-     * @return          Waar als het project geldig is (i.e. als het project nog niet geëindigd is) en
-     *                  nog geen associatie bestaat tussen het project en een taak met hetzelfde taskID als deze taak.
+     * @return          Waar als er nog geen associatie bestaat tussen het project deze taak.
      */
     public boolean canHaveAsProject(Project project) {
         return project != null;
