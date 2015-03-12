@@ -175,6 +175,8 @@ public class TaskTest {
         task1.setNewStatus(TaskStatus.FAILED);
         task1.setAlternativeTask(task2);
         assertFalse(task1.getAlternativeFinished());
+        task2.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
+        task2.setEndTime(LocalDateTime.of(2015, 3, 8, 12, 0));
         task2.setNewStatus(TaskStatus.FINISHED);
         assertTrue(task1.getAlternativeFinished());
     }
