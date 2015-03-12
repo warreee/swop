@@ -141,17 +141,12 @@ public class InputReader  {
     }
 
     private void addTaskToProject(Map<String, String> propertiesList, Project project) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        try {
             String description = propertiesList.get("description");
             Duration duration = Duration.ofMinutes(Long.parseLong(propertiesList.get("estimatedDuration")));
             Double acceptableDeviation = Double.valueOf(propertiesList.get("acceptableDeviation"));
             project.addNewTask(description, acceptableDeviation, duration);
 
-        } catch (DateTimeParseException e) {
-            System.out.println(e.getMessage());
-        }
     }
 
 
