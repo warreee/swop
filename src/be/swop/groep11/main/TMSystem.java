@@ -3,7 +3,7 @@ package be.swop.groep11.main;
 import java.time.LocalDateTime;
 
 /**
- * Created by Ronald on 7/03/2015.
+ * TMSystem bevat de systeemtijd en houdt een project repository bij.
  */
 public class TMSystem {
 

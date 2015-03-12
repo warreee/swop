@@ -1,7 +1,7 @@
 package be.swop.groep11.main;
 
 /**
- * Created by warreee on 23/02/15.
+ * Stelt de status van een project voor.
  */
 public enum ProjectStatus {
     ONGOING, FINISHED

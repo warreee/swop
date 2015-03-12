@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * Created by warreee on 23/02/15.
+ * Stelt een project voor met een naam, beschrijving, creation time, due time en een creator.
+ * Een project heeft een status, bevat een lijst van taken en behoort tot een project repository.
  */
 public class Project {
 

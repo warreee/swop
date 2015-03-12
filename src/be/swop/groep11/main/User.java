@@ -1,7 +1,7 @@
 package be.swop.groep11.main;
 
 /**
- * Created by warreee on 23/02/15.
+ * Stelt een gebruiker met een naam voor.
  */
 public class User {
     private String name;
