@@ -216,12 +216,15 @@ public class Task {
      *                  en de gegeven endTime niet null is en de huidige endTime
      */
     public boolean canHaveAsEndTime(LocalDateTime endTime) {
-        if(this.getStatus() != TaskStatus.AVAILABLE || endTime == null || !hasStartTime()){
-            return false;
+        boolean result = false;
+        if(this.getStatus() != TaskStatus.AVAILABLE){
+            result = false;
+        }else if(!hasStartTime()){
+            result = false;
+        } else if(endTime != null){
+            result = startTime.isBefore(endTime);
         }
-        // We moeten hier niet meer over alle dependingOn taken gaan aangezien we een starttijd vereisen.
-        // deze stattijd heeft dit al gecheckt.
-        return true;
+        return result;
     }
 
     /**
@@ -474,7 +477,7 @@ public class Task {
      */
     public boolean isOverTime() {
         double percent = getOverTimePercentage();
-        return percent <= getAcceptableDeviation();
+        return !(percent <= getAcceptableDeviation());
     }
 
     /**
