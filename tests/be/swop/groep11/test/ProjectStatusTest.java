@@ -17,8 +17,7 @@ public class ProjectStatusTest {
     private ProjectRepository projectRepository;
     @Before
     public void setUp() throws Exception {
-        System system = new System();
-        projectRepository = system.getProjectRepository();
+        projectRepository = new System().getProjectRepository();
     }
 
 

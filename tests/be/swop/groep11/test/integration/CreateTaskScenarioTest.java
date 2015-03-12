@@ -2,6 +2,7 @@ package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
+import be.swop.groep11.main.System;
 import be.swop.groep11.main.User;
 import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.ui.EmptyListException;
@@ -21,7 +22,7 @@ public class CreateTaskScenarioTest {
 
     @Before
     public void setUp() throws Exception {
-        repository = new ProjectRepository();
+        repository = new System().getProjectRepository();
         now = LocalDateTime.now();
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10),new User("TEST"));
 
