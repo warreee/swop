@@ -3,6 +3,7 @@ package be.swop.groep11.main;
 
 
 import be.swop.groep11.main.ui.UserInterface;
+import com.google.common.collect.ImmutableList;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -26,7 +27,7 @@ public class InputReader  {
     User user = new User("InputReader");
     TMSystem TMSystem;
     ProjectRepository projectRepository;
-    ArrayList<Project> projectList = new ArrayList<>();
+    ImmutableList<Project> projectList = projectRepository.getProjects();
     ArrayList<Task> taskList = new ArrayList<>();
 
     public InputReader(ProjectRepository projectRepository) {
@@ -76,7 +77,7 @@ public class InputReader  {
                     Map<String, String> mapTask = (Map<String, String>) subList.get(i);
                     Project projectX = projectList.get(Integer.valueOf(mapTask.get("project")));
                     addTaskToProject(mapTask, projectX); //De taak wordt in project aangemaakt
-                    addOtherDetails(mapTask, projectX.getTasks().get(i));
+                    addOtherDetails(mapTask, projectX.getTasks().get(projectX.getTasks().size() - 1)); //het laatst toegevoegde
 
                 }
             }
@@ -99,46 +100,77 @@ public class InputReader  {
                             task.addNewDependencyConstraint(taskList.get(prt));
                         }
                     }
+                    break;
+                /*
+                Status kan moeilijk geupdated worden als de start en eindtijd nog niet gezet zijn
+                 */
+                case "startTime" :
+                    if (mapTask.get("startTime").length() > 0) {
+                        LocalDateTime startTime = parseTime(mapTask.get("startTime"));
+                        task.setStartTime(startTime);
+                    }
+                    break;
+
+                case "endTime" :
+                    if (mapTask.get("startTime").length() > 0) {
+                        LocalDateTime endTime = parseTime(mapTask.get("endTime"));
+                        task.setStartTime(endTime);
+                    }
+                    break;
+
+                case "status" :
+
             }
         }
-
-
     }
 
-    private void addProject(Map<String, String> propertiesList) {
+    private ProjectStatus stringToStatus(String strStatus) throws IllegalArgumentException{
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        ProjectStatus result = null;
 
         try {
-            String name = propertiesList.get("name");
-            String description = propertiesList.get("description");
-            LocalDateTime creationTime = LocalDateTime.parse(propertiesList.get("creationTime"), formatter);
-            LocalDateTime dueTime = LocalDateTime.parse(propertiesList.get("dueTime"), formatter);
-
-            projectRepository.addNewProject(name, description, creationTime, dueTime, user);
-
-        } catch (DateTimeParseException e) {
+            for (ProjectStatus status : ProjectStatus.values()){
+                if (strStatus.equalsIgnoreCase(status.toString())){
+                    result = status;
+                }
+            }
+        } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-
         }
 
-
-
+        return result;
     }
 
-    private Task addTaskToProject(Map<String, String> propertiesList, Project project) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+    private LocalDateTime parseTime(String date){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         try {
-            String description = propertiesList.get("description");
-            Duration duration = Duration.ofMinutes(Long.parseLong(propertiesList.get("estimatedDuration")));
-            Double acceptableDeviation = Double.valueOf(propertiesList.get("acceptableDeviation"));
-            return new Task(description, duration, acceptableDeviation, project);
+            return LocalDateTime.parse(date);
 
         } catch (DateTimeParseException e) {
             System.out.println(e.getMessage());
             return null;
         }
+    }
+
+    private void addProject(Map<String, String> propertiesList) {
+
+            String name = propertiesList.get("name");
+            String description = propertiesList.get("description");
+            LocalDateTime creationTime = parseTime(propertiesList.get("creationTime"));
+            LocalDateTime dueTime = parseTime(propertiesList.get("dueTime"));
+
+            projectRepository.addNewProject(name, description, creationTime, dueTime, user);
+
+    }
+
+    private void addTaskToProject(Map<String, String> propertiesList, Project project) {
+
+            String description = propertiesList.get("description");
+            Duration duration = Duration.ofMinutes(Long.parseLong(propertiesList.get("estimatedDuration")));
+            Double acceptableDeviation = Double.valueOf(propertiesList.get("acceptableDeviation"));
+            project.addNewTask(description, acceptableDeviation, duration);
+
     }
 
 

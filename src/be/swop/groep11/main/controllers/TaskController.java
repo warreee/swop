@@ -91,7 +91,7 @@ public class TaskController {
         try {
             LocalDateTime startTime = ui.requestDatum("Starttijd (of laat leeg om starttijd niet te wijzigen):");
             LocalDateTime endTime = ui.requestDatum("Eindtijd (of laat leeg om eindtijd niet te wijzigen):");
-            String status = ui.requestString("Status: FAILED of FINISHED (of laat leeg om starttijd niet te wijzigen):");
+            String status = ui.requestString("Status: FAILED of FINISHED (of laat leeg om status niet te wijzigen):");
 
             if(startTime != null){
                 task.setStartTime(startTime);

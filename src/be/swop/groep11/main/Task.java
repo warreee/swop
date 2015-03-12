@@ -27,7 +27,7 @@ public class Task {
      *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project)throws IllegalArgumentException {
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project) throws IllegalArgumentException {
         if (! canHaveAsProject(project)) {
             throw new IllegalArgumentException("Ongeldig project");
         }
@@ -167,6 +167,9 @@ public class Task {
 
     /**
      * Wijzigt de eindtijd van de taak.
+     * Dit kan alleen gezet worden als er al een starttijd gezet.
+     * De eindtijd moet uiteraard na de starttijd liggen.
+     *
      * @param endTime De nieuwe eindtijd van deze taak
      * @throws java.lang.IllegalArgumentException De eindtijd is niet geldig.
      */
@@ -209,7 +212,7 @@ public class Task {
     /**
      * Controleer of de gegeven eind tijd een geldig tijdstip is voor deze taak..
      *
-     * @param endTime   De eind tijd om te controleren
+     * @param endTime   De eindtijd om te controleren
      * @return          Waar indien de status van deze taak AVAILABLE is, een huidige starttijd heeft,
      *                  en de gegeven endTime na de start tijd van deze taak valt.
      *                  Waar indien de status van deze taak AVAILABLE is en een huidige starttijd heeft,
@@ -422,10 +425,10 @@ public class Task {
 
     /**
      * Geeft de status waarmee de taak geëindigd is: vroeg / op tijd / te laat
-     * @return -2 als de taak nog niet geëindigd is,
-     *     <br>-1 als de taak vroeg geëindigd is,
-     *     <br> 0 als de taak op tijd geëindigd is,
-     *     <br> 1 als de taak te laat geëindigd is.
+     * @return FinishedStatus.NOTFINISHED als de taak nog niet geëindigd is,
+     *     <br>FinishedStatus.EARLY als de taak vroeg geëindigd is,
+     *     <br>FinishedStatus.ONTIME als de taak op tijd geëindigd is,
+     *     <br>FinishedStatus.OVERDUE als de taak te laat geëindigd is.
      */
     public FinishedStatus getFinishedStatus() {
         if (getStatus() != TaskStatus.FINISHED)
