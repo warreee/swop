@@ -77,7 +77,7 @@ public class InputReader  {
                     Map<String, String> mapTask = (Map<String, String>) subList.get(i);
                     Project projectX = projectList.get(Integer.valueOf(mapTask.get("project")));
                     addTaskToProject(mapTask, projectX); //De taak wordt in project aangemaakt
-                    addOtherDetails(mapTask, projectX.getTasks().get(i));
+                    addOtherDetails(mapTask, projectX.getTasks().get(projectX.getTasks().size() - 1)); //het laatst toegevoegde
 
                 }
             }
@@ -101,6 +101,15 @@ public class InputReader  {
                         }
                     }
                     break;
+                /*
+                Status kan moeilijk geupdated worden als de start en eindtijd nog niet gezet zijn
+                 */
+                case "startTime" :
+                    LocalDateTime creationTime = LocalDateTime.parse(
+                    break;
+
+                case "endTime" :
+
                 case "status" :
 
             }
@@ -109,24 +118,25 @@ public class InputReader  {
 
     }
 
-    private void addProject(Map<String, String> propertiesList) {
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
+    private LocalDateTime parseTime(String date){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         try {
-            String name = propertiesList.get("name");
-            String description = propertiesList.get("description");
-            LocalDateTime creationTime = LocalDateTime.parse(propertiesList.get("creationTime"), formatter);
-            LocalDateTime dueTime = LocalDateTime.parse(propertiesList.get("dueTime"), formatter);
-
-            projectRepository.addNewProject(name, description, creationTime, dueTime, user);
+            return LocalDateTime.parse(date);
 
         } catch (DateTimeParseException e) {
             System.out.println(e.getMessage());
-
+            return null;
         }
+    }
 
+    private void addProject(Map<String, String> propertiesList) {
 
+            String name = propertiesList.get("name");
+            String description = propertiesList.get("description");
+            LocalDateTime creationTime = parseTime(propertiesList.get("creationTime"));
+            LocalDateTime dueTime = parseTime(propertiesList.get("dueTime"));
+
+            projectRepository.addNewProject(name, description, creationTime, dueTime, user);
 
     }
 
