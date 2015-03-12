@@ -105,13 +105,17 @@ public class InputReader  {
                 Status kan moeilijk geupdated worden als de start en eindtijd nog niet gezet zijn
                  */
                 case "startTime" :
-                    LocalDateTime startTime = parseTime(mapTask.get("startTime"));
-                    task.setStartTime(startTime);
+                    if (mapTask.get("startTime").length() > 0) {
+                        LocalDateTime startTime = parseTime(mapTask.get("startTime"));
+                        task.setStartTime(startTime);
+                    }
                     break;
 
                 case "endTime" :
-                    LocalDateTime endTime = parseTime(mapTask.get("endTime"));
-                    task.setStartTime(endTime);
+                    if (mapTask.get("startTime").length() > 0) {
+                        LocalDateTime endTime = parseTime(mapTask.get("endTime"));
+                        task.setStartTime(endTime);
+                    }
                     break;
 
                 case "status" :
