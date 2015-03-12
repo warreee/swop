@@ -15,8 +15,6 @@ public class ProjectTest {
     private String name;
     private String description;
 
-    private int ID;
-
     @Before
     public void setUp() throws Exception {
         user = new User("ROOT");
@@ -26,7 +24,6 @@ public class ProjectTest {
         name = "name";
         description = "description";
 
-        ID=1;
     }
 
     //VRAAG: is dit de juiste plaats voor deze testen, of horen deze bij ProjectRepositoryTests
