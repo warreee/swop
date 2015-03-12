@@ -187,17 +187,22 @@ public class CommandLineInterface implements UserInterface {
 
     /**
      * Laat de gebruiker een dataum ingeven.
+     * Indien de gebruikers niets invult, geeft deze methode null terug.
      * Implementeert requestDatum in UserInterface
      */
     @Override
     public LocalDateTime requestDatum(String request) throws CancelException {
         String input = requestInput(request + " formaat: yyyy-mm-dd hh:mm");
+        if (input.isEmpty())
+            return null;
         checkCancel(input);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         while (! isValidDateTimeFormat(input, formatter)) {
             System.out.println("Ongeldig formaat");
             input = requestInput(request + " formaat: yyyy-mm-dd hh:mm");
+            if (input.isEmpty())
+                return null;
             checkCancel(input);
         }
         LocalDateTime dateTime = LocalDateTime.parse(input, formatter);

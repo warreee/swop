@@ -89,14 +89,20 @@ public class TaskController {
 
     private void updateTask(Task task) throws CancelException{
         try {
-            LocalDateTime startTime = ui.requestDatum("Starttijd:");
-            LocalDateTime endTime = ui.requestDatum("Eindtijd:");
-            String status = ui.requestString("Status (FAILED of FINISHED):");
+            LocalDateTime startTime = ui.requestDatum("Starttijd (of laat leeg om starttijd niet te wijzigen):");
+            LocalDateTime endTime = ui.requestDatum("Eindtijd (of laat leeg om eindtijd niet te wijzigen):");
+            String status = ui.requestString("Status: FAILED of FINISHED (of laat leeg om starttijd niet te wijzigen):");
 
-            task.setStartTime(startTime);
-            task.setEndTime(endTime);
-            task.setNewStatus(TaskStatus.valueOf(status));
-            ui.printMessage("Taak geupdated");
+            if (startTime != null)
+                task.setStartTime(startTime);
+            if (endTime != null)
+             task.setEndTime(endTime);
+            if (! status.isEmpty())
+                task.setNewStatus(TaskStatus.valueOf(status));
+            if (startTime == null && endTime == null && status.isEmpty())
+                ui.printMessage("Geen updates gedaan");
+            else
+                ui.printMessage("Taak geupdated");
         }
         catch (IllegalArgumentException e) {
             ui.printException(e);
