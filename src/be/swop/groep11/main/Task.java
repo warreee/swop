@@ -393,7 +393,7 @@ public class Task {
     }
 
     private boolean dependsOn(Task other) {
-        return this.dependencyConstraints.contains(new DependencyConstraint(this,other));
+        return this.getDependingOnTasks().contains(other);
     }
 
     /**
