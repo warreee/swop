@@ -59,6 +59,8 @@ public class TaskController {
             }
 
             project.addNewTask(description, acceptableDeviation, estimatedDuration);
+            // opm.: het toevoegen van afhankelijke taken kan nog geen fouten veroorzaken,
+            // dus het is geen probleem dat de taak al gecreëerd is
             Task task = project.getTasks().get(project.getTasks().size()-1);
             for (Task dependingOn : selectedTasks) {
                 task.addNewDependencyConstraint(dependingOn);
