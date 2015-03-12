@@ -191,4 +191,10 @@ public class TaskTest {
         assertTrue(task1.getAlternativeFinished());
     }
 
+    @Test
+    public void getOverTimePercentageTest() throws Exception {
+        assertEquals(task1.getOverTimePercentage(), 0.0, 1E-14);
+        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
+    }
+
 }
