@@ -8,6 +8,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,14 +24,13 @@ import java.util.Map;
 public class InputReader  {
 
     User user = new User("InputReader");
-    UserInterface ui;
     TMSystem TMSystem;
     ProjectRepository projectRepository;
     ArrayList<Project> projectList = new ArrayList<>();
     ArrayList<Task> taskList = new ArrayList<>();
 
-    public InputReader(UserInterface ui, ProjectRepository projectRepository) {
-        this.ui = ui;
+    public InputReader(ProjectRepository projectRepository) {
+
         this.projectRepository = projectRepository;
         Map<Integer, Project> projectList = new HashMap<>();
         Map<Integer, Task> taskList = new HashMap<>();
@@ -39,7 +39,7 @@ public class InputReader  {
     public static void main(String[] args) throws FileNotFoundException {
         TMSystem TMSystem = new TMSystem();
         ProjectRepository pr = TMSystem.getProjectRepository();
-        InputReader io = new InputReader(null, pr);
+        InputReader io = new InputReader(pr);
         io.runInputReader();
         io.runInputReader();
 
@@ -66,8 +66,7 @@ public class InputReader  {
                 subList = (ArrayList) values.get(key);
                 for (int i = 0; i < subList.size(); i++) {
                     Map<String, String> mapProject = (Map<String, String>) subList.get(i);
-                    Project projectX = createProjectObject(mapProject);
-                    projectList.add(projectX);
+                    addProject(mapProject);
                 }
             }
 
@@ -81,13 +80,6 @@ public class InputReader  {
 
                 }
             }
-
-
-/*            for (String subValueKey : test.keySet()) {
-                System.out.println(String.format("\t%s = %s",
-                        subValueKey, test.get(subValueKey)));
-            }*/
-
 
         }
 
@@ -113,18 +105,21 @@ public class InputReader  {
 
     }
 
-    private Project createProjectObject(Map<String, String> propertiesList) {
+    private void addProject(Map<String, String> propertiesList) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         try {
+            String name = propertiesList.get("name");
+            String description = propertiesList.get("description");
             LocalDateTime creationTime = LocalDateTime.parse(propertiesList.get("creationTime"), formatter);
             LocalDateTime dueTime = LocalDateTime.parse(propertiesList.get("dueTime"), formatter);
-            return new Project(propertiesList.get("name"), propertiesList.get("description"), creationTime, dueTime, user);
+
+            projectRepository.addNewProject(name, description, creationTime, dueTime, user);
 
         } catch (DateTimeParseException e) {
-            ui.printException(e);
-            return null;
+            System.out.println(e.getMessage());
+
         }
 
 
@@ -141,7 +136,7 @@ public class InputReader  {
             return new Task(description, duration, acceptableDeviation, project);
 
         } catch (DateTimeParseException e) {
-            ui.printException(e);
+            System.out.println(e.getMessage());
             return null;
         }
     }
