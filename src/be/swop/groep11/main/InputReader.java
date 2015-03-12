@@ -3,6 +3,7 @@ package be.swop.groep11.main;
 
 
 import be.swop.groep11.main.ui.UserInterface;
+import com.google.common.collect.ImmutableList;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -26,7 +27,7 @@ public class InputReader  {
     User user = new User("InputReader");
     TMSystem TMSystem;
     ProjectRepository projectRepository;
-    ArrayList<Project> projectList = new ArrayList<>();
+    ImmutableList<Project> projectList = projectRepository.getProjects();
     ArrayList<Task> taskList = new ArrayList<>();
 
     public InputReader(ProjectRepository projectRepository) {
@@ -99,6 +100,9 @@ public class InputReader  {
                             task.addNewDependencyConstraint(taskList.get(prt));
                         }
                     }
+                    break;
+                case "status" :
+
             }
         }
 
@@ -126,18 +130,17 @@ public class InputReader  {
 
     }
 
-    private Task addTaskToProject(Map<String, String> propertiesList, Project project) {
+    private void addTaskToProject(Map<String, String> propertiesList, Project project) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         try {
             String description = propertiesList.get("description");
             Duration duration = Duration.ofMinutes(Long.parseLong(propertiesList.get("estimatedDuration")));
             Double acceptableDeviation = Double.valueOf(propertiesList.get("acceptableDeviation"));
-            return new Task(description, duration, acceptableDeviation, project);
+            project.addNewTask(description, acceptableDeviation, duration);
 
         } catch (DateTimeParseException e) {
             System.out.println(e.getMessage());
-            return null;
         }
     }
 
