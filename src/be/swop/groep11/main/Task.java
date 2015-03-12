@@ -355,6 +355,7 @@ public class Task {
      *     <br> 0 als de taak op tijd geëindigd is,
      *     <br> 1 als de taak te laat geëindigd is.
      */
+    // TODO: maak een enum voor hier
     public int getFinishedStatus() {
         if (getStatus() != TaskStatus.FINISHED)
             return -2;

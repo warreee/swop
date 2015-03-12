@@ -19,8 +19,7 @@ public class InputReader  {
     public static void main(String[] args) throws FileNotFoundException {
         Yaml yaml = new Yaml();
 
-        System.out.println(yaml.dump(yaml.load(new FileInputStream(new File(
-                "input.tman")))));
+        System.out.println(yaml.dump(yaml.load(new FileInputStream(new File("input.tman")))));
 
         Map<String, Map<String, String>> values = (Map<String, Map<String, String>>) yaml
                 .load(new FileInputStream(new File("input.tman")));

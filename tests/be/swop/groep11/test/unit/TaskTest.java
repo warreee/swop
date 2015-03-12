@@ -74,9 +74,9 @@ public class TaskTest {
      */
     @Test
     public void SetAlternativeTask_valid() throws Exception {
+        task1.setStartTime(LocalDateTime.now());
+        task1.setEndTime(LocalDateTime.now().plusDays(1));
         task1.setNewStatus(TaskStatus.FAILED);
-        // TODO: we zetten hier een alternatieve taak zonder van de originele taak een start/eindtijd op te geven.
-        // mag dit?
         task1.setAlternativeTask(task2);
     }
 
@@ -109,9 +109,11 @@ public class TaskTest {
 
     @Test
     public void FinishedStatus_onTime() throws Exception {
-        task1.setStartTime(LocalDateTime.of(2015,3,8,8,32));
-        task1.setEndTime(LocalDateTime.of(2015,3,8,16,35));
+        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 0, 32));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 8, 16, 35));
         task1.setNewStatus(TaskStatus.FINISHED);
+        // TODO
+        int status = task1.getFinishedStatus();
         assertTrue(task1.getFinishedStatus() == 0);
     }
     @Test
@@ -134,10 +136,15 @@ public class TaskTest {
     }
     @Test
     public void Delay_FinishedAfterEstimatedDuration() {
-        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 8, 32));
+        project.addNewTask("Test taak 1", 0, Duration.ofMinutes(30));
+        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 16, 02));
         task1.setEndTime(LocalDateTime.of(2015, 3, 8, 16, 35));
         task1.setNewStatus(TaskStatus.FINISHED);
-        assertTrue(task1.getDelay().equals(Duration.ofMinutes(3)));
+        Duration dur = task1.getDelay();
+        // TODO
+        assertTrue(task1.getDelay().equals(Duration.ofSeconds(180)));
+        Boolean test = task1.getDelay().equals(Duration.ofSeconds(180));
+        Duration dur3 = task1.getDelay();
     }
 
     /**
