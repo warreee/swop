@@ -2,6 +2,7 @@ package be.swop.groep11.main;
 
 
 
+import be.swop.groep11.main.ui.UserInterface;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -9,7 +10,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,28 +23,120 @@ import java.util.Map;
  */
 public class InputReader  {
 
-    @SuppressWarnings("unchecked")
+    User user = new User("InputReader");
+    UserInterface ui;
+    System system;
+    ProjectRepository projectRepository;
+    ArrayList<Project> projectList;
+    ArrayList<Task> taskList;
+
+    public InputReader(UserInterface ui, ProjectRepository projectRepository) {
+        this.ui = ui;
+        this.projectRepository = projectRepository;
+        Map<Integer, Project> projectList = new HashMap<>();
+        Map<Integer, Task> taskList = new HashMap<>();
+    }
+
     public static void main(String[] args) throws FileNotFoundException {
+        System system = new System();
+        ProjectRepository pr = system.getProjectRepository();
+        InputReader io = new InputReader(null, pr);
+        io.runInputReader();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void runInputReader() throws FileNotFoundException {
+
+
         Yaml yaml = new Yaml();
         String path = Paths.get("input/input.tman").toAbsolutePath().toString();
-        System.out.println(yaml.dump(yaml.load(new FileInputStream(new File(path)))));
+        //System.out.println(yaml.dump(yaml.load(new FileInputStream(new File(path)))));
 
+        // In de tman file staan twee soorten values: projects en tasks
         Map<String, Map<String, String>> values = (Map<String, Map<String, String>>) yaml
                 .load(new FileInputStream(new File(path)));
 
+        // Voegt eerst de projecten toe, daarna de taken.
         for (String key : values.keySet()) {
-            String o = key;
-            ArrayList subList = (ArrayList) values.get(o);
-            Map<String, String> test = (Map<String, String>) subList.get(0);
+            ArrayList subList;
+
+            if (key.equals("projects")){
+                subList = (ArrayList) values.get(key);
+                for (int i = 0; i < subList.size(); i++) {
+                    Map<String, String> mapProject = (Map<String, String>) subList.get(0);
+                    Project projectX = createProjectObject(mapProject);
+                    this.projectList.add(projectX);
+                }
+            }
+
+            if (key.equals("task")){
+                subList = (ArrayList) values.get(key);
+                for (int i = 0; i < subList.size(); i++) {
+                    Map<String, String> mapTask = (Map<String, String>) subList.get(0);
+                    //Project taskX = createTaskObject(mapTask);
+
+                }
+            }
 
 
-            System.out.println(key);
+            //Map<String, String> test = (Map<String, String>) subList.get(0);
 
-            for (String subValueKey : test.keySet()) {
+
+
+
+
+/*            for (String subValueKey : test.keySet()) {
                 System.out.println(String.format("\t%s = %s",
                         subValueKey, test.get(subValueKey)));
-            }
+            }*/
+
+
+        }
+
+    }
+    private Project createProjectObject(Map<String, String> propertiesList) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        try {
+            LocalDateTime creationTime = LocalDateTime.parse(propertiesList.get("creationTime"), formatter);
+            LocalDateTime dueTime = LocalDateTime.parse(propertiesList.get("dueTime"), formatter);
+            return new Project(propertiesList.get("name"), propertiesList.get("description"), creationTime, dueTime, user);
+
+        } catch (DateTimeParseException e) {
+            ui.printException(e);
+            return null;
+        }
+
+
+
+    }
+
+    private Task createTaskObject(Map<String, String> propertiesList, Project project) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        try {
+            String description = propertiesList.get("description");
+            Duration duration = Duration.ofMinutes(Long.parseLong(propertiesList.get("estimatedDuration")));
+            Double acceptableDeviation = Double.valueOf(propertiesList.get("acceptableDeviation"));
+            return new Task(description, duration, acceptableDeviation, project);
+
+        } catch (DateTimeParseException e) {
+            ui.printException(e);
+            return null;
         }
     }
+
+
+    /**
+     * Geeft de nummer van het project terug waarbij de taakt hoort.
+     * @param propertiesList
+     * @return
+     */
+    private int projectOfTask(Map<String, String> propertiesList){
+
+        return Integer.valueOf(propertiesList.get("project"));
+    }
+
 
 }

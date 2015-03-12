@@ -64,8 +64,7 @@ public class CreateTaskScenarioTest {
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
             public String requestString(String request) throws CancelException {
-                requestInput();
-                return "Beschrijving";
+                throw new CancelException("Cancel");
             }
 
             @Override
@@ -87,9 +86,6 @@ public class CreateTaskScenarioTest {
                 return projects.get(0);
             }
 
-            private void requestInput() throws CancelException{
-                throw new CancelException("Cancel");
-            }
         };
         TaskController taskController = new TaskController(repository,ui);
         //Cancel exception wordt opgevangen in de controller.
@@ -106,8 +102,7 @@ public class CreateTaskScenarioTest {
 
             @Override
             public double requestDouble(String request) throws CancelException {
-                cancel();
-                return 50;
+                throw new CancelException("Cancel");
             }
 
             @Override
@@ -122,10 +117,6 @@ public class CreateTaskScenarioTest {
             @Override
             public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException {
                 return projects.get(0);
-            }
-
-            private void cancel() throws CancelException{
-                throw new CancelException("Cancel");
             }
         };
         TaskController taskController = new TaskController(repository,ui);
@@ -148,8 +139,7 @@ public class CreateTaskScenarioTest {
 
             @Override
             public int requestNumber(String request) throws CancelException {
-                cancel();
-                return 8;
+                throw new CancelException("Cancel");
             }
 
             @Override
@@ -159,10 +149,6 @@ public class CreateTaskScenarioTest {
             @Override
             public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException {
                 return projects.get(0);
-            }
-
-            private void cancel() throws CancelException{
-                throw new CancelException("Cancel");
             }
         };
         TaskController taskController = new TaskController(repository,ui);

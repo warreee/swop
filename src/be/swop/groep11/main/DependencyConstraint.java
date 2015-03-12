@@ -54,6 +54,9 @@ public class DependencyConstraint {
     public static boolean isValidDependingOn(Task task, Task dependingOn) {
         if (task == dependingOn)
             return false;
+        if (task.getStatus() == TaskStatus.FINISHED || task.getStatus() == TaskStatus.FAILED){
+            return false; // Aan een FINISHED of FAILED task kunnen geen nieuwe depency constraint meer toegewezen worden.
+        }
         Set<Task> dependingOnTasks = dependingOn.getDependingOnTasks();
         if (dependingOnTasks.contains(task))
             // dan hangt dependingOn af van task,
