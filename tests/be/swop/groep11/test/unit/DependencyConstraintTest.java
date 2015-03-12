@@ -1,9 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.DependencyConstraint;
-import be.swop.groep11.main.Project;
-import be.swop.groep11.main.Task;
-import be.swop.groep11.main.User;
+import be.swop.groep11.main.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,9 +15,10 @@ public class DependencyConstraintTest {
 
     @Before
     public void setUp() throws Exception {
+        ProjectRepository repository = new TMSystem().getProjectRepository();
         Project project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015,3,4,16,0),
-                new User("Alfred J. Kwak"));
+                new User("Alfred J. Kwak"),repository);
         task1 = new Task("Taak 1", Duration.ofHours(8), 0.1, project);
         task2 = new Task("Taak 2", Duration.ofHours(6), 0.1, project);
         task3 = new Task("Taak 3", Duration.ofHours(7), 0.5, project);
