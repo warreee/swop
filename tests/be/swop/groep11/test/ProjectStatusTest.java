@@ -46,13 +46,13 @@ public class ProjectStatusTest {
         }
     }
 
-    /**
+  /*  /**
     * We voegen een project toe, daarna een taak aan dit project.
     * Hierna finishen we de taak.
     * We finishen het project.
     * We kijken na of het project effectief gefinished is.
      */
-    @Test
+    /*@Test
     public void projectFinishedTest() throws Exception {
         addProjectsToProjectManager(1);
         Project testProject = projectRepository.getProjects().get(0);
@@ -69,7 +69,7 @@ public class ProjectStatusTest {
      * We proberen het project te finishen.
      * We kijken of dit gefaald is.
      */
-    @Test
+    /*@Test
     public void projectNotFinishedTest() throws Exception {
         addProjectsToProjectManager(1);
         Project testProject = projectRepository.getProjects().get(0);
@@ -77,7 +77,7 @@ public class ProjectStatusTest {
         assertFalse("Project status is not finished: ", testProject.getProjectStatus().equals(ProjectStatus.FINISHED));
         testProject.finish();
         assertFalse("Project status is not finished: ", testProject.getProjectStatus().equals(ProjectStatus.FINISHED));
-    }
+    }*/
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

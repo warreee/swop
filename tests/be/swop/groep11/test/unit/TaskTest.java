@@ -19,8 +19,8 @@ public class TaskTest {
     @Before
     public void setUp() throws Exception {
         project = new Project("Test project", "Test beschrijving",
-                    LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015,3,4,16,0),
-                    new User("Alfred J. Kwak"));
+                LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
+                new User("Alfred J. Kwak"));
         project.addNewTask("Test taak", 0.1, Duration.ofHours(8));
         project.addNewTask("Test taak 1", 0, Duration.ofMinutes(30));
         project.addNewTask("Test taak 2", 0.2, Duration.ofHours(16));
@@ -34,39 +34,39 @@ public class TaskTest {
      */
 
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Null() throws Exception {
         Task invalidTask = new Task(null, Duration.ofHours(8), 0.1, project);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Empty() throws Exception {
         Task invalidTask = new Task("", Duration.ofHours(8), 0.1, project);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDuration_Negative() throws Exception {
         Task invalidTask = new Task("Test taak", Duration.ofHours(-1), 0.1, project);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidAcceptableDeviation_Negative() throws Exception {
         Task invalidTask = new Task("Test taak", Duration.ofHours(8), -0.1, project);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidProject_Null() throws Exception {
         Task invalidTask = new Task("Test taak", Duration.ofHours(8), 0.1, null);
     }
 
-    @Test (expected = Exception.class)
+   /* @Test(expected = Exception.class)
     public void newTask_InvalidProject_Finished() throws Exception {
         task1.setNewStatus(TaskStatus.FINISHED);
         task2.setNewStatus(TaskStatus.FINISHED);
         task3.setNewStatus(TaskStatus.FINISHED);
         project.finish();
         Task invalidTask = new Task("Test taak", Duration.ofHours(8), 0.1, project);
-    }
+    }*/
 
 
     /*
@@ -80,12 +80,12 @@ public class TaskTest {
         task1.setAlternativeTask(task2);
     }
 
-    @Test (expected = Exception.class)
+    @Test(expected = Exception.class)
     public void SetAlternativeTask_notFailed() throws Exception {
         task1.setAlternativeTask(task2);
     }
 
-    @Test (expected = Exception.class)
+    @Test(expected = Exception.class)
     public void SetAlternativeTask_sameTask() throws Exception {
         task1.setNewStatus(TaskStatus.FAILED);
         task1.setAlternativeTask(task1);
@@ -102,7 +102,7 @@ public class TaskTest {
     @Test
     public void FinishedStatus_early() throws Exception {
         task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
-        task1.setEndTime(LocalDateTime.of(2015,3,8,12,0));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 8, 12, 0));
         task1.setNewStatus(TaskStatus.FINISHED);
         assertTrue(task1.getFinishedStatus() == Task.FinishedStatus.EARLY);
     }
@@ -114,10 +114,11 @@ public class TaskTest {
         task1.setNewStatus(TaskStatus.FINISHED);
         assertTrue(task1.getFinishedStatus() == Task.FinishedStatus.ONTIME);
     }
+
     @Test
     public void FinishedStatus_late() throws Exception {
-        task1.setStartTime(LocalDateTime.of(2015,3,8,8,32));
-        task1.setEndTime(LocalDateTime.of(2015,3,9,12,38));
+        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 8, 32));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 9, 12, 38));
         task1.setNewStatus(TaskStatus.FINISHED);
         assertTrue(task1.getFinishedStatus() == Task.FinishedStatus.OVERDUE);
     }
@@ -128,10 +129,11 @@ public class TaskTest {
     @Test
     public void Delay_EarlyFinishedTask() {
         task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
-        task1.setEndTime(LocalDateTime.of(2015,3,8,12,0));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 8, 12, 0));
         task1.setNewStatus(TaskStatus.FINISHED);
         assertTrue(task1.getDelay().equals(Duration.ofDays(0)));
     }
+
     @Test
     public void Delay_FinishedAfterEstimatedDuration() {
         task1.setStartTime(LocalDateTime.of(2015, 3, 8, 8, 32));
@@ -145,11 +147,36 @@ public class TaskTest {
      */
 
     @Test
-    public void hasTaskTest(){
+    public void hasTaskTest() {
         assertTrue(project.hasTask(task2));
         // Deze task heeft een referentie naar project, maar is niet aan project toegevoegd.
         Task t = new Task("beschrijving", Duration.ofHours(8), 0.1, project);
         assertFalse(project.hasTask(t));
 
     }
+
+    /**
+     * getAlternativeStatus
+     */
+
+    @Test
+    public void AlternativeStatus_NoAlternativeTask() {
+        assertFalse(task1.getAlternativeFinished());
+        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 8, 12, 0));
+        task1.setNewStatus(TaskStatus.FINISHED);
+        assertTrue(task1.getAlternativeFinished());
+    }
+
+    @Test
+    public void AlternativeStatus_AlternativeTask_() throws Exception {
+        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 8, 12, 0));
+        task1.setNewStatus(TaskStatus.FAILED);
+        task1.setAlternativeTask(task2);
+        assertFalse(task1.getAlternativeFinished());
+        task2.setNewStatus(TaskStatus.FINISHED);
+        assertTrue(task1.getAlternativeFinished());
+    }
+
 }
