@@ -119,17 +119,17 @@ public class InputReader  {
                     break;
 
                 case "status" :
-
+                    task.setNewStatus(stringToStatus(mapTask.get("status")));
             }
         }
     }
 
-    private ProjectStatus stringToStatus(String strStatus) throws IllegalArgumentException{
+    private TaskStatus stringToStatus(String strStatus) throws IllegalArgumentException{
 
-        ProjectStatus result = null;
+        TaskStatus result = null;
 
         try {
-            for (ProjectStatus status : ProjectStatus.values()){
+            for (TaskStatus status : TaskStatus.values()){
                 if (strStatus.equalsIgnoreCase(status.toString())){
                     result = status;
                 }
