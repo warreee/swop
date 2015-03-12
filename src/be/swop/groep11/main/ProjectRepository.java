@@ -9,14 +9,30 @@ import java.util.ArrayList;
 
 /**
  * Houdt een lijst van projecten bij en heeft de verantwoordelijkheid om nieuwe projecten te maken en een project op
- * te vragen op basis van zijn identifier.
+ * te vragen.
  */
 public class ProjectRepository {
 
     private ArrayList<Project> projects;
+    private System system;
 
-    public ProjectRepository() {
+    /**
+     * Contstructor om een nieuwe project repository aan te maken.
+     * @param system Het systeem
+     */
+    public ProjectRepository(System system) {
         projects = new ArrayList<>();
+        this.system = system;
+    }
+
+    private ProjectRepository() {
+    }
+
+    /**
+     * Geeft het systeem van deze project repository.
+     */
+    public System getSystem() {
+        return system;
     }
 
     /**
@@ -28,7 +44,7 @@ public class ProjectRepository {
     }
 
     /**
-     * Maakt een nieuw project aan en voegt het toe aan de Set van projecten.
+     * Maakt een nieuw project aan en voegt het toe aan de lijst van projecten.
      *
      * @param name          De naam van het project
      * @param description   De beschrijving van het project

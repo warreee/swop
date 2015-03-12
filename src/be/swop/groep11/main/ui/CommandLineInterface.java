@@ -50,7 +50,7 @@ public class CommandLineInterface implements UserInterface {
         this.br = new BufferedReader(new InputStreamReader(java.lang.System.in));
         this.exit = false;
 
-        // maak een nieuwe taskMan aan
+        // maak een nieuwe system aan
         System system = new System();
         ProjectRepository projectRepository = system.getProjectRepository();
 

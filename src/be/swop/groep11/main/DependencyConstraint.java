@@ -7,7 +7,8 @@ import java.util.Set;
  */
 public class DependencyConstraint {
 
-    private final Task task, dependingOn;
+    private final Task task;
+    private Task dependingOn;
 
     /**
      * Maakt een nieuwe dependency constraint aan.
@@ -37,6 +38,13 @@ public class DependencyConstraint {
     }
 
     /**
+     * Zet de depedingOn taak van deze dependency constraint.
+     */
+    public void setDependingOn(Task dependingOn) {
+        this.dependingOn = dependingOn;
+    }
+
+    /**
      * Controleer of een taak (task) van een geldige taak (dependingOn) afhangt.
      * @param task De afhankelijke taak
      * @param dependingOn De taak waarvan gecontroleerd moet worden of task daarvan afhankelijk kan zijn
@@ -46,6 +54,9 @@ public class DependencyConstraint {
     public static boolean isValidDependingOn(Task task, Task dependingOn) {
         if (task == dependingOn)
             return false;
+        if (task.getStatus() == TaskStatus.FINISHED || task.getStatus() == TaskStatus.FAILED){
+            return false; // Aan een FINISHED of FAILED task kunnen geen nieuwe depency constraint meer toegewezen worden.
+        }
         Set<Task> dependingOnTasks = dependingOn.getDependingOnTasks();
         if (dependingOnTasks.contains(task))
             // dan hangt dependingOn af van task,
