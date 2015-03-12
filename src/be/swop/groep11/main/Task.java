@@ -331,10 +331,10 @@ public class Task {
     private void setStatus(TaskStatus status) throws IllegalArgumentException {
         if (! TaskStatus.isValidNewStatus(status, this))
             throw new IllegalArgumentException("Ongeldige status");
+        this.status = status;
         if (status == TaskStatus.FINISHED) {
             this.makeDependentTasksAvailable();
         }
-        this.status = status;
     }
 
     /**
