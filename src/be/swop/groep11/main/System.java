@@ -23,7 +23,7 @@ public class System {
      *           | !canHaveAsSystemTime(systemTime)
      */
     public System(LocalDateTime currentSystemTime) throws IllegalArgumentException {
-        this.projectRepository = new ProjectRepository();
+        this.projectRepository = new ProjectRepository(this);
         setCurrentSystemTime(currentSystemTime);
     }
 
