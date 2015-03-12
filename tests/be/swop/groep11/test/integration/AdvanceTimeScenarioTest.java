@@ -1,6 +1,6 @@
 package be.swop.groep11.test.integration;
 
-import be.swop.groep11.main.System;
+import be.swop.groep11.main.TMSystem;
 import be.swop.groep11.main.controllers.AdvanceTimeController;
 import be.swop.groep11.main.ui.commands.CancelException;
 import org.junit.Before;
@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 
 public class AdvanceTimeScenarioTest {
 
-    private System system;
+    private TMSystem TMSystem;
     private LocalDateTime now;
 
 
     @Before
     public void setUp() throws Exception {
         now = LocalDateTime.now();
-        system = new System(now);
+        TMSystem = new TMSystem(now);
 
     }
 
@@ -29,7 +29,7 @@ public class AdvanceTimeScenarioTest {
                 return now.plusDays(1);
             }
         };
-        AdvanceTimeController advanceTimeController = new AdvanceTimeController(system,ui);
+        AdvanceTimeController advanceTimeController = new AdvanceTimeController(TMSystem,ui);
         advanceTimeController.advanceTime();
     }
 
@@ -45,7 +45,7 @@ public class AdvanceTimeScenarioTest {
                 throw new StopTestException("Cancel");
             }
         };
-        AdvanceTimeController advanceTimeController = new AdvanceTimeController(system,ui);
+        AdvanceTimeController advanceTimeController = new AdvanceTimeController(TMSystem,ui);
         advanceTimeController.advanceTime();
     }
 
@@ -58,7 +58,7 @@ public class AdvanceTimeScenarioTest {
             }
 
         };
-        AdvanceTimeController advanceTimeController = new AdvanceTimeController(system,ui);
+        AdvanceTimeController advanceTimeController = new AdvanceTimeController(TMSystem,ui);
         advanceTimeController.advanceTime();
     }
 }

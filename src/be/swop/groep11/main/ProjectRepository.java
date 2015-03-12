@@ -13,22 +13,22 @@ import java.util.ArrayList;
 public class ProjectRepository {
 
     private ArrayList<Project> projects;
-    private System system;
+    private TMSystem TMSystem;
 
     /**
      * Contstructor om een nieuwe project repository aan te maken.
-     * @param system Het systeem
+     * @param TMSystem Het systeem
      */
-    public ProjectRepository(System system) {
+    public ProjectRepository(TMSystem TMSystem) {
         projects = new ArrayList<>();
-        this.system = system;
+        this.TMSystem = TMSystem;
     }
 
     /**
      * Geeft het systeem van deze project repository.
      */
-    public System getSystem() {
-        return system;
+    public TMSystem getTMSystem() {
+        return TMSystem;
     }
 
     /**

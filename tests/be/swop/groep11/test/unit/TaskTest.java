@@ -15,8 +15,8 @@ public class TaskTest {
 
     @Before
     public void setUp() throws Exception {
-        be.swop.groep11.main.System system = new be.swop.groep11.main.System();
-        ProjectRepository repo = new ProjectRepository(system);
+        TMSystem TMSystem = new TMSystem();
+        ProjectRepository repo = new ProjectRepository(TMSystem);
         project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
                 new User("Alfred J. Kwak"), repo);

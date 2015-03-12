@@ -8,7 +8,6 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -25,7 +24,7 @@ public class InputReader  {
 
     User user = new User("InputReader");
     UserInterface ui;
-    System system;
+    TMSystem TMSystem;
     ProjectRepository projectRepository;
     ArrayList<Project> projectList = new ArrayList<>();
     ArrayList<Task> taskList = new ArrayList<>();
@@ -38,8 +37,8 @@ public class InputReader  {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        System system = new System();
-        ProjectRepository pr = system.getProjectRepository();
+        TMSystem TMSystem = new TMSystem();
+        ProjectRepository pr = TMSystem.getProjectRepository();
         InputReader io = new InputReader(null, pr);
         io.runInputReader();
         io.runInputReader();

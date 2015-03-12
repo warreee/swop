@@ -1,7 +1,7 @@
 package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.*;
-import be.swop.groep11.main.System;
+import be.swop.groep11.main.TMSystem;
 import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.commands.CancelException;
@@ -18,7 +18,7 @@ public class UpdateTaskStatusScenarioTest {
 
     @Before
     public void setUp() throws Exception {
-        repository = new System().getProjectRepository();
+        repository = new TMSystem().getProjectRepository();
         now = LocalDateTime.now();
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10),new User("TEST"));
 

@@ -1,7 +1,7 @@
 package be.swop.groep11.main.ui;
 
 import be.swop.groep11.main.*;
-import be.swop.groep11.main.System;
+import be.swop.groep11.main.TMSystem;
 import be.swop.groep11.main.controllers.AdvanceTimeController;
 import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.controllers.TaskController;
@@ -62,8 +62,8 @@ public class CommandLineInterface implements UserInterface {
         this.exit = false;
 
         // maak een nieuwe system aan
-        System system = new System();
-        ProjectRepository projectRepository = system.getProjectRepository();
+        TMSystem TMSystem = new TMSystem();
+        ProjectRepository projectRepository = TMSystem.getProjectRepository();
 
         if (readYamlFile) {
             // run inputreader
@@ -79,7 +79,7 @@ public class CommandLineInterface implements UserInterface {
         User user = new User("ROOT");
         this.projectController = new ProjectController(projectRepository, user, this);
         this.taskController = new TaskController(projectRepository, this);
-        this.advanceTimeController = new AdvanceTimeController(system,this);
+        this.advanceTimeController = new AdvanceTimeController(TMSystem,this);
     }
 
     private void run(){
