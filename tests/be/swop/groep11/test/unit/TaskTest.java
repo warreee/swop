@@ -15,9 +15,11 @@ public class TaskTest {
 
     @Before
     public void setUp() throws Exception {
+        TMSystem TMSystem = new TMSystem();
+        ProjectRepository repo = new ProjectRepository(TMSystem);
         project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
-                new User("Alfred J. Kwak"));
+                new User("Alfred J. Kwak"), repo);
         project.addNewTask("Test taak", 0.1, Duration.ofHours(8));
         project.addNewTask("Test taak 1", 0, Duration.ofMinutes(30));
         project.addNewTask("Test taak 2", 0.2, Duration.ofHours(16));
@@ -187,6 +189,12 @@ public class TaskTest {
         task2.setEndTime(LocalDateTime.of(2015, 3, 8, 12, 0));
         task2.setNewStatus(TaskStatus.FINISHED);
         assertTrue(task1.getAlternativeFinished());
+    }
+
+    @Test
+    public void getOverTimePercentageTest() throws Exception {
+        assertEquals(task1.getOverTimePercentage(), 0.0, 1E-14);
+        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
     }
 
 }
