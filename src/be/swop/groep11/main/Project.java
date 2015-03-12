@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -136,9 +137,9 @@ public class Project {
     private User creator;
 
     /**
-     * Interne hashSet die alle taken bijhoud.
+     * Interne ArrayList die alle taken bijhoud.
      */
-    private HashSet<Task> tasks = new HashSet<>();
+    private ArrayList<Task> tasks = new ArrayList<>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////METHODES//////////////////////////////////////////////////////////
