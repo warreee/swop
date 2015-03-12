@@ -11,5 +11,4 @@ import org.junit.runners.Suite.SuiteClasses;
  * Dit functioneert als verzameling voor alle IntegrationTests.
  */
 public class IntegrationTests {
-    //TODO toevoegen integration test klassen aan "@SuiteClasses({})"
 }

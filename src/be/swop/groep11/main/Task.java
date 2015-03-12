@@ -145,8 +145,6 @@ public class Task {
         return startTime;
     }
 
-    //TODO Geen start en eind tijd terwijl TaakStatus Unavailable.
-
     /**
      * Wijzigt de starttijd van de taak.
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
@@ -462,6 +460,8 @@ public class Task {
         // We nemen als duration de echte tijd die gepasseerd is.
         if (getStartTime() == null || getEndTime() == null)
             return null;
+
+
         return Duration.between(getStartTime(),getEndTime());
     }
 

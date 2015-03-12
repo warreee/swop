@@ -4,7 +4,6 @@ package be.swop.groep11.main;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
-import java.util.AbstractList;
 import java.util.ArrayList;
 
 /**
@@ -23,9 +22,6 @@ public class ProjectRepository {
     public ProjectRepository(System system) {
         projects = new ArrayList<>();
         this.system = system;
-    }
-
-    private ProjectRepository() {
     }
 
     /**

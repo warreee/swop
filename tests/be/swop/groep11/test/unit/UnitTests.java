@@ -7,5 +7,4 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({TaskTest.class,SystemTest.class, TaskStatusTest.class,ProjectTest.class, ProjectRepositoryTest.class,DependencyConstraintTest.class})
 public class UnitTests {
-    //TODO toevoegen unit test klassen aan "@SuiteClasses({})"
 }
