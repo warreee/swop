@@ -5,15 +5,14 @@ import be.swop.groep11.main.Task;
 import be.swop.groep11.main.TaskStatus;
 import be.swop.groep11.main.User;
 import static org.junit.Assert.*;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-/**
- * Created by robin on 12/03/15.
- */
+
 public class TaskStatusTest {
 
     Project project;
@@ -30,11 +29,13 @@ public class TaskStatusTest {
     }
 
     @Test
-    public void availableToOtherTest() throws Exception {
+    public void availableToAvailableTest() throws Exception {
         assertTrue(TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task1));
-        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FAILED, task1));
-        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE, task1));
-        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FINISHED, task1));
+        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        assertTrue(TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task1));
+        task1.addNewDependencyConstraint(task2);
+        assertTrue(TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task1));
     }
 
     @Test
@@ -61,5 +62,59 @@ public class TaskStatusTest {
         assertFalse(TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE, task1));
         task1.addNewDependencyConstraint(task2);
         assertTrue(TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE, task1));
+    }
+
+    @Test
+    public void unavailableToAvailaleTest() throws Exception {
+        task1.addNewDependencyConstraint(task2); // Dit zet de status van taak1 op Unavailable.
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task1));
+        task2.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task2.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task1));
+        task2.setNewStatus(TaskStatus.FINISHED);
+        assertTrue(TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task1));
+
+    }
+
+    @Test
+    public void unavailableToUnavailaleTest() throws Exception {
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE, task1));
+        task1.addNewDependencyConstraint(task2); // Dit zet de status van taak1 op Unavailable.
+        assertTrue(TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE, task1));
+        task2.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task2.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        task2.setNewStatus(TaskStatus.FINISHED);
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE, task1));
+    }
+
+    @Test
+    public void unavailableToFinishedTest() throws Exception {
+        // UNAVAILABLE -> FINISHED mag nooit.
+        // Correct: UNAVAILABLE -> AVAILABLE -> FINISHED
+        task1.addNewDependencyConstraint(task2); // Dit zet de status van taak1 op Unavailable.
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FINISHED, task1));
+        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FINISHED, task1));
+        task2.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task2.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        task2.setNewStatus(TaskStatus.FINISHED);
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FINISHED, task1));
+
+    }
+
+    @Test
+    public void unavailableToFailedTest() throws Exception {
+        // UNAVAILABLE -> FAILED mag nooit.
+        // Correct: UNAVAILABLE -> AVAILABLE -> FAILED
+        task1.addNewDependencyConstraint(task2); // Dit zet de status van taak1 op Unavailable.
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FAILED, task1));
+        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FAILED, task1));
+        task2.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task2.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        task2.setNewStatus(TaskStatus.FINISHED);
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FAILED, task1));
     }
 }
