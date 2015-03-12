@@ -102,7 +102,12 @@ public class InputReader  {
                     taskList.get(alternativeTask).setAlternativeTask(task);
                     break;
                 case "prerequisiteTasks" :
-
+                    int[] ATArray = parseStringArray(mapTask.get("prerequisiteTasks"));
+                    if (ATArray.length > 0) {
+                        for (int prt : ATArray){
+                            task.addNewDependencyConstraint(taskList.get(prt));
+                        }
+                    }
             }
         }
 
