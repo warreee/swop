@@ -100,6 +100,9 @@ public class InputReader  {
                 case "alternativeFor" :
                     int alternativeTask = Integer.valueOf(mapTask.get("alternativeFor"));
                     taskList.get(alternativeTask).setAlternativeTask(task);
+                    break;
+                case "prerequisiteTasks" :
+
             }
         }
 
@@ -141,7 +144,7 @@ public class InputReader  {
 
 
     /**
-     * Geeft de nummer van het project terug waarbij de taakt hoort.
+     * Geeft de nummer van het project terug waarbij de taak hoort.
      * @param propertiesList
      * @return
      */
@@ -149,6 +152,8 @@ public class InputReader  {
 
         return Integer.valueOf(propertiesList.get("project"));
     }
+
+
 
 
 }
