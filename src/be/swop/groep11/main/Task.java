@@ -190,13 +190,14 @@ public class Task {
         boolean result = false;
         if(this.getStatus() != TaskStatus.AVAILABLE){
             result = false;
-        }else if(startTime != null && endTime != null){
+        }else if(startTime != null && hasEndTime()){
             result = startTime.isBefore(endTime);
-        } else if(startTime != null && endTime == null){
+        } else if(startTime != null && !hasEndTime()){
             result = true;
         }
         return result;
     }
+
     //TODO setEndTime & setStartTime tests
 
     /**
@@ -212,13 +213,27 @@ public class Task {
         boolean result = false;
         if(this.getStatus() != TaskStatus.AVAILABLE){
             result = false;
-        }else if(this.startTime == null){
+        }else if(!hasStartTime()){
             result = false;
         } else if(endTime != null){
             result = startTime.isBefore(endTime);
         }
 
         return result;
+    }
+
+    /**
+     * @return      Waar indien deze taak een start tijd heeft.
+     */
+    public boolean hasStartTime(){
+        return this.startTime != null;
+    }
+
+    /**
+     * @return      Waar indien deze taak een eind tijd heeft.
+     */
+    public boolean hasEndTime(){
+        return this.endTime != null;
     }
 
     /**
