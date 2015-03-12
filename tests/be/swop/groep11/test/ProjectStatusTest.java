@@ -1,6 +1,7 @@
 package be.swop.groep11.test;
 
 import be.swop.groep11.main.*;
+import be.swop.groep11.main.System;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +17,8 @@ public class ProjectStatusTest {
     private ProjectRepository projectRepository;
     @Before
     public void setUp() throws Exception {
-        projectRepository = new ProjectRepository();
+        System system = new System();
+        projectRepository = system.getProjectRepository();
     }
 
 

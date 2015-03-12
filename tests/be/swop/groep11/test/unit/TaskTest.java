@@ -1,9 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.Project;
-import be.swop.groep11.main.Task;
-import be.swop.groep11.main.TaskStatus;
-import be.swop.groep11.main.User;
+import be.swop.groep11.main.*;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -91,6 +88,17 @@ public class TaskTest {
         task1.setAlternativeTask(task1);
     }
 
+    @Test
+    public void SetAlternativeTask_withDepedencyConstraints() throws Exception {
+        task1.addNewDependencyConstraint(task3);
+        task1.setStartTime(LocalDateTime.now());
+        task1.setEndTime(LocalDateTime.now().plusDays(1));
+        task1.setNewStatus(TaskStatus.FAILED);
+        task1.setAlternativeTask(task2);
+        assertTrue(task2.getDependencyConstraints().contains(new DependencyConstraint(task2,task3)));
+        assertFalse(task1.getDependencyConstraints().contains(new DependencyConstraint(task1,task3)));
+    }
+
     /*
         Tests voor status van geëindigde taak
      */
@@ -169,7 +177,7 @@ public class TaskTest {
     }
 
     @Test
-    public void AlternativeStatus_AlternativeTask_() throws Exception {
+    public void AlternativeStatus_AlternativeTask() throws Exception {
         task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
         task1.setEndTime(LocalDateTime.of(2015, 3, 8, 12, 0));
         task1.setNewStatus(TaskStatus.FAILED);

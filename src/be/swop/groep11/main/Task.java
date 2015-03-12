@@ -372,7 +372,7 @@ public class Task {
             throw new Exception("Kan de alternatieve taak niet wijzigen");
         for (Task task : getDependentTasks()) {
             for (DependencyConstraint dependencyConstraint : task.getDependencyConstraints()) {
-                if (dependencyConstraint.getDependingOn() == this) {
+                if (dependencyConstraint.getDependingOn() == this ) {
                     dependencyConstraint.setDependingOn(alternativeTask);
                 }
             }
@@ -384,11 +384,16 @@ public class Task {
      * Controleert of een taak als alternatieve taak voor een gegeven taak kan ingesteld worden.
      * @param task De gegeven taak
      * @param alternativeTask De alternatieve taak
-     * @return true alss (task is gefaald en alternativeTask != task) of (alternativeTask == null)
+     * @return true alss (alternativeTask == null)
+     *                   of (task is gefaald en alternativeTask != task en alternativeTask hangt niet af van task)
      */
     public static boolean canSetAlternativeTask(Task task, Task alternativeTask) {
         return task != null
-                && ( (task.getStatus() == TaskStatus.FAILED && task != alternativeTask) || (alternativeTask == null) );
+                && ( (task.getStatus() == TaskStatus.FAILED && task != alternativeTask && (! alternativeTask.dependsOn(task))) || (alternativeTask == null) );
+    }
+
+    private boolean dependsOn(Task other) {
+        return this.dependencyConstraints.contains(new DependencyConstraint(this,other));
     }
 
     /**

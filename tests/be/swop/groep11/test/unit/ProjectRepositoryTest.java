@@ -2,6 +2,7 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
+import be.swop.groep11.main.System;
 import be.swop.groep11.main.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +22,8 @@ public class ProjectRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        projRep = new ProjectRepository();
+        System system = new System();
+        projRep = system.getProjectRepository();
         user = new User("ROOT");
 
         create = LocalDateTime.now();
