@@ -64,10 +64,12 @@
     <target name="jar" depends="compile">
         <jar destfile="${bin-dir}/system.jar"
              basedir="${out-main}">
+            <zipgroupfileset dir="lib" includes="*.jar" excludes=""/>
             <manifest>
                 <attribute name="Main-Class" value="be.swop.groep11.main.ui.CommandLineInterface"/>
             </manifest>
         </jar>
+
     </target>
 
     <target name="clean-jar">
