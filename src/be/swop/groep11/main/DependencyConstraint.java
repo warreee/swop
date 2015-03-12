@@ -12,9 +12,11 @@ public class DependencyConstraint {
 
     /**
      * Maakt een nieuwe dependency constraint aan.
-     * @param task De afhankelijke taak
-     * @param dependingOn De taak waarvan task afhankelijk is
-     * @throws java.lang.IllegalArgumentException Ongeldige dependency constraint
+     *
+     * @param task          De afhankelijke taak
+     * @param dependingOn   De taak waarvan task afhankelijk is
+     * @throws IllegalArgumentException
+     *                      Indien ! isValidDependingOn(task,dependingOn), dus ongeldige DependencyConstraint
      */
     public DependencyConstraint(Task task, Task dependingOn) throws IllegalArgumentException {
         if (! isValidDependingOn(task,dependingOn))
@@ -46,10 +48,10 @@ public class DependencyConstraint {
 
     /**
      * Controleer of een taak (task) van een geldige taak (dependingOn) afhangt.
-     * @param task De afhankelijke taak
-     * @param dependingOn De taak waarvan gecontroleerd moet worden of task daarvan afhankelijk kan zijn
-     * @return true alss task van dependingOn kan afhangen,
-     * (alss het toevoegen van de dependency constraint geen lussen veroorzaakt in de "dependency graph")
+     * @param task          De afhankelijke taak
+     * @param dependingOn   De taak waarvan gecontroleerd moet worden of task daarvan afhankelijk kan zijn
+     * @return              Waar indien de task afhankelijk kan zijn van dependingOn,
+     * (Indien het toevoegen van de dependency constraint geen lussen veroorzaakt)
      */
     public static boolean isValidDependingOn(Task task, Task dependingOn) {
         if (task == dependingOn)
@@ -70,10 +72,11 @@ public class DependencyConstraint {
     }
 
     /**
-     * Controleert of deze dependency constraint gelijk is aan een ander object
-     * @param other Het object om mee te vergelijken
-     * @return true alss other een dependency constraint is met dezelfde task en dependingOn
-     *         als deze dependency constraint
+     * Controleert of deze dependency constraint gelijk is aan een ander object.
+     *
+     * @param other     Het object om mee te vergelijken
+     * @return          Waar indien other een dependency constraint is met dezelfde task en dependingOn
+     *                  als deze dependency constraint
      */
     @Override
     public boolean equals(Object other) {
@@ -84,7 +87,8 @@ public class DependencyConstraint {
     }
 
     /**
-     * Geeft de hashcode van de dependency constraint
+     * Geeft de hashcode van de dependency constraint.
+     *
      * @return getTask().hashCode() + getDependingOn().hashCode()
      */
     @Override
