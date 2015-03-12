@@ -27,8 +27,8 @@ public class InputReader  {
     UserInterface ui;
     System system;
     ProjectRepository projectRepository;
-    ArrayList<Project> projectList;
-    ArrayList<Task> taskList;
+    ArrayList<Project> projectList = new ArrayList<>();
+    ArrayList<Task> taskList = new ArrayList<>();
 
     public InputReader(UserInterface ui, ProjectRepository projectRepository) {
         this.ui = ui;
@@ -42,6 +42,9 @@ public class InputReader  {
         ProjectRepository pr = system.getProjectRepository();
         InputReader io = new InputReader(null, pr);
         io.runInputReader();
+        io.runInputReader();
+
+
     }
 
     @SuppressWarnings("unchecked")
@@ -63,26 +66,22 @@ public class InputReader  {
             if (key.equals("projects")){
                 subList = (ArrayList) values.get(key);
                 for (int i = 0; i < subList.size(); i++) {
-                    Map<String, String> mapProject = (Map<String, String>) subList.get(0);
+                    Map<String, String> mapProject = (Map<String, String>) subList.get(i);
                     Project projectX = createProjectObject(mapProject);
-                    this.projectList.add(projectX);
+                    projectList.add(projectX);
                 }
             }
 
             if (key.equals("task")){
                 subList = (ArrayList) values.get(key);
                 for (int i = 0; i < subList.size(); i++) {
-                    Map<String, String> mapTask = (Map<String, String>) subList.get(0);
-                    //Project taskX = createTaskObject(mapTask);
+                    Map<String, String> mapTask = (Map<String, String>) subList.get(i);
+                    Project projectX = projectList.get(Integer.valueOf(mapTask.get("project")));
+                    addTaskToProject(mapTask, projectX); //De taak wordt in project aangemaakt
+                    addOtherDetails(mapTask, projectX.getTasks().get(i));
 
                 }
             }
-
-
-            //Map<String, String> test = (Map<String, String>) subList.get(0);
-
-
-
 
 
 /*            for (String subValueKey : test.keySet()) {
@@ -94,6 +93,19 @@ public class InputReader  {
         }
 
     }
+
+    private void addOtherDetails(Map<String, String> mapTask, Task task) {
+        for (String property : mapTask.keySet()){
+            switch (property){
+                case "alternativeFor" :
+                    int alternativeTask = Integer.valueOf(mapTask.get("alternativeFor"));
+                    taskList.get(alternativeTask).setAlternativeTask(task);
+            }
+        }
+
+
+    }
+
     private Project createProjectObject(Map<String, String> propertiesList) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -112,7 +124,7 @@ public class InputReader  {
 
     }
 
-    private Task createTaskObject(Map<String, String> propertiesList, Project project) {
+    private Task addTaskToProject(Map<String, String> propertiesList, Project project) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         try {

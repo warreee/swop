@@ -15,9 +15,11 @@ public class TaskTest {
 
     @Before
     public void setUp() throws Exception {
+        be.swop.groep11.main.System system = new be.swop.groep11.main.System();
+        ProjectRepository repo = new ProjectRepository(system);
         project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
-                new User("Alfred J. Kwak"));
+                new User("Alfred J. Kwak"), repo);
         project.addNewTask("Test taak", 0.1, Duration.ofHours(8));
         project.addNewTask("Test taak 1", 0, Duration.ofMinutes(30));
         project.addNewTask("Test taak 2", 0.2, Duration.ofHours(16));

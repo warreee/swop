@@ -31,11 +31,12 @@ public class Project {
      *                      | !isValidUser(creator)
      *                      | !isValidProjectID(projectID)
      */
-    public Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, User creator) throws IllegalArgumentException{
+    public Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, User creator, ProjectRepository repo) throws IllegalArgumentException{
         setProjectName(name);
         setCreationAndDueTime(creationTime, dueTime);
         setCreator(creator);
         setDescription(description);
+        setProjectRepository(repo);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +138,18 @@ public class Project {
         }
         this.creator = creator;
     }
+
+    public ProjectRepository getProjectRepository() {
+        return projectRepository;
+    }
+
+    public void setProjectRepository(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
+
+    private ProjectRepository projectRepository;
+
+
 
     private User creator;
 
