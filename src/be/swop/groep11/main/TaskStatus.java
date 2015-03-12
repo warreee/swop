@@ -37,11 +37,48 @@ public enum TaskStatus {
             case AVAILABLE:
                 if (newStatus == FINISHED || newStatus == FAILED)
                     return task.getStartTime() != null && task.getEndTime() != null;
+
+                if (newStatus == UNAVAILABLE){
+
+                    if(task.getDependingOnTasks().size() == 0){
+                        // De taak hangt van niks af. Unavailable is niet mogelijk.
+                        return false;
+                    }
+
+                    for(Task dependingOn: task.getDependingOnTasks()){
+
+                        Task t = dependingOn;
+                        while(true){
+                            if (t.getStatus() == FINISHED){
+                                // Deze taak is gefinished, Controlleer de volgende.
+                                break;
+                            }
+                            if(t.getStatus() == UNAVAILABLE){
+                                // Deze taak is nog niet beschikbaar. Controlleer de volgende.
+                                break;
+                            }
+                            if(t.getStatus() == AVAILABLE){
+                                // Er is een afhankelijke taak die nog gedaan moet worden.
+                                return true;
+                            }
+                            if (t.getStatus() == FAILED){
+                                t = t.getAlternativeTask();
+                                if (t == null){
+                                    // Er is geen alternatieve taak voor een gefaalde taak. De gegeven taak moet dus op unavailable komen te staan.
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    return false;
+                }
                 return true;
+
             case UNAVAILABLE:
                 if (newStatus == AVAILABLE) {
                     for (Task dependingOn : task.getDependingOnTasks())
                         if (dependingOn.getStatus() != FINISHED)
+                            // TODO: alternatieve taak wordt vergeten.
                             return false;
                     return true;
                 }
