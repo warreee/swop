@@ -5,11 +5,9 @@ import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.Task;
 import be.swop.groep11.main.TaskStatus;
 import be.swop.groep11.main.ui.EmptyListException;
-import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.CancelException;
 import com.google.common.collect.ImmutableList;
-import sun.invoke.empty.Empty;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -89,7 +87,7 @@ public class TaskController {
         }
     }
 
-    private void updateTask(Task task) {
+    private void updateTask(Task task) throws CancelException{
         try {
             LocalDateTime startTime = ui.requestDatum("Starttijd:");
             LocalDateTime endTime = ui.requestDatum("Eindtijd:");
@@ -104,22 +102,7 @@ public class TaskController {
             ui.printException(e);
             updateTask(task);
         }
-        catch (CancelException e) {
-            ui.printException(e);
-        }
     }
-
-    /*
-    public void showTasks(){
-        try{
-            ImmutableList<Task> tasks = project.getTasks();
-            Task task = ui.selectTaskFromList(tasks);
-            ui.showTaskDetails(task);
-        } catch (CancelException | EmptyListException e) {
-            ui.printException(e);
-        }
-    }
-    */
 
     private ImmutableList<Task> getAllTasks(){
         List<Task> tasks = new ArrayList<Task>();

@@ -303,7 +303,7 @@ public class Task {
      * @param status De nieuwe status
      * @throws java.lang.IllegalArgumentException Kan de status alleen op FINISHED of FAILED zetten.
      */
-    public void setNewStatus(TaskStatus status) {
+    public void setNewStatus(TaskStatus status) throws IllegalArgumentException{
         if (status != TaskStatus.FAILED && status != TaskStatus.FINISHED)
             throw new IllegalArgumentException("Kan status alleen op FINISHED of FAILED zetten");
         setStatus(status);

@@ -1,6 +1,7 @@
 package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.TaskMan;
+import be.swop.groep11.main.controllers.AdvanceTimeController;
 import be.swop.groep11.main.ui.commands.CancelException;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,39 +29,37 @@ public class AdvanceTimeScenarioTest {
                 return now.plusDays(1);
             }
         };
-        advanceTime(ui);
+        AdvanceTimeController advanceTimeController = new AdvanceTimeController(taskMan,ui);
+        advanceTimeController.advanceTime();
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = StopTestException.class)
     public void updateTime_invalidNewSystemTimeTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 return now.minusDays(1);
             }
+            @Override
+            public void printException(Exception e) {
+                throw new StopTestException("Cancel");
+            }
         };
-        advanceTime(ui);
+        AdvanceTimeController advanceTimeController = new AdvanceTimeController(taskMan,ui);
+        advanceTimeController.advanceTime();
     }
 
-    @Test (expected = CancelException.class)
+    @Test
     public void updateTime_CancelTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 throw new CancelException("Cancel");
             }
+
         };
-        advanceTime(ui);
-    }
-
-    private void advanceTime(EmptyTestUI ui){
-        //Step 1: User has indicated he wants to modify the system time.
-        //Stap 2 & 3:
-        LocalDateTime newSystemTime = ui.requestDatum("Nieuwe systeemtijd");
-        //step 4
-        taskMan.updateSystemTime(newSystemTime);
-
-        //TODO check if updated correctly
+        AdvanceTimeController advanceTimeController = new AdvanceTimeController(taskMan,ui);
+        advanceTimeController.advanceTime();
     }
 }
 

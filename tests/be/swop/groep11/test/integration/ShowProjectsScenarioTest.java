@@ -1,13 +1,17 @@
 package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.Project;
+import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.Task;
+import be.swop.groep11.main.User;
+import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.commands.CancelException;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
@@ -15,92 +19,73 @@ import java.time.LocalDateTime;
  */
 public class ShowProjectsScenarioTest {
 
-
     private LocalDateTime now;
+    private ProjectRepository projectRepository;
+    private User user;
 
     @Before
     public void setUp() throws Exception {
         now = LocalDateTime.now();
+        projectRepository = new ProjectRepository();
+        user = new User("Test");
+
+        projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10),new User("TEST"));
+        projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8));
     }
 
     @Test
     public void showProjects_validTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
-            public void showProjectList(ImmutableList<Project> projects) {
-                super.showProjectList(projects);
-            }
-
-            @Override
             public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException {
-                return super.selectTaskFromList(tasks);
+                return projectRepository.getProjects().get(0).getTasks().get(0);
             }
 
             @Override
-            public void showTaskDetails(Task task) {
-                super.showTaskDetails(task);
+            public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException {
+                return projectRepository.getProjects().get(0);
             }
 
-            @Override
-            public void showProjectDetails(Project project) {
-                super.showProjectDetails(project);
-            }
         };
-        showProject(ui);
+        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        projectController.showProjects();
     }
 
-
-    @Test (expected = CancelException.class)
+    @Test
     public void showProjects_CancelSelectProjectTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
-
-
             @Override
             public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException {
-                return super.selectTaskFromList(tasks);
+                return projectRepository.getProjects().get(0).getTasks().get(0);
             }
+
             @Override
             public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException {
                 throw new CancelException("Cancel");
             }
-
         };
-        showProject(ui);
-
+        //Cancel exception wordt opgevangen in de controller.
+        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        projectController.showProjects();
     }
 
-    @Test (expected = CancelException.class)
+    @Test
     public void showProjects_CancelSelectTaskTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
-
-
             @Override
             public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException {
                 throw new CancelException("Cancel");
             }
             @Override
             public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException {
-                return null;
+                return projectRepository.getProjects().get(0);
             }
-
         };
-        showProject(ui);
-
+        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        //Cancel exception wordt opgevangen in de controller.
+        projectController.showProjects();
     }
 
-    private void showProject(EmptyTestUI ui){
-        Project[] prjs = {};
-        ImmutableList<Project> projects = ImmutableList.copyOf(prjs);
-        //Step 2 & 3
-        Project project = ui.selectProjectFromList(projects);
-        //Step 4
-        ui.showProjectDetails(project);
 
-        Task[] tsks = {};
-        ImmutableList<Task> tasks = ImmutableList.copyOf(tsks);
-        //Step 5
-        Task task = ui.selectTaskFromList(tasks);
-        //Step 6
-        ui.showTaskDetails(task);
-    }
+
 }

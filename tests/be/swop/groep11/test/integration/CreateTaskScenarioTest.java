@@ -2,18 +2,15 @@ package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
-import be.swop.groep11.main.Task;
 import be.swop.groep11.main.User;
+import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.commands.CancelException;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Ronald on 11/03/2015.
@@ -57,10 +54,12 @@ public class CreateTaskScenarioTest {
                 return projects.get(0);
             }
         };
-        createTask(ui);
+        TaskController taskController = new TaskController(repository,ui);
+        taskController.createTask();
+
     }
 
-    @Test (expected = CancelException.class)
+    @Test
     public void createTask_CancelBeschrijvingTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
@@ -92,10 +91,12 @@ public class CreateTaskScenarioTest {
                 throw new CancelException("Cancel");
             }
         };
-        createTask(ui);
+        TaskController taskController = new TaskController(repository,ui);
+        //Cancel exception wordt opgevangen in de controller.
+        taskController.createTask();
     }
 
-    @Test (expected = CancelException.class)
+    @Test
     public void createTask_CancelDeviationTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
@@ -127,10 +128,12 @@ public class CreateTaskScenarioTest {
                 throw new CancelException("Cancel");
             }
         };
-        createTask(ui);
+        TaskController taskController = new TaskController(repository,ui);
+        //Cancel exception wordt opgevangen in de controller.
+        taskController.createTask();
     }
 
-    @Test (expected = CancelException.class)
+    @Test
     public void createTask_CancelDurationTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
@@ -162,11 +165,13 @@ public class CreateTaskScenarioTest {
                 throw new CancelException("Cancel");
             }
         };
-        createTask(ui);
+        TaskController taskController = new TaskController(repository,ui);
+        //Cancel exception wordt opgevangen in de controller.
+        taskController.createTask();
     }
 
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = StopTestException.class)
     public void createProject_invalidDescriptionTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
@@ -188,11 +193,16 @@ public class CreateTaskScenarioTest {
             public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException {
                 return projects.get(0);
             }
+            @Override
+            public void printException(Exception e) {
+                throw new StopTestException("Cancel");
+            }
         };
-        createTask(ui);
+        TaskController taskController = new TaskController(repository,ui);
+        taskController.createTask();
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = StopTestException.class)
     public void createProject_invalidDeviationTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
@@ -214,11 +224,16 @@ public class CreateTaskScenarioTest {
             public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException {
                 return projects.get(0);
             }
+            @Override
+            public void printException(Exception e) {
+                throw new StopTestException("Cancel");
+            }
         };
-        createTask(ui);
+        TaskController taskController = new TaskController(repository,ui);
+        taskController.createTask();
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = StopTestException.class)
     public void createProject_invalidDurationTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
@@ -240,28 +255,13 @@ public class CreateTaskScenarioTest {
             public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException {
                 return projects.get(0);
             }
+            @Override
+            public void printException(Exception e) {
+                throw new StopTestException("Cancel");
+            }
         };
-        createTask(ui);
+        TaskController taskController = new TaskController(repository,ui);
+        taskController.createTask();
     }
 
-    private void createTask(EmptyTestUI ui){
-        ImmutableList<Project> projects = repository.getProjects();
-
-        //Step 2 & 3
-        String description = ui.requestString("Beschrijving:");
-        Double acceptableDeviation = ui.requestDouble("Aanvaardbare afwijking in procent:") / 100;
-        Duration estimatedDuration = Duration.ofHours(Integer.valueOf(ui.requestNumber("Geschatte duur:")).longValue());
-        ui.printMessage("Kies een project waartoe de taak moet behoren:");
-        //Step 4
-        Project project = ui.selectProjectFromList(projects);
-        project.addNewTask(description, acceptableDeviation, estimatedDuration);
-
-        //Check
-        ImmutableList<Task> tasks = project.getTasks();
-        Task task = tasks.get(tasks.size()-1);
-
-        assertEquals(task.getDescription(),description);
-        assertEquals(Double.valueOf(task.getAcceptableDeviation()),acceptableDeviation);
-        assertEquals(task.getEstimatedDuration(),estimatedDuration);
-    }
 }
