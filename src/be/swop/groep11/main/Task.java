@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -204,7 +205,6 @@ public class Task {
         return true;
     }
 
-    //TODO setEndTimetest
 
     /**
      * Controleer of de gegeven eind tijd een geldig tijdstip is voor deze taak..
@@ -475,6 +475,30 @@ public class Task {
      */
     public boolean isOverTime(LocalDateTime currentTime) {
         return false; // TODO
+    }
+
+    /**
+     * Berekent hoeveel een project overtijd is zonder rekening te houden met de acceptable deviation.
+     * @return 0.1 staat voor 10%, 0.2 staat voor 20%.
+     */
+    public double getOverTimePercentage(){
+        LocalDateTime systemTime = getProject().getProjectRepository().getSystem().getCurrentSystemTime();
+        if(!hasStartTime()){
+            return 0.0; // Project is nog niet gestart. Dus over time is 0.
+        }
+        double minutes;
+        if(hasStartTime() && hasEndTime()) {
+            minutes = startTime.until(endTime, ChronoUnit.MINUTES);
+        } else {
+            minutes = startTime.until(systemTime, ChronoUnit.MINUTES);
+        }
+        double dur = getEstimatedDuration().toMinutes();
+        double percent = (minutes / dur) - 1.0;
+        if(percent <= 0.0){
+            return 0.0;
+        } else {
+            return percent;
+        }
     }
 
     /**
