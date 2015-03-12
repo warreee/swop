@@ -118,4 +118,39 @@ public class TaskStatusTest {
         task1.setEndTime(LocalDateTime.of(2015, 3, 12, 12, 0));
         assertTrue(TaskStatus.isValidNewStatus(TaskStatus.FAILED, task1));
     }
+
+    @Test
+    public void finishedToUnvailable() throws Exception {
+        //FINISHED -> UNAVAILABLE mag nooit.
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE, task1));
+        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        task1.setNewStatus(TaskStatus.FINISHED); //Taak1 is nu FINISHED
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE, task1));
+    }
+
+    @Test
+    public void finishedToAvailable() throws Exception {
+        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        task1.setNewStatus(TaskStatus.FINISHED); //Taak1 is nu FINISHED
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task1));
+    }
+
+    @Test
+    public void finishedToFailed() throws Exception {
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FAILED, task1));
+        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        task1.setNewStatus(TaskStatus.FINISHED); //Taak1 is nu FINISHED
+        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FAILED, task1));
+    }
+
+    @Test
+    public void finishedToFinished() throws Exception {
+        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        task1.setNewStatus(TaskStatus.FINISHED); //Taak1 is nu FINISHED
+        assertTrue(TaskStatus.isValidNewStatus(TaskStatus.FINISHED, task1));
+    }
 }

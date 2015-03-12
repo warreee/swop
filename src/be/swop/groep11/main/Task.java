@@ -145,8 +145,6 @@ public class Task {
         return startTime;
     }
 
-    //TODO Geen start en eind tijd terwijl TaakStatus Unavailable.
-
     /**
      * Wijzigt de starttijd van de taak.
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
@@ -331,10 +329,10 @@ public class Task {
     private void setStatus(TaskStatus status) throws IllegalArgumentException {
         if (! TaskStatus.isValidNewStatus(status, this))
             throw new IllegalArgumentException("Ongeldige status");
+        this.status = status;
         if (status == TaskStatus.FINISHED) {
             this.makeDependentTasksAvailable();
         }
-        this.status = status;
     }
 
     /**
@@ -393,7 +391,7 @@ public class Task {
     }
 
     private boolean dependsOn(Task other) {
-        return this.dependencyConstraints.contains(new DependencyConstraint(this,other));
+        return this.getDependingOnTasks().contains(other);
     }
 
     /**
@@ -462,14 +460,16 @@ public class Task {
         // We nemen als duration de echte tijd die gepasseerd is.
         if (getStartTime() == null || getEndTime() == null)
             return null;
+
+
         return Duration.between(getStartTime(),getEndTime());
     }
 
     /**
-     * Controleert of deze taak over tijd is.
-     * @return true als ...
+     * Controleert of deze taak momenteel over tijd is ten opzichte van de huidige tijd.
+     * @param currentTime De huidige tijd
      */
-    public boolean isOverTime() {
+    public boolean isOverTime(LocalDateTime currentTime) {
         return false; // TODO
     }
 

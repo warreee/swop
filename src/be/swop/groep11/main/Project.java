@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * Created by warreee on 23/02/15.
@@ -196,5 +195,16 @@ public class Project {
      */
     public boolean hasTask(Task task){
         return tasks.contains(task);
+    }
+
+    /**
+     * Geeft een schatting voor de effectieve eind datum van het project.
+     *
+     * @param currentSystemTime
+     * @return
+     */
+    public LocalDateTime getEstimatedEndTime(LocalDateTime currentSystemTime){
+        //TODO implement
+        return null;
     }
 }
