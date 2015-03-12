@@ -34,16 +34,16 @@ public class UpdateTaskStatusScenarioTest {
                 return project.getTasks().get(0);
 
             }
-
+            private int i = 0;
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 LocalDateTime result = null;
-                if(request.contentEquals("Starttijd:")){
+                if(i == 0){
                     result = now;
-                } else if(request.contentEquals("Eindtijd:")){
+                } else if(i == 1){
                     result = now.plusDays(1);
                 }
-
+                i++;
                 return result;
             }
 
@@ -72,15 +72,16 @@ public class UpdateTaskStatusScenarioTest {
                 return project.getTasks().get(0);
 
             }
-
+            private int i = 0;
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 LocalDateTime result = null;
-                if(request.contentEquals("Starttijd:")){
-                    throw new CancelException("Cancel");
-                } else if(request.contentEquals("Eindtijd:")){
+                if(i == 0){
+                   throw new CancelException("Cancel");
+                } else if(i == 1){
                     result = now.plusDays(1);
                 }
+                i++;
 
                 return result;
             }
@@ -111,14 +112,16 @@ public class UpdateTaskStatusScenarioTest {
                 return project.getTasks().get(0);
             }
 
+            private int i = 0;
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 LocalDateTime result = null;
-                if(request.contentEquals("Starttijd:")){
+                if(i == 0){
                     result = now.plusDays(1);
-                } else if(request.contentEquals("Eindtijd:")){
+                } else if(i == 1){
                     result = now;
                 }
+                i++;
                 return result;
             }
 
@@ -153,14 +156,16 @@ public class UpdateTaskStatusScenarioTest {
 
             }
 
+            private int i = 0;
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 LocalDateTime result = null;
-                if(request.contentEquals("Starttijd:")){
-                    result = now.plusDays(1);
-                } else if(request.contentEquals("Eindtijd:")){
+                if(i == 0){
                     result = now;
+                } else if(i == 1){
+                    result = now.plusDays(1);
                 }
+                i++;
                 return result;
             }
 
@@ -195,14 +200,16 @@ public class UpdateTaskStatusScenarioTest {
 
             }
 
+            private int i = 0;
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 LocalDateTime result = null;
-                if(request.contentEquals("Starttijd:")){
-                    result = now.plusDays(1);
-                } else if(request.contentEquals("Eindtijd:")){
+                if(i == 0){
                     result = now;
+                } else if(i == 1){
+                    result = now.plusDays(1);
                 }
+                i++;
                 return result;
             }
 

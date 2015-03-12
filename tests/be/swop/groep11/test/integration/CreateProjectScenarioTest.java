@@ -30,25 +30,30 @@ public class CreateProjectScenarioTest {
     @Test
     public void createProject_validTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
+
+            private int i = 0;
             @Override
             public String requestString(String request) throws CancelException {
                 String result = "";
-                if(request.contentEquals("Project naam:")){
+                if(i==0){
                     result = "Naam";
-                } else if (request.contentEquals("Project beschrijving:")){
+                } else if (i==1){
                     result = "Omschrijving";
                 }
+                i++;
                 return result;
             }
 
+            private int j = 0;
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 LocalDateTime result = null;
-                if(request.contentEquals("Creation time:")){
+                if(j==0){
                     result = now;
-                } else if (request.contentEquals("Due time:")){
+                } else if (j==1){
                     result = now.plusDays(1);
                 }
+                j++;
                 return result;
             }
         };
@@ -59,27 +64,33 @@ public class CreateProjectScenarioTest {
     @Test (expected = StopTestException.class)
     public void createProject_invalidNameTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
+
+            private int i = 0;
             @Override
             public String requestString(String request) throws CancelException {
                 String result = "";
-                if(request.contentEquals("Project naam:")){
+                if(i==0){
                     result = "";
-                } else if (request.contentEquals("Project beschrijving:")){
+                } else if (i==1){
                     result = "Omschrijving";
                 }
+                i++;
                 return result;
             }
 
+            private int j = 0;
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 LocalDateTime result = null;
-                if(request.contentEquals("Creation time:")){
+                if(j==0){
                     result = now;
-                } else if (request.contentEquals("Due time:")){
+                } else if (j==1){
                     result = now.plusDays(1);
                 }
+                j++;
                 return result;
             }
+
             @Override
             public void printException(Exception e) {
                 throw new StopTestException("Cancel");
@@ -92,27 +103,32 @@ public class CreateProjectScenarioTest {
     @Test (expected = StopTestException.class)
     public void createProject_invalidDescriptionTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
+            private int i = 0;
             @Override
             public String requestString(String request) throws CancelException {
                 String result = "";
-                if(request.contentEquals("Project naam:")){
+                if(i==0){
                     result = "Naam";
-                } else if (request.contentEquals("Project beschrijving:")){
+                } else if (i==1){
                     result = "";
                 }
+                i++;
                 return result;
             }
 
+            private int j = 0;
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 LocalDateTime result = null;
-                if(request.contentEquals("Creation time:")){
+                if(j==0){
                     result = now;
-                } else if (request.contentEquals("Due time:")){
+                } else if (j==1){
                     result = now.plusDays(1);
                 }
+                j++;
                 return result;
             }
+
             @Override
             public void printException(Exception e) {
                 throw new StopTestException("Cancel");
@@ -125,27 +141,32 @@ public class CreateProjectScenarioTest {
     @Test (expected = StopTestException.class)
     public void createProject_invalidCreationAndDueTimeTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
+            private int i = 0;
             @Override
             public String requestString(String request) throws CancelException {
                 String result = "";
-                if(request.contentEquals("Project naam:")){
+                if(i==0){
                     result = "Naam";
-                } else if (request.contentEquals("Project beschrijving:")){
+                } else if (i==1){
                     result = "Omschrijving";
                 }
+                i++;
                 return result;
             }
 
+            private int j = 0;
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
                 LocalDateTime result = null;
-                if(request.contentEquals("Creation time:")){
+                if(j==0){
                     result = now.plusDays(1);
-                } else if (request.contentEquals("Due time:")){
+                } else if (j==1){
                     result = now;
                 }
+                j++;
                 return result;
             }
+
             @Override
             public void printException(Exception e) {
                 throw new StopTestException("Cancel");
@@ -156,34 +177,145 @@ public class CreateProjectScenarioTest {
     }
 
     @Test
-    public void createProject_CancelTest() throws Exception {
+    public void createProject_CancelNameTest() throws Exception {
         EmptyTestUI ui = new EmptyTestUI(now) {
+            private int i = 0;
             @Override
             public String requestString(String request) throws CancelException {
-                String result = requestInput(request);
-                if(request.contentEquals("Project naam:")){
-                    result = "Naam";
-                } else if (request.contentEquals("Project beschrijving:")){
+                String result = "";
+                if(i==0){
+                    throw new CancelException("Cancel");
+                } else if (i==1){
                     result = "Omschrijving";
                 }
+                i++;
                 return result;
             }
 
+            private int j = 0;
             @Override
             public LocalDateTime requestDatum(String request) throws CancelException {
-                requestInput(request);
                 LocalDateTime result = null;
-                if(request.contentEquals("Creation time:")){
-                    result = now.plusDays(1);
-                } else if (request.contentEquals("Due time:")){
+                if(j==0){
                     result = now;
+                } else if (j==1){
+                    result = now.plusDays(1);
                 }
+                j++;
                 return result;
             }
 
-            private String requestInput(String request)throws CancelException{
-                throw new CancelException("Cancel");
+
+
+        };
+        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        //Cancel exception wordt opgevangen in de controller.
+        projectController.createProject();
+    }
+
+    @Test
+    public void createProject_CancelDescriptionTest() throws Exception {
+        EmptyTestUI ui = new EmptyTestUI(now) {
+            private int i = 0;
+            @Override
+            public String requestString(String request) throws CancelException {
+                String result = "";
+                if(i==0){
+                    result = "ProjectNaam";
+                } else if (i==1){
+                    throw new CancelException("Cancel");
+                }
+                i++;
+                return result;
             }
+
+            private int j = 0;
+            @Override
+            public LocalDateTime requestDatum(String request) throws CancelException {
+                LocalDateTime result = null;
+                if(j==0){
+                    result = now;
+                } else if (j==1){
+                    result = now.plusDays(1);
+                }
+                j++;
+                return result;
+            }
+
+
+
+        };
+        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        //Cancel exception wordt opgevangen in de controller.
+        projectController.createProject();
+    }
+    @Test
+    public void createProject_CancelCreateTimeTest() throws Exception {
+        EmptyTestUI ui = new EmptyTestUI(now) {
+            private int i = 0;
+            @Override
+            public String requestString(String request) throws CancelException {
+                String result = "";
+                if(i==0){
+                    result = "ProjectNaam";
+                } else if (i==1){
+                    result = "Omschrijving";
+                }
+                i++;
+                return result;
+            }
+
+            private int j = 0;
+            @Override
+            public LocalDateTime requestDatum(String request) throws CancelException {
+                LocalDateTime result = null;
+                if(j==0){
+                    throw new CancelException("Cancel");
+                } else if (j==1){
+                    result = now.plusDays(1);
+                }
+                j++;
+                return result;
+            }
+
+
+
+        };
+        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        //Cancel exception wordt opgevangen in de controller.
+        projectController.createProject();
+    }
+    @Test
+    public void createProject_CancelDueTimeTest() throws Exception {
+        EmptyTestUI ui = new EmptyTestUI(now) {
+            private int i = 0;
+            @Override
+            public String requestString(String request) throws CancelException {
+                String result = "";
+                if(i==0){
+                    result = "ProjectNaam";
+                } else if (i==1){
+                    result = "Omschrijving";
+                }
+                i++;
+                return result;
+            }
+
+            private int j = 0;
+            @Override
+            public LocalDateTime requestDatum(String request) throws CancelException {
+                LocalDateTime result = null;
+                if(j==0){
+                    result = now;
+                } else if (j==1){
+                    throw new CancelException("Cancel");
+                }
+                j++;
+                return result;
+            }
+
+
+
         };
         ProjectController projectController = new ProjectController(projectRepository,user,ui);
         //Cancel exception wordt opgevangen in de controller.
