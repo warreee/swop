@@ -96,7 +96,7 @@ public class TaskTest {
      */
     @Test
     public void FinishedStatus_notFinished() throws Exception {
-        assertTrue(task1.getFinishedStatus() == -2);
+        assertTrue(task1.getFinishedStatus() == Task.FinishedStatus.NOTFINISHED);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class TaskTest {
         task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
         task1.setEndTime(LocalDateTime.of(2015,3,8,12,0));
         task1.setNewStatus(TaskStatus.FINISHED);
-        assertTrue(task1.getFinishedStatus() == -1);
+        assertTrue(task1.getFinishedStatus() == Task.FinishedStatus.EARLY);
     }
 
     @Test
@@ -112,14 +112,14 @@ public class TaskTest {
         task1.setStartTime(LocalDateTime.of(2015, 3, 8, 8, 32));
         task1.setEndTime(LocalDateTime.of(2015, 3, 8, 16, 35));
         task1.setNewStatus(TaskStatus.FINISHED);
-        assertTrue(task1.getFinishedStatus() == 0);
+        assertTrue(task1.getFinishedStatus() == Task.FinishedStatus.ONTIME);
     }
     @Test
     public void FinishedStatus_late() throws Exception {
         task1.setStartTime(LocalDateTime.of(2015,3,8,8,32));
         task1.setEndTime(LocalDateTime.of(2015,3,9,12,38));
         task1.setNewStatus(TaskStatus.FINISHED);
-        assertTrue(task1.getFinishedStatus() == 1);
+        assertTrue(task1.getFinishedStatus() == Task.FinishedStatus.OVERDUE);
     }
 
     /*

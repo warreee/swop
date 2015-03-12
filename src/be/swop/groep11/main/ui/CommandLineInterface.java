@@ -333,13 +333,13 @@ public class CommandLineInterface implements UserInterface {
         System.out.printf(format, "Beschrijving: ", task.getDescription());
 
         String finishedStatus = "";
-        if (task.getFinishedStatus() == -1) {
+        if (task.getFinishedStatus() == Task.FinishedStatus.EARLY) {
             finishedStatus = "early";
         }
-        else if (task.getFinishedStatus() == 0) {
+        else if (task.getFinishedStatus() == Task.FinishedStatus.ONTIME) {
             finishedStatus = "on time";
         }
-        else if (task.getFinishedStatus() == 1) {
+        else if (task.getFinishedStatus() == Task.FinishedStatus.OVERDUE) {
             finishedStatus = "late";
         }
         System.out.printf(format, "Status: ", task.getStatus().name() + " " + finishedStatus);

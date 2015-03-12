@@ -348,6 +348,13 @@ public class Task {
                 && ( (task.getStatus() == TaskStatus.FAILED && task != alternativeTask) || (alternativeTask == null) );
     }
 
+    public static enum FinishedStatus {
+        EARLY,
+        ONTIME,
+        OVERDUE,
+        NOTFINISHED;
+    }
+
     /**
      * Geeft de status waarmee de taak geëindigd is: vroeg / op tijd / te laat
      * @return -2 als de taak nog niet geëindigd is,
@@ -355,20 +362,19 @@ public class Task {
      *     <br> 0 als de taak op tijd geëindigd is,
      *     <br> 1 als de taak te laat geëindigd is.
      */
-    // TODO: maak een enum voor hier
-    public int getFinishedStatus() {
+    public FinishedStatus getFinishedStatus() {
         if (getStatus() != TaskStatus.FINISHED)
-            return -2;
+            return FinishedStatus.NOTFINISHED;
 
         long durationInSeconds = getDuration().getSeconds();
         long estimatedDurationInSeconds = this.getEstimatedDuration().getSeconds();
 
         if (durationInSeconds < (1-acceptableDeviation)*estimatedDurationInSeconds)
-            return -1;
+            return FinishedStatus.EARLY;
         else if (durationInSeconds > (1+acceptableDeviation)*estimatedDurationInSeconds)
-            return 1;
+            return FinishedStatus.OVERDUE;
         else
-            return 0;
+            return FinishedStatus.ONTIME;
     }
 
     /**
