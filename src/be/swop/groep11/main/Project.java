@@ -212,22 +212,25 @@ public class Project {
         return tasks.contains(task);
     }
 
+    /**
+     * @return  Waar indien de geschatte eind datum van het project na de verwachte eind datum valt.
+     */
     public boolean isOverTime(){
-        return getEstimatedEndTime()
+        return getEstimatedEndTime().isAfter(dueTime);
     }
 
     /**
      * Geeft een schatting voor de effectieve eind datum van het project.
      *
-     * @param currentSystemTime De huidige systeemtijd nodig bij het berekenen van totale tijdsduur gespendeerd aan de taken.
-     * @return
+     * @return  De geschatte eind datum van het project, door het aantal nodige werkdagen te berekenen.
+     *          Tel het aantal werkdagen (plus nodige weekends) bij de begindatum van het project op.
      */
-    public LocalDateTime getEstimatedEndTime(LocalDateTime currentSystemTime){
+    public LocalDateTime getEstimatedEndTime(){
         int HOURS_PER_DAY = 8;
         Duration max = Duration.ofDays(0);
         for(Task task :getTasks()){
             Set<Task> dependingOnTasks = task.getDependingOnTasks();
-            Duration temp = calculateTotalDuration(dependingOnTasks,currentSystemTime);
+            Duration temp = calculateTotalDuration(dependingOnTasks);
             if(temp.compareTo(max) > 0){
                 max = temp;
             }
@@ -257,12 +260,13 @@ public class Project {
         return currentWorkingDay;
         }
 
-    private Duration calculateTotalDuration(Set<Task> tasks,LocalDateTime currentSystemTime){
+    private Duration calculateTotalDuration(Set<Task> tasks){
+        LocalDateTime currentSystemTime = this.getProjectRepository().getTMSystem().getCurrentSystemTime();
         Duration total = Duration.ofHours(0);
         for(Task task :tasks){
             TaskStatus status = task.getStatus();
             if(status == TaskStatus.AVAILABLE ){
-                Duration add = task.isOverTime(currentSystemTime) ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration()  ;
+                Duration add = task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration()  ;
                 total.plus(add);
             }
             else if(status == TaskStatus.UNAVAILABLE){
