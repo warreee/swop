@@ -12,11 +12,12 @@ public class TaskTest {
 
     private Task task1, task2, task3;
     private Project project;
+    TMSystem TMSystem;
 
     @Before
     public void setUp() throws Exception {
-        TMSystem TMSystem = new TMSystem();
-        ProjectRepository repo = new ProjectRepository(TMSystem);
+        TMSystem = new TMSystem(LocalDateTime.of(2015, 3, 4, 8, 0));
+        ProjectRepository repo = TMSystem.getProjectRepository();
         project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
                 new User("Alfred J. Kwak"), repo);
@@ -194,7 +195,34 @@ public class TaskTest {
     @Test
     public void getOverTimePercentageTest() throws Exception {
         assertEquals(task1.getOverTimePercentage(), 0.0, 1E-14);
-        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 10, 30));
+        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 8, 0));
+        assertEquals(task1.getOverTimePercentage(), 0.0, 1E-14);
+        task1.setEndTime(LocalDateTime.of(2015, 3, 8, 17, 0));
+        assertEquals(task1.getOverTimePercentage(), 0.125, 1E-14);
+        task1.setEndTime(LocalDateTime.of(2015, 3, 8, 13, 0));
+        assertEquals(task1.getOverTimePercentage(), 0.0, 1E-14);
+    }
+
+    @Test
+    public void isOverTimeTest() throws Exception {
+        assertFalse(task1.isOverTime());
+        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 8, 0));
+        assertFalse(task1.isOverTime());
+        TMSystem.updateSystemTime(LocalDateTime.of(2015, 3, 8, 18, 0));
+        assertTrue(task1.isOverTime());
+        task1.setEndTime(LocalDateTime.of(2015, 3, 8, 16, 0));
+        assertFalse(task1.isOverTime());
+    }
+
+    @Test
+    public void isUnacceptablyOverTime() {
+        assertFalse(task1.isUnacceptablyOverTime());
+        task1.setStartTime(LocalDateTime.of(2015, 3, 8, 8, 0));
+        assertFalse(task1.isUnacceptablyOverTime());
+        TMSystem.updateSystemTime(LocalDateTime.of(2015, 3, 8, 19, 0));
+        assertTrue(task1.isUnacceptablyOverTime());
+        task1.setEndTime(LocalDateTime.of(2015, 3, 8, 16, 0));
+        assertFalse(task1.isUnacceptablyOverTime());
     }
 
 }

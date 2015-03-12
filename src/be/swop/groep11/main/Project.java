@@ -13,9 +13,7 @@ import java.util.Set;
  */
 public class Project {
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////CONSTRUCTORS/////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     /**
      * Standaard constructor voor een nieuw project.
@@ -39,16 +37,12 @@ public class Project {
         setProjectRepository(repo);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////GETTERS AND SETTERS//////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     public String getName() {
         return this.name;
     }
     /**
      * @param name De naam die dit project moet dragen.
-     * @throws java.lang.IllegalArgumentException Deze exception wordt gegooid als het argument null is.
+     * @throws IllegalArgumentException Deze exception wordt gegooid als het argument null is.
      */
     public void setProjectName(String name) throws IllegalArgumentException {
         if(!isValidProjectName(name)){
@@ -229,16 +223,18 @@ public class Project {
         int HOURS_PER_DAY = 8;
         Duration max = Duration.ofDays(0);
         for(Task task :getTasks()){
-            Set<Task> dependingOnTasks = task.getDependingOnTasks();
-            Duration temp = calculateTotalDuration(dependingOnTasks);
+            Set<Task> tasks = task.getDependingOnTasks();
+            tasks.add(task);
+            Duration temp = calculateTotalDuration(tasks);
             if(temp.compareTo(max) > 0){
                 max = temp;
             }
         }
         long hours = max.toHours();
-        long workDays = (long)(hours / HOURS_PER_DAY)+1;
+        long workDays = (long) Math.ceil(hours / HOURS_PER_DAY);
 
         LocalDateTime currentWorkingDay = creationTime;
+        currentWorkingDay = currentWorkingDay.withHour(18).withMinute(0);
         while(workDays > 0){
             DayOfWeek currentDay = currentWorkingDay.getDayOfWeek();
             long add = 1;
@@ -253,7 +249,7 @@ public class Project {
                     add = 2;
                     break;
             }
-            currentWorkingDay.plusDays(add);
+            currentWorkingDay = currentWorkingDay.plusDays(add);
             workDays--;
 
             }
@@ -267,13 +263,13 @@ public class Project {
             TaskStatus status = task.getStatus();
             if(status == TaskStatus.AVAILABLE ){
                 Duration add = task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration()  ;
-                total.plus(add);
+                total = total.plus(add);
             }
             else if(status == TaskStatus.UNAVAILABLE){
-                total.plus(task.getEstimatedDuration());
+                total = total.plus(task.getEstimatedDuration());
             }
             else if(status == TaskStatus.FINISHED || status == TaskStatus.FAILED){
-                total.plus(task.getDuration());
+                total = total.plus(task.getDuration());
             }
         }
         return total;

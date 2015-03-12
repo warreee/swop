@@ -6,7 +6,9 @@ import be.swop.groep11.main.TMSystem;
 import be.swop.groep11.main.User;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class ProjectTest {
@@ -17,6 +19,7 @@ public class ProjectTest {
     private LocalDateTime due;
     private String name;
     private String description;
+    private Project project;
 
     @Before
     public void setUp() throws Exception {
@@ -27,12 +30,54 @@ public class ProjectTest {
         name = "name";
         description = "description";
 
-        repository = new TMSystem().getProjectRepository();
+        repository = new TMSystem(LocalDateTime.of(2015,3,12,23,2)).getProjectRepository();
+
+        project = new Project(name, description, create, due, user, repository);
     }
 
-    //VRAAG: is dit de juiste plaats voor deze testen, of horen deze bij ProjectRepositoryTests
-    //TODO addNewTask
     //TODO change project status
+
+    @Test
+    public void AddNewTask_valid() {
+        project.addNewTask("Test taak", 0.1, Duration.ofHours(2));
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void AddNewTask_invalid1() {
+        project.addNewTask("", 0.1, Duration.ofHours(2));
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void AddNewTask_invalid2() {
+        project.addNewTask("Test", -0.1, Duration.ofHours(2));
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void AddNewTask_invalid3() {
+        project.addNewTask("Test", 0.1, null);
+    }
+
+    @Test
+    public void isOverTime_OverTimeProject() {
+        Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0),user,repository);
+        project1.addNewTask("Taak",0.1,Duration.ofHours(24));
+        project1.addNewTask("Afhankelijke taak",0,Duration.ofHours(16));
+        project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
+        project1.getTasks().get(0).setStartTime(LocalDateTime.of(2015, 3, 8, 0, 0));
+        System.out.println(project1.getEstimatedEndTime().toString());
+        assertTrue(project1.isOverTime());
+    }
+
+    @Test
+    public void isOverTime_NotOverTimeProject() {
+        Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0),user,repository);
+        project1.addNewTask("Taak",0.1,Duration.ofHours(8));
+        project1.addNewTask("Afhankelijke taak",0,Duration.ofHours(16));
+        project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
+        project1.getTasks().get(0).setStartTime(LocalDateTime.of(2015, 3, 8, 0, 0));
+        System.out.println(project1.getEstimatedEndTime().toString());
+        assertFalse(project1.isOverTime());
+    }
 
     @Test
     public void NewProject_valid() throws Exception {
