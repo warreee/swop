@@ -27,7 +27,7 @@ public class InputReader  {
     UserInterface ui;
     System system;
     ProjectRepository projectRepository;
-    ArrayList<Project> projectList;
+    ArrayList<Project> projectList = new ArrayList<>();
     ArrayList<Task> taskList;
 
     public InputReader(UserInterface ui, ProjectRepository projectRepository) {
@@ -42,6 +42,9 @@ public class InputReader  {
         ProjectRepository pr = system.getProjectRepository();
         InputReader io = new InputReader(null, pr);
         io.runInputReader();
+        io.runInputReader();
+
+
     }
 
     @SuppressWarnings("unchecked")
@@ -63,26 +66,21 @@ public class InputReader  {
             if (key.equals("projects")){
                 subList = (ArrayList) values.get(key);
                 for (int i = 0; i < subList.size(); i++) {
-                    Map<String, String> mapProject = (Map<String, String>) subList.get(0);
+                    Map<String, String> mapProject = (Map<String, String>) subList.get(i);
                     Project projectX = createProjectObject(mapProject);
-                    this.projectList.add(projectX);
+                    projectList.add(projectX);
                 }
             }
 
             if (key.equals("task")){
                 subList = (ArrayList) values.get(key);
                 for (int i = 0; i < subList.size(); i++) {
-                    Map<String, String> mapTask = (Map<String, String>) subList.get(0);
-                    //Project taskX = createTaskObject(mapTask);
+                    Map<String, String> mapTask = (Map<String, String>) subList.get(i);
+                    Project projectX = projectList.get(Integer.valueOf(mapTask.get("project")));
+                    Task taskX = createTaskObject(mapTask, projectX);
 
                 }
             }
-
-
-            //Map<String, String> test = (Map<String, String>) subList.get(0);
-
-
-
 
 
 /*            for (String subValueKey : test.keySet()) {
