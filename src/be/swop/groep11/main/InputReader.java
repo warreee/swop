@@ -78,6 +78,7 @@ public class InputReader  {
                     Map<String, String> mapTask = (Map<String, String>) subList.get(i);
                     Project projectX = projectList.get(Integer.valueOf(mapTask.get("project")));
                     Task taskX = createTaskObject(mapTask, projectX);
+                    addOtherDetails(mapTask, taskX);
 
                 }
             }
@@ -92,6 +93,13 @@ public class InputReader  {
         }
 
     }
+
+    private void addOtherDetails(Map<String, String> mapTask, Task task) {
+
+
+
+    }
+
     private Project createProjectObject(Map<String, String> propertiesList) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
