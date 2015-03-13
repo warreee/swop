@@ -43,7 +43,7 @@ public class TaskController {
 
             List<Task> tasks = new ArrayList<Task>(project.getTasks());
             List<Task> selectedTasks = new ArrayList<Task>();
-            while (ui.requestString("Voeg een afhankelijkheid toe? (y/N)").equals("y")) {
+            while (ui.requestString("Voeg een afhankelijkheid toe? (y/N)").equalsIgnoreCase("y")) {
                 if (tasks.isEmpty()) {
                     ui.printMessage("Geen taken om toe te voegen...");
                     break;
@@ -56,12 +56,21 @@ public class TaskController {
                 }
             }
 
+            Task alternativeTaskFor = null;
+            if (ui.requestString("Is deze taak een alternatieve taak? (y/N)").equalsIgnoreCase("y")) {
+                ui.printMessage("Deze taak zal een zal een alternatieve taak zijn voor de geselecteerde taak.");
+                alternativeTaskFor = ui.selectTaskFromList(project.getFailedTasks());
+            }
+
             project.addNewTask(description, acceptableDeviation, estimatedDuration);
             // opm.: het toevoegen van afhankelijke taken kan nog geen fouten veroorzaken,
             // dus het is geen probleem dat de taak al gecreëerd is
             Task task = project.getTasks().get(project.getTasks().size()-1);
             for (Task dependingOn : selectedTasks) {
                 task.addNewDependencyConstraint(dependingOn);
+            }
+            if (alternativeTaskFor != null) {
+                alternativeTaskFor.setAlternativeTask(project.getTasks().get(project.getTasks().size() - 1));
             }
             ui.printMessage("Taak toegevoegd");
         }
@@ -79,7 +88,7 @@ public class TaskController {
      */
     public void updateTask() {
         try {
-            Task task = ui.selectTaskFromList(this.getAllTasks());
+            Task task = ui.selectTaskFromList(projectRepository.getAllAvailableTasks());
             updateTask(task);
         }
         catch (EmptyListException|CancelException e) {
@@ -113,13 +122,8 @@ public class TaskController {
         }
     }
 
-    private ImmutableList<Task> getAllTasks(){
-        List<Task> tasks = new ArrayList<Task>();
-        ImmutableList<Project> projects = projectRepository.getProjects();
-        for (Project project : projects) {
-            tasks.addAll(project.getTasks());
-        }
-        return ImmutableList.copyOf(tasks);
-    }
+
+
+
 
 }

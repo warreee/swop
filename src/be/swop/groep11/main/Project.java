@@ -6,6 +6,7 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -333,5 +334,18 @@ public class Project {
             }
         }
         return total;
+    }
+
+    /**
+     * Geeft een lijst van alle gefaalde taken van dit project.
+     */
+    public ImmutableList<Task> getFailedTasks(){
+        List<Task> tasks = new ArrayList<Task>();
+        for (Task task : this.getTasks()) {
+            if (task.getStatus() == TaskStatus.FAILED) {
+                tasks.add(task);
+            }
+        }
+        return ImmutableList.copyOf(tasks);
     }
 }

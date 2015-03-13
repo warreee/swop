@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Houdt een lijst van projecten bij en heeft de verantwoordelijkheid om nieuwe projecten te maken en een project op
@@ -52,6 +53,22 @@ public class ProjectRepository {
     public void addNewProject(String name, String description,LocalDateTime creationTime, LocalDateTime duetime, User user) throws IllegalArgumentException{
         Project proj = new Project(name, description, creationTime, duetime, user, this);
         projects.add(proj);
+    }
+
+    /**
+     * Geeft een lijst van alle beschikbare taken in deze project repository.
+     */
+    public ImmutableList<Task> getAllAvailableTasks(){
+        List<Task> tasks = new ArrayList<Task>();
+        ImmutableList<Project> projects = this.getProjects();
+        for (Project project : projects) {
+            for (Task task : project.getTasks()) {
+                if (task.getStatus() == TaskStatus.AVAILABLE) {
+                    tasks.add(task);
+                }
+            }
+        }
+        return ImmutableList.copyOf(tasks);
     }
 
 }
