@@ -30,7 +30,7 @@ public class ProjectTest {
         name = "name";
         description = "description";
 
-        repository = new TMSystem(LocalDateTime.of(2015,3,12,23,2)).getProjectRepository();
+        repository = new TMSystem(LocalDateTime.of(2015,3,8,16,2)).getProjectRepository();
 
         project = new Project(name, description, create, due, user, repository);
     }
@@ -64,7 +64,6 @@ public class ProjectTest {
         project1.addNewTask("Afhankelijke taak",0,Duration.ofHours(16));
         project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
         project1.getTasks().get(0).setStartTime(LocalDateTime.of(2015, 3, 8, 0, 0));
-        System.out.println(project1.getEstimatedEndTime().toString());
         assertTrue(project1.isOverTime());
     }
 
@@ -75,9 +74,10 @@ public class ProjectTest {
         project1.addNewTask("Afhankelijke taak",0,Duration.ofHours(16));
         project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
         project1.getTasks().get(0).setStartTime(LocalDateTime.of(2015, 3, 8, 0, 0));
-        System.out.println(project1.getEstimatedEndTime().toString());
         assertFalse(project1.isOverTime());
     }
+
+
 
     @Test
     public void NewProject_valid() throws Exception {

@@ -87,13 +87,12 @@ public class CommandLineInterface implements UserInterface {
 
             while (! exit) {
                 try {
-                    String commandString = null;
-                    commandString = br.readLine();
+                    String commandString = br.readLine();
                     Command com = Command.getInput(commandString);
                     executeCommand(com);
 
                 }catch (IllegalCommandException ec){
-                    java.lang.System.out.println(ec.getInput());
+                       printException(ec);
                 }
             }
 
@@ -110,7 +109,7 @@ public class CommandLineInterface implements UserInterface {
                 exit = true;
                 break;
             case HELP:
-                java.lang.System.out.println(Command.HELP.name());
+                printHelp();
                 break;
             case CREATEPROJECT:
                 getProjectController().createProject();
@@ -131,6 +130,16 @@ public class CommandLineInterface implements UserInterface {
     }
 
     private boolean exit;
+
+    private void printHelp(){
+        StringBuilder sb = new StringBuilder();
+        for(Command cmd: Command.values()){
+            sb.append(" | ");
+            sb.append(cmd.getCommandStr());
+        }
+        sb.append(" | ");
+        printMessage(sb.toString());
+    }
 
     @Override
     public void printMessage(String message) {
