@@ -27,16 +27,23 @@ public class InputParser {
         this.projectList = this.projectRepository.getProjects();
     }
 
-
+    /**
+     * Leest input.tman in, parset de file en maakt de opbjecten aan in de meegegeven projectRepository
+     * @throws FileNotFoundException indien het input.tman niet op de juiste plaats staat.
+     */
     public void parseInputFile() throws FileNotFoundException {
 
         Yaml yaml = new Yaml();
         String path = Paths.get("input/input.tman").toAbsolutePath().toString();
 
-        // In de tman file staan twee soorten values: projects en tasks
-        Map<String, Map<String, String>> values = (Map<String, Map<String, String>>) yaml
-                .load(new FileInputStream(new File(path)));
+        Map<String, Map<String, String>> values = null;
 
+        try {
+            values = (Map<String, Map<String, String>>) yaml
+                    .load(new FileInputStream(new File(path)));
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
         // Voegt eerst de projecten toe, daarna de taken.
         for (String key : values.keySet()) {
             ArrayList subList;
