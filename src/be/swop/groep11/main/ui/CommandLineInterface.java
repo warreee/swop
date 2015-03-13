@@ -367,6 +367,7 @@ public class CommandLineInterface implements UserInterface {
         java.lang.System.out.printf(format, "Op tijd: ", onTime);
         java.lang.System.out.printf(format, "Creation time: ", project.getCreationTime().format(formatter));
         java.lang.System.out.printf(format, "Due time: ", project.getDueTime().format(formatter));
+        java.lang.System.out.printf(format, "Geschatte eindtijd: ", project.getEstimatedEndTime().format(formatter));
     }
 
     /**
