@@ -99,6 +99,10 @@ public enum TaskStatus {
             }
             return true;
         }
+        if (newStatus == FAILED){
+            // De overgang van UNAVAILABLE naar FAILED mag altijd volgens input.tman.
+            return true;
+        }
         return false; // De enige mogelijke overgang is UNAVAILABLE -> AVAILABLE || UNAVAILABLE -> UNAVAILABLE
     }
 
