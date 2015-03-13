@@ -126,10 +126,11 @@ public class InputParser {
     }
 
     /**
-     *
-     * @param strStatus
-     * @return
-     * @throws IllegalArgumentException
+     * Zorgt voor de parsing van een string naar een TaskStatus
+     * @param strStatus de status in stringvorm
+     * @return de taskstatus
+     * @throws IllegalArgumentException indien er string wordt meegegeven waar geen status mee overeenkomt
+     *          (is niet hoofdlettergevoelgi)
      */
     private TaskStatus stringToStatus(String strStatus) throws IllegalArgumentException{
 
