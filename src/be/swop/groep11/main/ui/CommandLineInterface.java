@@ -67,9 +67,9 @@ public class CommandLineInterface implements UserInterface {
 
         if (readYamlFile) {
             // run inputreader
-            InputReader ir = new InputReader(projectRepository);
+            InputParser ir = new InputParser(projectRepository);
             try {
-                ir.runInputReader();
+                ir.parseInputFile();
             } catch (FileNotFoundException e) {
                 printMessage("Yaml file niet gevonden");
             }

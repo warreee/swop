@@ -1,15 +1,10 @@
 package be.swop.groep11.main;
 
-
-
-import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -18,30 +13,25 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 
 /**
- * Created by warreee on 2/03/15.
+ * Klasse voor het inlezen van de de input file, deze moet staan in /input met de naam input.tman
  */
-public class InputReader  {
+public class InputParser {
 
-    User user = new User("InputReader");
-    TMSystem TMSystem;
+    User user = new User("InputParser");
     ProjectRepository projectRepository;
     ImmutableList<Project> projectList;
     ArrayList<Task> taskList = new ArrayList<>();
 
-
-    public InputReader(ProjectRepository projectRepository) {
+    public InputParser(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
         this.projectList = this.projectRepository.getProjects();
     }
 
 
-    @SuppressWarnings("unchecked")
-    public void runInputReader() throws FileNotFoundException {
-
+    public void parseInputFile() throws FileNotFoundException {
 
         Yaml yaml = new Yaml();
         String path = Paths.get("input/input.tman").toAbsolutePath().toString();
-        //System.out.println(yaml.dump(yaml.load(new FileInputStream(new File(path)))));
 
         // In de tman file staan twee soorten values: projects en tasks
         Map<String, Map<String, String>> values = (Map<String, Map<String, String>>) yaml
