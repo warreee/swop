@@ -293,7 +293,7 @@ public class Project {
         currentWorkingDay = currentWorkingDay.plusHours((int) hours % 8);
         if (currentWorkingDay.getHour() > 18) {
             currentWorkingDay = currentWorkingDay.plusDays(1);
-            currentWorkingDay = currentWorkingDay.withHour(currentWorkingDay.getHour()-18);
+            currentWorkingDay = currentWorkingDay.withHour(currentWorkingDay.getHour()-9);
         }
         while(workDays > 0){
             DayOfWeek currentDay = currentWorkingDay.getDayOfWeek();
