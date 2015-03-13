@@ -73,9 +73,6 @@ public class InputReader  {
                 for (int i = 0; i < subList.size(); i++) {
                     Map<String, String> mapTask = (Map<String, String>) subList.get(i);
                     int projectIndex = Integer.valueOf(String.valueOf(mapTask.get("project")));
-                    int s2 = Integer.valueOf(String.valueOf(mapTask.get("project")));
-                    //String st = mapTask.get("project");
-                    //int t = Integer.valueOf(mapTask.get("project"));
                     Project projectX = projectRepository.getProjects().get(projectIndex);
                     addTaskToProject(mapTask, projectX); //De taak wordt in project aangemaakt
                     addOtherDetails(mapTask, projectX.getTasks().get(projectX.getTasks().size() - 1)); //het laatst toegevoegde
@@ -84,7 +81,6 @@ public class InputReader  {
             }
 
         }
-        System.out.print("test");
 
     }
 
@@ -175,7 +171,7 @@ public class InputReader  {
 
             String description = propertiesList.get("description");
             Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
-            Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation")));
+            Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation"))) / 100;
             project.addNewTask(description, acceptableDeviation, duration);
             taskList.add(project.getTasks().get(project.getTasks().size() - 1));
     }
