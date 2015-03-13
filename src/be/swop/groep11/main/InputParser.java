@@ -171,12 +171,12 @@ public class InputParser {
      */
     private void addProject(Map<String, String> propertiesList) {
 
-            String name = propertiesList.get("name");
-            String description = propertiesList.get("description");
-            LocalDateTime creationTime = parseTime(propertiesList.get("creationTime"));
-            LocalDateTime dueTime = parseTime(propertiesList.get("dueTime"));
+        String name = propertiesList.get("name");
+        String description = propertiesList.get("description");
+        LocalDateTime creationTime = parseTime(propertiesList.get("creationTime"));
+        LocalDateTime dueTime = parseTime(propertiesList.get("dueTime"));
 
-            projectRepository.addNewProject(name, description, creationTime, dueTime, user);
+        projectRepository.addNewProject(name, description, creationTime, dueTime, user);
 
     }
 
@@ -187,11 +187,11 @@ public class InputParser {
      */
     private void addTaskToProject(Map<String, String> propertiesList, Project project) {
 
-            String description = propertiesList.get("description");
-            Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
-            Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation"))) / 100;
-            project.addNewTask(description, acceptableDeviation, duration);
-            taskList.add(project.getTasks().get(project.getTasks().size() - 1));
+        String description = propertiesList.get("description");
+        Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
+        Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation"))) / 100;
+        project.addNewTask(description, acceptableDeviation, duration);
+        taskList.add(project.getTasks().get(project.getTasks().size() - 1));
     }
 
 
