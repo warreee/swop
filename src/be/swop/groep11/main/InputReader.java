@@ -34,15 +34,6 @@ public class InputReader  {
         this.projectList = this.projectRepository.getProjects();
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        TMSystem TMSystem = new TMSystem();
-        ProjectRepository pr = TMSystem.getProjectRepository();
-        InputReader io = new InputReader(pr);
-        io.runInputReader();
-        io.runInputReader();
-
-
-    }
 
     @SuppressWarnings("unchecked")
     public void runInputReader() throws FileNotFoundException {
