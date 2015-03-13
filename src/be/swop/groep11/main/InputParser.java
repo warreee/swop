@@ -72,49 +72,65 @@ public class InputParser {
 
     }
 
+    /**
+     * addOtherDetails voegt details toe aan de taken die niet worden gezet bij de constructie van een taak in project.
+     * @param mapTask de ingelezen details die moeten worden toegevoegd.
+     * @param task de taak waar de details aan worden toegevoegd.
+     */
     private void addOtherDetails(Map<String, String> mapTask, Task task) {
 
+        /*
+        Zet de meegegeven taak als alternatieve taak.
+         */
+        if (mapTask.get("alternativeFor") != null) {
+            int alternativeTask = Integer.valueOf(String.valueOf(mapTask.get("alternativeFor")));
+            taskList.get(alternativeTask).setAlternativeTask(task);
+        }
 
-                    if (mapTask.get("alternativeFor") != null) {
-                        int alternativeTask = Integer.valueOf(String.valueOf(mapTask.get("alternativeFor")));
-                        taskList.get(alternativeTask).setAlternativeTask(task);
-                    }
-
-
-                    if (mapTask.get("prerequisiteTasks") != null) {
-                        int[] ATArray = parseStringArray(String.valueOf(mapTask.get("prerequisiteTasks")));
-                        if (ATArray.length > 0) {
-                            for (int prt : ATArray) {
-                                task.addNewDependencyConstraint(taskList.get(prt));
-                            }
-                        }
-                    }
+        /*
+        Voegt aan de meegegeven taak taken die toe die prerequisite zijn.
+         */
+        if (mapTask.get("prerequisiteTasks") != null) {
+            int[] ATArray = parseStringArray(String.valueOf(mapTask.get("prerequisiteTasks")));
+            if (ATArray.length > 0) {
+                for (int prt : ATArray) {
+                    task.addNewDependencyConstraint(taskList.get(prt));
+                }
+            }
+        }
 
                 /*
-                Status kan moeilijk geupdated worden als de start en eindtijd nog niet gezet zijn
+                Status kan niet geupdated worden als de start en eindtijd nog niet gezet zijn.
+                Zet daarom eerst start en endtime.
                  */
 
-                    if (mapTask.get("startTime") != null) {
-                        LocalDateTime startTime = parseTime(mapTask.get("startTime"));
-                        task.setStartTime(startTime);
-                    }
+        if (mapTask.get("startTime") != null) {
+            LocalDateTime startTime = parseTime(mapTask.get("startTime"));
+            task.setStartTime(startTime);
+        }
 
 
-                    if (mapTask.get("endTime") != null) {
-                        LocalDateTime endTime = parseTime(mapTask.get("endTime"));
-                        task.setEndTime(endTime);
-                    }
+        if (mapTask.get("endTime") != null) {
+            LocalDateTime endTime = parseTime(mapTask.get("endTime"));
+            task.setEndTime(endTime);
+        }
 
-                    if (mapTask.get("status") != null) {
-                        TaskStatus status = stringToStatus(mapTask.get("status"));
-                        if (!status.equals(TaskStatus.UNAVAILABLE)) {
-                            task.setNewStatus(status);
-                        }
-                    }
+        if (mapTask.get("status") != null) {
+            TaskStatus status = stringToStatus(mapTask.get("status"));
+            if (!status.equals(TaskStatus.UNAVAILABLE)) {
+                task.setNewStatus(status);
+            }
+        }
 
 
     }
 
+    /**
+     *
+     * @param strStatus
+     * @return
+     * @throws IllegalArgumentException
+     */
     private TaskStatus stringToStatus(String strStatus) throws IllegalArgumentException{
 
         TaskStatus result = null;
