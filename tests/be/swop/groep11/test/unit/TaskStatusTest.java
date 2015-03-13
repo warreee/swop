@@ -104,13 +104,13 @@ public class TaskStatusTest {
 
     @Test
     public void unavailableToFailedTest() throws Exception {
-        // UNAVAILABLE -> FAILED mag nooit.
-        // Correct: UNAVAILABLE -> AVAILABLE -> FAILED
+        // UNAVAILABLE -> FAILED mag altijd.
         task1.addNewDependencyConstraint(task2); // Dit zet de status van taak1 op Unavailable.
-        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FAILED, task1));
+        assertTrue(TaskStatus.isValidNewStatus(TaskStatus.FAILED, task1));
         task2.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
         task2.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
-        task2.setNewStatus(TaskStatus.FINISHED);
+        task2.setNewStatus(TaskStatus.FINISHED); // zorgt er ook voor dat taak 1 op available komt
+        // maar AVAILABLE -> FAILED mag niet zonder start en eindtijd te zetten
         assertFalse(TaskStatus.isValidNewStatus(TaskStatus.FAILED, task1));
         task1.setStartTime(LocalDateTime.of(2015, 3, 12, 11, 0));
         task1.setEndTime(LocalDateTime.of(2015, 3, 12, 12, 0));
