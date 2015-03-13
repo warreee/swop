@@ -49,7 +49,7 @@ public enum Command {
             }
         }
         if(result == null)
-            throw new IllegalCommandException("Foute input!");
+            throw new IllegalCommandException("Ongeldig commando");
         return result;
     }
 
