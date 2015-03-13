@@ -424,6 +424,10 @@ public class CommandLineInterface implements UserInterface {
         else {
             java.lang.System.out.println("Deze taak hangt niet van andere taken af");
         }
+
+        if (task.getAlternativeTask() != null) {
+            java.lang.System.out.printf(format, "Alternatieve taak: ", task.getAlternativeTask().getDescription());
+        }
     }
 
     private void checkCancel(String str) throws CancelException{
