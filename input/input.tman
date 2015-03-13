@@ -53,15 +53,15 @@ tasks:
     alternativeFor     :
     # Inner lists are between "[" and "]". Their items are seperated by ",".
     prerequisiteTasks  : [ 1, 2 ]
-    status             : failed
-    startTime          : "2015-01-01 09:00"
-    endTime            : "2015-01-30 18:00"
+    status             :
+    startTime          :
+    endTime            :
 
   - project            : 1
     description        : "description"
     estimatedDuration  : 50
     acceptableDeviation: 0
-    alternativeFor     : 3
+    alternativeFor     :
     prerequisiteTasks  : [ 1, 2 ]
     status             :
 

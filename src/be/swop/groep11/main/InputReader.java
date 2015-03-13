@@ -28,6 +28,7 @@ public class InputReader  {
     ImmutableList<Project> projectList;
     ArrayList<Task> taskList = new ArrayList<>();
 
+
     public InputReader(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
         this.projectList = this.projectRepository.getProjects();
@@ -99,7 +100,7 @@ public class InputReader  {
                         int[] ATArray = parseStringArray(String.valueOf(mapTask.get("prerequisiteTasks")));
                         if (ATArray.length > 0) {
                             for (int prt : ATArray) {
-                                task.addNewDependencyConstraint(task.getProject().getTasks().get(prt));
+                                task.addNewDependencyConstraint(taskList.get(prt));
                             }
                         }
                     }
@@ -120,7 +121,10 @@ public class InputReader  {
                     }
 
                     if (mapTask.get("status") != null) {
-                        task.setNewStatus(stringToStatus(mapTask.get("status")));
+                        TaskStatus status = stringToStatus(mapTask.get("status"));
+                        if (!status.equals(TaskStatus.UNAVAILABLE)) {
+                            task.setNewStatus(status);
+                        }
                     }
 
 
@@ -172,7 +176,7 @@ public class InputReader  {
             Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
             Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation")));
             project.addNewTask(description, acceptableDeviation, duration);
-
+            taskList.add(project.getTasks().get(project.getTasks().size() - 1));
     }
 
 
