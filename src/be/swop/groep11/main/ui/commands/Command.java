@@ -18,11 +18,16 @@ public enum Command {
     SHOWPROJECTS("Show Projects");
 
     Command(String command){
+        this.command = command;
         String regex = "((?i)(\\b"+ command +"\\b))"; //Niet hoofdletter gevoelig
         this.pattern = Pattern.compile(regex);
     }
-
+    private final String command;
     private final Pattern pattern;
+
+    public String getCommandStr(){
+        return this.command;
+    }
 
     /**
      * Geeft een Command terug corresponderend met de gebruikers invoer.
