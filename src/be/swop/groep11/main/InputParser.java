@@ -196,15 +196,10 @@ public class InputParser {
 
 
     /**
-     * Geeft de nummer van het project terug waarbij de taak hoort.
-     * @param propertiesList
-     * @return
+     * Maakt van een array in stringformaat een int[]
+     * @param array in stringformaat
+     * @return een array van ints
      */
-    private int projectOfTask(Map<String, String> propertiesList){
-
-        return Integer.valueOf(propertiesList.get("project"));
-    }
-
     private int[] parseStringArray(String array) {
 
         String[] stringArray = array.replace("[", "").replace("]", "").replace(" ", "").trim().split(",");
