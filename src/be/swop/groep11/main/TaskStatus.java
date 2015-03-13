@@ -100,6 +100,7 @@ public enum TaskStatus {
             return true;
         }
         if (newStatus == FAILED){
+            // TODO
             // De overgang van UNAVAILABLE naar FAILED mag altijd volgens input.tman.
             return true;
         }

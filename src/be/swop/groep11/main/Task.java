@@ -190,7 +190,7 @@ public class Task {
      *
      */
     public boolean canHaveAsStartTime(LocalDateTime startTime) {
-        if(this.getStatus() != TaskStatus.AVAILABLE){
+        if(this.getStatus() == TaskStatus.FAILED || this.getStatus() == TaskStatus.FINISHED){
             return false;
         }
         if(startTime == null) {
@@ -201,6 +201,9 @@ public class Task {
         }
         Set<Task> tasks = getDependingOnTasks();
         for(Task task: tasks){
+            if(task.getEndTime() == null){
+                continue;
+            }
             if(startTime.isBefore(task.getEndTime())){
                 return false; // De gegeven starttijd ligt voor een eindtijd van een
             }
@@ -220,7 +223,7 @@ public class Task {
      */
     public boolean canHaveAsEndTime(LocalDateTime endTime) {
         boolean result = false;
-        if(this.getStatus() != TaskStatus.AVAILABLE){
+        if(this.getStatus() == TaskStatus.FAILED || this.getStatus() == TaskStatus.FINISHED){
             result = false;
         }else if(!hasStartTime()){
             result = false;
