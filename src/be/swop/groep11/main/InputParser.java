@@ -181,9 +181,9 @@ public class InputParser {
     }
 
     /**
-     *
-     * @param propertiesList
-     * @param project
+     * Gebruikt een aangemaakt project om een taak aan toe te voegen
+     * @param propertiesList de eigenschappen van de taak in tman formaat
+     * @param project het project waar de taak aan wordt toegevoegd.
      */
     private void addTaskToProject(Map<String, String> propertiesList, Project project) {
 
