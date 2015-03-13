@@ -165,6 +165,10 @@ public class InputParser {
         }
     }
 
+    /**
+     * Gebruikt de projectrepostory om een project toe te voegen aan het systeem
+     * @param propertiesList de eigenschappen van het project ingelezen vanuit de tman file.
+     */
     private void addProject(Map<String, String> propertiesList) {
 
             String name = propertiesList.get("name");
@@ -176,6 +180,11 @@ public class InputParser {
 
     }
 
+    /**
+     *
+     * @param propertiesList
+     * @param project
+     */
     private void addTaskToProject(Map<String, String> propertiesList, Project project) {
 
             String description = propertiesList.get("description");
