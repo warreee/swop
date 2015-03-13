@@ -44,7 +44,7 @@ public enum Command {
             }
         }
         if(result == null)
-            throw new IllegalCommandException(input);
+            throw new IllegalCommandException("Foute input!");
         return result;
     }
 

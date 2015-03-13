@@ -87,13 +87,12 @@ public class CommandLineInterface implements UserInterface {
 
             while (! exit) {
                 try {
-                    String commandString = null;
-                    commandString = br.readLine();
+                    String commandString = br.readLine();
                     Command com = Command.getInput(commandString);
                     executeCommand(com);
 
                 }catch (IllegalCommandException ec){
-                    java.lang.System.out.println(ec.getInput());
+                       printException(ec);
                 }
             }
 
