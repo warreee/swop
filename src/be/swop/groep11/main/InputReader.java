@@ -15,9 +15,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by warreee on 2/03/15.
@@ -27,14 +25,13 @@ public class InputReader  {
     User user = new User("InputReader");
     TMSystem TMSystem;
     ProjectRepository projectRepository;
-    ImmutableList<Project> projectList = projectRepository.getProjects();
+    ImmutableList<Project> projectList;
     ArrayList<Task> taskList = new ArrayList<>();
 
-    public InputReader(ProjectRepository projectRepository) {
 
+    public InputReader(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
-        Map<Integer, Project> projectList = new HashMap<>();
-        Map<Integer, Task> taskList = new HashMap<>();
+        this.projectList = this.projectRepository.getProjects();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -71,11 +68,15 @@ public class InputReader  {
                 }
             }
 
-            if (key.equals("task")){
+            if (key.equals("tasks")){
                 subList = (ArrayList) values.get(key);
                 for (int i = 0; i < subList.size(); i++) {
                     Map<String, String> mapTask = (Map<String, String>) subList.get(i);
-                    Project projectX = projectList.get(Integer.valueOf(mapTask.get("project")));
+                    int projectIndex = Integer.valueOf(String.valueOf(mapTask.get("project")));
+                    int s2 = Integer.valueOf(String.valueOf(mapTask.get("project")));
+                    //String st = mapTask.get("project");
+                    //int t = Integer.valueOf(mapTask.get("project"));
+                    Project projectX = projectRepository.getProjects().get(projectIndex);
                     addTaskToProject(mapTask, projectX); //De taak wordt in project aangemaakt
                     addOtherDetails(mapTask, projectX.getTasks().get(projectX.getTasks().size() - 1)); //het laatst toegevoegde
 
@@ -87,49 +88,54 @@ public class InputReader  {
     }
 
     private void addOtherDetails(Map<String, String> mapTask, Task task) {
-        for (String property : mapTask.keySet()){
-            switch (property){
-                case "alternativeFor" :
-                    int alternativeTask = Integer.valueOf(mapTask.get("alternativeFor"));
-                    taskList.get(alternativeTask).setAlternativeTask(task);
-                    break;
-                case "prerequisiteTasks" :
-                    int[] ATArray = parseStringArray(mapTask.get("prerequisiteTasks"));
-                    if (ATArray.length > 0) {
-                        for (int prt : ATArray){
-                            task.addNewDependencyConstraint(taskList.get(prt));
+
+
+                    if (mapTask.get("alternativeFor") != null) {
+                        int alternativeTask = Integer.valueOf(String.valueOf(mapTask.get("alternativeFor")));
+                        taskList.get(alternativeTask).setAlternativeTask(task);
+                    }
+
+
+                    if (mapTask.get("prerequisiteTasks") != null) {
+                        int[] ATArray = parseStringArray(String.valueOf(mapTask.get("prerequisiteTasks")));
+                        if (ATArray.length > 0) {
+                            for (int prt : ATArray) {
+                                task.addNewDependencyConstraint(taskList.get(prt));
+                            }
                         }
                     }
-                    break;
+
                 /*
                 Status kan moeilijk geupdated worden als de start en eindtijd nog niet gezet zijn
                  */
-                case "startTime" :
-                    if (mapTask.get("startTime").length() > 0) {
+
+                    if (mapTask.get("startTime") != null) {
                         LocalDateTime startTime = parseTime(mapTask.get("startTime"));
                         task.setStartTime(startTime);
                     }
-                    break;
 
-                case "endTime" :
-                    if (mapTask.get("startTime").length() > 0) {
+
+                    if (mapTask.get("endTime") != null) {
                         LocalDateTime endTime = parseTime(mapTask.get("endTime"));
-                        task.setStartTime(endTime);
+                        task.setEndTime(endTime);
                     }
-                    break;
 
-                case "status" :
+                    if (mapTask.get("status") != null) {
+                        TaskStatus status = stringToStatus(mapTask.get("status"));
+                        if (!status.equals(TaskStatus.UNAVAILABLE)) {
+                            task.setNewStatus(status);
+                        }
+                    }
 
-            }
-        }
+
     }
 
-    private ProjectStatus stringToStatus(String strStatus) throws IllegalArgumentException{
+    private TaskStatus stringToStatus(String strStatus) throws IllegalArgumentException{
 
-        ProjectStatus result = null;
+        TaskStatus result = null;
 
         try {
-            for (ProjectStatus status : ProjectStatus.values()){
+            for (TaskStatus status : TaskStatus.values()){
                 if (strStatus.equalsIgnoreCase(status.toString())){
                     result = status;
                 }
@@ -145,7 +151,7 @@ public class InputReader  {
     private LocalDateTime parseTime(String date){
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         try {
-            return LocalDateTime.parse(date);
+            return LocalDateTime.parse(date, dateTimeFormatter);
 
         } catch (DateTimeParseException e) {
             System.out.println(e.getMessage());
@@ -167,10 +173,10 @@ public class InputReader  {
     private void addTaskToProject(Map<String, String> propertiesList, Project project) {
 
             String description = propertiesList.get("description");
-            Duration duration = Duration.ofMinutes(Long.parseLong(propertiesList.get("estimatedDuration")));
-            Double acceptableDeviation = Double.valueOf(propertiesList.get("acceptableDeviation"));
+            Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
+            Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation")));
             project.addNewTask(description, acceptableDeviation, duration);
-
+            taskList.add(project.getTasks().get(project.getTasks().size() - 1));
     }
 
 
@@ -185,7 +191,8 @@ public class InputReader  {
     }
 
     private int[] parseStringArray(String array) {
-        String[] stringArray = array.replaceAll("\\[", "").replaceAll("\\]", "").split(",");
+
+        String[] stringArray = array.replace("[", "").replace("]", "").replace(" ", "").trim().split(",");
 
         int[] intArray = new int[stringArray.length];
 
