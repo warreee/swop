@@ -57,7 +57,7 @@ public class TaskController {
             }
 
             Task alternativeTaskFor = null;
-            if (ui.requestString("Is deze taak een alternatieve taak? (y/N)").equalsIgnoreCase("y")) {
+            if ( (! project.getFailedTasks().isEmpty()) && ui.requestString("Is deze taak een alternatieve taak? (y/N)").equalsIgnoreCase("y")) {
                 ui.printMessage("Deze taak zal een zal een alternatieve taak zijn voor de geselecteerde taak.");
                 alternativeTaskFor = ui.selectTaskFromList(project.getFailedTasks());
             }
