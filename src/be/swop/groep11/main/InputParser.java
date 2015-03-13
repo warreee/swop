@@ -149,7 +149,11 @@ public class InputParser {
         return result;
     }
 
-
+    /**
+     * Zet een string tijd om in een LocalDateTime object
+     * @param date, in stringvorm
+     * @return de LocalDateTime
+     */
     private LocalDateTime parseTime(String date){
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         try {
