@@ -43,7 +43,7 @@ public class TaskController {
 
             List<Task> tasks = new ArrayList<Task>(project.getTasks());
             List<Task> selectedTasks = new ArrayList<Task>();
-            while (ui.requestString("Voeg een afhankelijkheid toe? (Y/n)").equals("Y")) {
+            while (ui.requestString("Voeg een afhankelijkheid toe? (y/N)").equals("y")) {
                 if (tasks.isEmpty()) {
                     ui.printMessage("Geen taken om toe te voegen...");
                     break;
