@@ -290,7 +290,7 @@ public class Project {
         long workDays = (long) Math.ceil(hours / HOURS_PER_DAY);
 
         LocalDateTime currentWorkingDay = creationTime;
-        currentWorkingDay = currentWorkingDay.withHour(18).withMinute(0);
+        currentWorkingDay = currentWorkingDay.withHour(9 + (int) hours % 8).withMinute(0);
         while(workDays > 0){
             DayOfWeek currentDay = currentWorkingDay.getDayOfWeek();
             long add = 1;
