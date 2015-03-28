@@ -27,8 +27,22 @@ public class InputParser {
         this.projectList = this.projectRepository.getProjects();
     }
 
+
+    public static void main(String[] args) {
+        TMSystem tmSystem = new TMSystem();
+        ProjectRepository projectRepository = new ProjectRepository(tmSystem);
+        InputParser inputParser = new InputParser(projectRepository);
+        try {
+            inputParser.parseInputFile();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     /**
-     * Leest input.tman in, parset de file en maakt de opbjecten aan in de meegegeven projectRepository
+     * Leest input.tman in, parset de file en maakt de objecten aan in de meegegeven projectRepository
      * @throws FileNotFoundException indien het input.tman niet op de juiste plaats staat.
      */
     public void parseInputFile() throws FileNotFoundException {
@@ -67,6 +81,29 @@ public class InputParser {
 
                 }
             }
+
+            if (key.equals("systemTime")){
+                String sysTime = String.valueOf(values.get(key));
+                LocalDateTime sytemTime = parseTime(sysTime);
+            }
+            if (key.equals("dailyAvailability")){
+                String sysTime = String.valueOf(values.get(key));
+                LocalDateTime sytemTime = parseTime(sysTime);
+            }
+
+            if (key.equals("resourceTypes")){
+                String sysTime = String.valueOf(values.get(key));
+                LocalDateTime sytemTime = parseTime(sysTime);
+            }
+
+
+            if (key.equals("resources")){
+                String sysTime = String.valueOf(values.get(key));
+                LocalDateTime sytemTime = parseTime(sysTime);
+            }
+
+
+
 
         }
 
