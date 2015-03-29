@@ -87,23 +87,47 @@ public class InputParser {
                 LocalDateTime sytemTime = parseTime(sysTime);
             }
             if (key.equals("dailyAvailability")){
-                String sysTime = String.valueOf(values.get(key));
-                LocalDateTime sytemTime = parseTime(sysTime);
+                subList = (ArrayList) values.get(key);
+                for (int i = 0; i < subList.size(); i++) {
+                    Map<String, String> mapAvailability = (Map<String, String>) subList.get(i);
+                }
             }
 
             if (key.equals("resourceTypes")){
-                String sysTime = String.valueOf(values.get(key));
-                LocalDateTime sytemTime = parseTime(sysTime);
+                subList = (ArrayList) values.get(key);
+                for (int i = 0; i < subList.size(); i++) {
+                    Map<String, String> mapResourceTypes = (Map<String, String>) subList.get(i);
+                }
             }
 
 
             if (key.equals("resources")){
-                String sysTime = String.valueOf(values.get(key));
-                LocalDateTime sytemTime = parseTime(sysTime);
+                subList = (ArrayList) values.get(key);
+                for (int i = 0; i < subList.size(); i++) {
+                    Map<String, String> mapResources = (Map<String, String>) subList.get(i);
+                }
             }
 
+            if (key.equals("developers")){
+                subList = (ArrayList) values.get(key);
+                for (int i = 0; i < subList.size(); i++) {
+                    Map<String, String> mapDevelopers = (Map<String, String>) subList.get(i);
+                }
+            }
 
+            if (key.equals("plannings")){
+                subList = (ArrayList) values.get(key);
+                for (int i = 0; i < subList.size(); i++) {
+                    Map<String, String> mapPlannings = (Map<String, String>) subList.get(i);
+                }
+            }
 
+            if (key.equals("reservations")){
+                subList = (ArrayList) values.get(key);
+                for (int i = 0; i < subList.size(); i++) {
+                    Map<String, String> mapReservations = (Map<String, String>) subList.get(i);
+                }
+            }
 
         }
 
