@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
+<<<<<<< HEAD
  * Stelt een interface voor die elke instantie van een ResourceType moet implementeren.
  */
 public interface ResourceInstance {
@@ -27,4 +28,11 @@ public interface ResourceInstance {
      */
     public LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration);
 
+=======
+ * Created by robin on 2/04/15.
+ */
+public interface ResourceInstance {
+
+    public boolean isAvailable(LocalDateTime start, Duration duration);
+>>>>>>> Nieuwe klassen aangemaakt.
 }
