@@ -2,7 +2,9 @@ package be.swop.groep11.main;
 
 import com.google.common.collect.ImmutableList;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by robin on 2/04/15.
@@ -19,14 +21,13 @@ public class ResourceTypeRepository {
         return ImmutableList.copyOf(resourceTypes);
     }
 
-    public void addResourceType(ResourceType type) {
-        if (!isValidResourceType(type)){
-            throw new IllegalArgumentException("Geen geldig RescourceType aan ResourceTypeRepository toegevoegd.");
-        }
-        resourceTypes.add(type);
+    public void addResourceType(String name, List<RequirementConstraint> requiredTypes, List<ConflictConstraint> conflictingTypes) {
+        ResourceType resourceType = new ResourceType(name, requiredTypes, conflictingTypes);
+        resourceTypes.add(resourceType);
     }
 
-    public static boolean isValidResourceType(ResourceType type){
-        return type != null;
+    public void addResourceType(String name, List<RequirementConstraint> requiredTypes, List<ConflictConstraint> conflictingTypes, LocalDateTime availableFrom, LocalDateTime availableUntil){
+        ResourceType resourceType = new ResourceType(name, requiredTypes, conflictingTypes, availableFrom, availableUntil);
+        resourceTypes.add(resourceType);
     }
 }
