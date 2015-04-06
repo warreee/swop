@@ -27,12 +27,4 @@ public interface ResourceInstance {
      * @return De eindtijd van deze resource instantie.
      */
     public LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration);
-
-=======
- * Created by robin on 2/04/15.
- */
-public interface ResourceInstance {
-
-    public boolean isAvailable(LocalDateTime start, Duration duration);
->>>>>>> Nieuwe klassen aangemaakt.
 }
