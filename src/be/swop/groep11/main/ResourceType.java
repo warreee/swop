@@ -14,17 +14,28 @@ public class ResourceType {
      * ResourceType.
      *
      * @param name
-     * @param requirements
+     * @param requiredTypes
+     * @param conflictingTypes
      */
-    public ResourceType(String name, List<ResourceTypeRequirement> requirements){
-        this(name, requirements, null, null);
+    public ResourceType(String name, List<RequirementConstraint> requiredTypes, List<ConflictConstraint> conflictingTypes){
+        this(name, requiredTypes, conflictingTypes, null, null);
     }
 
-    public ResourceType(String name, List<ResourceTypeRequirement> requirements, LocalDateTime availableFrom, LocalDateTime availableUntil) {
+    /**
+     * Maakt een nieuwe ResourceType aan met de gegeven paramters.
+     *
+     * @param name De naam van deze ResourceType
+     * @param requiredTypes
+     * @param conflictingTypes
+     * @param availableFrom
+     * @param availableUntil
+     */
+    public ResourceType(String name, List<RequirementConstraint> requiredTypes, List<ConflictConstraint> conflictingTypes, LocalDateTime availableFrom, LocalDateTime availableUntil) {
         setName(name);
+        setRequiredTypes(requiredTypes);
+        setConflictingTypes(conflictingTypes);
         setAvailableFrom(availableFrom);
         setAvailableUntil(availableUntil);
-
     }
 
     private String name;
@@ -41,14 +52,24 @@ public class ResourceType {
         return name != null && !name.isEmpty();
     }
 
-    private List<ResourceTypeRequirement> requirements;
+    private List<RequirementConstraint> requiredTypes;
 
-    public List<ResourceTypeRequirement> getRequirements() {
-        return requirements;
+    public List<RequirementConstraint> getRequiredTypes() {
+        return requiredTypes;
     }
 
-    public void setRequirements(List<ResourceTypeRequirement> requirements) {
-        this.requirements = requirements;
+    public void setRequiredTypes(List<RequirementConstraint> requiredTypes) {
+        this.requiredTypes = requiredTypes;
+    }
+
+    private List<ConflictConstraint> conflictingTypes;
+
+    public List<ConflictConstraint> getConflictingTypes() {
+        return conflictingTypes;
+    }
+
+    public void setConflictingTypes(List<ConflictConstraint> conflictingTypes) {
+        this.conflictingTypes = conflictingTypes;
     }
 
     private LocalDateTime availableFrom;
