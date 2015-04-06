@@ -10,21 +10,18 @@ import java.util.List;
 public class ResourceType {
 
     /**
-     * Gemakkelijksconstructor om een ResourceType aan te maken zonder restricties op de beschikbaarheid van dit
+     * Gemakkelijksheidconstructor om een ResourceType aan te maken zonder restricties op de beschikbaarheid van dit
      * ResourceType.
      *
      * @param name
-     * @param conflictsWith
-     * @param requires
+     * @param requirements
      */
-    public ResourceType(String name, List<ResourceType> conflictsWith, List<ResourceType> requires){
-        this(name, conflictsWith, requires, null, null);
+    public ResourceType(String name, List<ResourceTypeRequirement> requirements){
+        this(name, requirements, null, null);
     }
 
-    public ResourceType(String name, List<ResourceType> conflictsWith, List<ResourceType> requires, LocalDateTime availableFrom, LocalDateTime availableUntil) {
+    public ResourceType(String name, List<ResourceTypeRequirement> requirements, LocalDateTime availableFrom, LocalDateTime availableUntil) {
         setName(name);
-        setConflictsWidth(conflictsWith);
-        setRequires(requires);
         setAvailableFrom(availableFrom);
         setAvailableUntil(availableUntil);
 
@@ -44,13 +41,14 @@ public class ResourceType {
         return name != null && !name.isEmpty();
     }
 
-    // TODO: Constraints enz.
-    public void setConflictsWidth(List<ResourceType> conflictsWidth) {
-        this.conflictsWidth = conflictsWidth;
+    private List<ResourceTypeRequirement> requirements;
+
+    public List<ResourceTypeRequirement> getRequirements() {
+        return requirements;
     }
 
-    public void setRequires(List<ResourceType> requires) {
-        this.requires = requires;
+    public void setRequirements(List<ResourceTypeRequirement> requirements) {
+        this.requirements = requirements;
     }
 
     private LocalDateTime availableFrom;
