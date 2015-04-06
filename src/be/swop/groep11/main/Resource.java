@@ -78,7 +78,6 @@ public class Resource implements ResourceInstance {
         return name;
     }
 
-<<<<<<< HEAD
     public static boolean isValidName(String name) {
         return name != null && ! name.isEmpty();
     }
@@ -90,10 +89,4 @@ public class Resource implements ResourceInstance {
     }
 
     private DailyAvailability dailyAvailability;
-
-=======
-    public void setName(String name) {
-        this.name = name;
-    }
->>>>>>> Nieuwe klassen aangemaakt.
 }
