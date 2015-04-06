@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
-<<<<<<< HEAD
  * Stelt een interface voor die elke instantie van een ResourceType moet implementeren.
  */
 public interface ResourceInstance {

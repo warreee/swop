@@ -1,6 +1,7 @@
 package be.swop.groep11.main;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,6 +37,16 @@ public class ResourceType {
         setConflictingTypes(conflictingTypes);
         setAvailableFrom(availableFrom);
         setAvailableUntil(availableUntil);
+    }
+
+    private ArrayList<ResourceInstance> instances = new ArrayList<>();
+
+    /**
+     * Voegt een nieuwe instantie van dit type resource toe aan deze ResourceType.
+     * @param name
+     */
+    public void addInstance(String name){
+        //TODO: implementeren.
     }
 
     private String name;
