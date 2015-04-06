@@ -3,11 +3,18 @@ package be.swop.groep11.main;
 import java.util.List;
 
 /**
- * Created by robin on 5/04/15.
+ * Created by Ronald on 3/04/2015.
  */
 public abstract class ResourceTypeConstraint {
 
-    public abstract boolean isSatisfied(List<ResourceTypeRequirement> requirements);
-    public abstract void resolve(List<ResourceTypeRequirement> requirements);
 
+    /**
+     * Controleer dat deze ResourceTypeConstraint voldoet a.d.h.v. gegeven lijst ResourceTypeRequirement
+     *
+     * @param requirements   De lijst ResourceTypeRequirements
+     * @return
+     */
+    public abstract boolean isSatisfied(List<ResourceTypeRequirement> requirements);
+
+    public abstract List<ResourceTypeRequirement> resolve(List<ResourceTypeRequirement> requirements);
 }

@@ -15,4 +15,10 @@ public class Developer extends User implements ResourceInstance {
     public boolean isAvailable(LocalDateTime start, Duration duration) {
         return false;
     }
+
+    @Override
+    public LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration) {
+        //TODO calculate end Time developer
+        return null;
+    }
 }
