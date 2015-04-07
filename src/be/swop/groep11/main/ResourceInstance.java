@@ -11,23 +11,19 @@ import java.time.LocalDateTime;
 public interface ResourceInstance {
 
     /**
-     * Controleert of deze resource instantie beschikbaar is vanaf een gegeven starttijd voor een gegeven duur.
-     * Hierbij wordt ook rekening gehouden met de huidige reservaties voor de resource instantie.
-     * @param startTime De gegeven starttijd
-     * @param duration  De gegeven duur
+     * Controleert of de resource instantie beschikbaar is gedurende een gegeven tijdsspanne.
+     * @param timeSpan De gegeven tijdsspanne
      * @return True als deze resource instantie beschikbaar is.
      */
-    public boolean isAvailable(LocalDateTime startTime, Duration duration);
+    public boolean isAvailable(TimeSpan timeSpan);
 
     /**
-     * Berekent de "eindtijd" van deze resource instantie: dit is het moment waarop de resource wordt vrijgegeven wanneer
-     * die vanaf een gegeven starttijd voor een gegeven duur zou gereserveerd worden.
-     * Hierbij wordt GEEN rekening gehouden met de huidige reservaties voor de resource instantie!
+     * Geeft de eerst volgende tijdsspanne waarin de resource instantie voor een gegeven duur beschikbaar is,
+     * na een gegeven starttijd.
      * @param startTime De gegeven starttijd
      * @param duration  De gegeven duur
-     * @return De eindtijd van deze resource instantie.
      */
-    public LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration);
+    public TimeSpan getNextAvailableTimeSpan(LocalDateTime startTime, Duration duration);
 
     /**
      * Geeft het resource type van de resource instantie.

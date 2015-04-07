@@ -9,4 +9,10 @@ public class ResourceAllocation {
     public TimeSpan getTimeSpan() {
         return timeSpan;
     }
+
+    public ResourceInstance getResourceInstance() {
+        return resourceInstance;
+    }
+
+    private ResourceInstance resourceInstance;
 }

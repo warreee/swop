@@ -3,6 +3,7 @@ package be.swop.groep11.main;
 import com.google.common.collect.ImmutableList;
 
 import java.time.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +16,6 @@ public class Resource implements ResourceInstance {
      * @param name         De naam van de resource
      * @param resourceType Het resource type
      * @throws java.lang.IllegalArgumentException Ongeldige naam of type voor de resource
-     *
      */
     public Resource(String name, ResourceType resourceType) throws IllegalArgumentException {
         if (! isValidName(name))
@@ -42,41 +42,73 @@ public class Resource implements ResourceInstance {
     }
 
     /**
-     * Implementeert de methode isAvailable in de interface ResourceInstance.
-     * @param startTime De gegeven starttijd
-     * @param duration  De gegeven duur
-     * @return          True als deze resource vanaf de starttijd voor de gegeven duur kan gerserveerd worden,
-     *                  rekening houdend met andere reservaties voor deze resource.
+     * Controleert of deze resource beschikbaar is gedurende een gegeven tijdsspanne.
+     * @param timeSpan De gegeven tijdsspanne
+     * @return True als deze resoruce beschikbaar is, rekening houdend met dat de resource al gereserveerd kan zijn.
      */
     @Override
-    public boolean isAvailable(LocalDateTime startTime, Duration duration) {
+    public boolean isAvailable(TimeSpan timeSpan) {
+        return this.getConflictingAllocations(timeSpan).isEmpty();
+    }
+
+    private List<ResourceAllocation> getConflictingAllocations(TimeSpan timeSpan) {
+        List<ResourceAllocation> conflictingAllocations = new ArrayList<>();
         ImmutableList<ResourceAllocation> allocations = this.getAllocations();
-        TimeSpan timeSpan = new TimeSpan(startTime, this.calculateEndTime(startTime, duration));
         for (ResourceAllocation allocation : allocations) {
             if (timeSpan.overlapsWith(allocation.getTimeSpan())) {
-                return false;
+                conflictingAllocations.add(allocation);
             }
         }
-        return true;
+        return conflictingAllocations;
     }
 
     /**
-     * Implementeert de methode calculateEndTime in de interface ResourceInstance.
-     * @return De eindtijd van deze resource, rekening houdend met het feit dat deze resource mogelijks niet 24/7
-     *         beschikbaar is. (Er wordt hierbij GEEN rekening gehouden met de huidige reservaties van deze resource!)
+     * Geeft de eerst volgende tijdsspanne waarin deze resource voor een gegeven duur beschikbaar is,
+     * na een gegeven starttijd.
+     * Hierbij wordt rekening gehouden dat deze resource niet noodzakelijk 24/7 beschikbaar is.
+     * en er al allocaties kunnen zijn.
+     * @param startTime De gegeven starttijd
+     * @param duration  De gegeven duur
      */
     @Override
-    public LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration) {
+    public TimeSpan getNextAvailableTimeSpan(LocalDateTime startTime, Duration duration) {
+        LocalDateTime realStartTime;
+        if (this.getDailyAvailability() == null) {
+            realStartTime = startTime;
+        }
+        else {
+            // de "echte" starttijd is dan het eerste moment dat binnen de dagelijkse beschikbaarheid ligt
+            realStartTime = this.getDailyAvailability().getNextTime(startTime);
+        }
+
+        LocalDateTime realEndTime = calculateEndTime(realStartTime, duration);
+        TimeSpan timeSpan = new TimeSpan(realStartTime, realEndTime);
+
+        if (! this.isAvailable(timeSpan)) {
+            List<ResourceAllocation> conflictingAllocations = this.getConflictingAllocations(timeSpan);
+            // bereken hiermee de volgende mogelijke starttijd = de grootste van alle eindtijden van de resources
+            LocalDateTime nextStartTime = realStartTime;
+            for (ResourceAllocation allocation : conflictingAllocations) {
+                if (allocation.getTimeSpan().getEndTime().isAfter(nextStartTime)) {
+                    nextStartTime = allocation.getTimeSpan().getEndTime();
+                }
+            }
+
+            return getNextAvailableTimeSpan(nextStartTime, duration);
+        }
+
+        return timeSpan;
+    }
+
+    private LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration) {
 
         if (this.getDailyAvailability() == null) {
             return startTime.plus(duration);
         }
 
         else {
-            // de "echte" starttijd is het eerste moment dat binnen de dagelijkse beschikbaarheid ligt
-            LocalDateTime realStartTime = this.getDailyAvailability().getNextTime(startTime);
 
-            LocalDateTime currentStartTime = realStartTime;
+            LocalDateTime currentStartTime = startTime;
             LocalDateTime currentEndTime   = null;
             Duration      currentDuration  = duration;
 
