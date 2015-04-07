@@ -24,4 +24,9 @@ public abstract class TaskStatus2 {
     public boolean checkDependencies(){
         return true;
     }
+
+    public static boolean isValidNewStatus(TaskStatus2 status, Task task) {
+        //TaskStatus2 currentStatus = task.getStatus();
+        return true;
+    }
 }

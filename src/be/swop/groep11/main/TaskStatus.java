@@ -6,6 +6,7 @@ package be.swop.groep11.main;
 public enum TaskStatus {
 
     AVAILABLE,
+    EXECUTING,
     UNAVAILABLE,
     FINISHED,
     FAILED;
@@ -36,7 +37,8 @@ public enum TaskStatus {
         switch (currentStatus) {
             case AVAILABLE:
                 return checkAvailable(newStatus, task);
-
+            case EXECUTING:
+                return checkExecuting(newStatus, task);
             case UNAVAILABLE:
                 return checkUnavailable(newStatus, task);
             case FINISHED:
@@ -44,6 +46,10 @@ public enum TaskStatus {
             case FAILED:
                 return newStatus == FAILED;
         }
+        return false;
+    }
+
+    private static boolean checkExecuting(TaskStatus newStatus, Task task) {
         return false;
     }
 
