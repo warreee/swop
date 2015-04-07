@@ -13,7 +13,7 @@ public class TimeSpan {
      * @param endTime   De eindtijd
      * @throws java.lang.IllegalArgumentException Ongeldige start- en/of eindtijd
      */
-    public TimeSpan(LocalDateTime startTime, LocalDateTime endTime) {
+    public TimeSpan(LocalDateTime startTime, LocalDateTime endTime) throws IllegalArgumentException {
         if (! isValidStartTimeEndTime(startTime, endTime))
             throw new IllegalArgumentException("Ongeldige start- en/of eindtijd");
         this.startTime = startTime;
