@@ -6,4 +6,23 @@ package be.swop.groep11.main;
 public class TaskAvailable extends TaskStatus2 {
 
 
+    @Override
+    public String toString() {
+        return StatusName.AVAILABLE.toString();
+    }
+
+    @Override
+    public boolean execute() {
+        return false;
+    }
+
+    @Override
+    public boolean finish() {
+        return false;
+    }
+
+    @Override
+    public boolean fail() {
+        return false;
+    }
 }

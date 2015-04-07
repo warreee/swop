@@ -3,17 +3,25 @@ package be.swop.groep11.main;
 /**
  * Created by warreee on 4/7/15.
  */
-public class TaskStatus2 {
+public abstract class TaskStatus2 {
 
-    public void execute() {
-
+    protected enum StatusName {
+        AVAILABLE,
+        EXECUTING,
+        UNAVAILABLE,
+        FINISHED,
+        FAILED;
     }
 
-    public void finish() {
+    public abstract String toString();
 
-    }
+    public abstract boolean execute();
 
-    public void fail() {
+    public abstract boolean finish();
 
+    public abstract boolean fail();
+
+    public boolean checkDependencies(){
+        return true;
     }
 }
