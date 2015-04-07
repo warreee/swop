@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by robin on 2/04/15.
- */
+
 public class ResourceType {
 
     /**
@@ -44,8 +42,9 @@ public class ResourceType {
      * Voegt een nieuwe instantie van dit type resource toe aan deze ResourceType.
      * @param name
      */
-    public void addInstance(String name){
-        //TODO: implementeren.
+    public void addResourceInstance(String name){
+        Resource resource = new Resource(name);
+        instances.add(resource);
     }
 
     private String name;
