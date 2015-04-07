@@ -43,7 +43,7 @@ public class ResourceType {
      * @param name
      */
     public void addResourceInstance(String name){
-        Resource resource = new Resource(name);
+        Resource resource = new Resource(name, this);
         instances.add(resource);
     }
 
