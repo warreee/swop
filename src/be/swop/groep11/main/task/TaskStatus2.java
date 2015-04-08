@@ -9,23 +9,23 @@ public abstract class TaskStatus2 {
 
     }
 
-    public void execute(Task task) {
+    protected void execute(Task task) {
         throw new IllegalStateTransition("De taak kan niet naar de status EXECUTING gaan vanuit de huidige status");
     }
 
-    public void finish(Task task){
+    protected void finish(Task task){
         throw new IllegalStateTransition("De taak kan niet naar de status FINISHED gaan vanuit de huidige status");
     }
 
-    public void fail(Task task){
+    protected void fail(Task task){
         throw new IllegalStateTransition("De taak kan niet naar de status FAIL gaan vanuit de huidige status");
     }
 
-    public void makeAvailable(Task task){
+    protected void makeAvailable(Task task){
         throw new IllegalStateTransition("De taak kan niet naar de status AVAILABLE gaan vanuit de huidige status");
     }
 
-    public void makeUnavailable(Task task){
+    protected void makeUnavailable(Task task){
         throw new IllegalStateTransition("De taak kan niet naar de status UNAVAILABLE gaan vanuit de huidige status");
     }
 
