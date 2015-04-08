@@ -128,24 +128,4 @@ public class ResourceType {
         }
         return true;
     }
-
-    private LocalDateTime availableFrom;
-
-    public LocalDateTime getAvailableFrom() {
-        return availableFrom;
-    }
-
-    public void setAvailableFrom(LocalDateTime availableFrom) {
-        this.availableFrom = availableFrom;
-    }
-
-    private LocalDateTime availableUntil;
-
-    public LocalDateTime getAvailableUntil() {
-        return availableUntil;
-    }
-
-    public void setAvailableUntil(LocalDateTime availableUntil) {
-        this.availableUntil = availableUntil;
-    }
 }
