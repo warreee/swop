@@ -327,11 +327,32 @@ public class Task {
      */
     private TaskStatus status;
 
+    private TaskStatus2 status2;
     /**
      * Geeft de status van deze taak.
      */
-    public TaskStatus getStatus() {
+    private TaskStatus getStatus() {
         return status;
+    }
+
+    public void execute() {
+        status2.execute(this);
+    }
+
+    public void fail() {
+        status2.fail(this);
+    }
+
+    public void finish() {
+        status2.finish(this);
+    }
+
+    public void makeAvailable() {
+        status2.makeAvailable(this);
+    }
+
+    public void makeUnAvailable() {
+        status2.makeUnavailable(this);
     }
 
     /**
