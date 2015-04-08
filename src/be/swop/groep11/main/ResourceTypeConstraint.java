@@ -6,7 +6,7 @@ import java.util.List;
  * Created by Ronald on 3/04/2015.
  */
 public abstract class ResourceTypeConstraint {
-    
+
     /**
      * Constructor voor ResourceTypeConstraint
      * @param owner    Het ResourceType waarvoor deze constraint van toepassing is.

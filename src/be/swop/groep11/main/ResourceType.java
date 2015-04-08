@@ -1,18 +1,20 @@
 package be.swop.groep11.main;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class ResourceType {
+    private final DailyAvailability dailyAvailability;
 
     /**
      * Gemakkelijksheidcnstructor om een ResourceType met enkel een naam aan te maken.
      * @param name De naam van dit ResourceType.
      */
     public ResourceType(String name){
-        this(name, new ArrayList<ResourceTypeConstraint>(), null, null);
+        this(name, new ArrayList<ResourceTypeConstraint>());
     }
 
     /**
@@ -23,7 +25,7 @@ public class ResourceType {
      * @param constraints De constraints die aan dit ResourceType moeten worden toegewezen.
      */
     public ResourceType(String name, List<ResourceTypeConstraint> constraints){
-        this(name, constraints, null, null);
+        this(name, constraints, new DailyAvailability(LocalTime.MIN,LocalTime.MAX));
     }
 
     /**
@@ -34,11 +36,25 @@ public class ResourceType {
      * @param availableFrom Vanaf wanneer dit ResourceType beschikbaar is.
      * @param availableUntil Tot wanneer dit ResourceType beschikbaar is.
      */
-    public ResourceType(String name, List<ResourceTypeConstraint> constraints, LocalDateTime availableFrom, LocalDateTime availableUntil) {
-        setName(name);
+    public ResourceType(String name, List<ResourceTypeConstraint> constraints,DailyAvailability availability) {
+        if(!isValidResourceTypeName(name)){
+            throw new IllegalArgumentException("Ongeldige naam voor ResourceType");
+        }
+        if(!isValidDailyAvailability(availability)){
+            throw new IllegalArgumentException("Ongeldige DailyAvailability");
+        }
         setResourceTypeConstraints(constraints);
-        setAvailableFrom(availableFrom);
-        setAvailableUntil(availableUntil);
+        this.name = name;
+        this.dailyAvailability = availability;
+    }
+
+
+    private boolean isValidResourceTypeName(String name) {
+        return false;
+    }
+
+    private boolean isValidDailyAvailability(DailyAvailability availability) {
+            return false;
     }
 
     /**
@@ -58,11 +74,8 @@ public class ResourceType {
     /**
      * De naam van dit ResourceType.
      */
-    private String name;
+    private final String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getName() {
         return name;
@@ -96,7 +109,7 @@ public class ResourceType {
                 }
             }
         }
-        this.resourceTypeConstraints = resourceTypeConstraints.;
+        this.resourceTypeConstraints = resourceTypeConstraints;
     }
 
     private LocalDateTime availableFrom;

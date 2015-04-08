@@ -64,7 +64,6 @@ public class ConflictConstraint extends ResourceTypeConstraint {
                 }
             }
         }
-
         return result;
     }
 
@@ -83,9 +82,6 @@ public class ConflictConstraint extends ResourceTypeConstraint {
         }else if(otherConstraint instanceof ConflictConstraint){
             result = true;//Andere conflictConstraints vormen geen probleem
         }
-
         return result;
     }
-
-
 }

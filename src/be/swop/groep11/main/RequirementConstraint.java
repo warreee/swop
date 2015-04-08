@@ -64,7 +64,6 @@ public class RequirementConstraint extends ResourceTypeConstraint {
      * @param requirements  De gegeven lijst ResourceTypeRequirements
      * @return              Indien alle nodige ResourceTypeRequirements reeds aanwezig geeft men requirements terug.
      *                      Anders worden de requirements uitgebreid met de ontbrekende ResourceTypeRequirements.
-     *
      */
     @Override
     public List<ResourceTypeRequirement> resolve(List<ResourceTypeRequirement> requirements) {
@@ -92,8 +91,6 @@ public class RequirementConstraint extends ResourceTypeConstraint {
      * @return                  Waar indien otherConstraint als ownerType een verschillend ResourceType heeft als deze RequirementConstraint.
      *                          Indien otherConstraint instantie van ConflictConstraint
      *                                  Waar indien de constrainingTypes niet overlappen. Anders niet waar.
-     *
-     *
      */
     @Override
     public boolean isValidOtherConstraint(ResourceTypeConstraint otherConstraint) {
@@ -107,6 +104,4 @@ public class RequirementConstraint extends ResourceTypeConstraint {
 
         return result;
     }
-
-
 }
