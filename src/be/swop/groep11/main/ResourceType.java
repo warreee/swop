@@ -50,11 +50,11 @@ public class ResourceType {
 
 
     private boolean isValidResourceTypeName(String name) {
-        return false;
+        return name != null && !name.isEmpty();
     }
 
     private boolean isValidDailyAvailability(DailyAvailability availability) {
-            return false;
+        return availability != null;
     }
 
     /**
