@@ -98,6 +98,59 @@ public class Developer extends User implements ResourceInstance {
             }
 
             // rekening houden met de middagpauze: middagpauze opnemen in de duur van de reservatie
+            boolean addBreak;
+            if (currentStartTime.toLocalTime().equals(startOfBreak.plus(breakDuration))) {
+                // als start = 12u ==> +1 uur voor pauze
+                addBreak = true;
+            }
+            else if (! currentStartTime.toLocalTime().isAfter(startOfBreak.plus(breakDuration)) && ! currentEndTime.toLocalTime().isBefore(startOfBreak.plus(breakDuration))) {
+                // als start <= 12u & einde >= 12 ==> +1 uur voor pauze
+                addBreak = true;
+            }
+            else {
+                // anders niets toevoegen
+                addBreak = false;
+            }
+
+            if (addBreak) {
+                // voeg een middagpauze toe
+                currentDuration = currentDuration.plus(breakDuration);
+                durationUntilNextEndTime = this.getDailyAvailability().getDurationUntilNextEndTime(currentEndTime);
+                if (currentDuration.compareTo(durationUntilNextEndTime) <= 0) {
+                    /* voeg een middagpauze toe op dezelfde dag als dat kan*/
+                    currentEndTime = currentEndTime.plus(breakDuration);
+                    currentDuration = Duration.ZERO;
+                }
+                else {
+                    /* voeg een middagpauze toe, (deels) op een andere dag */
+                    currentEndTime = currentStartTime.plus(durationUntilNextEndTime);
+                    currentDuration = currentDuration.minus(durationUntilNextEndTime);
+                    currentStartTime = this.getDailyAvailability().getNextStartTime(currentEndTime);
+                }
+            }
+        }
+
+        return currentEndTime;
+    }
+
+    private LocalDateTime calculateEndTimeOld(LocalDateTime startTime, Duration duration) {
+        LocalDateTime currentStartTime = startTime;
+        LocalDateTime currentEndTime   = null;
+        Duration      currentDuration  = duration;
+
+        while (!currentDuration.isZero()) {
+            Duration durationUntilNextEndTime = this.getDailyAvailability().getDurationUntilNextEndTime(currentStartTime);
+            if (currentDuration.compareTo(durationUntilNextEndTime) <= 0) {
+                currentEndTime = currentStartTime.plus(currentDuration);
+                currentDuration = Duration.ZERO;
+            }
+            else {
+                currentEndTime = currentStartTime.plus(durationUntilNextEndTime);
+                currentDuration = currentDuration.minus(durationUntilNextEndTime);
+                currentStartTime = this.getDailyAvailability().getNextStartTime(currentEndTime);
+            }
+
+            // rekening houden met de middagpauze: middagpauze opnemen in de duur van de reservatie
             // verschillende gevallen: zie uml/Developer.calculateEndTime - verschillende gevallen.jpg
             boolean addBreak;
             if (currentEndTime.toLocalTime().isAfter(endOfBreak.minus(breakDuration)) && currentStartTime.toLocalTime().isBefore(startOfBreak.plus(breakDuration))) {
@@ -105,10 +158,6 @@ public class Developer extends User implements ResourceInstance {
                 addBreak = true;
             }
             else if (! currentEndTime.toLocalTime().isAfter(endOfBreak.minus(breakDuration))) {
-                /* GEVAL 2: voeg geen middagpauze toe */
-                addBreak = false;
-            }
-            else {
                 /* GEVAL 1 */
                 if (! currentEndTime.toLocalTime().isBefore(startOfBreak)) {
                     /* voeg een middagpauze toe op dezelfde dag als [currentEndTime] >= [startOfBreak] */
@@ -117,6 +166,10 @@ public class Developer extends User implements ResourceInstance {
                 else {
                     addBreak = false;
                 }
+            }
+            else {
+                /* GEVAL 2 */
+                addBreak = false;
             }
 
             if (addBreak) {
