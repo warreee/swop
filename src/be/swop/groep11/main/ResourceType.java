@@ -16,7 +16,7 @@ public class ResourceType {
      * @param name De naam van dit ResourceType.
      */
     public ResourceType(String name){
-        this(name, new ArrayList<ResourceTypeConstraint>());
+        this(name, new ArrayList<>());
     }
 
     /**
@@ -35,8 +35,7 @@ public class ResourceType {
      *
      * @param name De naam van deze ResourceType
      * @param constraints De constraints die aan dit ResourceType moeten worden toegewezen.
-     * @param availableFrom Vanaf wanneer dit ResourceType beschikbaar is.
-     * @param availableUntil Tot wanneer dit ResourceType beschikbaar is.
+     * @param availability Hoelang dit ResourceType beschikbaar is per dag.
      */
     public ResourceType(String name, List<ResourceTypeConstraint> constraints,DailyAvailability availability) {
         if(!isValidResourceTypeName(name)){
@@ -66,7 +65,7 @@ public class ResourceType {
 
     /**
      * Voegt een nieuwe instantie van dit type resource toe aan deze ResourceType.
-     * @param name
+     * @param name De naam van de ResourceInstance die moet worden toegevoegd.
      */
     public void addResourceInstance(String name){
         Resource resource = new Resource(name, this);
