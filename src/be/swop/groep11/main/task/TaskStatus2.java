@@ -5,6 +5,10 @@ package be.swop.groep11.main.task;
  */
 public abstract class TaskStatus2 {
 
+    protected TaskStatus2() {
+
+    }
+
     public abstract void execute(Task task);
 
     public abstract void finish(Task task);

@@ -57,10 +57,11 @@ public class DailyAvailability {
      * Controleert of een start- en eindtijd geldig zijn.
      * @param startTime De starttijd die gecontroleerd moet worden
      * @param endTime   De eindtijd die gecontroleerd moet worden
-     * @return          True als de starttijd en eindtijd niet null zijn, en de starttijd voor de eindtijd ligt.
+     * @return          True als de starttijd en eindtijd niet null zijn, en de starttijd voor de eindtijd ligt, en er minstens 1 uur tussen zit.
      */
     public boolean isValidStartTimeEndTime(LocalTime startTime, LocalTime endTime){
-        return startTime != null && endTime != null && startTime.isBefore(endTime);
+        return startTime != null && endTime != null && startTime.isBefore(endTime)
+                && Duration.between(startTime, endTime).compareTo(Duration.ofHours(1)) >= 0;
     }
 
     private boolean containsTime(LocalTime time) {
@@ -68,16 +69,22 @@ public class DailyAvailability {
     }
 
     /**
-     * Geeft het eerst volgende tijdstip die in deze dagelijkse beschikbaarheid valt voor een gegeven tijdstip.
+     * Geeft het eerst volgende uur dat in deze dagelijkse beschikbaarheid valt voor een gegeven tijdstip.
      * @param dateTime Het gegeven tijdstip
-     * @return Het gegeven tijdstip indien deze dagelijkse beschikbaarheid het gegeven tijdstip al bevat,
-     *         of anders de eerstvolgende starttijd in deze dagelijkse beschikbaarheid.
      */
     public LocalDateTime getNextTime(LocalDateTime dateTime) {
-        if (this.containsDateTime(dateTime))
+        LocalDateTime dateTimeHours = this.getNextHour(dateTime);
+        if (this.containsDateTime(dateTimeHours))
+            return dateTimeHours;
+        else
+            return this.getNextHour(this.getNextStartTime(dateTime));
+    }
+
+    private LocalDateTime getNextHour(LocalDateTime dateTime) {
+        if (dateTime.getMinute() == 0)
             return dateTime;
         else
-            return this.getNextStartTime(dateTime);
+            return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour()+1,0));
     }
 
     /**
