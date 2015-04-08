@@ -1,5 +1,7 @@
 package be.swop.groep11.main;
 
+import com.google.common.collect.ImmutableList;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -95,21 +97,30 @@ public class ResourceType {
      */
     private List<ResourceTypeConstraint> resourceTypeConstraints;
 
-    public List<ResourceTypeConstraint> getResourceTypeConstraints() {
-        return resourceTypeConstraints;
+    /**
+     * Geeft een ImmutableList van ResourceTypeConstraints terug die alle constraint van dit ResourceType bevat.
+     */
+    public ImmutableList<ResourceTypeConstraint> getResourceTypeConstraints() {
+        return ImmutableList.copyOf(resourceTypeConstraints);
     }
 
+    /**
+     * Zet de gegeven resourceTypeConstraints lijst als constraints voor dit ResourceType object. De lijst wordt
+     * gecontroleerd op mogelijke conflicten.
+     * @param resourceTypeConstraints De lijst met ResourceTypeConstraint
+     * @throws IllegalArgumentException Wordt gegooid als er een conflict is bij de gegeven resourceTypeConstraints.
+     */
     public void setResourceTypeConstraints(List<ResourceTypeConstraint> resourceTypeConstraints) {
         for(int i = 0; i < resourceTypeConstraints.size(); i++){
             for(int j = i+1; j < resourceTypeConstraints.size();j++){
                 ResourceTypeConstraint constraint1 = resourceTypeConstraints.get(i);
                 ResourceTypeConstraint constraint2 = resourceTypeConstraints.get(j);
                 if(!constraint1.isValidOtherConstraint(constraint2)){
-                    throw new IllegalArgumentException("In de doorgegeven lijst van constraint zit een fout waardoor deze constraints nooit kunnen voldaan zijn.");
+                    throw new IllegalArgumentException("In de doorgegeven lijst van constraint zit een conflict waardoor deze constraints nooit kunnen voldaan zijn.");
                 }
             }
         }
-        this.resourceTypeConstraints = resourceTypeConstraints;
+        this.resourceTypeConstraints = new ArrayList<>(resourceTypeConstraints);
     }
 
     private LocalDateTime availableFrom;
