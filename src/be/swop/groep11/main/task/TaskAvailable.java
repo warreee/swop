@@ -9,22 +9,35 @@ public class TaskAvailable extends TaskStatus2 {
 
 
     @Override
-    public String toString() {
-        return StatusName.AVAILABLE.toString();
+    public void execute(Task task) {
+        if (checkPlan()){
+            TaskStatus2 executing = new TaskExecuting();
+            task.setStatus(executing);
+        }
     }
 
     @Override
-    public boolean execute() {
-        return false;
+    public void finish(Task task) {
+        throw new IllegalStateTransition("Een taak moet eerst worden uitgevoerd voor hij gefinish wordt");
     }
 
     @Override
-    public boolean finish() {
-        return false;
+    public void fail(Task task) {
+        throw new IllegalStateTransition("Een taak kan niet van Available naar Fail gaan");
     }
 
     @Override
-    public boolean fail() {
-        return false;
+    public void makeAvailable(Task task) {
+        throw new IllegalStateTransition("De taak was al available");
+    }
+
+    @Override
+    public void makeUnavailable(Task task) {
+        TaskStatus2 unavailable = new TaskUnavailable();
+        task.setStatus(unavailable);
+    }
+
+    private boolean checkPlan () {
+        return true;
     }
 }

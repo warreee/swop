@@ -2,7 +2,6 @@ package be.swop.groep11.main;
 
 import com.google.common.collect.ImmutableList;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,39 +11,26 @@ public class ResourceType {
     private final DailyAvailability dailyAvailability;
 
     /**
-     * Gemakkelijksheidcnstructor om een ResourceType met enkel een naam aan te maken.
+     * Gemakkelijksheidconstructor om een ResourceType met enkel een naam aan te maken.
      * @param name De naam van dit ResourceType.
      */
     public ResourceType(String name){
-        this(name, new ArrayList<>());
-    }
-
-    /**
-     * Gemakkelijksheidconstructor om een ResourceType aan te maken zonder restricties op de beschikbaarheid van dit
-     * ResourceType.
-     *
-     * @param name De naam van dit ResourceType
-     * @param constraints De constraints die aan dit ResourceType moeten worden toegewezen.
-     */
-    public ResourceType(String name, List<ResourceTypeConstraint> constraints){
-        this(name, constraints, new DailyAvailability(LocalTime.MIN,LocalTime.MAX));
+        this(name, new DailyAvailability(LocalTime.MIN, LocalTime.MAX));
     }
 
     /**
      * Maakt een nieuwe ResourceType aan met de gegeven parameters.
      *
      * @param name De naam van deze ResourceType
-     * @param constraints De constraints die aan dit ResourceType moeten worden toegewezen.
      * @param availability Hoelang dit ResourceType beschikbaar is per dag.
      */
-    public ResourceType(String name, List<ResourceTypeConstraint> constraints,DailyAvailability availability) {
+    public ResourceType(String name, DailyAvailability availability) {
         if(!isValidResourceTypeName(name)){
             throw new IllegalArgumentException("Ongeldige naam voor ResourceType");
         }
         if(!isValidDailyAvailability(availability)){
             throw new IllegalArgumentException("Ongeldige DailyAvailability");
         }
-        setResourceTypeConstraints(constraints);
         this.name = name;
         this.dailyAvailability = availability;
     }
@@ -60,6 +46,10 @@ public class ResourceType {
 
     private boolean isValidDailyAvailability(DailyAvailability availability) {
         return availability != null;
+    }
+
+    public DailyAvailability getDailyAvailability() {
+        return dailyAvailability;
     }
 
     /**
