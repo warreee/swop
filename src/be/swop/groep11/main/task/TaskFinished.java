@@ -7,23 +7,29 @@ import be.swop.groep11.main.task.TaskStatus2;
  */
 public class TaskFinished extends TaskStatus2 {
 
+
     @Override
-    public String toString() {
-        return StatusName.FINISHED.toString();
+    public void execute(Task task) {
+
     }
 
     @Override
-    public boolean execute() {
-        return false;
+    public void finish(Task task) {
+
     }
 
     @Override
-    public boolean finish() {
-        return false;
+    public void fail(Task task) {
+
     }
 
     @Override
-    public boolean fail() {
-        return false;
+    public void makeAvailable(Task task) {
+
+    }
+
+    @Override
+    public void makeUnavailable(Task task) {
+
     }
 }
