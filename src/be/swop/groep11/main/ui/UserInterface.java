@@ -1,7 +1,7 @@
 package be.swop.groep11.main.ui;
 
 import be.swop.groep11.main.Project;
-import be.swop.groep11.main.Task;
+import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.commands.CancelException;
 import com.google.common.collect.ImmutableList;
 

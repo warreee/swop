@@ -16,7 +16,7 @@ public class ResourceType {
      * @param name De naam van dit ResourceType.
      */
     public ResourceType(String name){
-        this(name, new ArrayList<ResourceTypeConstraint>());
+        this(name, new ArrayList<>());
     }
 
     /**
@@ -35,8 +35,7 @@ public class ResourceType {
      *
      * @param name De naam van deze ResourceType
      * @param constraints De constraints die aan dit ResourceType moeten worden toegewezen.
-     * @param availableFrom Vanaf wanneer dit ResourceType beschikbaar is.
-     * @param availableUntil Tot wanneer dit ResourceType beschikbaar is.
+     * @param availability Hoelang dit ResourceType beschikbaar is per dag.
      */
     public ResourceType(String name, List<ResourceTypeConstraint> constraints,DailyAvailability availability) {
         if(!isValidResourceTypeName(name)){
@@ -50,7 +49,11 @@ public class ResourceType {
         this.dailyAvailability = availability;
     }
 
-
+    /**
+     *
+     * @param name
+     * @return
+     */
     private boolean isValidResourceTypeName(String name) {
         return name != null && !name.isEmpty();
     }
@@ -66,7 +69,7 @@ public class ResourceType {
 
     /**
      * Voegt een nieuwe instantie van dit type resource toe aan deze ResourceType.
-     * @param name
+     * @param name De naam van de ResourceInstance die moet worden toegevoegd.
      */
     public void addResourceInstance(String name){
         Resource resource = new Resource(name, this);
@@ -117,7 +120,19 @@ public class ResourceType {
         this.resourceTypeConstraints = new ArrayList<>(resourceTypeConstraints);
     }
 
+    /**
+     * Controleert of de gegeven lijst met resourceTypeConstraints wel mag.
+     * @param resourceTypeConstraints de lijst met resourceTypeConstraintss
+     * @return true als de lijst geen conflicten heeft en de lijst met instances leeg is..
+     */
     private boolean canHaveAsResourceTypeConstraints(List<ResourceTypeConstraint> resourceTypeConstraints){
+
+        // De lijst mag alleen veranderd worden als er nog geen instances zijn van dit ResourceType.
+        if(instances.size() != 0){
+            return false;
+        }
+
+        // Controleer of er een conflict is voor elke combinatie van resourceTypeConstraints.
         for(int i = 0; i < resourceTypeConstraints.size(); i++){
             for(int j = i+1; j < resourceTypeConstraints.size();j++){
                 ResourceTypeConstraint constraint1 = resourceTypeConstraints.get(i);
@@ -128,25 +143,5 @@ public class ResourceType {
             }
         }
         return true;
-    }
-
-    private LocalDateTime availableFrom;
-
-    public LocalDateTime getAvailableFrom() {
-        return availableFrom;
-    }
-
-    public void setAvailableFrom(LocalDateTime availableFrom) {
-        this.availableFrom = availableFrom;
-    }
-
-    private LocalDateTime availableUntil;
-
-    public LocalDateTime getAvailableUntil() {
-        return availableUntil;
-    }
-
-    public void setAvailableUntil(LocalDateTime availableUntil) {
-        this.availableUntil = availableUntil;
     }
 }

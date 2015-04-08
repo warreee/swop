@@ -1,5 +1,7 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.DependencyConstraint;
+import be.swop.groep11.main.Project;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;

@@ -1,4 +1,4 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.task;
 
 /**
  * Stelt de status van een taak voor.

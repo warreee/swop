@@ -1,12 +1,15 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.task;
+
+import be.swop.groep11.main.task.TaskStatus2;
 
 /**
  * Created by warreee on 4/7/15.
  */
-public class TaskExecuting extends TaskStatus2 {
+public class TaskFailed extends TaskStatus2 {
+
     @Override
     public String toString() {
-        return StatusName.EXECUTING.toString();
+        return StatusName.FAILED.toString();
     }
 
     @Override
