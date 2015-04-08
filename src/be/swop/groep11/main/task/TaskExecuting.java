@@ -8,27 +8,17 @@ import be.swop.groep11.main.task.TaskStatus2;
 public class TaskExecuting extends TaskStatus2 {
 
     @Override
-    public void execute(Task task) {
+    protected void execute(Task task) {
         throw new IllegalStateTransition("De taak was reeds aan het uitvoeren!");
     }
 
     @Override
-    public void finish(Task task) {
+    protected void finish(Task task) {
+        if (super.checkPlan()){
+            TaskStatus2 finished = new TaskFinished();
+            task.setStatus(finished);
+        }
 
     }
 
-    @Override
-    public void fail(Task task) {
-
-    }
-
-    @Override
-    public void makeAvailable(Task task) {
-
-    }
-
-    @Override
-    public void makeUnavailable(Task task) {
-
-    }
 }
