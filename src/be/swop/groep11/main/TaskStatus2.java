@@ -5,28 +5,13 @@ package be.swop.groep11.main;
  */
 public abstract class TaskStatus2 {
 
-    protected enum StatusName {
-        AVAILABLE,
-        EXECUTING,
-        UNAVAILABLE,
-        FINISHED,
-        FAILED;
-    }
+    public abstract void execute(Task task);
 
-    public abstract String toString();
+    public abstract void finish(Task task);
 
-    public abstract boolean execute();
+    public abstract void fail(Task task);
 
-    public abstract boolean finish();
+    public abstract void makeAvailable(Task task);
 
-    public abstract boolean fail();
-
-    public boolean checkDependencies(){
-        return true;
-    }
-
-    public static boolean isValidNewStatus(TaskStatus2 status, Task task) {
-        //TaskStatus2 currentStatus = task.getStatus();
-        return true;
-    }
+    public abstract void makeUnavailable(Task task);
 }

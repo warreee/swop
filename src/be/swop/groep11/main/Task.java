@@ -327,12 +327,19 @@ public class Task {
      */
     private TaskStatus status;
 
+    private TaskStatus2 status2;
     /**
      * Geeft de status van deze taak.
      */
     public TaskStatus getStatus() {
         return status;
     }
+
+    public void execute() {
+        status2.execute();
+    }
+
+    public void
 
     /**
      * Wijzigt de status van deze taak.
