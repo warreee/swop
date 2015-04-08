@@ -2,12 +2,21 @@ package be.swop.groep11.main;
 
 import com.google.common.collect.ImmutableList;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class ResourceType {
     private final DailyAvailability dailyAvailability;
+
+    /**
+     * Gemakkelijksheidconstructor om een ResourceType met enkel een naam aan te maken.
+     * @param name De naam van dit ResourceType.
+     */
+    public ResourceType(String name){
+        this(name, new DailyAvailability(LocalTime.MIN, LocalTime.MAX));
+    }
 
     /**
      * Maakt een nieuwe ResourceType aan met de gegeven parameters.
