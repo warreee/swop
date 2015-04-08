@@ -64,7 +64,7 @@ public class Resource implements ResourceInstance {
 
     /**
      * Geeft de eerst volgende tijdsspanne waarin deze resource voor een gegeven duur beschikbaar is,
-     * na een gegeven starttijd.
+     * na een gegeven starttijd. De starttijd van de tijdsspanne is steeds op een uur (zonder minuten).
      * Hierbij wordt rekening gehouden dat deze resource niet noodzakelijk 24/7 beschikbaar is.
      * en er al allocaties kunnen zijn.
      * @param startTime De gegeven starttijd
@@ -74,11 +74,11 @@ public class Resource implements ResourceInstance {
     public TimeSpan getNextAvailableTimeSpan(LocalDateTime startTime, Duration duration) {
         LocalDateTime realStartTime;
         if (this.getDailyAvailability() == null) {
-            realStartTime = startTime;
+            realStartTime = this.getNextHour(startTime);
         }
         else {
             // de "echte" starttijd is dan het eerste moment dat binnen de dagelijkse beschikbaarheid ligt
-            realStartTime = this.getDailyAvailability().getNextTime(startTime);
+            realStartTime = this.getDailyAvailability().getNextTime(this.getNextHour(startTime));
         }
 
         LocalDateTime realEndTime = calculateEndTime(realStartTime, duration);
@@ -98,6 +98,13 @@ public class Resource implements ResourceInstance {
         }
 
         return timeSpan;
+    }
+
+    private LocalDateTime getNextHour(LocalDateTime dateTime) {
+        if (dateTime.getMinute() == 0)
+            return dateTime;
+        else
+            return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour()+1,0));
     }
 
     private LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration) {

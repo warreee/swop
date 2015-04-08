@@ -24,6 +24,7 @@ public class Developer extends User implements ResourceInstance {
         if (resourceType == null)
             throw new IllegalArgumentException("Resource type mag niet null zijn");
         this.resourceType = resourceType;
+        this.allocations = new ArrayList<>();
     }
 
     /**
@@ -49,7 +50,7 @@ public class Developer extends User implements ResourceInstance {
 
     /**
      * Geeft de eerst volgende tijdsspanne waarin deze resource voor een gegeven duur beschikbaar is,
-     * na een gegeven starttijd.
+     * na een gegeven starttijd. De starttijd van de tijdsspanne is steeds op een uur (zonder minuten).
      * Hierbij wordt rekening gehouden dat een developer van 8u tot 17u werkt en een middagpauze van 1u moet
      * hebben tussen 11u en 14u.
      * en er al allocaties kunnen zijn.
@@ -59,12 +60,12 @@ public class Developer extends User implements ResourceInstance {
     @Override
     public TimeSpan getNextAvailableTimeSpan(LocalDateTime startTime, Duration duration) {
         // de "echte" starttijd is dan het eerste moment dat binnen de dagelijkse beschikbaarheid ligt
-        LocalDateTime realStartTime = this.getDailyAvailability().getNextTime(startTime);
+        LocalDateTime realStartTime = this.getDailyAvailability().getNextTime(this.getNextHour(startTime));
 
         LocalDateTime realEndTime = calculateEndTime(realStartTime, duration);
         TimeSpan timeSpan = new TimeSpan(realStartTime, realEndTime);
 
-        if (! this.isAvailable(timeSpan)) {
+        if (!this.isAvailable(timeSpan)) {
             List<ResourceAllocation> conflictingAllocations = this.getConflictingAllocations(timeSpan);
             // bereken hiermee de volgende mogelijke starttijd = de grootste van alle eindtijden van de resources
             LocalDateTime nextStartTime = realStartTime;
@@ -78,6 +79,13 @@ public class Developer extends User implements ResourceInstance {
         }
 
         return timeSpan;
+    }
+
+    private LocalDateTime getNextHour(LocalDateTime dateTime) {
+        if (dateTime.getMinute() == 0)
+            return dateTime;
+        else
+            return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour()+1,0));
     }
 
     private LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration) {
