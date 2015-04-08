@@ -14,6 +14,10 @@ public class TaskExecuting extends TaskStatus2 {
 
     @Override
     public void finish(Task task) {
+        if (super.checkPlan()){
+            TaskStatus2 finished = new TaskFinished();
+            task.setStatus(finished);
+        }
 
     }
 
