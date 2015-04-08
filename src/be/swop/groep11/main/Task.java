@@ -327,11 +327,32 @@ public class Task {
      */
     private TaskStatus status;
 
+    private TaskStatus2 status2;
     /**
      * Geeft de status van deze taak.
      */
-    public TaskStatus getStatus() {
+    private TaskStatus getStatus() {
         return status;
+    }
+
+    public void execute() {
+        status2.execute(this);
+    }
+
+    public void fail() {
+        status2.fail(this);
+    }
+
+    public void finish() {
+        status2.finish(this);
+    }
+
+    public void makeAvailable() {
+        status2.makeAvailable(this);
+    }
+
+    public void makeUnAvailable() {
+        status2.makeUnavailable(this);
     }
 
     /**
@@ -354,9 +375,20 @@ public class Task {
      * @throws java.lang.IllegalArgumentException Kan de status alleen op FINISHED of FAILED zetten.
      */
     public void setNewStatus(TaskStatus status) throws IllegalArgumentException{
-        if (status != TaskStatus.FAILED && status != TaskStatus.FINISHED)
+        if (legalTransition(status))
             throw new IllegalArgumentException("Kan status alleen op FINISHED of FAILED zetten");
         setStatus(status);
+    }
+
+    /**
+     * Kijkt na of het een publieke toegestane overgang is
+     * @param status De nieuwe status
+     * @return true als het een legale overgang is, false in het andere geval
+     */
+    private boolean legalTransition(TaskStatus status) {
+        return status != TaskStatus.FAILED &&
+                status != TaskStatus.FINISHED &&
+                status != TaskStatus.EXECUTING;
     }
 
 
