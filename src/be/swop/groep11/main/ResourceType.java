@@ -31,7 +31,7 @@ public class ResourceType {
     }
 
     /**
-     * Maakt een nieuwe ResourceType aan met de gegeven paramters.
+     * Maakt een nieuwe ResourceType aan met de gegeven parameters.
      *
      * @param name De naam van deze ResourceType
      * @param constraints De constraints die aan dit ResourceType moeten worden toegewezen.
@@ -111,16 +111,23 @@ public class ResourceType {
      * @throws IllegalArgumentException Wordt gegooid als er een conflict is bij de gegeven resourceTypeConstraints.
      */
     public void setResourceTypeConstraints(List<ResourceTypeConstraint> resourceTypeConstraints) {
+        if(!canHaveAsResourceTypeConstraints(resourceTypeConstraints)){
+            throw new IllegalArgumentException("In de doorgegeven lijst van constraint zit een conflict waardoor deze constraints nooit kunnen voldaan zijn.");
+        }
+        this.resourceTypeConstraints = new ArrayList<>(resourceTypeConstraints);
+    }
+
+    private boolean canHaveAsResourceTypeConstraints(List<ResourceTypeConstraint> resourceTypeConstraints){
         for(int i = 0; i < resourceTypeConstraints.size(); i++){
             for(int j = i+1; j < resourceTypeConstraints.size();j++){
                 ResourceTypeConstraint constraint1 = resourceTypeConstraints.get(i);
                 ResourceTypeConstraint constraint2 = resourceTypeConstraints.get(j);
                 if(!constraint1.isValidOtherConstraint(constraint2)){
-                    throw new IllegalArgumentException("In de doorgegeven lijst van constraint zit een conflict waardoor deze constraints nooit kunnen voldaan zijn.");
+                   return false;
                 }
             }
         }
-        this.resourceTypeConstraints = new ArrayList<>(resourceTypeConstraints);
+        return true;
     }
 
     private LocalDateTime availableFrom;
