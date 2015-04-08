@@ -7,6 +7,11 @@ import be.swop.groep11.main.task.TaskStatus2;
  */
 public class TaskUnavailable extends TaskStatus2 {
 
+    protected TaskUnavailable() {
+
+    }
+
+
     @Override
     public void execute(Task task) {
 

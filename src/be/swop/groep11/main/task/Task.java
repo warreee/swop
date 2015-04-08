@@ -362,7 +362,7 @@ public class Task {
      * @param status De nieuwe status
      * @throws java.lang.IllegalArgumentException De nieuwe status is ongeldig voor deze taak
      */
-    private void setStatus(TaskStatus status) throws IllegalArgumentException {
+    protected void setStatus(TaskStatus status) throws IllegalArgumentException {
         if (! TaskStatus.isValidNewStatus(status, this))
             throw new IllegalArgumentException("Ongeldige status");
         this.status = status;
@@ -451,6 +451,10 @@ public class Task {
         if (this.getAlternativeTask() != null)
             return getAlternativeTask().getAlternativeFinished();
         return false;
+    }
+
+    protected void setStatus(TaskStatus2 status) {
+        this.status2 = status;
     }
 
     public static enum FinishedStatus {
