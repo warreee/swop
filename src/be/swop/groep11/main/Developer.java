@@ -24,6 +24,7 @@ public class Developer extends User implements ResourceInstance {
         if (resourceType == null)
             throw new IllegalArgumentException("Resource type mag niet null zijn");
         this.resourceType = resourceType;
+        this.allocations = new ArrayList<>();
     }
 
     /**

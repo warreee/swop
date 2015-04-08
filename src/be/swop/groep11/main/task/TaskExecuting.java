@@ -9,7 +9,7 @@ public class TaskExecuting extends TaskStatus2 {
 
     @Override
     public void execute(Task task) {
-
+        throw new IllegalStateTransition("De taak was reeds aan het uitvoeren!");
     }
 
     @Override
