@@ -35,14 +35,6 @@ public class ResourceType {
         this.dailyAvailability = availability;
     }
 
-    /**
-     *
-     * @param name
-     * @return
-     */
-    private boolean isValidResourceTypeName(String name) {
-        return name != null && !name.isEmpty();
-    }
 
     private boolean isValidDailyAvailability(DailyAvailability availability) {
         return availability != null;
@@ -81,7 +73,7 @@ public class ResourceType {
      * @param name De naam die aan dit ResourceType gegeven wordt.
      * @return True als de naam niet null en niet leeg is.
      */
-    public static boolean isValidName(String name){
+    public static boolean isValidResourceTypeName(String name){
         return name != null && !name.isEmpty();
     }
 
