@@ -97,7 +97,7 @@ public class RequirementConstraint extends ResourceTypeConstraint {
         boolean result = false;
         if(otherConstraint instanceof ConflictConstraint){
             List<ResourceType> list = (otherConstraint).getConstrainingTypes();
-            result = Collections.disjoint(getConstrainingTypes(),list);
+            result = !list.contains(getOwnerType()) && Collections.disjoint(getConstrainingTypes(),list);
         }else if(otherConstraint instanceof RequirementConstraint){
             result = true;//Andere requirementConstraints vormen geen probleem
         }
