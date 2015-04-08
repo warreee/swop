@@ -18,4 +18,8 @@ public abstract class TaskStatus2 {
     public abstract void makeAvailable(Task task);
 
     public abstract void makeUnavailable(Task task);
+
+    protected boolean checkPlan () {
+        return true;
+    }
 }

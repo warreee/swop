@@ -37,7 +37,5 @@ public class TaskAvailable extends TaskStatus2 {
         task.setStatus(unavailable);
     }
 
-    private boolean checkPlan () {
-        return true;
-    }
+
 }
