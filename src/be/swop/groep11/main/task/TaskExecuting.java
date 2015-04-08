@@ -6,23 +6,29 @@ import be.swop.groep11.main.task.TaskStatus2;
  * Created by warreee on 4/7/15.
  */
 public class TaskExecuting extends TaskStatus2 {
+
     @Override
-    public String toString() {
-        return StatusName.EXECUTING.toString();
+    public void execute(Task task) {
+
     }
 
     @Override
-    public boolean execute() {
-        return false;
+    public void finish(Task task) {
+
     }
 
     @Override
-    public boolean finish() {
-        return false;
+    public void fail(Task task) {
+
     }
 
     @Override
-    public boolean fail() {
-        return false;
+    public void makeAvailable(Task task) {
+
+    }
+
+    @Override
+    public void makeUnavailable(Task task) {
+
     }
 }
