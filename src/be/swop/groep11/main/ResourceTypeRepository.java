@@ -2,7 +2,7 @@ package be.swop.groep11.main;
 
 import com.google.common.collect.ImmutableList;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +10,7 @@ import java.util.List;
 public class ResourceTypeRepository {
 
     public ResourceTypeRepository(){
+        //Zeker zijn dat developers beschikbaar zijn als type
         addDeveloperType();
     }
 
@@ -18,34 +19,40 @@ public class ResourceTypeRepository {
      * probleem is met de naam.
      */
     private void addDeveloperType(){
-        if(isValidResourceTypeName("Developer")) {
-            ResourceType developerType = new ResourceType("Developer", new ArrayList<RequirementConstraint>(), new ArrayList<ConflictConstraint>());
-            resourceTypes.add(developerType);
+        if(!containtsType("Developer")) {
+            addResourceType("Developer", new DailyAvailability(LocalTime.of(8, 0), LocalTime.of(17, 0)));
         }
     }
 
     /**
      * Voegt een nieuwe ResourceType toe zonder start en eindtijd voor de beschikbaarheid.
      * @param name De naam van de toe te voegen ResourceType
-     * @param requiredTypes Een lijst van RequirementConstraint voor deze ResourceType.
-     * @param conflictingTypes Een lijst van ConflictConstraint voor deze ResourceType.
+     * @param constrainingTypes Een lijst van ResourceTypeConstraints voor deze ResourceType.
      */
-    public void addResourceType(String name, List<RequirementConstraint> requiredTypes, List<ConflictConstraint> conflictingTypes) {
-        ResourceType resourceType = new ResourceType(name, requiredTypes, conflictingTypes);
+    public void addResourceType(String name, DailyAvailability availability, List<ResourceTypeConstraint> constrainingTypes) {
+        if(containtsType(name)){
+            throw new IllegalArgumentException("Er bestaat reeds een ResourceType met de naam " +name);
+        }
+        ResourceType resourceType = new ResourceType(name,availability);
         resourceTypes.add(resourceType);
+
+        resourceType.setResourceTypeConstraints(constrainingTypes);
+    }
+    /**
+     * Voegt een nieuwe ResourceType toe zonder start en eindtijd voor de beschikbaarheid.
+     * @param name De naam van de toe te voegen ResourceType
+     * @param availability //TODO documentatie
+     */
+    public void addResourceType(String name, DailyAvailability availability) {
+        addResourceType(name, availability, new ArrayList<>());
     }
 
     /**
-     * Voegt een nieuwe ResourceType toe met start en eindtijd voor de beschikbaarheid.
-     * @param name
-     * @param requiredTypes
-     * @param conflictingTypes
-     * @param availableFrom
-     * @param availableUntil
+     * Voegt een nieuwe ResourceType met een DailyAvailability voor een ganse dag.
+     * @param name De naam van de toe te voegen ResourceType
      */
-    public void addResourceType(String name, List<RequirementConstraint> requiredTypes, List<ConflictConstraint> conflictingTypes, LocalDateTime availableFrom, LocalDateTime availableUntil){
-        ResourceType resourceType = new ResourceType(name, requiredTypes, conflictingTypes, availableFrom, availableUntil);
-        resourceTypes.add(resourceType);
+    public void addResourceType(String name) {
+        addResourceType(name, new DailyAvailability(LocalTime.MIN, LocalTime.MAX), new ArrayList<>());
     }
 
     /**
@@ -79,6 +86,17 @@ public class ResourceTypeRepository {
         } catch (IllegalArgumentException e){
             return true;
         }
+    }
+
+
+    public boolean containtsType(String typeName){
+
+        for(ResourceType r: resourceTypes){
+            if (r.getName().equals(typeName)){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
