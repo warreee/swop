@@ -8,34 +8,42 @@ import java.util.List;
 public class ResourceType {
 
     /**
+     * Gemakkelijksheidcnstructor om een ResourceType met enkel een naam aan te maken.
+     * @param name De naam van dit ResourceType.
+     */
+    public ResourceType(String name){
+        this(name, new ArrayList<ResourceTypeConstraint>(), null, null);
+    }
+
+    /**
      * Gemakkelijksheidconstructor om een ResourceType aan te maken zonder restricties op de beschikbaarheid van dit
      * ResourceType.
      *
-     * @param name
-     * @param requiredTypes
-     * @param conflictingTypes
+     * @param name De naam van dit ResourceType
+     * @param constraints De constraints die aan dit ResourceType moeten worden toegewezen.
      */
-    public ResourceType(String name, List<RequirementConstraint> requiredTypes, List<ConflictConstraint> conflictingTypes){
-        this(name, requiredTypes, conflictingTypes, null, null);
+    public ResourceType(String name, List<ResourceTypeConstraint> constraints){
+        this(name, constraints, null, null);
     }
 
     /**
      * Maakt een nieuwe ResourceType aan met de gegeven paramters.
      *
      * @param name De naam van deze ResourceType
-     * @param requiredTypes
-     * @param conflictingTypes
-     * @param availableFrom
-     * @param availableUntil
+     * @param constraints De constraints die aan dit ResourceType moeten worden toegewezen.
+     * @param availableFrom Vanaf wanneer dit ResourceType beschikbaar is.
+     * @param availableUntil Tot wanneer dit ResourceType beschikbaar is.
      */
-    public ResourceType(String name, List<RequirementConstraint> requiredTypes, List<ConflictConstraint> conflictingTypes, LocalDateTime availableFrom, LocalDateTime availableUntil) {
+    public ResourceType(String name, List<ResourceTypeConstraint> constraints, LocalDateTime availableFrom, LocalDateTime availableUntil) {
         setName(name);
-        setRequiredTypes(requiredTypes);
-        setConflictingTypes(conflictingTypes);
+        setResourceTypeConstraints(constraints);
         setAvailableFrom(availableFrom);
         setAvailableUntil(availableUntil);
     }
 
+    /**
+     * Een lijst die alle ResourceInstance van dit ResourceType bevat.
+     */
     private ArrayList<ResourceInstance> instances = new ArrayList<>();
 
     /**
@@ -47,6 +55,9 @@ public class ResourceType {
         instances.add(resource);
     }
 
+    /**
+     * De naam van dit ResourceType.
+     */
     private String name;
 
     public void setName(String name) {
@@ -57,28 +68,35 @@ public class ResourceType {
         return name;
     }
 
+    /**
+     * Controleert of de gegeven naam wel correct is.
+     * @param name De naam die aan dit ResourceType gegeven wordt.
+     * @return True als de naam niet null en niet leeg is.
+     */
     public static boolean isValidName(String name){
         return name != null && !name.isEmpty();
     }
 
-    private List<RequirementConstraint> requiredTypes;
+    /**
+     * Een lijst met alle constraint die van toepassing zijn op dit ResourceType.
+     */
+    private List<ResourceTypeConstraint> resourceTypeConstraints;
 
-    public List<RequirementConstraint> getRequiredTypes() {
-        return requiredTypes;
+    public List<ResourceTypeConstraint> getResourceTypeConstraints() {
+        return resourceTypeConstraints;
     }
 
-    public void setRequiredTypes(List<RequirementConstraint> requiredTypes) {
-        this.requiredTypes = requiredTypes;
-    }
-
-    private List<ConflictConstraint> conflictingTypes;
-
-    public List<ConflictConstraint> getConflictingTypes() {
-        return conflictingTypes;
-    }
-
-    public void setConflictingTypes(List<ConflictConstraint> conflictingTypes) {
-        this.conflictingTypes = conflictingTypes;
+    public void setResourceTypeConstraints(List<ResourceTypeConstraint> resourceTypeConstraints) {
+        for(int i = 0; i < resourceTypeConstraints.size(); i++){
+            for(int j = i+1; j < resourceTypeConstraints.size();j++){
+                ResourceTypeConstraint constraint1 = resourceTypeConstraints.get(i);
+                ResourceTypeConstraint constraint2 = resourceTypeConstraints.get(j);
+                if(!constraint1.isValidOtherConstraint(constraint2)){
+                    throw new IllegalArgumentException("In de doorgegeven lijst van constraint zit een fout waardoor deze constraints nooit kunnen voldaan zijn.");
+                }
+            }
+        }
+        this.resourceTypeConstraints = resourceTypeConstraints.;
     }
 
     private LocalDateTime availableFrom;
