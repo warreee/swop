@@ -354,9 +354,20 @@ public class Task {
      * @throws java.lang.IllegalArgumentException Kan de status alleen op FINISHED of FAILED zetten.
      */
     public void setNewStatus(TaskStatus status) throws IllegalArgumentException{
-        if (status != TaskStatus.FAILED && status != TaskStatus.FINISHED)
+        if (legalTransition(status))
             throw new IllegalArgumentException("Kan status alleen op FINISHED of FAILED zetten");
         setStatus(status);
+    }
+
+    /**
+     * Kijkt na of het een publieke toegestane overgang is
+     * @param status De nieuwe status
+     * @return true als het een legale overgang is, false in het andere geval
+     */
+    private boolean legalTransition(TaskStatus status) {
+        return status != TaskStatus.FAILED &&
+                status != TaskStatus.FINISHED &&
+                status != TaskStatus.EXECUTING;
     }
 
 
