@@ -76,7 +76,7 @@ public class ResourceTypeRepository {
      * @return true asa dit gaat, anders false
      */
     public boolean isValidResourceTypeName(String name){
-        if(!ResourceType.isValidName(name)){
+        if(!ResourceType.isValidResourceTypeName(name)){
             return false;
         }
 
