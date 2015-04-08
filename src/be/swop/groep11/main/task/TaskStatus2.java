@@ -1,4 +1,4 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.task;
 
 /**
  * Created by warreee on 4/7/15.

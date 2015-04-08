@@ -5,6 +5,7 @@ import be.swop.groep11.main.TMSystem;
 import be.swop.groep11.main.controllers.AdvanceTimeController;
 import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.controllers.TaskController;
+import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.commands.Command;
 import be.swop.groep11.main.ui.commands.IllegalCommandException;

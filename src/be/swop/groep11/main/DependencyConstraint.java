@@ -1,5 +1,8 @@
 package be.swop.groep11.main;
 
+import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.task.TaskStatus;
+
 import java.util.Set;
 
 /**
