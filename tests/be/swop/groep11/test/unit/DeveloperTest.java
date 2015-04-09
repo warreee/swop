@@ -44,20 +44,30 @@ public class DeveloperTest {
     }
 
     @Test
-    public void getNextAvailableTimeSpan_Test1() {
+    public void getNextAvailableTimeSpan_EndsOnOtherDayTest() {
         LocalDateTime startTime = LocalDateTime.of(2015,4,9,10,0);
-        Duration duration = Duration.ofHours(4);
-        TimeSpan expectedTimeSpan = new TimeSpan(LocalDateTime.of(2015,4,13,13,00), LocalDateTime.of(2015,4,13,17,0));
+        Duration duration = Duration.ofHours(5);
+        TimeSpan expectedTimeSpan = new TimeSpan(LocalDateTime.of(2015,4,13,13,00), LocalDateTime.of(2015,4,14,9,0));
         TimeSpan timeSpan = developer.getNextAvailableTimeSpan(startTime, duration);
         assertEquals(expectedTimeSpan.getStartTime(), timeSpan.getStartTime());
         assertEquals(expectedTimeSpan.getEndTime(), timeSpan.getEndTime());
     }
 
     @Test
-    public void getNextAvailableTimeSpan_Test2() {
+    public void getNextAvailableTimeSpan_EndsOnSameDayTest() {
         LocalDateTime startTime = LocalDateTime.of(2015,4,14,10,30);
         Duration duration = Duration.ofMinutes(90);
         TimeSpan expectedTimeSpan = new TimeSpan(LocalDateTime.of(2015,4,14,14,0), LocalDateTime.of(2015,4,14,15,30));
+        TimeSpan timeSpan = developer.getNextAvailableTimeSpan(startTime, duration);
+        assertEquals(expectedTimeSpan.getStartTime(), timeSpan.getStartTime());
+        assertEquals(expectedTimeSpan.getEndTime(), timeSpan.getEndTime());
+    }
+
+    @Test
+    public void getNextAvailableTimeSpan_AddBreakTest() {
+        LocalDateTime startTime = LocalDateTime.of(2015,4,14,11,0);
+        Duration duration = Duration.ofMinutes(60);
+        TimeSpan expectedTimeSpan = new TimeSpan(LocalDateTime.of(2015,4,14,11,00), LocalDateTime.of(2015,4,14,13,0));
         TimeSpan timeSpan = developer.getNextAvailableTimeSpan(startTime, duration);
         assertEquals(expectedTimeSpan.getStartTime(), timeSpan.getStartTime());
         assertEquals(expectedTimeSpan.getEndTime(), timeSpan.getEndTime());

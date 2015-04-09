@@ -94,15 +94,19 @@ public class Developer extends User implements ResourceInstance {
         Duration      currentDuration  = duration;
 
         while (!currentDuration.isZero()) {
+            LocalDateTime newStartTime;
+            Duration newDuration;
+
             Duration durationUntilNextEndTime = this.getDailyAvailability().getDurationUntilNextEndTime(currentStartTime);
             if (currentDuration.compareTo(durationUntilNextEndTime) <= 0) {
                 currentEndTime = currentStartTime.plus(currentDuration);
-                currentDuration = Duration.ZERO;
+                newDuration = Duration.ZERO;
+                newStartTime = currentStartTime;
             }
             else {
                 currentEndTime = currentStartTime.plus(durationUntilNextEndTime);
-                currentDuration = currentDuration.minus(durationUntilNextEndTime);
-                currentStartTime = this.getDailyAvailability().getNextStartTime(currentEndTime);
+                newDuration = currentDuration.minus(durationUntilNextEndTime);
+                newStartTime = this.getDailyAvailability().getNextStartTime(currentEndTime);
             }
 
             // rekening houden met de middagpauze: middagpauze opnemen in de duur van de reservatie
@@ -136,6 +140,9 @@ public class Developer extends User implements ResourceInstance {
                     currentStartTime = this.getDailyAvailability().getNextStartTime(currentEndTime);
                 }
             }
+
+            currentStartTime = newStartTime;
+            currentDuration  = newDuration;
         }
 
         return currentEndTime;
