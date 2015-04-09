@@ -9,7 +9,7 @@ public class ResourceTypeRequirement {
     private final ResourceType type;
     //TEMP class
     public ResourceTypeRequirement(ResourceType type, int amount) {
-        //TODO isValidType & isValidAmount
+        //TODO isValidType & isValidAmount & isValidRequirement (of in ResourceType)
         this.type = type;
         this.amount = amount;
     }
@@ -21,4 +21,8 @@ public class ResourceTypeRequirement {
     public ResourceType getType() {
         return type;
     }
+
+    //TODO boolean containsType?
+
+
 }

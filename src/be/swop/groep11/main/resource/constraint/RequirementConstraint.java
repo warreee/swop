@@ -1,4 +1,7 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.resource.constraint;
+
+import be.swop.groep11.main.ResourceType;
+import be.swop.groep11.main.ResourceTypeRequirement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,8 +11,6 @@ import java.util.List;
  * Created by Ronald on 3/04/2015.
  */
 public class RequirementConstraint extends ResourceTypeConstraint {
-
-    //TODO tests
 
     public RequirementConstraint(ResourceType onType, List<ResourceType> requiredTypes) {
         super(onType, requiredTypes);

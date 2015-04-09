@@ -1,4 +1,7 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.resource.constraint;
+
+import be.swop.groep11.main.ResourceType;
+import be.swop.groep11.main.ResourceTypeRequirement;
 
 import java.util.List;
 
@@ -6,6 +9,10 @@ import java.util.List;
  * Created by Ronald on 3/04/2015.
  */
 public abstract class ResourceTypeConstraint {
+
+    /**
+     * TODO werken met SET ipv List om ervoor te zorgen dat de constrainingTypes uniek zijn?
+     */
 
     /**
      * Constructor voor ResourceTypeConstraint

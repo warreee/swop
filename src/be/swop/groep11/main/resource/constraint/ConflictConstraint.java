@@ -1,4 +1,7 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.resource.constraint;
+
+import be.swop.groep11.main.ResourceType;
+import be.swop.groep11.main.ResourceTypeRequirement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +11,6 @@ import java.util.List;
  */
 public class ConflictConstraint extends ResourceTypeConstraint {
 
-    //TODO tests
 
     /**
      * Constructor om een nieuwe ConflictConstraint aan te maken.
@@ -17,7 +19,6 @@ public class ConflictConstraint extends ResourceTypeConstraint {
      */
     public ConflictConstraint(ResourceType onType, List<ResourceType> conflictingTypes) {
         super(onType, conflictingTypes);
-
     }
 
     @Override
@@ -27,7 +28,7 @@ public class ConflictConstraint extends ResourceTypeConstraint {
             result = false;
         }else if(constrainingTypes.isEmpty()){
             result = false;
-        }else if(constrainingTypes.contains(getOwnerType())){ //Een ConflictConstraint van een type mag wel het type zelf als requirement bezitten
+        }else if(constrainingTypes.contains(getOwnerType())){ //Een type met een ConflictConstraint mag zelf aanwezig zijn in de constrainingTypes van die ConflictConstraint
             result = true;
         }
         return result;

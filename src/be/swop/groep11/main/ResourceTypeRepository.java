@@ -1,5 +1,6 @@
 package be.swop.groep11.main;
 
+import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalTime;
