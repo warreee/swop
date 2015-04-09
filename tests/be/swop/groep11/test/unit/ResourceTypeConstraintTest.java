@@ -1,6 +1,7 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.*;
+import be.swop.groep11.main.resource.ResourceType;
+import be.swop.groep11.main.resource.ResourceTypeRepository;
 import org.junit.Before;
 import org.junit.Test;
 

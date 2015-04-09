@@ -1,6 +1,9 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.*;
+import be.swop.groep11.main.project.Project;
+import be.swop.groep11.main.project.ProjectRepository;
+import be.swop.groep11.main.task.DependencyConstraint;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +35,7 @@ public class DependencyConstraintTest {
 
     @Test
     public void isValidDependingOnTest() throws Exception {
-        assertFalse(DependencyConstraint.isValidDependingOn(task4,task1));
+        assertFalse(DependencyConstraint.isValidDependingOn(task4, task1));
         assertTrue(DependencyConstraint.isValidDependingOn(task1,task4));
         assertFalse(DependencyConstraint.isValidDependingOn(task4,task2));
         assertTrue(DependencyConstraint.isValidDependingOn(task2,task4));

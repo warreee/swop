@@ -1,6 +1,7 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.*;
+import be.swop.groep11.main.resource.ResourceType;
+import be.swop.groep11.main.resource.ResourceRequirement;
 import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequirementConstraint;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
@@ -54,8 +55,8 @@ public class ConflictConstraintTest extends ResourceTypeConstraintTest {
 
     @Test
     public void testIsSatisfied_True() throws Exception {
-        List<ResourceTypeRequirement> requirements = new ArrayList<>();
-        requirements.add(new ResourceTypeRequirement(typeA,1));
+        List<ResourceRequirement> requirements = new ArrayList<>();
+        requirements.add(new ResourceRequirement(typeA,1));
 
         List<ResourceType> types = new ArrayList<>();
         types.add(typeB);
@@ -66,8 +67,8 @@ public class ConflictConstraintTest extends ResourceTypeConstraintTest {
 
     @Test
     public void testIsSatisfied_False() throws Exception {
-        List<ResourceTypeRequirement> requirements = new ArrayList<>();
-        requirements.add(new ResourceTypeRequirement(typeB,1));
+        List<ResourceRequirement> requirements = new ArrayList<>();
+        requirements.add(new ResourceRequirement(typeB,1));
 
         List<ResourceType> types = new ArrayList<>();
         types.add(typeB);
@@ -78,20 +79,20 @@ public class ConflictConstraintTest extends ResourceTypeConstraintTest {
 
     @Test
     public void testResolve() throws Exception {
-        List<ResourceTypeRequirement> requirements = new ArrayList<>();
-        requirements.add(new ResourceTypeRequirement(typeB,1));
-        requirements.add(new ResourceTypeRequirement(typeA,1));
+        List<ResourceRequirement> requirements = new ArrayList<>();
+        requirements.add(new ResourceRequirement(typeB,1));
+        requirements.add(new ResourceRequirement(typeA,1));
 
         List<ResourceType> types = new ArrayList<>();
         types.add(typeB);
         types.add(typeA);
         //Requirements voor TypeA als TypeB mogen reeds niet aanwezig zijn
         ConflictConstraint conflictConstraint = new ConflictConstraint(typeB,types);
-        List<ResourceTypeRequirement> result = conflictConstraint.resolve(requirements);
+        List<ResourceRequirement> result = conflictConstraint.resolve(requirements);
         System.out.println(result.toString());
         boolean contains = (result.size() == 0)? false:true;
         boolean temp = true;
-        for(ResourceTypeRequirement req : result){
+        for(ResourceRequirement req : result){
             temp = req.getType().equals(typeB);
             contains = (temp == false)? false: contains;
         }

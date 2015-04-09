@@ -1,7 +1,7 @@
 package be.swop.groep11.main.resource.constraint;
 
-import be.swop.groep11.main.ResourceType;
-import be.swop.groep11.main.ResourceTypeRequirement;
+import be.swop.groep11.main.resource.ResourceType;
+import be.swop.groep11.main.resource.ResourceRequirement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,12 +43,12 @@ public class RequirementConstraint extends ResourceTypeConstraint {
      *                      Niet waar indien er minstens één nodig ResourceType niet aanwezig is in de lijst van ResourceTypeRequirements
      */
     @Override
-    public boolean isSatisfied(List<ResourceTypeRequirement> requirements) {
+    public boolean isSatisfied(List<ResourceRequirement> requirements) {
         //Voor iedere ResourceType dat aanwezig moet zijn in de requirements
         //Controleren of dat type aanwezig is in de gegeven lijst
         for(ResourceType  conType: this.getConstrainingTypes()){
             boolean contains = false;
-            for(ResourceTypeRequirement rq : requirements){
+            for(ResourceRequirement rq : requirements){
                 contains = conType.equals(rq.getType());
             }
             if(contains == false){
@@ -67,20 +67,20 @@ public class RequirementConstraint extends ResourceTypeConstraint {
      *                      Anders worden de requirements uitgebreid met de ontbrekende ResourceTypeRequirements.
      */
     @Override
-    public List<ResourceTypeRequirement> resolve(List<ResourceTypeRequirement> requirements) {
-        List<ResourceTypeRequirement> result = new ArrayList<>(requirements);
+    public List<ResourceRequirement> resolve(List<ResourceRequirement> requirements) {
+        List<ResourceRequirement> result = new ArrayList<>(requirements);
 
         //Voor iedere ResourceType dat aanwezig moet zijn in de requirements
         //Controleren of dat type aanwezig is in de gegeven lijst
         for(ResourceType  conType: this.getConstrainingTypes()){
             boolean contains = false;
-            for(ResourceTypeRequirement rq : requirements){
+            for(ResourceRequirement rq : requirements){
 
                 contains = conType.equals(rq.getType());
             }
             if(contains == false){
                 //Indien het nodige type niet aanwezig is voegen we het toe aan tijdelijke lijst.
-                result.add(new ResourceTypeRequirement(conType,1)); // Enkel 1?
+                result.add(new ResourceRequirement(conType,1)); // Enkel 1?
             }
         }
         return result;

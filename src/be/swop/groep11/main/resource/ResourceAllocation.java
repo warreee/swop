@@ -1,4 +1,6 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.resource;
+
+import be.swop.groep11.main.TimeSpan;
 
 /**
  * Created by robin on 2/04/15.

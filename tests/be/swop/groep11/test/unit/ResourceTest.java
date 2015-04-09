@@ -1,6 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.Resource;
+import be.swop.groep11.main.resource.Resource;
 import org.junit.Before;
 import org.junit.Test;
 

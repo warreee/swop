@@ -1,12 +1,11 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.Developer;
-import be.swop.groep11.main.ResourceAllocation;
-import be.swop.groep11.main.ResourceType;
+import be.swop.groep11.main.resource.ResourceAllocation;
+import be.swop.groep11.main.resource.ResourceType;
 import be.swop.groep11.main.TimeSpan;
 import org.junit.*;
 
-import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDateTime;
 

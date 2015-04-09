@@ -1,7 +1,7 @@
 package be.swop.groep11.main.resource.constraint;
 
-import be.swop.groep11.main.ResourceType;
-import be.swop.groep11.main.ResourceTypeRequirement;
+import be.swop.groep11.main.resource.ResourceType;
+import be.swop.groep11.main.resource.ResourceRequirement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +35,10 @@ public class ConflictConstraint extends ResourceTypeConstraint {
     }
 
     @Override
-    public boolean isSatisfied(List<ResourceTypeRequirement> requirementList) {
+    public boolean isSatisfied(List<ResourceRequirement> requirementList) {
         //Controleer of ieder ResourceType die niet aanwezig mag zijn in de requirements, toch aanwezig is
         for(ResourceType  conType: this.getConstrainingTypes()){
-            for(ResourceTypeRequirement rq : requirementList){
+            for(ResourceRequirement rq : requirementList){
                 if (conType.equals(rq.getType())) {
                    return false; //Er is een ResourceType aanwezig wat niet mag.
                 }
@@ -55,11 +55,11 @@ public class ConflictConstraint extends ResourceTypeConstraint {
      *          zonder de ResourceTypeRequirements met een types die conflicten geven.
      */
     @Override
-    public List<ResourceTypeRequirement> resolve(List<ResourceTypeRequirement> requirementList) {
-        List<ResourceTypeRequirement> result = new ArrayList<>(requirementList);
+    public List<ResourceRequirement> resolve(List<ResourceRequirement> requirementList) {
+        List<ResourceRequirement> result = new ArrayList<>(requirementList);
         //Controleer of ieder ResourceType die niet aanwezig mag zijn in de requirements, toch aanwezig is
         for(ResourceType  conType: this.getConstrainingTypes()){
-            for(ResourceTypeRequirement rq : requirementList){
+            for(ResourceRequirement rq : requirementList){
                 if (conType.equals(rq.getType())) {
                     result.remove(rq); //Er is een ResourceType aanwezig wat niet mag. Verwijder uit lijst
                 }

@@ -1,5 +1,7 @@
 package be.swop.groep11.main;
 
+import be.swop.groep11.main.project.Project;
+import be.swop.groep11.main.project.ProjectRepository;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskStatus;
 import com.google.common.collect.ImmutableList;

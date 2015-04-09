@@ -1,6 +1,7 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.*;
+import be.swop.groep11.main.resource.ResourceType;
+import be.swop.groep11.main.resource.ResourceRequirement;
 import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequirementConstraint;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
@@ -53,8 +54,8 @@ public class RequirementConstraintTest extends ResourceTypeConstraintTest {
 
     @Test
     public void testIsSatisfied_True() throws Exception {
-        List<ResourceTypeRequirement> requirements = new ArrayList<>();
-        requirements.add(new ResourceTypeRequirement(typeA,1));
+        List<ResourceRequirement> requirements = new ArrayList<>();
+        requirements.add(new ResourceRequirement(typeA,1));
 
         List<ResourceType> types = new ArrayList<>();
         types.add(typeA);
@@ -67,8 +68,8 @@ public class RequirementConstraintTest extends ResourceTypeConstraintTest {
 
     @Test
     public void testIsSatisfied_False() throws Exception {
-        List<ResourceTypeRequirement> requirements = new ArrayList<>();
-        requirements.add(new ResourceTypeRequirement(typeB,1));
+        List<ResourceRequirement> requirements = new ArrayList<>();
+        requirements.add(new ResourceRequirement(typeB,1));
 
         List<ResourceType> types = new ArrayList<>();
         types.add(typeA);
@@ -82,16 +83,16 @@ public class RequirementConstraintTest extends ResourceTypeConstraintTest {
     @Test
     public void testResolve() throws Exception {
 //        fail("Not implemented");
-        List<ResourceTypeRequirement> requirements = new ArrayList<>();
+        List<ResourceRequirement> requirements = new ArrayList<>();
 
         List<ResourceType> types = new ArrayList<>();
         types.add(typeA);
 
         RequirementConstraint constraint = new RequirementConstraint(typeB,types);
-        List<ResourceTypeRequirement> result = constraint.resolve(requirements);
+        List<ResourceRequirement> result = constraint.resolve(requirements);
         boolean contains = false;
         boolean temp = false;
-        for(ResourceTypeRequirement req : result){
+        for(ResourceRequirement req : result){
             temp = req.getType().equals(typeA);
             contains = (temp == true)? true: contains;
         }

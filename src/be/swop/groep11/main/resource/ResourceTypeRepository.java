@@ -1,4 +1,4 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.resource;
 
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import com.google.common.collect.ImmutableList;

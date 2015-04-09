@@ -1,5 +1,9 @@
 package be.swop.groep11.main;
 
+import be.swop.groep11.main.resource.DailyAvailability;
+import be.swop.groep11.main.resource.ResourceAllocation;
+import be.swop.groep11.main.resource.ResourceInstance;
+import be.swop.groep11.main.resource.ResourceType;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;

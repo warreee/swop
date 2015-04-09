@@ -1,7 +1,7 @@
 package be.swop.groep11.main.resource.constraint;
 
-import be.swop.groep11.main.ResourceType;
-import be.swop.groep11.main.ResourceTypeRequirement;
+import be.swop.groep11.main.resource.ResourceType;
+import be.swop.groep11.main.resource.ResourceRequirement;
 
 import java.util.List;
 
@@ -62,14 +62,14 @@ public abstract class ResourceTypeConstraint {
      *
      * @param requirements   De lijst ResourceTypeRequirements
      */
-    public abstract boolean isSatisfied(List<ResourceTypeRequirement> requirements);
+    public abstract boolean isSatisfied(List<ResourceRequirement> requirements);
 
     /**
      * Genereer voor deze Constraint een lijst ResourceTypeRequirements gebaseerd op de gegeven lijst requirements,
      * dewelke geen tegenstrijdigheden bevat.
      * @param requirements      Lijst van ResourceTypeRequirement
      */
-    public abstract List<ResourceTypeRequirement> resolve(List<ResourceTypeRequirement> requirements);
+    public abstract List<ResourceRequirement> resolve(List<ResourceRequirement> requirements);
 
     /**
      * Controleer of deze ConflictConstraint tegenstrijdig is met de gegeven ResourceTypeConstraint.

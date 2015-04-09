@@ -1,6 +1,7 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.*;
+import be.swop.groep11.main.resource.DailyAvailability;
+import be.swop.groep11.main.resource.ResourceType;
 import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequirementConstraint;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
