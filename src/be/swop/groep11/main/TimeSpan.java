@@ -21,7 +21,8 @@ public class TimeSpan {
     }
 
     /**
-     * Controleert of deze tijdsspanne overlapt met een andere tijdsspanne.
+     * Controleert of deze tijdsspanne *strikt* overlapt met een andere tijdsspanne.
+     * Een tijdsspanne die begint op het moment dat een andere eindigt, overlapt niet met de andere, en omgekeerd.
      * @param other De andere tijdsspanne.
      * @return      True als deze tijdsspanne strikt overlapt met de andere tijdsspanne.
      */
@@ -33,7 +34,7 @@ public class TimeSpan {
         LocalDateTime startTime2 = other.getStartTime();
         LocalDateTime endTime2   = other.getEndTime();
 
-        return ! (startTime1.isAfter(endTime2) || startTime2.isAfter(endTime1)); // TODO: dit moet nog getest worden
+        return ! (startTime1.isAfter(endTime2) || startTime1.equals(endTime2) || startTime2.isAfter(endTime1) || startTime2.equals(endTime1));
     }
 
     /**
