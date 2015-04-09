@@ -19,9 +19,9 @@ public class TimeSpanTest {
         timeSpan3 = new TimeSpan(LocalDateTime.of(2015,4,9,10,0), LocalDateTime.of(2015,4,9,11,0));
         timeSpan4 = new TimeSpan(LocalDateTime.of(2015,4,9,15,0), LocalDateTime.of(2015,4,9,16,0));
         timeSpan5 = new TimeSpan(LocalDateTime.of(2015,4,9,8,0), LocalDateTime.of(2015,4,9,10,0));
-        timeSpan5 = new TimeSpan(LocalDateTime.of(2015,4,9,10,0), LocalDateTime.of(2015,4,9,13,0));
-        timeSpan5 = new TimeSpan(LocalDateTime.of(2015,4,9,13,0), LocalDateTime.of(2015,4,9,15,0));
-        timeSpan5 = new TimeSpan(LocalDateTime.of(2015,4,9,15,0), LocalDateTime.of(2015,4,9,18,0));
+        timeSpan6 = new TimeSpan(LocalDateTime.of(2015,4,9,10,0), LocalDateTime.of(2015,4,9,13,0));
+        timeSpan7 = new TimeSpan(LocalDateTime.of(2015,4,9,13,0), LocalDateTime.of(2015,4,9,15,0));
+        timeSpan8 = new TimeSpan(LocalDateTime.of(2015,4,9,15,0), LocalDateTime.of(2015,4,9,18,0));
     }
 
     @Test

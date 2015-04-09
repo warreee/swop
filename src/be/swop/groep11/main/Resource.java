@@ -171,7 +171,7 @@ public class Resource implements ResourceInstance {
 
     /**
      * Controleert of een resource allocatie geldig is voor deze resource.
-     * @param allocation De te controleren resource.
+     * @param allocation De te controleren resource allocatie.
      * @return De allocation is niet null en de resource is beschikbaar gedurende de tijdsspanne van de allocatie
      *         en de resource instance van de allocation is deze resource.
      */

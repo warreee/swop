@@ -1,16 +1,15 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.Developer;
-import be.swop.groep11.main.ResourceAllocation;
-import be.swop.groep11.main.ResourceType;
-import be.swop.groep11.main.TimeSpan;
+import be.swop.groep11.main.*;
 import org.junit.*;
+import org.junit.experimental.theories.suppliers.TestedOn;
 
-import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DeveloperTest {
 
@@ -71,6 +70,38 @@ public class DeveloperTest {
         TimeSpan timeSpan = developer.getNextAvailableTimeSpan(startTime, duration);
         assertEquals(expectedTimeSpan.getStartTime(), timeSpan.getStartTime());
         assertEquals(expectedTimeSpan.getEndTime(), timeSpan.getEndTime());
+    }
+
+    @Test
+    public void addAllocation_ValidTest() {
+        ResourceAllocation allocationA = mock(ResourceAllocation.class);
+        when(allocationA.getResourceInstance()).thenReturn(developer);
+        when(allocationA.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015,4,1,8,0), LocalDateTime.of(2015,4,2,20,0)));
+
+        ResourceAllocation allocationB = mock(ResourceAllocation.class);
+        when(allocationB.getResourceInstance()).thenReturn(developer);
+        when(allocationB.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015,4,3,8,0), LocalDateTime.of(2015,4,8,8,0)));
+
+        developer.addAllocation(allocationA);
+        developer.addAllocation(allocationB);
+    }
+
+    @Test (expected=IllegalArgumentException.class)
+    public void addAllocation_InValidTest1() {
+        ResourceAllocation allocationA = mock(ResourceAllocation.class);
+        when(allocationA.getResourceInstance()).thenReturn(developer);
+        when(allocationA.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015,4,1,8,0), LocalDateTime.of(2015,4,28,20,0)));
+
+        developer.addAllocation(allocationA);
+    }
+
+    @Test (expected=IllegalArgumentException.class)
+    public void addAllocation_InValidTest2() {
+        ResourceAllocation allocationB = mock(ResourceAllocation.class);
+        when(allocationB.getResourceInstance()).thenReturn(developer);
+        when(allocationB.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015,4,1,8,0), LocalDateTime.of(2015,4,8,9,0)));
+
+        developer.addAllocation(allocationB);
     }
 
 }

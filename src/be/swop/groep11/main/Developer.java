@@ -242,11 +242,15 @@ public class Developer extends User implements ResourceInstance {
 
     /**
      * Controleert of een resource allocatie geldig is voor deze developer.
-     * @param allocation
-     * @return
+     * @param allocation De te controleren resource allocatie.
+     * @return De allocation is niet null en de developer is beschikbaar gedurende de tijdsspanne van de allocatie
+     *         en de resource instance van de allocation is deze developer.
      */
-    protected boolean canHaveAsAllocation(ResourceAllocation allocation) {
-        return true; // TODO
+    public boolean canHaveAsAllocation(ResourceAllocation allocation) {
+        if (allocation == null)
+            return false;
+        else
+            return this.isAvailable(allocation.getTimeSpan()) && allocation.getResourceInstance() == this;
     }
 
     /**
