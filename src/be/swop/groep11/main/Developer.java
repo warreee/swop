@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by robin on 2/04/15.
+ * Stelt een developer voor met een naam en resource type.
  */
 public class Developer extends User implements ResourceInstance {
 
