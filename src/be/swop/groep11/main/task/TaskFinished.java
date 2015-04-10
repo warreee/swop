@@ -2,6 +2,8 @@ package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.task.TaskStatus2;
 
+import java.time.Duration;
+
 /**
  * Created by warreee on 4/7/15.
  */
@@ -31,5 +33,15 @@ public class TaskFinished extends TaskStatus2 {
     @Override
     protected void makeUnavailable(Task task) {
         throw new IllegalStateTransition("Een gefinishste taak kan niet unavailable worden!");
+    }
+
+    /**
+     * Geeft de duur van een gefinishte taak terug.
+     * @param task de taak waarvan de duur wordt opgevraagd.
+     * @return de duur van de taak
+     */
+    @Override
+    protected Duration getDuration(Task task) {
+        return task.getDuration();
     }
 }
