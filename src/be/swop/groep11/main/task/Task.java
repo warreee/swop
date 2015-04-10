@@ -575,8 +575,10 @@ public class Task {
      */
     private void makeDependentTasksAvailable() {
         for (Task task : this.getDependentTasks()) {
-            if (TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task)) {
-                task.setStatus(TaskStatus.AVAILABLE);
+            try {
+                task.makeAvailable();
+            } catch (IllegalStateTransition e) {
+                e.printStackTrace(); // TODO: is deze try catch juist geïmplementeerd?
             }
         }
     }
