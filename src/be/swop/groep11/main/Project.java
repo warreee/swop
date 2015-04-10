@@ -327,7 +327,7 @@ public class Project {
         Duration total = Duration.ofHours(0);
         for(Task task :tasks){
             TaskStatus2 status = task.getStatus();
-            status.getDuration(task, );
+            status.getDuration(task, currentSystemTime); // TODO: Hier wordt task opnieuw doorgegeven, kan dit wel de bedoeling zijn als we eerst status uit datzelfde task object halen
             if(status == TaskStatus.AVAILABLE ){
                 Duration add = task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration()  ;
                 total = total.plus(add);

@@ -22,11 +22,18 @@ public class TaskExecuting extends TaskStatus2 {
         }
 
     }
-    // TODO: hoe berekenen als het nog bezig is?
+
+    /**
+     * Geeft de geschatte duur van de taak die aan het uitvoeren is, indien de taak over tijd is
+     * dan wordt de duur berekend als het vereschil tussen de starttijd en de huidige systeemtijd.
+     * @param task
+     * @param currentSystemTime
+     * @return de duur van de taak.
+     */
     @Override
     public Duration getDuration(Task task, LocalDateTime currentSystemTime) {
 
-        return null;
+        return task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration();
     }
 
 }
