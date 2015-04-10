@@ -354,10 +354,12 @@ public class Task {
 
     public void fail() {
         status2.fail(this);
+        makeDependentTasksAvailable(); // TODO: in iteratie 1 deden we dit enkel bij finish, klopt het als dit hier ook gebeurd?
     }
 
     public void finish() {
         status2.finish(this);
+        makeDependentTasksAvailable();
     }
 
     public void makeAvailable() {
