@@ -320,13 +320,14 @@ public class Project {
             }
         return currentWorkingDay;
         }
+    // TODO: commentaar zetten
 
     private Duration calculateTotalDuration(Set<Task> tasks){
-        LocalDateTime currentSystemTime = this.getProjectRepository().getTMSystem().getCurrentSystemTime();
+        LocalDateTime currentSystemTime = this.getProjectRepository().getTMSystem().getCurrentSystemTime(); // TODO: zo lang voor de tijd?
         Duration total = Duration.ofHours(0);
         for(Task task :tasks){
             TaskStatus2 status = task.getStatus();
-            status.getDuration(task);
+            status.getDuration(task, );
             if(status == TaskStatus.AVAILABLE ){
                 Duration add = task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration()  ;
                 total = total.plus(add);

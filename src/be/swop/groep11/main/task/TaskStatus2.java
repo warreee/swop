@@ -1,6 +1,7 @@
 package be.swop.groep11.main.task;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 /**
  * Created by warreee on 4/7/15.
@@ -40,5 +41,5 @@ public abstract class TaskStatus2 implements Cloneable {
         return true;
     }
 
-    public abstract Duration getDuration(Task task);
+    public abstract Duration getDuration(Task task, LocalDateTime currentSystemTime);
 }

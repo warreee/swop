@@ -1,8 +1,7 @@
 package be.swop.groep11.main.task;
 
-import be.swop.groep11.main.task.TaskStatus2;
-
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 
 /**
@@ -25,7 +24,7 @@ public class TaskExecuting extends TaskStatus2 {
     }
     // TODO: hoe berekenen als het nog bezig is?
     @Override
-    public Duration getDuration(Task task) {
+    public Duration getDuration(Task task, LocalDateTime currentSystemTime) {
 
         return null;
     }
