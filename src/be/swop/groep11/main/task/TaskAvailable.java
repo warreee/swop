@@ -2,6 +2,8 @@ package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.task.TaskStatus2;
 
+import java.time.Duration;
+
 /**
  * Created by warreee on 4/7/15.
  */
@@ -35,6 +37,17 @@ public class TaskAvailable extends TaskStatus2 {
         TaskStatus2 unavailable = new TaskUnavailable();
         task.setStatus(unavailable);
     }
+
+    /**
+     * Geeft de geschatte duur als duur van de taak terug.
+     * @param task de taak waarvan de geschatte duur wordt opgevraagd.
+     * @return de geschatte duur van de taak.
+     */
+    @Override
+    protected Duration getDuration(Task task) {
+        return task.getEstimatedDuration();
+    }
+
 
 
 }
