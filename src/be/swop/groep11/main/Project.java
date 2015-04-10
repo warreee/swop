@@ -320,24 +320,19 @@ public class Project {
             }
         return currentWorkingDay;
         }
-    // TODO: commentaar zetten
 
+    /**
+     * Berekend de totaal tijd van een set van taken.
+     * De duur van elke taak wordt teruggegeven adv status, en zijn bijhorende implementatie van getDuration.
+     * @param tasks
+     * @return
+     */
     private Duration calculateTotalDuration(Set<Task> tasks){
         LocalDateTime currentSystemTime = this.getProjectRepository().getTMSystem().getCurrentSystemTime(); // TODO: zo lang voor de tijd?
         Duration total = Duration.ofHours(0);
         for(Task task :tasks){
             TaskStatus2 status = task.getStatus();
-            status.getDuration(task, currentSystemTime); // TODO: Hier wordt task opnieuw doorgegeven, kan dit wel de bedoeling zijn als we eerst status uit datzelfde task object halen
-            if(status == TaskStatus.AVAILABLE ){
-                Duration add = task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration()  ;
-                total = total.plus(add);
-            }
-            else if(status == TaskStatus.UNAVAILABLE){
-                total = total.plus(task.getEstimatedDuration());
-            }
-            else if(status == TaskStatus.FINISHED || status == TaskStatus.FAILED){
-                total = total.plus(task.getDuration());
-            }
+            total.plus(status.getDuration(task, currentSystemTime)); // TODO: Hier wordt task opnieuw doorgegeven, kan dit wel de bedoeling zijn als we eerst status uit datzelfde task object halen
         }
         return total;
     }
