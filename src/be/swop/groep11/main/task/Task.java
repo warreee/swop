@@ -368,7 +368,7 @@ public class Task {
         status2.makeUnavailable(this);
     }
 
-/*    *//**
+/*    /**
      * Wijzigt de status van deze taak.
      * @param status De nieuwe status
      * @throws java.lang.IllegalArgumentException De nieuwe status is ongeldig voor deze taak
@@ -382,28 +382,29 @@ public class Task {
         }
     }
 
-    *//**
+    /**
      * Wijzigt de status van deze taak.
      * @param status De nieuwe status
      * @throws java.lang.IllegalArgumentException Kan de status alleen op FINISHED of FAILED zetten.
-     *//*
+
     public void setNewStatus(TaskStatus status) throws IllegalArgumentException{
         if (legalTransition(status))
             throw new IllegalArgumentException("Kan status alleen op FINISHED of FAILED zetten");
         setStatus(status);
-    }*/
+    }
+
 
     /**
      * Kijkt na of het een publieke toegestane overgang is
      * @param status De nieuwe status
      * @return true als het een legale overgang is, false in het andere geval
-     */
+
     private boolean legalTransition(TaskStatus status) {
         return status != TaskStatus.FAILED &&
                 status != TaskStatus.FINISHED &&
                 status != TaskStatus.EXECUTING;
     }
-
+    */
 
     /**
      * Alternatieve taal (kan null zijn)

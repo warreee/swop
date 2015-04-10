@@ -15,7 +15,7 @@ public class TaskFailed extends TaskStatus2 {
      * @return
      */
     @Override
-    protected Duration getDuration(Task task) {
+    public Duration getDuration(Task task) {
         return task.getDuration();
     }
 }

@@ -40,5 +40,5 @@ public abstract class TaskStatus2 implements Cloneable {
         return true;
     }
 
-    protected abstract Duration getDuration(Task task);
+    public abstract Duration getDuration(Task task);
 }

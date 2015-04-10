@@ -41,7 +41,7 @@ public class TaskFinished extends TaskStatus2 {
      * @return de duur van de taak
      */
     @Override
-    protected Duration getDuration(Task task) {
+    public Duration getDuration(Task task) {
         return task.getDuration();
     }
 }

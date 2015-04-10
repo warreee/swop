@@ -4,6 +4,7 @@ import be.swop.groep11.main.task.TaskStatus2;
 
 import java.time.Duration;
 
+
 /**
  * Created by warreee on 4/7/15.
  */
@@ -24,7 +25,8 @@ public class TaskExecuting extends TaskStatus2 {
     }
     // TODO: hoe berekenen als het nog bezig is?
     @Override
-    protected Duration getDuration(Task task) {
+    public Duration getDuration(Task task) {
+
         return null;
     }
 
