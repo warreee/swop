@@ -1,12 +1,19 @@
 package be.swop.groep11.main.task;
 
+import java.time.Duration;
+
 /**
  * Created by warreee on 4/7/15.
  */
-public abstract class TaskStatus2 {
+public abstract class TaskStatus2 implements Cloneable {
 
     protected TaskStatus2() {
 
+    }
+
+    @Override
+    protected TaskStatus2 clone() throws CloneNotSupportedException {
+        return (TaskStatus2) super.clone();
     }
 
     protected void execute(Task task) {
@@ -32,4 +39,6 @@ public abstract class TaskStatus2 {
     protected boolean checkPlan () {
         return true;
     }
+
+    protected abstract Duration getDuration(Task task);
 }

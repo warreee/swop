@@ -327,14 +327,25 @@ public class Task {
     /**
      * Status van de taak
      */
-    private TaskStatus status;
 
     private TaskStatus2 status2;
     /**
-     * Geeft de status van deze taak.
+     * Geeft de status van deze taak, er wordt telkens een nieuw object aangemaakt zodat de interne variabele niet wordt terugggeven.
      */
-    private TaskStatus getStatus() {
-        return status;
+    public TaskStatus2 getStatus() {
+        TaskStatus2 result = null;
+        if (this.status2 instanceof TaskAvailable) {
+            result = new TaskAvailable();
+        } else if (this.status2 instanceof TaskUnavailable) {
+            result = new TaskUnavailable();
+        } else if (this.status2 instanceof TaskExecuting) {
+            result = new TaskExecuting();
+        } else if (this.status2 instanceof TaskFailed) {
+            result = new TaskFailed();
+        } else if (this.status2 instanceof TaskFailed) {
+            result = new TaskFailed();
+        }
+        return result;
     }
 
     public void execute() {
@@ -357,11 +368,11 @@ public class Task {
         status2.makeUnavailable(this);
     }
 
-    /**
+/*    *//**
      * Wijzigt de status van deze taak.
      * @param status De nieuwe status
      * @throws java.lang.IllegalArgumentException De nieuwe status is ongeldig voor deze taak
-     */
+     *//*
     protected void setStatus(TaskStatus status) throws IllegalArgumentException {
         if (! TaskStatus.isValidNewStatus(status, this))
             throw new IllegalArgumentException("Ongeldige status");
@@ -371,16 +382,16 @@ public class Task {
         }
     }
 
-    /**
+    *//**
      * Wijzigt de status van deze taak.
      * @param status De nieuwe status
      * @throws java.lang.IllegalArgumentException Kan de status alleen op FINISHED of FAILED zetten.
-     */
+     *//*
     public void setNewStatus(TaskStatus status) throws IllegalArgumentException{
         if (legalTransition(status))
             throw new IllegalArgumentException("Kan status alleen op FINISHED of FAILED zetten");
         setStatus(status);
-    }
+    }*/
 
     /**
      * Kijkt na of het een publieke toegestane overgang is
@@ -434,7 +445,7 @@ public class Task {
      */
     public static boolean canSetAlternativeTask(Task task, Task alternativeTask) {
         return task != null
-                && ( (task.getStatus() == TaskStatus.FAILED && task != alternativeTask && (! alternativeTask.dependsOn(task))) || (alternativeTask == null) );
+                && ( (task.getStatus() instanceof TaskFailed && task != alternativeTask && (! alternativeTask.dependsOn(task))) || (alternativeTask == null) );
     }
 
     private boolean dependsOn(Task other) {
@@ -446,7 +457,7 @@ public class Task {
      * @return true als (deze taak is geëindigd) of (alternatieve taak != null en alternatieve taak is geëindigd)
      */
     public boolean getAlternativeFinished() {
-        if (this.getStatus() == TaskStatus.FINISHED)
+        if (this.getStatus() instanceof TaskFinished)
             return true;
         if (this.getAlternativeTask() != null)
             return getAlternativeTask().getAlternativeFinished();
@@ -472,7 +483,7 @@ public class Task {
      *     <br>FinishedStatus.OVERDUE als de taak te laat geëindigd is.
      */
     public FinishedStatus getFinishedStatus() {
-        if (getStatus() != TaskStatus.FINISHED)
+        if (getStatus() instanceof TaskFinished)
             return FinishedStatus.NOTFINISHED;
 
         long durationInSeconds = getDuration().getSeconds();

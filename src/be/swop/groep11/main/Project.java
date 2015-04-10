@@ -1,6 +1,7 @@
 package be.swop.groep11.main;
 
 import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.task.TaskFailed;
 import be.swop.groep11.main.task.TaskStatus;
 import com.google.common.collect.ImmutableList;
 
@@ -344,7 +345,7 @@ public class Project {
     public ImmutableList<Task> getFailedTasks(){
         List<Task> tasks = new ArrayList<Task>();
         for (Task task : this.getTasks()) {
-            if (task.getStatus() == TaskStatus.FAILED) {
+            if (task.getStatus() instanceof TaskFailed) {
                 tasks.add(task);
             }
         }
