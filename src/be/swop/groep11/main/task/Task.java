@@ -154,7 +154,7 @@ public class Task {
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
      */
     public void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
-        if (! this.status2.canHaveAsStartTime(this, startTime))
+        if (! this.status.canHaveAsStartTime(this, startTime))
             throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
     }
@@ -176,7 +176,7 @@ public class Task {
      * @throws java.lang.IllegalArgumentException De eindtijd is niet geldig.
      */
     public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
-        if (! status2.canHaveAsEndTime(this, endTime))
+        if (! status.canHaveAsEndTime(this, endTime))
             throw new IllegalArgumentException("Ongeldige eindtijd");
         this.endTime = endTime;
 
@@ -276,46 +276,46 @@ public class Task {
      * Status van de taak
      */
 
-    private TaskStatus status2;
+    private TaskStatus status;
     /**
      * Geeft de status van deze taak, er wordt telkens een nieuw object aangemaakt zodat de interne variabele niet wordt terugggeven.
      */
     public TaskStatus getStatus() {
         TaskStatus result = null;
-        if (this.status2 instanceof TaskAvailable) {
+        if (this.status instanceof TaskAvailable) {
             result = new TaskAvailable();
-        } else if (this.status2 instanceof TaskUnavailable) {
+        } else if (this.status instanceof TaskUnavailable) {
             result = new TaskUnavailable();
-        } else if (this.status2 instanceof TaskExecuting) {
+        } else if (this.status instanceof TaskExecuting) {
             result = new TaskExecuting();
-        } else if (this.status2 instanceof TaskFailed) {
+        } else if (this.status instanceof TaskFailed) {
             result = new TaskFailed();
-        } else if (this.status2 instanceof TaskFailed) {
+        } else if (this.status instanceof TaskFailed) {
             result = new TaskFailed();
         }
         return result;
     }
 
     public void execute() {
-        status2.execute(this);
+        status.execute(this);
     }
 
     public void fail() {
-        status2.fail(this);
+        status.fail(this);
         makeDependentTasksAvailable(); // TODO: in iteratie 1 deden we dit enkel bij finish, klopt het als dit hier ook gebeurd?
     }
 
     public void finish() {
-        status2.finish(this);
+        status.finish(this);
         makeDependentTasksAvailable();
     }
 
     public void makeAvailable() {
-        status2.makeAvailable(this);
+        status.makeAvailable(this);
     }
 
     public void makeUnAvailable() {
-        status2.makeUnavailable(this);
+        status.makeUnavailable(this);
     }
 
     /**
@@ -378,7 +378,7 @@ public class Task {
     }
 
     protected void setStatus(TaskStatus status) {
-        this.status2 = status;
+        this.status = status;
     }
 
     public static enum FinishedStatus {
