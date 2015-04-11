@@ -6,12 +6,12 @@ import java.time.LocalDateTime;
 /**
  * Created by warreee on 4/7/15.
  */
-public class TaskAvailable extends TaskStatus2 {
+public class TaskAvailable extends TaskStatus {
 
     @Override
     protected void execute(Task task) {
         if (checkPlan()){
-            TaskStatus2 executing = new TaskExecuting();
+            TaskStatus executing = new TaskExecuting();
             task.setStatus(executing);
         }
     }
@@ -33,7 +33,7 @@ public class TaskAvailable extends TaskStatus2 {
 
     @Override
     protected void makeUnavailable(Task task) {
-        TaskStatus2 unavailable = new TaskUnavailable();
+        TaskStatus unavailable = new TaskUnavailable();
         task.setStatus(unavailable);
     }
 

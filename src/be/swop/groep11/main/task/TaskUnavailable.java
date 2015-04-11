@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 /**
  * Created by warreee on 4/7/15.
  */
-public class TaskUnavailable extends TaskStatus2 {
+public class TaskUnavailable extends TaskStatus {
 
     /**
      * Geeft als duur, de geschatte duur van de taak terug.

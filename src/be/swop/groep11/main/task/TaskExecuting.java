@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 /**
  * Created by warreee on 4/7/15.
  */
-public class TaskExecuting extends TaskStatus2 {
+public class TaskExecuting extends TaskStatus {
 
     @Override
     protected void execute(Task task) {
@@ -17,7 +17,7 @@ public class TaskExecuting extends TaskStatus2 {
     @Override
     protected void finish(Task task) {
         if (super.checkPlan()){
-            TaskStatus2 finished = new TaskFinished();
+            TaskStatus finished = new TaskFinished();
             task.setStatus(finished);
         }
 

@@ -239,9 +239,9 @@ public class Task {
      */
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyConstraints.add(new DependencyConstraint(this, dependingOn));
-        if (TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE,this)) {
+
             makeUnAvailable();
-        }
+
     }
 
     /**
@@ -276,12 +276,12 @@ public class Task {
      * Status van de taak
      */
 
-    private TaskStatus2 status2;
+    private TaskStatus status2;
     /**
      * Geeft de status van deze taak, er wordt telkens een nieuw object aangemaakt zodat de interne variabele niet wordt terugggeven.
      */
-    public TaskStatus2 getStatus() {
-        TaskStatus2 result = null;
+    public TaskStatus getStatus() {
+        TaskStatus result = null;
         if (this.status2 instanceof TaskAvailable) {
             result = new TaskAvailable();
         } else if (this.status2 instanceof TaskUnavailable) {
@@ -317,44 +317,6 @@ public class Task {
     public void makeUnAvailable() {
         status2.makeUnavailable(this);
     }
-
-/*    /**
-     * Wijzigt de status van deze taak.
-     * @param status De nieuwe status
-     * @throws java.lang.IllegalArgumentException De nieuwe status is ongeldig voor deze taak
-     *//*
-    protected void setStatus(TaskStatus status) throws IllegalArgumentException {
-        if (! TaskStatus.isValidNewStatus(status, this))
-            throw new IllegalArgumentException("Ongeldige status");
-        this.status = status;
-        if (status == TaskStatus.FINISHED) {
-            this.makeDependentTasksAvailable();
-        }
-    }
-
-    /**
-     * Wijzigt de status van deze taak.
-     * @param status De nieuwe status
-     * @throws java.lang.IllegalArgumentException Kan de status alleen op FINISHED of FAILED zetten.
-
-    public void setNewStatus(TaskStatus status) throws IllegalArgumentException{
-        if (legalTransition(status))
-            throw new IllegalArgumentException("Kan status alleen op FINISHED of FAILED zetten");
-        setStatus(status);
-    }
-
-
-    /**
-     * Kijkt na of het een publieke toegestane overgang is
-     * @param status De nieuwe status
-     * @return true als het een legale overgang is, false in het andere geval
-
-    private boolean legalTransition(TaskStatus status) {
-        return status != TaskStatus.FAILED &&
-                status != TaskStatus.FINISHED &&
-                status != TaskStatus.EXECUTING;
-    }
-    */
 
     /**
      * Alternatieve taal (kan null zijn)
@@ -415,7 +377,7 @@ public class Task {
         return false;
     }
 
-    protected void setStatus(TaskStatus2 status) {
+    protected void setStatus(TaskStatus status) {
         this.status2 = status;
     }
 

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 /**
  * Created by warreee on 4/7/15.
  */
-public class TaskFailed extends TaskStatus2 {
+public class TaskFailed extends TaskStatus {
 
     /**
      * Geeft de tijd terug dat de gefaalde taak heeft geduurd.

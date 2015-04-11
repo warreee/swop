@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 /**
  * Created by warreee on 4/7/15.
  */
-public class TaskFinished extends TaskStatus2 {
+public class TaskFinished extends TaskStatus {
 
 
     @Override

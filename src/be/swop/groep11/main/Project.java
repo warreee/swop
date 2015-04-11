@@ -3,7 +3,6 @@ package be.swop.groep11.main;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskFailed;
 import be.swop.groep11.main.task.TaskStatus;
-import be.swop.groep11.main.task.TaskStatus2;
 import com.google.common.collect.ImmutableList;
 
 import java.time.DayOfWeek;
@@ -331,7 +330,7 @@ public class Project {
         LocalDateTime currentSystemTime = this.getProjectRepository().getTMSystem().getCurrentSystemTime(); // TODO: zo lang voor de tijd?
         Duration total = Duration.ofHours(0);
         for(Task task :tasks){
-            TaskStatus2 status = task.getStatus();
+            TaskStatus status = task.getStatus();
             total.plus(status.getDuration(task, currentSystemTime)); // TODO: Hier wordt task opnieuw doorgegeven, kan dit wel de bedoeling zijn als we eerst status uit datzelfde task object halen
         }
         return total;
