@@ -2,6 +2,7 @@ package be.swop.groep11.main.task;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * Created by warreee on 4/7/15.
@@ -42,4 +43,32 @@ public abstract class TaskStatus2 implements Cloneable {
     }
 
     public abstract Duration getDuration(Task task, LocalDateTime currentSystemTime);
+
+
+    /** TODO: vragen aan michiel
+     * Controleer of de gegeven start tijd geldig is voor deze taak.
+     *
+     * @param startTime De starttijd om te controleren
+     * @return          Waar indien de status van deze taak AVAILABLE is, geen huidige endTime en de gegeven startTime niet null is.
+     *                  Waar indien de status van deze taak AVAILABLE is, een huidige endTime heeft en de gegeven startTime voor de endTime valt.
+     *
+     */
+    protected boolean canHaveAsStartTime(Task task, LocalDateTime startTime){
+        if(startTime == null) { // TODO: wanneer zou dit gebeuren?
+            return false;
+        }
+        if(task.hasEndTime() && startTime.isAfter(task.getEndTime())){
+            return false;
+        }
+        Set<Task> tasks = task.getDependingOnTasks();
+        for(Task t: tasks){
+            if(t.getEndTime() == null){
+                continue;
+            }
+            if(startTime.isBefore(t.getEndTime())){
+                return false; // De gegeven starttijd ligt voor een eindtijd van een afhankelijke taak
+            }
+        }
+        return true;
+    }
 }

@@ -36,4 +36,13 @@ public class TaskExecuting extends TaskStatus2 {
         return task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration();
     }
 
+    /**
+     * Een uitvoerende taak kan geen nieuwe starttijd hebben. Deze is al gezet bij de overgang van available naar executing.
+     * @return false
+     */
+    @Override
+    protected boolean canHaveAsStartTime(Task task, LocalDateTime startTime) {
+        return false;
+    }
+
 }

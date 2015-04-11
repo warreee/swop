@@ -154,7 +154,7 @@ public class Task {
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
      */
     public void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
-        if (! canHaveAsStartTime(startTime))
+        if (! this.status2.canHaveAsStartTime(this, startTime))
             throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
     }
@@ -181,36 +181,6 @@ public class Task {
         this.endTime = endTime;
         /* if (getStatus() != TaskStatus.FINISHED && status != TaskStatus.FINISHED)
             this.setStatus(TaskStatus.FINISHED); */
-    }
-
-    /**
-     * Controleer of de gegeven start tijd geldig is voor deze taak.
-     *
-     * @param startTime De start tijd om te controleren
-     * @return          Waar indien de status van deze taak AVAILABLE is, geen huidige endTime en de gegeven startTime niet null is.
-     *                  Waar indien de status van deze taak AVAILABLE is, een huidige endTime heeft en de gegeven startTime voor de endTime valt.
-     *
-     */
-    public boolean canHaveAsStartTime(LocalDateTime startTime) {
-        if(this.getStatus() == TaskStatus.FAILED || this.getStatus() == TaskStatus.FINISHED){
-            return false;
-        }
-        if(startTime == null) {
-            return false;
-        }
-        if(hasEndTime() && startTime.isAfter(endTime)){
-            return false;
-        }
-        Set<Task> tasks = getDependingOnTasks();
-        for(Task task: tasks){
-            if(task.getEndTime() == null){
-                continue;
-            }
-            if(startTime.isBefore(task.getEndTime())){
-                return false; // De gegeven starttijd ligt voor een eindtijd van een
-            }
-        }
-        return true;
     }
 
 

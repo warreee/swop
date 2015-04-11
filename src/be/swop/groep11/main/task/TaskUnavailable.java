@@ -18,4 +18,15 @@ public class TaskUnavailable extends TaskStatus2 {
     public Duration getDuration(Task task, LocalDateTime currentSystemTime) {
         return task.getEstimatedDuration();
     }
+
+    /**
+     * Een taak die nog Unavailable is, kan nog geen starttijd krijgen!
+     * @param task
+     * @param startTime De starttijd om te controleren
+     * @return false
+     */
+    @Override
+    protected boolean canHaveAsStartTime(Task task, LocalDateTime startTime) {
+        return false;
+    }
 }

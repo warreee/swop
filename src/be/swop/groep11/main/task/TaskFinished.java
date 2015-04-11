@@ -44,4 +44,13 @@ public class TaskFinished extends TaskStatus2 {
     public Duration getDuration(Task task, LocalDateTime currentSystemTime) {
         return task.getDuration();
     }
+
+    /**
+     * Een gefinishste taak kan geen nieuwe starttijd hebben. Deze is al gezet bij de overgang van available naar executing.
+     * @return false
+     */
+    @Override
+    protected boolean canHaveAsStartTime(Task task, LocalDateTime startTime) {
+        return false;
+    }
 }
