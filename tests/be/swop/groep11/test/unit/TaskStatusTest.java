@@ -1,6 +1,7 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.*;
+import be.swop.groep11.main.task.IllegalStateTransition;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskStatus;
 import org.junit.Before;
@@ -30,11 +31,11 @@ public class TaskStatusTest {
     }
 
     @Test
-    public void availableToAvailableTest() throws Exception {
-        assertTrue(TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task1));
+    public void availableToAvailableTest() throws IllegalStateTransition {
+        task1.makeAvailable();
         task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task1));
+        task1.makeAvailable();
         task1.addNewDependencyConstraint(task2); // Dit zou ervoor moeten zorgen dat taak1 op UNVAILABLE komt.
         assertFalse(TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task1));
     }

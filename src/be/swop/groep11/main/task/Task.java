@@ -33,7 +33,7 @@ public class Task {
         if (! canHaveAsProject(project)) {
             throw new IllegalArgumentException("Ongeldig project");
         }
-        setStatus(TaskStatus.AVAILABLE);
+        makeAvailable();
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
@@ -215,7 +215,7 @@ public class Task {
 
 
     /**
-     * Controleer of de gegeven eind tijd een geldig tijdstip is voor deze taak..
+     * Controleer of de gegeven eindtijd een geldig tijdstip is voor deze taak..
      *
      * @param endTime   De eindtijd om te controleren
      * @return          Waar indien de status van deze taak AVAILABLE is, een huidige starttijd heeft,
