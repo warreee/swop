@@ -27,4 +27,15 @@ public class TaskFailed extends TaskStatus2 {
     protected boolean canHaveAsStartTime(Task task, LocalDateTime startTime) {
         return false;
     }
+
+    /**
+     * Een gefaalde task kan geen nieuwe EndTime krijgen.
+     * @param task
+     * @param endTime   De eindtijd om te controleren
+     * @return
+     */
+    @Override
+    protected boolean canHaveAsEndTime(Task task, LocalDateTime endTime) {
+        return false;
+    }
 }

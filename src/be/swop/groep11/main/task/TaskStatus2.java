@@ -71,4 +71,29 @@ public abstract class TaskStatus2 implements Cloneable {
         }
         return true;
     }
+
+    /**
+     * Controleer of de gegeven eindtijd een geldig tijdstip is voor deze taak..
+     *
+     * @param endTime   De eindtijd om te controleren
+     * @return          Waar indien de status van deze taak AVAILABLE is, een huidige starttijd heeft,
+     *                  en de gegeven endTime na de start tijd van deze taak valt.
+     *                  Waar indien de status van deze taak AVAILABLE is en een huidige starttijd heeft,
+     *                  en de gegeven endTime niet null is en de huidige endTime
+     */
+    protected boolean canHaveAsEndTime(Task task, LocalDateTime endTime) {
+
+        if (!task.hasStartTime()) {
+            return false;
+        }
+        if(endTime == null){
+            return false;
+        }
+
+        if (task.getStartTime().isBefore(endTime)){
+            return true;
+        }
+
+        return true;
+    }
 }

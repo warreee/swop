@@ -49,5 +49,19 @@ public class TaskAvailable extends TaskStatus2 {
     }
 
 
+    /**
+     * Een available task kan nog geen EndTime krijgen.
+     * @param task
+     * @param endTime   De eindtijd om te controleren
+     * @return
+     */
+    @Override
+    protected boolean canHaveAsEndTime(Task task, LocalDateTime endTime) {
+        return false;
+    }
+
+
+
+
 
 }

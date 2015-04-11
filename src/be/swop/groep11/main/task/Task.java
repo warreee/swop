@@ -176,34 +176,12 @@ public class Task {
      * @throws java.lang.IllegalArgumentException De eindtijd is niet geldig.
      */
     public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
-        if (! canHaveAsEndTime(endTime))
+        if (! status2.canHaveAsEndTime(this, endTime))
             throw new IllegalArgumentException("Ongeldige eindtijd");
         this.endTime = endTime;
-        /* if (getStatus() != TaskStatus.FINISHED && status != TaskStatus.FINISHED)
-            this.setStatus(TaskStatus.FINISHED); */
+
     }
 
-
-    /**
-     * Controleer of de gegeven eindtijd een geldig tijdstip is voor deze taak..
-     *
-     * @param endTime   De eindtijd om te controleren
-     * @return          Waar indien de status van deze taak AVAILABLE is, een huidige starttijd heeft,
-     *                  en de gegeven endTime na de start tijd van deze taak valt.
-     *                  Waar indien de status van deze taak AVAILABLE is en een huidige starttijd heeft,
-     *                  en de gegeven endTime niet null is en de huidige endTime
-     */
-    public boolean canHaveAsEndTime(LocalDateTime endTime) {
-        boolean result = false;
-        if(this.getStatus() == TaskStatus.FAILED || this.getStatus() == TaskStatus.FINISHED){
-            result = false;
-        }else if(!hasStartTime()){
-            result = false;
-        } else if(endTime != null){
-            result = startTime.isBefore(endTime);
-        }
-        return result;
-    }
 
     /**
      * @return      Waar indien deze taak een start tijd heeft.
@@ -262,7 +240,7 @@ public class Task {
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyConstraints.add(new DependencyConstraint(this, dependingOn));
         if (TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE,this)) {
-            this.setStatus(TaskStatus.UNAVAILABLE);
+            makeUnAvailable();
         }
     }
 
