@@ -1,5 +1,7 @@
 package be.swop.groep11.main;
 
+import be.swop.groep11.main.resource.ResourceTypeRepository;
+
 import java.time.LocalDateTime;
 
 /**
@@ -7,9 +9,10 @@ import java.time.LocalDateTime;
  */
 public class TMSystem {
 
+
     /**
      * Initialiseren van TaskMan men huidige systeem tijd (machine)
-     * alsook een nieuwe ProjectRepository.
+     * alsook een nieuwe ProjectRepository & nieuwe ResourceTypeRepository
      */
     public TMSystem(){
         this(LocalDateTime.now());
@@ -24,6 +27,7 @@ public class TMSystem {
      */
     public TMSystem(LocalDateTime currentSystemTime) throws IllegalArgumentException {
         this.projectRepository = new ProjectRepository(this);
+        this.resourceTypeRepository = new ResourceTypeRepository();
         setCurrentSystemTime(currentSystemTime);
     }
 
@@ -34,7 +38,9 @@ public class TMSystem {
         return projectRepository;
     }
 
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
+    private final ResourceTypeRepository resourceTypeRepository;
+
 
     /**
      * Wijzigt huidige systeemtijd naar de gegeven systeemtijd.

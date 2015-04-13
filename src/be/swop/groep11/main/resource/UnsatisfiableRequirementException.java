@@ -6,10 +6,9 @@ package be.swop.groep11.main.resource;
 public class UnsatisfiableRequirementException extends RuntimeException {
     private final ResourceRequirement req;
 
-    public UnsatisfiableRequirementException(ResourceRequirement req){
-        //TODO copy of?
-        //TODO onderscheid/feedback indien oorzak geen overlapping dailyAvailability
-        this.req = req;
+    public UnsatisfiableRequirementException(IResourceType requiredType, int amount) {
+        //TODO onderscheid/feedback indien oorzak geen overlapping dailyAvailability ?
+        this.req = new ResourceRequirement(requiredType,amount);
     }
 
     public ResourceRequirement getResourceRequirement() {

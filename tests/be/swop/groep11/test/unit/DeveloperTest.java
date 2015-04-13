@@ -1,12 +1,17 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.*;
-import org.junit.*;
-import org.junit.experimental.theories.suppliers.TestedOn;
+import be.swop.groep11.main.Developer;
+import be.swop.groep11.main.TimeSpan;
+import be.swop.groep11.main.resource.DailyAvailability;
+import be.swop.groep11.main.resource.IResourceType;
+import be.swop.groep11.main.resource.ResourceAllocation;
+import be.swop.groep11.main.resource.ResourceTypeRepository;
+import org.junit.Before;
+import org.junit.Test;
 
-import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -25,7 +30,9 @@ public class DeveloperTest {
 
     @Before
     public void setUp() throws Exception {
-        ResourceType developerType = new ResourceType("Developer");
+        ResourceTypeRepository repo = new ResourceTypeRepository();
+        repo.addNewResourceType("dev",new DailyAvailability(LocalTime.of(8,0),LocalTime.of(17,0)));
+        IResourceType developerType = repo.getResourceTypeByName("dev");
         developer = new Developer("Jos", developerType);
         ResourceAllocation allocation1 = new ResourceAllocation(developer, new TimeSpan(LocalDateTime.of(2015,4,8,8,0), LocalDateTime.of(2015,4,10,14,0)));
         ResourceAllocation allocation2 = new ResourceAllocation(developer, new TimeSpan(LocalDateTime.of(2015,4,13,8,0), LocalDateTime.of(2015,4,13,12,30)));

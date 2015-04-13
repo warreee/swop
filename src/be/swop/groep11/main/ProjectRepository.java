@@ -16,22 +16,22 @@ import java.util.List;
 public class ProjectRepository {
 
     private ArrayList<Project> projects;
-    private be.swop.groep11.main.TMSystem TMSystem;
+    private TMSystem tmSystem;
 
     /**
      * Contstructor om een nieuwe project repository aan te maken.
-     * @param TMSystem Het systeem
+     * @param tmSystem Het systeem
      */
-    public ProjectRepository(TMSystem TMSystem) {
+    public ProjectRepository(TMSystem tmSystem) {
         projects = new ArrayList<>();
-        this.TMSystem = TMSystem;
+        this.tmSystem = tmSystem;
     }
 
     /**
      * Geeft het systeem van deze project repository.
      */
-    public TMSystem getTMSystem() {
-        return TMSystem;
+    public TMSystem getTmSystem() {
+        return tmSystem;
     }
 
     /**
@@ -64,6 +64,7 @@ public class ProjectRepository {
         List<Task> tasks = new ArrayList<Task>();
         ImmutableList<Project> projects = this.getProjects();
         for (Project project : projects) {
+
             for (Task task : project.getTasks()) {
                 if (task.getStatus() == TaskStatus.AVAILABLE) {
                     tasks.add(task);

@@ -14,7 +14,6 @@ import java.util.List;
  */
 public class Resource implements ResourceInstance {
 
-    //TODO type bevat dailyAvailability. Attribuut is hier overbodig?
 
     /**
      * Constructor om een nieuwe resource aan te maken met een naam en een type, die 24/7 beschikbaar is.
@@ -41,9 +40,12 @@ public class Resource implements ResourceInstance {
      * @param endTime      De tijd tot wanneer de resource van maandag tot en met vrijdag beschikbaar is
      * @throws java.lang.IllegalArgumentException Ongeldige naam, type of start- en/of eindtijd voor de resource
      */
+    @Deprecated
     public Resource(String name, ResourceType resourceType,LocalTime startTime, LocalTime endTime) throws IllegalArgumentException {
+        //TODO ResourceType bevat dailyAvailability. Attribuut is hier overbodig?
         this(name, resourceType);
-        this.dailyAvailability = new DailyAvailability(startTime, endTime);
+//        this.dailyAvailability = new DailyAvailability(startTime, endTime);
+        //zie getDailyAvailability()
     }
 
     /**
@@ -212,10 +214,12 @@ public class Resource implements ResourceInstance {
     private final String name;
 
     private DailyAvailability getDailyAvailability() {
-        return dailyAvailability;
+
+//        return dailyAvailability;
+        return getResourceType().getDailyAvailability();
     }
 
-    private DailyAvailability dailyAvailability;
+//    private DailyAvailability dailyAvailability;
 
 
 }

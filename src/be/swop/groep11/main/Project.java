@@ -327,7 +327,7 @@ public class Project {
      * @return
      */
     private Duration calculateTotalDuration(Set<Task> tasks){
-        LocalDateTime currentSystemTime = this.getProjectRepository().getTMSystem().getCurrentSystemTime(); // TODO: zo lang voor de tijd?
+        LocalDateTime currentSystemTime = this.getProjectRepository().getTmSystem().getCurrentSystemTime(); // TODO: zo lang voor de tijd?
         Duration total = Duration.ofHours(0);
         for(Task task :tasks){
             TaskStatus status = task.getStatus();

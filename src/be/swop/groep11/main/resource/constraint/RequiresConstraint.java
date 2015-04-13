@@ -5,9 +5,9 @@ import be.swop.groep11.main.resource.IResourceType;
 /**
  * Created by Ronald on 9/04/2015.
  */
-public class RequiresCon extends TypeConstraint {
+public class RequiresConstraint extends ResourceTypeConstraint {
 
-    private RequiresCon(IResourceType ownerType, IResourceType constrainingType, int min, int max) throws IllegalArgumentException{
+    private RequiresConstraint(IResourceType ownerType, IResourceType constrainingType, int min, int max) throws IllegalArgumentException{
         super(ownerType, constrainingType, min, max);
         if(ownerType.equals(constrainingType)){
             throw new IllegalArgumentException("mag zichzelf niet requiren.");
@@ -20,7 +20,7 @@ public class RequiresCon extends TypeConstraint {
      * @param ownerType
      * @param constrainingType
      */
-    public RequiresCon(IResourceType ownerType, IResourceType constrainingType) {
+    public RequiresConstraint(IResourceType ownerType, IResourceType constrainingType) {
         this(ownerType, constrainingType, 1, Integer.MAX_VALUE);
     }
 }

@@ -1,8 +1,11 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.resource.constraint.TypeConstraint;
+import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Ronald on 9/04/2015.
@@ -12,56 +15,40 @@ import java.util.HashMap;
  */
 public class RequirementListBuilder {
 
+    //TODO finish RequirementListBuilder.
+    //WIP
+
     private RequirementList reqList;
 
     public RequirementListBuilder() {
         this.reqList = new RequirementList();
     }
 
-    boolean canHaveAsRequirement(ResourceType requestedType,int amount){
-
-        return false;
-    }
-    //TODO dailyAvailabilty overlappen?
-
-    public void addRequirement(ResourceType type, int amount) throws IllegalArgumentException,IllegalRequirementAmountException{
-        if(!isValidAmountForType(type,amount)){
-            throw new IllegalRequirementAmountException("Ongeldige hoeveelheid voor het gegeven ResourceType.",type,amount);
-        }
-
-        ResourceRequirement req = new ResourceRequirement(type, amount);
-        this.reqList.addRequirement(req);
-
-
+    public void addNewRequirement(ResourceType type, int amount) throws IllegalArgumentException,IllegalRequirementAmountException{
+        this.reqList.addRequirement(type,amount);
     }
 
-    private boolean isValidAmountForType(ResourceType type, int amount) {
-        if( type.hasConstraintFor(type)){
-            TypeConstraint constraintB = type.getConstraintFor(type);
-            return constraintB.isAcceptableAmount(amount);
-        }
-        return true;
+    public void removeRequirementFor(ResourceType type) throws NoSuchElementException{
+        this.reqList.removeRequirementFor(type);
     }
 
-    public RequirementListing getRequirements(){
-        //TODO copy?
+
+    public IRequirementList getRequirements(){
+        // copy?
         return this.reqList;
     }
 
-
-
-    private class RequirementList implements RequirementListing {
+    private class RequirementList implements IRequirementList {
 
         public RequirementList() {
             this(null);
         }
         public RequirementList(HashMap<ResourceType, ResourceRequirement> reqs) {
-            this.requirements = new HashMap<>();
             if(reqs != null && !reqs.isEmpty()){
                 requirements.putAll(reqs);
             }
         }
-        private final HashMap<IResourceType,ResourceRequirement> requirements;
+        private final HashMap<IResourceType,ResourceRequirement> requirements = new HashMap<>();;
 
         @Override
         public boolean containsRequirementFor(IResourceType ownerType) {
@@ -74,16 +61,32 @@ public class RequirementListBuilder {
             return (req == null)?0:req.getAmount();
         }
 
-
+        /**
+         * Controleer of deze lijst met Requirements geldig blijft. Indien er een requirement voor het gegeven IResourceType
+         * en hoeveelheid zou worden toegevoegd.
+         *
+         * @param requestedType Het aangevraagde IResourceType
+         * @param amount        De aangevraagde hoeveelheid
+         * @return
+         *        | Niet waar indien de DailyAvailability voor het aangevraagde ResourceType niet (min. 1 uur) overlapt
+         *        met de huidige DailyAvailabilities geassocieerd met iedere Requirement in de lijst.
+         *        | Niet waar indien aangevraagde hoeveelheid niet aanvaard kan worden
+         *        door de aanwezige ResourceTypes geassocieerd met de requirements.
+         *        | anders wel waar
+         */
         @Override
-        public boolean isSatisfiableForRequirement(ResourceRequirement requirement) {
-            //Indien de hoeveelheid in requirement niet aanvaard kan worden door de reeds aanwezige requirements => false
-            IResourceType requestedType = requirement.getType();
-            int amount = requirement.getAmount();
+        public boolean isSatisfiableFor(IResourceType requestedType,int amount) {
+            // Niet waar indien de DailyAvailability voor het aangevraagde ResourceType niet overlapt (min. 1 uur)
+            // met de huidige DailyAvailabilities overeenkomstig met iedere Requirement in de lijst
+            boolean result = hasOverlappingAvailability(requestedType);
+            if(!result){
+                return false;
+            }
 
+            //Niet waar indien aangevraagde hoeveelheid niet aanvaard kan worden door de aanwezige ResourceTypes geassocieerd met de requirements
             for (IResourceType type : requirements.keySet()) {
-                for (TypeConstraint conInList : type.getRequirementConstraints()) {
-                    for (TypeConstraint requestedCon : requestedType.getRequirementConstraints()) {
+                for (ResourceTypeConstraint conInList : type.getTypeConstraints()) {
+                    for (ResourceTypeConstraint requestedCon : requestedType.getTypeConstraints()) {
                         if (conInList.contradictsWith(requestedCon,amount)) {
                             return false;
                         }
@@ -93,31 +96,40 @@ public class RequirementListBuilder {
             return true;
         }
 
-        private void addRequirement(ResourceRequirement requirement){
-            IResourceType type = requirement.getType();
-            if(!isSatisfiableForRequirement(requirement)){
-                throw new UnsatisfiableRequirementException(requirement);
+        private boolean hasOverlappingAvailability(IResourceType requestedType){
+            List<DailyAvailability> availabilities = new ArrayList<>();
+            for(IResourceType type : requirements.keySet()){
+                availabilities.add(type.getDailyAvailability());
+            }
+            if(availabilities.isEmpty()){
+                return true;
+            }else{
+                return requestedType.getDailyAvailability().overlapsWith(availabilities);
+            }
+        }
+
+        private void addRequirement(IResourceType requiredType,int amount) throws IllegalRequirementAmountException,IllegalArgumentException,UnsatisfiableRequirementException{
+            if(!isSatisfiableFor(requiredType, amount)){
+                throw new UnsatisfiableRequirementException(requiredType, amount);
             }else {
-                //if(containsRequirementFor(type))
-                //Indien er al een requirement is voor type
-                //zijn we reeds zeker dat de nieuwe requirement de plaats mag vervangen.
-                //De gevraagde hoeveelheid is geen probleem
-                requirements.put(type,requirement);
+                //Indien er al een requirement is voor type zijn we reeds zeker dat een nieuwe requirement de plaats mag vervangen.
+                // Plus de gevraagde hoeveelheid is geen probleem
+                ResourceRequirement requirement = new ResourceRequirement(requiredType, amount);
+                requirements.put(requiredType,requirement);
             }
         }
 
         private ResourceRequirement getRequirementFor(ResourceType type) {
-            return  requirements.get(type);
+            return requirements.get(type);
         }
 
-        private void removeRequirement(ResourceRequirement req){
-
+        private void removeRequirementFor(ResourceType type)throws NoSuchElementException{
+            if(containsRequirementFor(type)){
+                requirements.remove(type);
+            }else{
+                throw new NoSuchElementException("Geen requirement voor dit type aanwezig.");
+            }
         }
-
-        private boolean containsRequirement(ResourceRequirement req){
-            return false;
-        }
-
 
     }
 }

@@ -1,6 +1,6 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.resource.constraint.TypeConstraint;
+import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -10,7 +10,9 @@ public interface IResourceType {
 
     public boolean hasConstraintFor(IResourceType typeA);
 
-    public TypeConstraint getConstraintFor(IResourceType typeA);
+    public ResourceTypeConstraint getConstraintFor(IResourceType typeA);
+
+    public ImmutableList<ResourceTypeConstraint> getTypeConstraints();
 
     public int amountOfConstraints();
 

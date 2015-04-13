@@ -6,7 +6,7 @@ import java.time.LocalTime;
  * Created by Ronald on 13/04/2015.
  */
 public class ResourceTypeBuilder {
-    private RType type;
+    private ResourceType type;
 
     public ResourceTypeBuilder(String typeName) throws IllegalArgumentException{
         newType(typeName);
@@ -14,7 +14,7 @@ public class ResourceTypeBuilder {
 
     //TODO private, update tests
     private void newType(String typeName)throws IllegalArgumentException{
-        this.type = new RType(typeName);
+        this.type = new ResourceType(typeName);
     }
 
     public void withDailyAvailability(DailyAvailability availability)throws IllegalArgumentException{

@@ -461,7 +461,7 @@ public class Task {
      * @return 0.1 staat voor 10%, 0.2 staat voor 20%.
      */
     public double getOverTimePercentage(){
-        LocalDateTime systemTime = getProject().getProjectRepository().getTMSystem().getCurrentSystemTime();
+        LocalDateTime systemTime = getProject().getProjectRepository().getTmSystem().getCurrentSystemTime();
         if(!hasStartTime()){
             return 0.0; // Project is nog niet gestart. Dus over time is 0.
         }

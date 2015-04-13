@@ -1,7 +1,9 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.resource.DailyAvailability;
+import be.swop.groep11.main.resource.IResourceType;
 import be.swop.groep11.main.resource.ResourceType;
+import be.swop.groep11.main.resource.ResourceTypeRepository;
 import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequirementConstraint;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
@@ -15,18 +17,25 @@ import java.util.ArrayList;
  * Created by robin on 8/04/15.
  */
 public class ResourceTypeTest {
-    ResourceType t1, t2, t3, t4, t5, t6;
+    IResourceType t1, t2, t3, t4, t5, t6;
+    private ResourceTypeRepository repo;
 
     @Before
     public void setUp(){
-        ResourceType t1 = new ResourceType("Autobus");
-        ResourceType t2 = new ResourceType("Lijnbus");
-        ResourceType t3 = new ResourceType("Bushok");
+        this.repo = new ResourceTypeRepository();
 
-        ResourceType t4 = new ResourceType("Fiets", new DailyAvailability(LocalTime.of(8, 0), LocalTime.of(16, 0)));
-        ResourceType t5 = new ResourceType("Segway", new DailyAvailability(LocalTime.of(8, 0), LocalTime.of(16, 0)));
-        ResourceType t6 = new ResourceType("Hurr Durr", new DailyAvailability(LocalTime.of(8, 0), LocalTime.of(16, 0)));
+        repo.addNewResourceType("Autobus");
+        repo.addNewResourceType("Lijnbus");
+        repo.addNewResourceType("Bushok");
+
+        DailyAvailability a = new DailyAvailability(LocalTime.of(8, 0), LocalTime.of(16, 0));
+
+        repo.addNewResourceType("Fiets", a);
+        repo.addNewResourceType("Segway", a);
+        repo.addNewResourceType("Hurr Durr", a);
     }
+
+    //TODO sommige onderstaande testen zitten in ResourceTypeBuilderTest, ... (fix me)
 
     @Test
     public void newResourceTypeTest(){

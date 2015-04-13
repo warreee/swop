@@ -1,6 +1,7 @@
 package be.swop.groep11.main.resource;
 
 import java.time.*;
+import java.util.List;
 
 /**
  * Stelt de dagelijkse beschikbaarheid van een resource voor met een starttijd en een eindtijd.
@@ -51,6 +52,18 @@ public class DailyAvailability {
      */
     public LocalTime getEndTime() {
         return endTime;
+    }
+
+    /**
+     * Controleer of deze dailyAvailability minstens 1 uur overlapt met de gegeven lijst van dailyAvailability.
+     *
+     * @param availabilityList  De lijst van te controleren dailyAvailability
+     * @return  Waar indien er minstens een periode van 1 uur is waarvoor deze dailyAvailability als ook de andere uit availabilityList
+     *          beschikbaar zijn.
+     */
+    public boolean overlapsWith(List<DailyAvailability> availabilityList){
+        //TODO implement overlapsWith
+        return false;
     }
 
     /**

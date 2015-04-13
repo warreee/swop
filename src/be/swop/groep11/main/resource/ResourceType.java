@@ -1,8 +1,8 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.resource.constraint.ConflictCon;
-import be.swop.groep11.main.resource.constraint.RequiresCon;
-import be.swop.groep11.main.resource.constraint.TypeConstraint;
+import be.swop.groep11.main.resource.constraint.ConflictConstraint;
+import be.swop.groep11.main.resource.constraint.RequiresConstraint;
+import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalTime;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class ResourceType implements  IResourceType{
+class ResourceType implements  IResourceType{
 
     private final String name;
     private DailyAvailability dailyAvailability;
@@ -51,9 +51,10 @@ public class ResourceType implements  IResourceType{
 
 
     //ConstrainingType,constraint
-    HashMap<IResourceType, TypeConstraint> constraintMap = new HashMap<>();
+    private HashMap<IResourceType, ResourceTypeConstraint> constraintMap = new HashMap<>();
 
-    protected ImmutableList<TypeConstraint> getTypeConstraints() {
+    @Override
+    public ImmutableList<ResourceTypeConstraint> getTypeConstraints() {
         return ImmutableList.copyOf(constraintMap.values());
     }
 
@@ -61,7 +62,7 @@ public class ResourceType implements  IResourceType{
         if (!isValidConstrainingType(constrainingType)) {
             throw new IllegalArgumentException("constrainingType mag niet null zijn");
         }
-        TypeConstraint constraint = new ConflictCon(this, constrainingType);
+        ResourceTypeConstraint constraint = new ConflictConstraint(this, constrainingType);
         constraintMap.put(constrainingType, constraint);
     }
 
@@ -69,7 +70,7 @@ public class ResourceType implements  IResourceType{
         if (!isValidConstrainingType(constrainingType)) {
             throw new IllegalArgumentException("constrainingType mag niet null zijn");
         }
-        TypeConstraint constraint = new RequiresCon(this, constrainingType);
+        ResourceTypeConstraint constraint = new RequiresConstraint(this, constrainingType);
         constraintMap.put(constrainingType, constraint);
     }
 
@@ -83,7 +84,7 @@ public class ResourceType implements  IResourceType{
     }
 
     @Override
-    public TypeConstraint getConstraintFor(IResourceType typeA) {
+    public ResourceTypeConstraint getConstraintFor(IResourceType typeA) {
         //TODO documentatie kan null terug geven
         return constraintMap.get(typeA);
     }

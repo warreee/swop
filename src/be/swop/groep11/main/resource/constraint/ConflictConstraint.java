@@ -1,88 +1,24 @@
 package be.swop.groep11.main.resource.constraint;
 
-import be.swop.groep11.main.resource.ResourceType;
-import be.swop.groep11.main.resource.ResourceRequirement;
-
-import java.util.ArrayList;
-import java.util.List;
+import be.swop.groep11.main.resource.IResourceType;
 
 /**
- * Created by Ronald on 3/04/2015.
+ * Created by Ronald on 9/04/2015.
  */
 public class ConflictConstraint extends ResourceTypeConstraint {
 
-
-    /**
-     * Constructor om een nieuwe ConflictConstraint aan te maken.
-     *
-     * @param conflictingTypes     De lijst ResourceType's die bepalen welke andere resourceTypes zeker niet aanwezig mogen zijn.
-     */
-    public ConflictConstraint(ResourceType onType, List<ResourceType> conflictingTypes) {
-        super(onType, conflictingTypes);
+    private ConflictConstraint(IResourceType ownerType, IResourceType constrainingType, int min, int max) {
+        super(ownerType, constrainingType, min, max);
     }
 
-    @Override
-    protected boolean canHaveAsConstrainingTypes(List<ResourceType> constrainingTypes) {
-        boolean result = true;
-        if(constrainingTypes == null){
-            result = false;
-        }else if(constrainingTypes.isEmpty()){
-            result = false;
-        }else if(constrainingTypes.contains(getOwnerType())){ //Een type met een ConflictConstraint mag zelf aanwezig zijn in de constrainingTypes van die ConflictConstraint
-            result = true;
-        }
-        return result;
+    public ConflictConstraint(IResourceType ownerType, IResourceType constrainingType) {
+        this(ownerType, constrainingType, 0, (ownerType!=null && ownerType.equals(constrainingType)) ? 1 : 0);
+        /**
+         * (ownerType.equals(constrainingType))?1:0
+         * indien ownerType conflictConstraint op zichzelf wilt toevoegen
+         * mag er hoogstens 1 instance van required worden.
+         */
     }
 
-    @Override
-    public boolean isSatisfied(List<ResourceRequirement> requirementList) {
-        //Controleer of ieder ResourceType die niet aanwezig mag zijn in de requirements, toch aanwezig is
-        for(ResourceType  conType: this.getConstrainingTypes()){
-            for(ResourceRequirement rq : requirementList){
-                if (conType.equals(rq.getType())) {
-                   return false; //Er is een ResourceType aanwezig wat niet mag.
-                }
-            }
-        }
-        return true; //Geen verkeerde requirements aanwezig.
-    }
 
-    /**
-     * Geeft een lijst van ResourceTypeRequirements terug zonder Requirements die conflict zouden veroorzaken.
-     *
-     * @param requirementList De gegeven lijst ResourceTypeRequirements
-     * @return  Lijst van ResourceTypeRequirements gebaseerd op requirementList,
-     *          zonder de ResourceTypeRequirements met een types die conflicten geven.
-     */
-    @Override
-    public List<ResourceRequirement> resolve(List<ResourceRequirement> requirementList) {
-        List<ResourceRequirement> result = new ArrayList<>(requirementList);
-        //Controleer of ieder ResourceType die niet aanwezig mag zijn in de requirements, toch aanwezig is
-        for(ResourceType  conType: this.getConstrainingTypes()){
-            for(ResourceRequirement rq : requirementList){
-                if (conType.equals(rq.getType())) {
-                    result.remove(rq); //Er is een ResourceType aanwezig wat niet mag. Verwijder uit lijst
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Controleer of deze ConflictConstraint tegenstrijdig is met de gegeven ResourceTypeConstraint.
-     * @param otherConstraint   De andere ResourceTypeConstraint om te controleren
-     * @return                  Waar indien otherConstraint als ownerType een verschillend ResourceType heeft als deze RequirementConstraint.
-     *                          Indien otherConstraint instantie van RequirementConstraint:
-     *                                  Waar indien de constrainingTypes niet overlappen. Anders niet waar.
-     */
-    @Override
-    public boolean isValidOtherConstraint(ResourceTypeConstraint otherConstraint) {
-        boolean result = false;
-        if(otherConstraint instanceof RequirementConstraint){
-            result = (otherConstraint).isValidOtherConstraint(this);
-        }else if(otherConstraint instanceof ConflictConstraint){
-            result = true;//Andere conflictConstraints vormen geen probleem
-        }
-        return result;
-    }
 }

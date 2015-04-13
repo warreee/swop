@@ -1,5 +1,7 @@
 package be.swop.groep11.main.resource;
 
+import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
+
 /**
  * Created by Ronald on 3/04/2015.
  */
@@ -12,8 +14,8 @@ public class ResourceRequirement {
         if(!isValidType(type)){
             throw new IllegalArgumentException("Type mag niet null zijn.");
         }
-        if(!isValidAmount(amount)){
-            throw new IllegalArgumentException("Ongeldige hoeveelheid voor een requirement. Mag niet negatief zijn.");
+        if(!isValidAmountFor(type, amount)){
+            throw new IllegalRequirementAmountException("Ongeldige hoeveelheid voor het gegeven ResourceType.",type,amount);
         }
         this.type = type;
         this.amount = amount;
@@ -21,10 +23,6 @@ public class ResourceRequirement {
 
     private boolean isValidType(IResourceType type) {
         return type != null;
-    }
-
-    private boolean isValidAmount(int amount) {
-        return amount >= 0;
     }
 
     public int getAmount() {
@@ -35,6 +33,15 @@ public class ResourceRequirement {
         return type;
     }
 
-    //TODO override equals
+    private boolean isValidAmountFor(IResourceType type, int amount) {
+        if( type.hasConstraintFor(type)){
+            ResourceTypeConstraint constraintB = type.getConstraintFor(type);
+            return constraintB.isAcceptableAmount(amount);
+        }
+
+        return amount > 0 && amount <= type.amountOfInstances();
+    }
+
+    //TODO override equals?
 
 }

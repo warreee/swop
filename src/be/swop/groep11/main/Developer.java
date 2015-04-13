@@ -1,9 +1,6 @@
 package be.swop.groep11.main;
 
-import be.swop.groep11.main.resource.DailyAvailability;
-import be.swop.groep11.main.resource.ResourceAllocation;
-import be.swop.groep11.main.resource.ResourceInstance;
-import be.swop.groep11.main.resource.ResourceType;
+import be.swop.groep11.main.resource.*;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
@@ -17,18 +14,21 @@ import java.util.List;
  */
 public class Developer extends User implements ResourceInstance {
 
+
     /**
      * Constructor om een nieuwe developer aan te maken met een naam en een resource type.
      * @param name         Naam van de developer
      * @param resourceType Resource type van de developer
      * @throws java.lang.IllegalArgumentException Ongeldige resource type
      */
-    public Developer(String name, ResourceType resourceType) throws IllegalArgumentException {
+    public Developer(String name, IResourceType resourceType) throws IllegalArgumentException {
         super(name);
         if (resourceType == null)
             throw new IllegalArgumentException("Resource type mag niet null zijn");
         this.resourceType = resourceType;
         this.allocations = new ArrayList<>();
+
+        //resourceType bevat de dailyAvailability die bepaald wanneer developer mag werken.
     }
 
     /**
@@ -217,11 +217,11 @@ public class Developer extends User implements ResourceInstance {
     private static Duration  breakDuration = Duration.ofHours(1);
 
     @Override
-    public ResourceType getResourceType() {
+    public IResourceType getResourceType() {
         return resourceType;
     }
 
-    private final ResourceType resourceType;
+    private final IResourceType resourceType;
 
     private List<ResourceAllocation> allocations;
 
@@ -266,8 +266,8 @@ public class Developer extends User implements ResourceInstance {
     }
 
     private DailyAvailability getDailyAvailability() {
-        return dailyAvailability;
+        return getResourceType().getDailyAvailability();
     }
 
-    private static DailyAvailability dailyAvailability = new DailyAvailability(LocalTime.of(8,0), LocalTime.of(17,0));
+//    private static DailyAvailability dailyAvailability = new DailyAvailability(LocalTime.of(8,0), LocalTime.of(17,0));
 }
