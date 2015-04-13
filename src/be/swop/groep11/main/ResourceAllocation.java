@@ -1,6 +1,6 @@
-package be.swop.groep11.main.resource;
+package be.swop.groep11.main;
 
-import be.swop.groep11.main.TimeSpan;
+import be.swop.groep11.main.resource.ResourceInstance;
 
 /**
  * Stelt de allocatie van een resource instantie gedurende een bepaalde tijdsspanne voor.

@@ -1,5 +1,6 @@
 package be.swop.groep11.main.resource;
 
+import be.swop.groep11.main.ResourceAllocation;
 import be.swop.groep11.main.TimeSpan;
 import com.google.common.collect.ImmutableList;
 

@@ -18,7 +18,7 @@ public class RequirementListBuilder {
     //TODO finish RequirementListBuilder.
     //WIP
 
-    private RequirementList reqList;
+    private IRequirementList reqList;
 
     public RequirementListBuilder() {
         this.reqList = new RequirementList();
@@ -108,7 +108,8 @@ public class RequirementListBuilder {
             }
         }
 
-        private void addRequirement(IResourceType requiredType,int amount) throws IllegalRequirementAmountException,IllegalArgumentException,UnsatisfiableRequirementException{
+        @Override
+        public void addRequirement(IResourceType requiredType,int amount) throws IllegalRequirementAmountException,IllegalArgumentException,UnsatisfiableRequirementException{
             if(!isSatisfiableFor(requiredType, amount)){
                 throw new UnsatisfiableRequirementException(requiredType, amount);
             }else {
@@ -119,11 +120,12 @@ public class RequirementListBuilder {
             }
         }
 
-        private ResourceRequirement getRequirementFor(ResourceType type) {
+        private ResourceRequirement getRequirementFor(IResourceType type) {
             return requirements.get(type);
         }
 
-        private void removeRequirementFor(ResourceType type)throws NoSuchElementException{
+        @Override
+        public void removeRequirementFor(IResourceType type)throws NoSuchElementException{
             if(containsRequirementFor(type)){
                 requirements.remove(type);
             }else{

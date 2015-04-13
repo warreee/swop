@@ -5,7 +5,7 @@ import java.time.LocalTime;
 /**
  * Created by Ronald on 13/04/2015.
  */
-public class ResourceTypeBuilder {
+class ResourceTypeBuilder {
     private ResourceType type;
 
     public ResourceTypeBuilder(String typeName) throws IllegalArgumentException{

@@ -4,7 +4,7 @@ import be.swop.groep11.main.Developer;
 import be.swop.groep11.main.TimeSpan;
 import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.IResourceType;
-import be.swop.groep11.main.resource.ResourceAllocation;
+import be.swop.groep11.main.ResourceAllocation;
 import be.swop.groep11.main.resource.ResourceTypeRepository;
 import org.junit.Before;
 import org.junit.Test;
