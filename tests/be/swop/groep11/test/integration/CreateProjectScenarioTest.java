@@ -1,6 +1,6 @@
 package be.swop.groep11.test.integration;
 
-import be.swop.groep11.main.project.ProjectRepository;
+import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.TMSystem;
 import be.swop.groep11.main.User;
 import be.swop.groep11.main.controllers.ProjectController;

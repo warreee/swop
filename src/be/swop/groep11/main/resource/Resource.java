@@ -14,13 +14,15 @@ import java.util.List;
  */
 public class Resource implements ResourceInstance {
 
+    //TODO type bevat dailyAvailability. Attribuut is hier overbodig?
+
     /**
      * Constructor om een nieuwe resource aan te maken met een naam en een type, die 24/7 beschikbaar is.
      * @param name         De naam van de resource
      * @param resourceType Het resource type
      * @throws java.lang.IllegalArgumentException Ongeldige naam of type voor de resource
      */
-    public Resource(String name, ResourceType resourceType) throws IllegalArgumentException {
+    public Resource(String name, IResourceType resourceType) throws IllegalArgumentException {
         if (! isValidName(name))
             throw new IllegalArgumentException("Ongeldige naam voor de resource");
         if (resourceType == null)
@@ -139,13 +141,13 @@ public class Resource implements ResourceInstance {
         }
     }
 
-    private final ResourceType resourceType;
+    private final IResourceType resourceType;
 
     /**
      * Geeft het resource type van deze resource.
      */
     @Override
-    public ResourceType getResourceType() {
+    public IResourceType getResourceType() {
         return resourceType;
     }
 

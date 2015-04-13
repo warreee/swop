@@ -1,8 +1,6 @@
-package be.swop.groep11.main.project;
+package be.swop.groep11.main;
 
 
-import be.swop.groep11.main.TMSystem;
-import be.swop.groep11.main.User;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskStatus;
 import com.google.common.collect.ImmutableList;

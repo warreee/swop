@@ -19,22 +19,19 @@ public abstract class ResourceTypeConstraintTest {
         this.repository = new ResourceTypeRepository();
         repository.addResourceType("testA");
         this.typeA = repository.getResourceTypeByName("testA");
+
+
         repository.addResourceType("testB");
         this.typeB = repository.getResourceTypeByName("testB");
     }
 
+
+
     @Test
-    public abstract void testConstructor_valid() throws Exception;
+    public abstract void testConstructor_invalid_constraining() throws Exception ;
 
-    @Test(expected = IllegalArgumentException.class)
-    public abstract void testConstructor_emptyList_invalid() throws Exception ;
-
-    @Test(expected = IllegalArgumentException.class)
-    public abstract void testConstructor_nullList_invalid() throws Exception ;
-
-    @Test(expected = IllegalArgumentException.class)
-    public abstract void testConstructor_nullOwnerType_invalid() throws Exception ;
-
+    @Test
+    public abstract void testConstructor_invalid_owner() throws Exception ;
     @Test
     public abstract void testIsSatisfied_True() throws Exception ;
 

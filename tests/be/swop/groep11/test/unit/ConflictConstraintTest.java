@@ -1,66 +1,54 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.resource.ResourceType;
-import be.swop.groep11.main.resource.ResourceRequirement;
+import be.swop.groep11.main.resource.*;
+import be.swop.groep11.main.resource.constraint.ConflictCon;
 import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequirementConstraint;
-import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by Ronald on 8/04/2015.
  */
-public class ConflictConstraintTest extends ResourceTypeConstraintTest {
+public class ConflictConstraintTest{
 
+    private ResourceTypeRepository repository;
+    private ResourceType typeA;
+    private ResourceType typeB;
+    private ResourceType typeC;
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-    }
+        this.repository = new ResourceTypeRepository();
+        repository.addResourceType("testA");
+        this.typeA = repository.getResourceTypeByName("testA");
 
-    @Test
-    public void testConstructor_valid() throws Exception {
-        List<ResourceType> types = new ArrayList<>();
-        types.add(typeB);
-        ConflictConstraint conflictConstraint = new ConflictConstraint(typeA,types);
-        assertEquals(typeA, conflictConstraint.getOwnerType());
-        assertTrue(conflictConstraint.getConstrainingTypes().equals(types));
-    }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testConstructor_emptyList_invalid() throws Exception {
-        ResourceTypeConstraint constraint = new ConflictConstraint(typeA, new ArrayList<>());
-    }
+        repository.addResourceType("testB");
+        this.typeB = repository.getResourceTypeByName("testB");
+        this.typeB.addConflictConstraint(typeC);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testConstructor_nullList_invalid() throws Exception {
-        ResourceTypeConstraint constraint = new ConflictConstraint(typeA, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testConstructor_nullOwnerType_invalid() throws Exception {
-        List<ResourceType> types = new ArrayList<>();
-        types.add(typeB);
-        ResourceTypeConstraint constraint =new ConflictConstraint(null,types);
-
+        repository.addResourceType("testC");
+        this.typeC = repository.getResourceTypeByName("testC");
     }
 
     @Test
     public void testIsSatisfied_True() throws Exception {
-        List<ResourceRequirement> requirements = new ArrayList<>();
-        requirements.add(new ResourceRequirement(typeA,1));
+        RequirementListBuilder builder = new RequirementListBuilder();
+        builder.addRequirement(typeA,1);
+        RequirementListing list = builder.getRequirements();
 
-        List<ResourceType> types = new ArrayList<>();
-        types.add(typeB);
-        ConflictConstraint conflictConstraintA = new ConflictConstraint(typeB,types);
+        //TODO fix
+
+        ConflictCon constraint = new ConflictCon(typeA,typeB);
+        constraint.isSatisfied(list);
+
+
 
         assertTrue( conflictConstraintA.isSatisfied(requirements));//geen typeB in requirements
     }

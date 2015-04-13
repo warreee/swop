@@ -31,6 +31,9 @@ public class ResourceTypeRepository {
      * @param constrainingTypes Een lijst van ResourceTypeConstraints voor deze ResourceType.
      */
     public void addResourceType(String name, DailyAvailability availability, List<ResourceTypeConstraint> constrainingTypes) {
+        /**
+         * Er kunnen geen resourceTypeConstraints zijn omdat ze al een verwijzing naar de resourcetype nodig hebben, terwijl we die nog moeten aanmaken.
+         */
         if(containtsType(name)){
             throw new IllegalArgumentException("Er bestaat reeds een ResourceType met de naam " +name);
         }
@@ -108,4 +111,5 @@ public class ResourceTypeRepository {
     public ImmutableList<ResourceType> getResourceTypes() {
         return ImmutableList.copyOf(resourceTypes);
     }
+
 }

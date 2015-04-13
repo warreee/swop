@@ -29,7 +29,12 @@ public interface ResourceInstance {
     /**
      * Geeft het resource type van de resource instantie.
      */
-    public ResourceType getResourceType();
+    public IResourceType getResourceType();
+
+    /**
+     * Geeft de naam van de resource instantie terug.
+     */
+    public String getName();
 
     /**
      * Geeft een lijst van resource allocaties voor de resource instantie.

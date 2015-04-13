@@ -18,6 +18,8 @@ import static org.junit.Assert.*;
  */
 public class RequirementConstraintTest extends ResourceTypeConstraintTest {
 
+    //TODO nieuwe constraints
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -83,12 +85,12 @@ public class RequirementConstraintTest extends ResourceTypeConstraintTest {
     @Test
     public void testResolve() throws Exception {
 //        fail("Not implemented");
-        List<ResourceRequirement> requirements = new ArrayList<>();
+        List<ResourceRequirement> requirements = new ArrayList<>(); //Leeg
 
         List<ResourceType> types = new ArrayList<>();
         types.add(typeA);
 
-        RequirementConstraint constraint = new RequirementConstraint(typeB,types);
+        RequirementConstraint constraint = new RequirementConstraint(typeB,types); // typeA heeft typeB nodig
         List<ResourceRequirement> result = constraint.resolve(requirements);
         boolean contains = false;
         boolean temp = false;
@@ -102,6 +104,8 @@ public class RequirementConstraintTest extends ResourceTypeConstraintTest {
     @Test
     public void testIsValidOtherConstraint_requirementConstraint() throws Exception {
         fail("Not implemented");
+
+
 
         List<ResourceType> typesC = new ArrayList<>();
         typesC.add(typeA);

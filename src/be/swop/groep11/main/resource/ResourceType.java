@@ -1,6 +1,7 @@
 package be.swop.groep11.main.resource;
 
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
+import be.swop.groep11.main.resource.constraint.TypeConstraint;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalTime;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ResourceType {
+public class ResourceType implements  IResourceType{
     private final DailyAvailability dailyAvailability;
 
     /**
@@ -45,6 +46,8 @@ public class ResourceType {
         return dailyAvailability;
     }
 
+
+
     /**
      * Een lijst die alle ResourceInstance van dit ResourceType bevat.
      */
@@ -63,6 +66,7 @@ public class ResourceType {
      * De naam van dit ResourceType.
      */
     private final String name;
+
 
 
     public String getName() {
@@ -126,5 +130,30 @@ public class ResourceType {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean hasConstraintFor(IResourceType typeA) {
+        return false;
+    }
+
+    @Override
+    public TypeConstraint getConstraintFor(IResourceType typeA) {
+        return null;
+    }
+
+    @Override
+    public int amountOfConstraints() {
+        return 0;
+    }
+
+    @Override
+    public ImmutableList<ResourceInstance> getResourceInstances() {
+        return null;
+    }
+
+    @Override
+    public int amountOfInstances() {
+        return 0;
     }
 }

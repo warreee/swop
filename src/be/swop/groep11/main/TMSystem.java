@@ -1,7 +1,5 @@
 package be.swop.groep11.main;
 
-import be.swop.groep11.main.project.ProjectRepository;
-
 import java.time.LocalDateTime;
 
 /**
