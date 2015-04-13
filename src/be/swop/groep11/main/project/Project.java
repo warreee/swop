@@ -2,6 +2,7 @@ package be.swop.groep11.main.project;
 
 import be.swop.groep11.main.User;
 import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.task.TaskFailed;
 import be.swop.groep11.main.task.TaskStatus;
 import com.google.common.collect.ImmutableList;
 
@@ -320,21 +321,18 @@ public class Project {
         return currentWorkingDay;
         }
 
+    /**
+     * Berekend de totaal tijd van een set van taken.
+     * De duur van elke taak wordt teruggegeven adv status, en zijn bijhorende implementatie van getDuration.
+     * @param tasks
+     * @return
+     */
     private Duration calculateTotalDuration(Set<Task> tasks){
-        LocalDateTime currentSystemTime = this.getProjectRepository().getTMSystem().getCurrentSystemTime();
+        LocalDateTime currentSystemTime = this.getProjectRepository().getTMSystem().getCurrentSystemTime(); // TODO: zo lang voor de tijd?
         Duration total = Duration.ofHours(0);
         for(Task task :tasks){
             TaskStatus status = task.getStatus();
-            if(status == TaskStatus.AVAILABLE ){
-                Duration add = task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration()  ;
-                total = total.plus(add);
-            }
-            else if(status == TaskStatus.UNAVAILABLE){
-                total = total.plus(task.getEstimatedDuration());
-            }
-            else if(status == TaskStatus.FINISHED || status == TaskStatus.FAILED){
-                total = total.plus(task.getDuration());
-            }
+            total.plus(status.getDuration(task, currentSystemTime)); // TODO: Hier wordt task opnieuw doorgegeven, kan dit wel de bedoeling zijn als we eerst status uit datzelfde task object halen
         }
         return total;
     }
@@ -345,10 +343,27 @@ public class Project {
     public ImmutableList<Task> getFailedTasks(){
         List<Task> tasks = new ArrayList<Task>();
         for (Task task : this.getTasks()) {
-            if (task.getStatus() == TaskStatus.FAILED) {
+            if (task.getStatus() instanceof TaskFailed) {
                 tasks.add(task);
             }
         }
         return ImmutableList.copyOf(tasks);
+    }
+
+    /**
+     * Geeft een kopie van dit project met een lijst van de kopieen van de taken van dit project.
+     */
+    protected Project copy() {
+        try {
+            Project clone = (Project) this.clone();
+            clone.tasks = new ArrayList();
+            for (Task task : this.tasks) {
+                clone.tasks.add(task.copy());
+            }
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            // dit zou niet mogen gebeuren
+            return null;
+        }
     }
 }

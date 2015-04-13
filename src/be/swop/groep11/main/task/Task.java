@@ -32,7 +32,7 @@ public class Task {
         if (! canHaveAsProject(project)) {
             throw new IllegalArgumentException("Ongeldig project");
         }
-        setStatus(TaskStatus.AVAILABLE);
+        makeAvailable();
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
@@ -153,7 +153,7 @@ public class Task {
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
      */
     public void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
-        if (! canHaveAsStartTime(startTime))
+        if (! this.status.canHaveAsStartTime(this, startTime))
             throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
     }
@@ -175,64 +175,12 @@ public class Task {
      * @throws java.lang.IllegalArgumentException De eindtijd is niet geldig.
      */
     public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
-        if (! canHaveAsEndTime(endTime))
+        if (! status.canHaveAsEndTime(this, endTime))
             throw new IllegalArgumentException("Ongeldige eindtijd");
         this.endTime = endTime;
-        /* if (getStatus() != TaskStatus.FINISHED && status != TaskStatus.FINISHED)
-            this.setStatus(TaskStatus.FINISHED); */
+
     }
 
-    /**
-     * Controleer of de gegeven start tijd geldig is voor deze taak.
-     *
-     * @param startTime De start tijd om te controleren
-     * @return          Waar indien de status van deze taak AVAILABLE is, geen huidige endTime en de gegeven startTime niet null is.
-     *                  Waar indien de status van deze taak AVAILABLE is, een huidige endTime heeft en de gegeven startTime voor de endTime valt.
-     *
-     */
-    public boolean canHaveAsStartTime(LocalDateTime startTime) {
-        if(this.getStatus() == TaskStatus.FAILED || this.getStatus() == TaskStatus.FINISHED){
-            return false;
-        }
-        if(startTime == null) {
-            return false;
-        }
-        if(hasEndTime() && startTime.isAfter(endTime)){
-            return false;
-        }
-        Set<Task> tasks = getDependingOnTasks();
-        for(Task task: tasks){
-            if(task.getEndTime() == null){
-                continue;
-            }
-            if(startTime.isBefore(task.getEndTime())){
-                return false; // De gegeven starttijd ligt voor een eindtijd van een
-            }
-        }
-        return true;
-    }
-
-
-    /**
-     * Controleer of de gegeven eind tijd een geldig tijdstip is voor deze taak..
-     *
-     * @param endTime   De eindtijd om te controleren
-     * @return          Waar indien de status van deze taak AVAILABLE is, een huidige starttijd heeft,
-     *                  en de gegeven endTime na de start tijd van deze taak valt.
-     *                  Waar indien de status van deze taak AVAILABLE is en een huidige starttijd heeft,
-     *                  en de gegeven endTime niet null is en de huidige endTime
-     */
-    public boolean canHaveAsEndTime(LocalDateTime endTime) {
-        boolean result = false;
-        if(this.getStatus() == TaskStatus.FAILED || this.getStatus() == TaskStatus.FINISHED){
-            result = false;
-        }else if(!hasStartTime()){
-            result = false;
-        } else if(endTime != null){
-            result = startTime.isBefore(endTime);
-        }
-        return result;
-    }
 
     /**
      * @return      Waar indien deze taak een start tijd heeft.
@@ -290,9 +238,9 @@ public class Task {
      */
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyConstraints.add(new DependencyConstraint(this, dependingOn));
-        if (TaskStatus.isValidNewStatus(TaskStatus.UNAVAILABLE,this)) {
-            this.setStatus(TaskStatus.UNAVAILABLE);
-        }
+
+            makeUnAvailable();
+
     }
 
     /**
@@ -326,72 +274,48 @@ public class Task {
     /**
      * Status van de taak
      */
-    private TaskStatus status;
 
-    private TaskStatus2 status2;
+    private TaskStatus status;
     /**
-     * Geeft de status van deze taak.
+     * Geeft de status van deze taak, er wordt telkens een nieuw object aangemaakt zodat de interne variabele niet wordt terugggeven.
      */
-    private TaskStatus getStatus() {
-        return status;
+    public TaskStatus getStatus() {
+        TaskStatus result = null;
+        if (this.status instanceof TaskAvailable) {
+            result = new TaskAvailable();
+        } else if (this.status instanceof TaskUnavailable) {
+            result = new TaskUnavailable();
+        } else if (this.status instanceof TaskExecuting) {
+            result = new TaskExecuting();
+        } else if (this.status instanceof TaskFailed) {
+            result = new TaskFailed();
+        } else if (this.status instanceof TaskFailed) {
+            result = new TaskFailed();
+        }
+        return result;
     }
 
     public void execute() {
-        status2.execute(this);
+        status.execute(this);
     }
 
     public void fail() {
-        status2.fail(this);
+        status.fail(this);
+        makeDependentTasksAvailable(); // TODO: in iteratie 1 deden we dit enkel bij finish, klopt het als dit hier ook gebeurd?
     }
 
     public void finish() {
-        status2.finish(this);
+        status.finish(this);
+        makeDependentTasksAvailable();
     }
 
     public void makeAvailable() {
-        status2.makeAvailable(this);
+        status.makeAvailable(this);
     }
 
     public void makeUnAvailable() {
-        status2.makeUnavailable(this);
+        status.makeUnavailable(this);
     }
-
-    /**
-     * Wijzigt de status van deze taak.
-     * @param status De nieuwe status
-     * @throws java.lang.IllegalArgumentException De nieuwe status is ongeldig voor deze taak
-     */
-    protected void setStatus(TaskStatus status) throws IllegalArgumentException {
-        if (! TaskStatus.isValidNewStatus(status, this))
-            throw new IllegalArgumentException("Ongeldige status");
-        this.status = status;
-        if (status == TaskStatus.FINISHED) {
-            this.makeDependentTasksAvailable();
-        }
-    }
-
-    /**
-     * Wijzigt de status van deze taak.
-     * @param status De nieuwe status
-     * @throws java.lang.IllegalArgumentException Kan de status alleen op FINISHED of FAILED zetten.
-     */
-    public void setNewStatus(TaskStatus status) throws IllegalArgumentException{
-        if (legalTransition(status))
-            throw new IllegalArgumentException("Kan status alleen op FINISHED of FAILED zetten");
-        setStatus(status);
-    }
-
-    /**
-     * Kijkt na of het een publieke toegestane overgang is
-     * @param status De nieuwe status
-     * @return true als het een legale overgang is, false in het andere geval
-     */
-    private boolean legalTransition(TaskStatus status) {
-        return status != TaskStatus.FAILED &&
-                status != TaskStatus.FINISHED &&
-                status != TaskStatus.EXECUTING;
-    }
-
 
     /**
      * Alternatieve taal (kan null zijn)
@@ -433,7 +357,7 @@ public class Task {
      */
     public static boolean canSetAlternativeTask(Task task, Task alternativeTask) {
         return task != null
-                && ( (task.getStatus() == TaskStatus.FAILED && task != alternativeTask && (! alternativeTask.dependsOn(task))) || (alternativeTask == null) );
+                && ( (task.getStatus() instanceof TaskFailed && task != alternativeTask && (! alternativeTask.dependsOn(task))) || (alternativeTask == null) );
     }
 
     private boolean dependsOn(Task other) {
@@ -445,15 +369,15 @@ public class Task {
      * @return true als (deze taak is geëindigd) of (alternatieve taak != null en alternatieve taak is geëindigd)
      */
     public boolean getAlternativeFinished() {
-        if (this.getStatus() == TaskStatus.FINISHED)
+        if (this.getStatus() instanceof TaskFinished)
             return true;
         if (this.getAlternativeTask() != null)
             return getAlternativeTask().getAlternativeFinished();
         return false;
     }
 
-    protected void setStatus(TaskStatus2 status) {
-        this.status2 = status;
+    protected void setStatus(TaskStatus status) {
+        this.status = status;
     }
 
     public static enum FinishedStatus {
@@ -471,7 +395,7 @@ public class Task {
      *     <br>FinishedStatus.OVERDUE als de taak te laat geëindigd is.
      */
     public FinishedStatus getFinishedStatus() {
-        if (getStatus() != TaskStatus.FINISHED)
+        if (getStatus() instanceof TaskFinished)
             return FinishedStatus.NOTFINISHED;
 
         long durationInSeconds = getDuration().getSeconds();
@@ -562,9 +486,25 @@ public class Task {
      */
     private void makeDependentTasksAvailable() {
         for (Task task : this.getDependentTasks()) {
-            if (TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task)) {
-                task.setStatus(TaskStatus.AVAILABLE);
+            try {
+                task.makeAvailable();
+            } catch (IllegalStateTransition e) {
+                e.printStackTrace(); // TODO: is deze try catch juist geïmplementeerd?
             }
+        }
+    }
+
+    /**
+     * Geeft een kopie van deze taak.
+     */
+    protected Task copy() {
+        try {
+            Task clone = (Task) this.clone();
+            // TODO: plan kopiëren?
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            // dit zou niet mogen gebeuren
+            return null;
         }
     }
 

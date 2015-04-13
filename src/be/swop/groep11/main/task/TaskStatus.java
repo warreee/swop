@@ -1,165 +1,99 @@
 package be.swop.groep11.main.task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Set;
+
 /**
- * Stelt de status van een taak voor.
+ * Created by warreee on 4/7/15.
  */
-public enum TaskStatus {
+public abstract class TaskStatus implements Cloneable {
 
-    AVAILABLE,
-    EXECUTING,
-    UNAVAILABLE,
-    FINISHED,
-    FAILED;
+    protected TaskStatus() {
 
-    /**
-     * Controleert of een status een geldige nieuwe status is voor een taak.
-     * De geldige overgangen zijn:
-     *
-     *      AVAILABLE -> AVAILABLE
-     *      AVAILABLE -> UNAVAILABLE
-     *      AVAILABLE -> FINISHED/FAILED indien taak een start- en eindtijd heeft
-     *
-     *      UNAVAILABLE -> UNAVAILABLE
-     *      UNAVAILABLE -> AVAILABLE indien alle taken waarvan task afhankelijk is beëindigd zijn
-     *
-     *      FINISHED -> FINISHED
-     *
-     *      FAILED -> FAILED
-     *
-     * @param newStatus De nieuwe status om te checken
-     * @param task De taak
-     * @return true als status een geldige nieuwe status is voor een taak
-     */
-    public static boolean isValidNewStatus(TaskStatus newStatus, Task task) {
-        TaskStatus currentStatus = task.getStatus();
-        if (currentStatus == null)
-            return newStatus == AVAILABLE; // status van nieuwe taak = AVAILABLE
-        switch (currentStatus) {
-            case AVAILABLE:
-                return checkAvailable(newStatus, task);
-            case EXECUTING:
-                return checkExecuting(newStatus, task);
-            case UNAVAILABLE:
-                return checkUnavailable(newStatus, task);
-            case FINISHED:
-                return newStatus == FINISHED;
-            case FAILED:
-                return newStatus == FAILED;
-        }
-        return false;
     }
 
-    private static boolean checkExecuting(TaskStatus newStatus, Task task) {
-        return false;
+    @Override
+    protected TaskStatus clone() throws CloneNotSupportedException {
+        return (TaskStatus) super.clone();
     }
 
-    /**
-     * Controleer de overgang van UNVAILABLE -> *
-     *
-     * @param newStatus
-     * @param task
-     * @return true als het mag, anders false.
-     */
-    private static boolean checkUnavailable(TaskStatus newStatus, Task task) {
-        if (newStatus == UNAVAILABLE) {
-            for (Task dependingOn : task.getDependingOnTasks()) {
-                Task t = dependingOn;
+    protected void execute(Task task) {
+        throw new IllegalStateTransition("De taak kan niet naar de status EXECUTING gaan vanuit de huidige status");
+    }
 
-                while(true){
-                    if(t.getStatus() == AVAILABLE){
-                        return true; // Als er een taak is die nog bezig is, dan mag het nog.
-                    }
-                    if(t.getStatus() == UNAVAILABLE){
-                        return true; // Een afhankelijke taak is nog niet klaar, dan deze zeker niet.
-                    }
-                    if(t.getStatus() == FINISHED){
-                        break;
-                    }
-                    if(t.getStatus() == FAILED){
-                        t = t.getAlternativeTask();
-                        if(t == null){
-                            return true; // Voor een gefaalde taak is geen alternatieve taak ingesteld.
-                        }
-                    }
-                }
-            }
+    protected void finish(Task task){
+        throw new IllegalStateTransition("De taak kan niet naar de status FINISHED gaan vanuit de huidige status");
+    }
+
+    protected void fail(Task task){
+        throw new IllegalStateTransition("De taak kan niet naar de status FAIL gaan vanuit de huidige status");
+    }
+
+    protected void makeAvailable(Task task){
+        throw new IllegalStateTransition("De taak kan niet naar de status AVAILABLE gaan vanuit de huidige status");
+    }
+
+    protected void makeUnavailable(Task task){
+        throw new IllegalStateTransition("De taak kan niet naar de status UNAVAILABLE gaan vanuit de huidige status");
+    }
+
+    protected boolean checkPlan () {
+        return true;
+    }
+
+    public abstract Duration getDuration(Task task, LocalDateTime currentSystemTime);
+
+
+    /** TODO: vragen aan michiel
+     * Controleer of de gegeven start tijd geldig is voor deze taak.
+     *
+     * @param startTime De starttijd om te controleren
+     * @return          Waar indien de status van deze taak AVAILABLE is, geen huidige endTime en de gegeven startTime niet null is.
+     *                  Waar indien de status van deze taak AVAILABLE is, een huidige endTime heeft en de gegeven startTime voor de endTime valt.
+     *
+     */
+    protected boolean canHaveAsStartTime(Task task, LocalDateTime startTime){
+        if(startTime == null) { // TODO: wanneer zou dit gebeuren?
             return false;
         }
-
-        if (newStatus == AVAILABLE){
-
-            for (Task dependingOn : task.getDependingOnTasks()) {
-                Task t = dependingOn;
-                while(true){
-                    if(t.getStatus() == FINISHED){
-                        break;
-                    } else if(t.getStatus() == FAILED){
-                        t = t.getAlternativeTask();
-                        if(t == null){
-                            return false; // Voor een gefaalde taak is geen alternatieve taak ingesteld.
-                        }
-                    } else {
-                        return false; // Als de status van t niet FAILED of FINISHED is, mag er niet worden overgegaan.
-                    }
-                }
-            }
-            return true;
-        }
-        if (newStatus == FAILED){
-            // TODO
-            // De overgang van UNAVAILABLE naar FAILED mag altijd volgens input.tman.
-            return true;
-        }
-        return false; // De enige mogelijke overgang is UNAVAILABLE -> AVAILABLE || UNAVAILABLE -> UNAVAILABLE
-    }
-
-    /**
-     * Controleert de overgang Available -> *
-     *
-     * @param newStatus
-     * @param task
-     * @return true als het mag, anders false.
-     */
-    private static boolean checkAvailable(TaskStatus newStatus, Task task) {
-        if (newStatus == FINISHED || newStatus == FAILED)
-            return task.getStartTime() != null && task.getEndTime() != null;
-
-        if (newStatus == UNAVAILABLE){
-
-            if(task.getDependingOnTasks().size() == 0){
-                // De taak hangt van niks af. Unavailable is niet mogelijk.
-                return false;
-            }
-
-            for(Task dependingOn: task.getDependingOnTasks()){
-
-                Task t = dependingOn;
-                while(true){
-                    if (t.getStatus() == FINISHED){
-                        // Deze taak is gefinished, Controlleer de volgende.
-                        break;
-                    }
-                    if(t.getStatus() == UNAVAILABLE){
-                        // Deze taak is nog niet beschikbaar. Controlleer de volgende.
-                        break;
-                    }
-                    if(t.getStatus() == AVAILABLE){
-                        // Er is een afhankelijke taak die nog gedaan moet worden.
-                        return true;
-                    }
-                    if (t.getStatus() == FAILED){
-                        t = t.getAlternativeTask();
-                        if (t == null){
-                            // Er is geen alternatieve taak voor een gefaalde taak. De gegeven taak moet dus op unavailable komen te staan.
-                            return true;
-                        }
-                    }
-                }
-            }
+        if(task.hasEndTime() && startTime.isAfter(task.getEndTime())){
             return false;
+        }
+        Set<Task> tasks = task.getDependingOnTasks();
+        for(Task t: tasks){
+            if(t.getEndTime() == null){
+                continue;
+            }
+            if(startTime.isBefore(t.getEndTime())){
+                return false; // De gegeven starttijd ligt voor een eindtijd van een afhankelijke taak
+            }
         }
         return true;
     }
 
+    /**
+     * Controleer of de gegeven eindtijd een geldig tijdstip is voor deze taak..
+     *
+     * @param endTime   De eindtijd om te controleren
+     * @return          Waar indien de status van deze taak AVAILABLE is, een huidige starttijd heeft,
+     *                  en de gegeven endTime na de start tijd van deze taak valt.
+     *                  Waar indien de status van deze taak AVAILABLE is en een huidige starttijd heeft,
+     *                  en de gegeven endTime niet null is en de huidige endTime
+     */
+    protected boolean canHaveAsEndTime(Task task, LocalDateTime endTime) {
 
+        if (!task.hasStartTime()) {
+            return false;
+        }
+        if(endTime == null){
+            return false;
+        }
+
+        if (task.getStartTime().isBefore(endTime)){
+            return true;
+        }
+
+        return true;
+    }
 }

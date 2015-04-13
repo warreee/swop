@@ -105,7 +105,7 @@ public class TaskController {
             if(startTime != null){
                 task.setStartTime(startTime);
             }
-            if(task.hasStartTime() && endTime != null){
+            if(task.hasStartTime() && endTime != null){ // TODO: we controleren hier dubbel, want dit wordt ook nog is canHaveAsStartTime gezet
                 task.setEndTime(endTime);
             }
            if(!status.isEmpty()){

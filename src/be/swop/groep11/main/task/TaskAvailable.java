@@ -1,16 +1,17 @@
 package be.swop.groep11.main.task;
 
-import be.swop.groep11.main.task.TaskStatus2;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 /**
  * Created by warreee on 4/7/15.
  */
-public class TaskAvailable extends TaskStatus2 {
+public class TaskAvailable extends TaskStatus {
 
     @Override
     protected void execute(Task task) {
         if (checkPlan()){
-            TaskStatus2 executing = new TaskExecuting();
+            TaskStatus executing = new TaskExecuting();
             task.setStatus(executing);
         }
     }
@@ -32,9 +33,35 @@ public class TaskAvailable extends TaskStatus2 {
 
     @Override
     protected void makeUnavailable(Task task) {
-        TaskStatus2 unavailable = new TaskUnavailable();
+        TaskStatus unavailable = new TaskUnavailable();
         task.setStatus(unavailable);
     }
+
+    /**
+     * Geeft de geschatte duur als duur van de taak terug.
+     * @param task de taak waarvan de geschatte duur wordt opgevraagd.
+     * @param currentSystemTime
+     * @return de geschatte duur van de taak.
+     */
+    @Override
+    public Duration getDuration(Task task, LocalDateTime currentSystemTime) {
+        return task.getEstimatedDuration();
+    }
+
+
+    /**
+     * Een available task kan nog geen EndTime krijgen.
+     * @param task
+     * @param endTime   De eindtijd om te controleren
+     * @return
+     */
+    @Override
+    protected boolean canHaveAsEndTime(Task task, LocalDateTime endTime) {
+        return false;
+    }
+
+
+
 
 
 }

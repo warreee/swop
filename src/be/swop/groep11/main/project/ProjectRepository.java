@@ -75,4 +75,38 @@ public class ProjectRepository {
         return ImmutableList.copyOf(tasks);
     }
 
+    /**
+     * Geeft een ProjectRepositoryMemento object die de status van deze project repository bevat.
+     */
+    public ProjectRepositoryMemento createMemento() {
+        ProjectRepositoryMemento memento = new ProjectRepositoryMemento();
+        memento.setProjects(this.projects);
+        return memento;
+    }
+
+    /**
+     * Wijzigt de status van deze project repository naar de status van een gegeven ProjectRepositoryMemento object.
+     * @param memento Het ProjectRepositoryMemento object met de status
+     */
+    public void setMemento(ProjectRepositoryMemento memento) {
+        this.projects = (ArrayList<Project>) memento.getProjects();
+    }
+
+    private class ProjectRepositoryMemento {
+
+        private List<Project> projects;
+
+        public List<Project> getProjects() {
+            return this.projects;
+        }
+
+        public void setProjects(List<Project> projects) {
+            this.projects = new ArrayList<>();
+            for (Project project : projects) {
+                this.projects.add(project.copy()); // hou kopies van projecten bij!
+            }
+        }
+
+    }
+
 }

@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by arnedebrabandere on 3/04/15.
+ * Stelt een resource voor met een naam en resource type.
+ * Een resource dat niet 24/7 kan gebruikt worden, wordt bijgehouden wanneer die beschikbaar is.
+ * Voor een resource wordt ook een lijst van alle allocaties ervan bijgehouden.
  */
 public class Resource implements ResourceInstance {
 
@@ -170,11 +172,15 @@ public class Resource implements ResourceInstance {
 
     /**
      * Controleert of een resource allocatie geldig is voor deze resource.
-     * @param allocation
-     * @return
+     * @param allocation De te controleren resource allocatie.
+     * @return De allocation is niet null en de resource is beschikbaar gedurende de tijdsspanne van de allocatie
+     *         en de resource instance van de allocation is deze resource.
      */
-    protected boolean canHaveAsAllocation(ResourceAllocation allocation) {
-        return true; // TODO
+    public boolean canHaveAsAllocation(ResourceAllocation allocation) {
+        if (allocation == null)
+            return false;
+        else
+            return this.isAvailable(allocation.getTimeSpan()) && allocation.getResourceInstance() == this;
     }
 
     /**
@@ -193,9 +199,9 @@ public class Resource implements ResourceInstance {
     }
 
     /**
-     *
-     * @param name
-     * @return
+     * Controleert of een naam een geldige naam is voor een resource.
+     * @param name De te controleren naam
+     * @return True als de naam niet null en niet leeg is.
      */
     public static boolean isValidName(String name) {
         return name != null && ! name.isEmpty();
