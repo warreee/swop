@@ -1,9 +1,14 @@
 package be.swop.groep11.main;
 
+import be.swop.groep11.main.resource.DailyAvailability;
+import be.swop.groep11.main.resource.IResourceType;
+import be.swop.groep11.main.resource.ResourceTypeBuilder;
+import be.swop.groep11.main.resource.ResourceTypeRepository;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskStatus;
 import com.google.common.collect.ImmutableList;
 import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,7 +17,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Klasse voor het inlezen van de de input file, deze moet staan in /input met de naam input.tman
@@ -23,9 +30,11 @@ public class InputParser {
     ProjectRepository projectRepository;
     ImmutableList<Project> projectList;
     ArrayList<Task> taskList = new ArrayList<>();
+    private ResourceTypeRepository typeRepo;
 
-    public InputParser(ProjectRepository projectRepository) {
+    public InputParser(ProjectRepository projectRepository, ResourceTypeRepository typeRepo) {
         this.projectRepository = projectRepository;
+        this.typeRepo = typeRepo;
         this.projectList = this.projectRepository.getProjects();
     }
 
@@ -33,7 +42,7 @@ public class InputParser {
     public static void main(String[] args) {
         TMSystem tmSystem = new TMSystem();
         ProjectRepository projectRepository = new ProjectRepository(tmSystem);
-        InputParser inputParser = new InputParser(projectRepository);
+        InputParser inputParser = new InputParser(projectRepository, );
         try {
             inputParser.parseInputFile();
         } catch (FileNotFoundException e) {
@@ -88,6 +97,7 @@ public class InputParser {
                 String sysTime = String.valueOf(values.get(key));
                 LocalDateTime sytemTime = parseTime(sysTime);
             }
+
             if (key.equals("dailyAvailability")){
                 subList = (ArrayList) values.get(key);
                 for (int i = 0; i < subList.size(); i++) {
@@ -133,6 +143,53 @@ public class InputParser {
 
         }
 
+    }
+
+//    private void addType(Map<String, String> typeMap){
+//        typeMap.get("name");
+//        int[] ATArray = parseStringArray(String.valueOf(typeMap.get("requires")));
+//        typeMap.get("requires");
+//        typeMap.get("conflictsWith");
+//        typeMap.get("dailyAvailability");
+//    }
+
+    /**
+     * Init IResourceTypes a.d.h.v. hun namen.
+     */
+    private void withTypes(List<String> types) throws IllegalArgumentException{
+        if (types == null || types.isEmpty()) {
+            throw new IllegalArgumentException("Eerst types bepalen met");
+        }
+
+        for (String typeName : types) {
+            typeRepo.addNewResourceType(typeName);
+
+        }
+    }
+
+    private void defineResourceType(String typeName, DailyAvailability availability, List<String> requires, List<String> conflicts, List<String> instances) throws IllegalArgumentException {
+        if (typeName == null || typeName.isEmpty()) {
+            throw new IllegalArgumentException("Ongeldige naam voor type.");
+        }
+        IResourceType ownerType = typeRepo.getResourceTypeByName(typeName);
+
+        typeRepo.withDailyAvailability(ownerType,availability);
+
+        //add require constraints
+        for (String req : requires) {
+            IResourceType reqType = typeRepo.getResourceTypeByName(req);
+            typeRepo.withRequirementConstraint(ownerType,reqType);
+        }
+        //Add conflicting constraints
+        for (String con : conflicts) {
+            IResourceType conflictType = typeRepo.getResourceTypeByName(con);
+            typeRepo.withConflictConstraint(ownerType, conflictType);
+        }
+
+        //Add instances
+        for (String inst : instances) {
+            typeRepo.addResourceInstance(ownerType,inst);
+        }
     }
 
     /**

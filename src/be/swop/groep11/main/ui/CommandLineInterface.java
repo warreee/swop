@@ -70,7 +70,7 @@ public class CommandLineInterface implements UserInterface {
 
         if (readYamlFile) {
             // run inputreader
-            InputParser ir = new InputParser(projectRepository);
+            InputParser ir = new InputParser(projectRepository, );
             try {
                 ir.parseInputFile();
             } catch (FileNotFoundException e) {

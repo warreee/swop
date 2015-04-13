@@ -18,22 +18,21 @@ import static org.junit.Assert.*;
 public class ConflictConstraintTest{
 
     private ResourceTypeRepository repository;
-    private ResourceType typeA;
-    private ResourceType typeB;
-    private ResourceType typeC;
+    private IResourceType typeA;
+    private IResourceType typeB;
+    private IResourceType typeC;
 
     @Before
     public void setUp() throws Exception {
         this.repository = new ResourceTypeRepository();
-        repository.addResourceType("testA");
+        repository.addNewResourceType("testA");
         this.typeA = repository.getResourceTypeByName("testA");
 
-
-        repository.addResourceType("testB");
+        repository.addNewResourceType("testB");
         this.typeB = repository.getResourceTypeByName("testB");
-        this.typeB.addConflictConstraint(typeC);
+        repository.withConflictConstraint(typeB,typeC);
 
-        repository.addResourceType("testC");
+        repository.addNewResourceType("testC");
         this.typeC = repository.getResourceTypeByName("testC");
     }
 

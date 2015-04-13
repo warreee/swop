@@ -1,49 +1,63 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.resource.ResourceType;
+import be.swop.groep11.main.resource.IResourceType;
 import be.swop.groep11.main.resource.ResourceTypeRepository;
+import be.swop.groep11.main.resource.constraint.ConflictCon;
+import be.swop.groep11.main.resource.constraint.RequiresCon;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 
 /**
- * Created by Ronald on 9/04/2015.
+ * Created by Ronald on 13/04/2015.
  */
-public abstract class ResourceTypeConstraintTest {
-    ResourceTypeRepository repository;
-    ResourceType typeA;
-    ResourceType typeB;
+public class ResourceTypeConstraintTest {
+
+    private ResourceTypeRepository repository;
+    private IResourceType typeA;
+    private IResourceType typeB;
 
     @Before
     public void setUp() throws Exception {
         this.repository = new ResourceTypeRepository();
-        repository.addResourceType("testA");
+        repository.addNewResourceType("testA");
         this.typeA = repository.getResourceTypeByName("testA");
 
 
-        repository.addResourceType("testB");
+        repository.addNewResourceType("testB");
         this.typeB = repository.getResourceTypeByName("testB");
     }
 
-
-
     @Test
-    public abstract void testConstructor_invalid_constraining() throws Exception ;
+    public void testConflictConstructor_valid() throws Exception {
+        ConflictCon constraint = new ConflictCon(typeA,typeB);
 
-    @Test
-    public abstract void testConstructor_invalid_owner() throws Exception ;
-    @Test
-    public abstract void testIsSatisfied_True() throws Exception ;
+        assertEquals(typeA, constraint.getOwnerType());
+        assertEquals(typeB, constraint.getConstrainingType());
+        assertEquals(0, constraint.getMin());
+        assertEquals(0,constraint.getMax());
+    }
 
-    @Test
-    public abstract void testIsSatisfied_False() throws Exception ;
-
-    @Test
-    public abstract void testResolve() throws Exception ;
-
-    @Test
-    public abstract void testIsValidOtherConstraint_requirementConstraint() throws Exception;
+    @Test(expected = IllegalArgumentException.class)
+    public void testConflictConstructor_invalid() throws Exception {
+        ConflictCon constraint = new ConflictCon(typeA,null);
+    }
 
     @Test
-    public abstract void testIsValidOtherConstraint_conflictConstraint() throws Exception;
+    public void testRequiresConstructor_valid() throws Exception {
+        RequiresCon constraint = new RequiresCon(typeA,typeB);
+
+        assertEquals(typeA, constraint.getOwnerType());
+        assertEquals(typeB, constraint.getConstrainingType());
+        assertEquals(1, constraint.getMin());
+        assertEquals(Integer.MAX_VALUE,constraint.getMax());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRequiresConstructor_invalid() throws Exception {
+        RequiresCon constraint = new RequiresCon(typeA,null);
+    }
+
+
 }

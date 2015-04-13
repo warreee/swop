@@ -1,9 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.resource.DailyAvailability;
-import be.swop.groep11.main.resource.IResourceType;
-import be.swop.groep11.main.resource.ResourceInstance;
-import be.swop.groep11.main.resource.ResourceTypeBuilder;
+import be.swop.groep11.main.resource.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,14 +19,12 @@ public class ResourceTypeBuilderTest {
 
     @Before
     public void setUp() throws Exception {
-        this.builderA = new ResourceTypeBuilder();
-        this.builderB = new ResourceTypeBuilder();
+        this.builderA = new ResourceTypeBuilder("A");
+        this.builderB = new ResourceTypeBuilder("B");
     }
 
     @Test
     public void testBasicResourceType() throws Exception {
-        builderA.newType("A");
-
         IResourceType typeA = builderA.getResourceType();
 
         assertEquals("A",typeA.getName());
@@ -40,24 +35,21 @@ public class ResourceTypeBuilderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testName_Invalid() throws Exception {
-        builderA.newType("");
+        new ResourceTypeBuilder("");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testWithDailyAvailability_invalid() throws Exception {
-        builderA.newType("A");
         builderA.withDailyAvailability(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testWithRequirementConstraint_invaid() throws Exception {
-        builderA.newType("A");
         builderA.withRequirementConstraint(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testWithConflictConstraint_invalid() throws Exception {
-        builderA.newType("A");
         builderA.withConflictConstraint(null);
     }
 
@@ -66,9 +58,7 @@ public class ResourceTypeBuilderTest {
         LocalTime start = LocalTime.of(10, 10), end = LocalTime.of(15, 10);
         DailyAvailability d = new DailyAvailability(start,end);
 
-        builderA.newType("A");
         builderA.withDailyAvailability(start, end);
-        builderB.newType("B");
         builderB.withDailyAvailability(d);
 
         IResourceType typeA = builderA.getResourceType();
@@ -83,9 +73,6 @@ public class ResourceTypeBuilderTest {
 
     @Test
     public void testWithRequirementConstraints_valid() throws Exception {
-        builderA.newType("testA");
-        builderB.newType("testB");
-
         IResourceType typeA = builderA.getResourceType();
         IResourceType typeB = builderB.getResourceType();
 
@@ -95,9 +82,6 @@ public class ResourceTypeBuilderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testWithConstraints_invalid() throws Exception {
-        builderA.newType("testA");
-        builderB.newType("testB");
-
         IResourceType typeA = builderA.getResourceType();
         IResourceType typeB = builderB.getResourceType();
 
@@ -107,7 +91,6 @@ public class ResourceTypeBuilderTest {
 
     @Test
     public void testSelfConflictingConstraint() throws Exception {
-        builderA.newType("testA");
         builderA.setConflictWithSelf(true);
 
         IResourceType typeA = builderA.getResourceType();
@@ -116,15 +99,12 @@ public class ResourceTypeBuilderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testSelfRequireConstraint_invalid() throws Exception {
-        builderA.newType("testA");
-
         IResourceType typeA = builderA.getResourceType();
         builderA.withRequirementConstraint(typeA);
     }
 
     @Test
     public void testAddInstance() throws Exception {
-        builderA.newType("A");
         builderA.addResourceInstance("in1");
         IResourceType typeA = builderA.getResourceType();
         assertEquals(1, typeA.getResourceInstances().size());
@@ -135,7 +115,6 @@ public class ResourceTypeBuilderTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void testAddInstance_invalid() throws Exception {
-        builderA.newType("A");
         builderA.addResourceInstance("");
     }
 }

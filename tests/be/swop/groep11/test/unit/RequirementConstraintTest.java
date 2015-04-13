@@ -1,7 +1,9 @@
 package be.swop.groep11.test.unit;
 
+import be.swop.groep11.main.resource.IResourceType;
 import be.swop.groep11.main.resource.ResourceType;
 import be.swop.groep11.main.resource.ResourceRequirement;
+import be.swop.groep11.main.resource.ResourceTypeRepository;
 import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequirementConstraint;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
@@ -16,13 +18,26 @@ import static org.junit.Assert.*;
 /**
  * Created by Ronald on 8/04/2015.
  */
-public class RequirementConstraintTest extends ResourceTypeConstraintTest {
+public class RequirementConstraintTest{
 
     //TODO nieuwe constraints
+    private ResourceTypeRepository repository;
+    private IResourceType typeA;
+    private IResourceType typeB;
+    private IResourceType typeC;
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
+        this.repository = new ResourceTypeRepository();
+        repository.addNewResourceType("testA");
+        this.typeA = repository.getResourceTypeByName("testA");
+
+        repository.addNewResourceType("testB");
+        this.typeB = repository.getResourceTypeByName("testB");
+        repository.withConflictConstraint(typeB,typeC);
+
+        repository.addNewResourceType("testC");
+        this.typeC = repository.getResourceTypeByName("testC");
     }
 
     @Test

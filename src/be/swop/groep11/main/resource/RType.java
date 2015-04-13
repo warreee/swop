@@ -9,18 +9,15 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-public class ResourceType implements  IResourceType{
+/**
+ * Created by Ronald on 13/04/2015.
+ */
+class RType implements IResourceType {
 
     private final String name;
     private DailyAvailability dailyAvailability;
 
-    /**
-     * Maakt een nieuwe ResourceType aan met de gegeven parameters.
-     *
-     * @param typeName De naam van deze ResourceType
-     */
-    protected ResourceType(String typeName) throws IllegalArgumentException {
+    protected RType(String typeName) throws IllegalArgumentException {
         if (!isValidResourceTypeName(typeName)) {
             throw new IllegalArgumentException("Ongeldige naam voor ResourceType");
         }

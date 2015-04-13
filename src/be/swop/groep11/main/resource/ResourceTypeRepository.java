@@ -1,11 +1,12 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 public class ResourceTypeRepository {
@@ -20,43 +21,58 @@ public class ResourceTypeRepository {
      * probleem is met de naam.
      */
     private void addDeveloperType(){
-        if(!containtsType("Developer")) {
-            addResourceType("Developer", new DailyAvailability(LocalTime.of(8, 0), LocalTime.of(17, 0)));
+        if(!containsType("Developer")) {
+            addNewResourceType("Developer", new DailyAvailability(LocalTime.of(8, 0), LocalTime.of(17, 0)));
         }
     }
-
+//TODO documentatie
     /**
      * Voegt een nieuwe ResourceType toe zonder start en eindtijd voor de beschikbaarheid.
      * @param name De naam van de toe te voegen ResourceType
-     * @param constrainingTypes Een lijst van ResourceTypeConstraints voor deze ResourceType.
+     *
      */
-    public void addResourceType(String name, DailyAvailability availability, List<ResourceTypeConstraint> constrainingTypes) {
+    public void addNewResourceType(String name, DailyAvailability availability, List<IResourceType> requireTypes, List<IResourceType> conflictingTypes) {
         /**
          * Er kunnen geen resourceTypeConstraints zijn omdat ze al een verwijzing naar de resourcetype nodig hebben, terwijl we die nog moeten aanmaken.
          */
-        if(containtsType(name)){
+        if(containsType(name)){
             throw new IllegalArgumentException("Er bestaat reeds een ResourceType met de naam " +name);
         }
-        ResourceType resourceType = new ResourceType(name,availability);
-        resourceTypes.add(resourceType);
+        ResourceTypeBuilder newTypeBuilder = typeBuilders.put(name,new ResourceTypeBuilder(name));
+        newTypeBuilder.withDailyAvailability(availability);
 
-        resourceType.setResourceTypeConstraints(constrainingTypes);
+        //Add require constraints
+        if(!requireTypes.isEmpty()){
+            for (IResourceType reqType : requireTypes) {
+                newTypeBuilder.withRequirementConstraint(reqType);
+            }
+        }
+
+        //Add conflicting constraints
+        if(!conflictingTypes.isEmpty()){
+            for (IResourceType conflictType : conflictingTypes) {
+                newTypeBuilder.withConflictConstraint(conflictType);
+            }
+        }
+
+        resourceTypes.add(newTypeBuilder.getResourceType());
     }
+
     /**
      * Voegt een nieuwe ResourceType toe zonder start en eindtijd voor de beschikbaarheid.
      * @param name De naam van de toe te voegen ResourceType
-     * @param availability //TODO documentatie
+     * @param availability
      */
-    public void addResourceType(String name, DailyAvailability availability) {
-        addResourceType(name, availability, new ArrayList<>());
+    public void addNewResourceType(String name, DailyAvailability availability) {
+        addNewResourceType(name, availability, new ArrayList<>(), new ArrayList<>());
     }
 
     /**
      * Voegt een nieuwe ResourceType met een DailyAvailability voor een ganse dag.
      * @param name De naam van de toe te voegen ResourceType
      */
-    public void addResourceType(String name) {
-        addResourceType(name, new DailyAvailability(LocalTime.MIN, LocalTime.MAX), new ArrayList<>());
+    public void addNewResourceType(String name) {
+        addNewResourceType(name, new DailyAvailability(LocalTime.MIN, LocalTime.MAX), new ArrayList<>(), new ArrayList<>());
     }
 
     /**
@@ -65,51 +81,44 @@ public class ResourceTypeRepository {
      * @throws IllegalArgumentException wordt gegooid als de naam niet in deze repository zit.
      * @return
      */
-    public ResourceType getResourceTypeByName(String name){
-        for(ResourceType r: resourceTypes){
-            if (r.getName().equals(name)){
-                return r;
-            }
+    public IResourceType getResourceTypeByName(String name)throws NoSuchElementException{
+        ResourceTypeBuilder b = typeBuilders.get(name);
+        if(b == null){
+            throw new NoSuchElementException("Resource type met de gegeven naam kon niet gevonden worden.");
         }
-        throw new IllegalArgumentException("Resource type met de gegeven naam kon niet gevonden worden.");
+        return b.getResourceType();
     }
 
-    /**
-     * Controleert of de gegeven naam een geldige naam is voor een nieuwe ResourceType instantie.
-     * @param name De naam die de nieuwe ResourceType moet hebben
-     * @return true asa dit gaat, anders false
-     */
-    public boolean isValidResourceTypeName(String name){
-        if(!ResourceType.isValidResourceTypeName(name)){
-            return false;
-        }
-
-        try {
-            getResourceTypeByName(name);
-            return false;
-        } catch (IllegalArgumentException e){
-            return true;
-        }
-    }
-
-
-    public boolean containtsType(String typeName){
-
-        for(ResourceType r: resourceTypes){
-            if (r.getName().equals(typeName)){
-                return true;
-            }
-        }
-        return false;
+    public boolean containsType(String typeName){
+        return typeBuilders.containsKey(typeName);
     }
 
     /**
      * Een lijst die alle bekende resourceType van deze repository bevat.
      */
-    private ArrayList<ResourceType> resourceTypes = new ArrayList<ResourceType>();
+    private ArrayList<IResourceType> resourceTypes = new ArrayList<>();
 
-    public ImmutableList<ResourceType> getResourceTypes() {
+    public ImmutableList<IResourceType> getResourceTypes() {
         return ImmutableList.copyOf(resourceTypes);
     }
 
+    private HashMap<String, ResourceTypeBuilder> typeBuilders = new HashMap<>();
+
+
+    public void withDailyAvailability(IResourceType ownerType, DailyAvailability availability) {
+        typeBuilders.get(ownerType).withDailyAvailability(availability);
+    }
+
+    public void withRequirementConstraint(IResourceType ownerType, IResourceType reqType) {
+        typeBuilders.get(ownerType).withRequirementConstraint(reqType);
+    }
+
+    public void withConflictConstraint(IResourceType ownerType, IResourceType conflictType) {
+        typeBuilders.get(ownerType).withConflictConstraint(conflictType);
+    }
+
+    public void addResourceInstance(IResourceType ownerType, String inst) {
+        typeBuilders.get(ownerType).addResourceInstance(inst);
+
+    }
 }
