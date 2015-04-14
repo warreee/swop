@@ -352,7 +352,7 @@ public class Project {
     /**
      * Geeft een kopie van dit project met een lijst van de kopieen van de taken van dit project.
      */
-    protected Project copy() {
+    public Project copy() {
         try {
             Project clone = (Project) this.clone();
             clone.tasks = new ArrayList();

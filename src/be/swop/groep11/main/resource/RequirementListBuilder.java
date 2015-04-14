@@ -2,10 +2,7 @@ package be.swop.groep11.main.resource;
 
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Created by Ronald on 9/04/2015.
@@ -18,7 +15,7 @@ public class RequirementListBuilder {
     //TODO finish RequirementListBuilder.
     //WIP
 
-    private IRequirementList reqList;
+    private RequirementList reqList;
 
     public RequirementListBuilder() {
         this.reqList = new RequirementList();
@@ -96,6 +93,11 @@ public class RequirementListBuilder {
             return true;
         }
 
+        @Override
+        public Iterator<ResourceRequirement> iterator() {
+            return this.requirements.values().iterator();
+        }
+
         private boolean hasOverlappingAvailability(IResourceType requestedType){
             List<DailyAvailability> availabilities = new ArrayList<>();
             for(IResourceType type : requirements.keySet()){
@@ -108,8 +110,7 @@ public class RequirementListBuilder {
             }
         }
 
-        @Override
-        public void addRequirement(IResourceType requiredType,int amount) throws IllegalRequirementAmountException,IllegalArgumentException,UnsatisfiableRequirementException{
+        private void addRequirement(IResourceType requiredType,int amount) throws IllegalRequirementAmountException,IllegalArgumentException,UnsatisfiableRequirementException{
             if(!isSatisfiableFor(requiredType, amount)){
                 throw new UnsatisfiableRequirementException(requiredType, amount);
             }else {
@@ -124,8 +125,7 @@ public class RequirementListBuilder {
             return requirements.get(type);
         }
 
-        @Override
-        public void removeRequirementFor(IResourceType type)throws NoSuchElementException{
+        private void removeRequirementFor(IResourceType type)throws NoSuchElementException{
             if(containsRequirementFor(type)){
                 requirements.remove(type);
             }else{

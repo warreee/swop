@@ -2,13 +2,18 @@ package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.DependencyConstraint;
 import be.swop.groep11.main.Project;
+import be.swop.groep11.main.TimeSpan;
+import be.swop.groep11.main.resource.IRequirementList;
+import be.swop.groep11.main.resource.Resource;
+import be.swop.groep11.main.resource.ResourceInstance;
+import be.swop.groep11.main.resource.ResourceRequirement;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Stelt een taak voor met een beschrijving, starttijd, eindtijd, verwachte duur en een aanvaardbare marge.
@@ -419,7 +424,7 @@ public class Task {
      * @return De duur van deze taak,
      *         of null als de starttijd of eindtijd van deze taak null is.
      */
-    public Duration getDuration() {
+    public Duration getDuration() { // TODO: status.getDuration() !!
         // We nemen als duration de echte tijd die gepasseerd is.
         if (getStartTime() == null || getEndTime() == null)
             return null;
@@ -469,6 +474,51 @@ public class Task {
     }
 
     /**
+     * Geeft de eerstvolgende n tijdsspannes na een gegeven starttijd waarin deze taak kan uitgevoerd worden.
+     * De tijdsspannes starten steeds op een uur (zonder minuten).
+     * @param n         Het aantal gevraagde tijdsspannes
+     * @param startTime De gegeven starttijd
+     * @return Een lijst van de eerstvolgende n tijdsspannes
+     */
+    public List<TimeSpan> getNextTimeSpans(int n, LocalDateTime startTime) {
+        List<TimeSpan> timeSpans = new ArrayList<>();
+
+        LocalDateTime nextStartTime = this.getNextHour(startTime);
+        while (timeSpans.size() < n) {
+
+            // lijst van "te alloceren resource instanties"
+            List<ResourceInstance> instances = new ArrayList<>();
+
+            // zijn er genoeg instanties beschikbaar van elke resource?
+            boolean enoughInstances = true;
+
+            Iterator<ResourceRequirement> it = this.getRequirementList().iterator();
+            while (it.hasNext()) {
+                ResourceRequirement requirement = it.next();
+
+                List<ResourceInstance> availableInstances = requirement.getType().getResourceInstances();
+
+                int nbRequiredInstances = requirement.getAmount();
+                if (availableInstances.size() < nbRequiredInstances) {
+                    enoughInstances = false; // niet genoeg instances beschikbaar!
+                    break;
+                }
+            }
+
+            // TODO afwerken ...
+        }
+
+        return timeSpans;
+    }
+
+    private LocalDateTime getNextHour(LocalDateTime dateTime) {
+        if (dateTime.getMinute() == 0)
+            return dateTime;
+        else
+            return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour() + 1, 0));
+    }
+
+    /**
      * Maakt de afhankelijke taken (if any) van deze taak AVAILABLE,
      * indien dat mogelijk is.
      * Als deze taak een alternatieve taak voor een andere taak is.
@@ -484,9 +534,26 @@ public class Task {
     }
 
     /**
+     * Geeft de lijst van benodigde resources voor deze taak.
+     */
+    public IRequirementList getRequirementList() {
+        return this.requirementList;
+    }
+
+    /**
+     * Zet de lijst van benodigde resources voor deze taak.
+     * @param requirementList De nieuwe lijst van benodigde resources
+     */
+    public void setRequirementList(IRequirementList requirementList) {
+        this.requirementList = requirementList;
+    }
+
+    private IRequirementList requirementList;
+
+    /**
      * Geeft een kopie van deze taak.
      */
-    protected Task copy() {
+    public Task copy() {
         try {
             Task clone = (Task) this.clone();
             // TODO: plan kopiëren?

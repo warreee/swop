@@ -1,5 +1,6 @@
 package be.swop.groep11.main.resource;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -13,7 +14,5 @@ public interface IRequirementList {
 
     public boolean isSatisfiableFor(IResourceType requestedType, int amount) ;
 
-    public void addRequirement(IResourceType type, int amount) throws IllegalRequirementAmountException,IllegalArgumentException,UnsatisfiableRequirementException;
-
-    public void removeRequirementFor(IResourceType type)throws NoSuchElementException;
+    public Iterator<ResourceRequirement> iterator();
 }

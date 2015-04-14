@@ -7,6 +7,7 @@ import be.swop.groep11.main.TMSystem;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
@@ -67,6 +68,18 @@ public class ProjectRepositoryTest {
     @Test (expected = IllegalArgumentException.class)
     public void AddNewProjectInvalidDescriptionTest() throws Exception {
         projRep.addNewProject(name, null, create, due, user);
+    }
+
+    @Test
+    public void CreateMemento_Test() throws Exception {
+        projRep.addNewProject(name, description, create,due,user);
+        projRep.addNewProject(name, description, create,due,user);
+        Project proj1 = projRep.getProjects().get(0);
+        Project proj2 = projRep.getProjects().get(1);
+        proj1.addNewTask(description, 0.1, Duration.ofHours(8));
+        proj2.addNewTask(description, 0.0, Duration.ofMinutes(30));
+        proj2.addNewTask(description, 0.2, Duration.ofHours(100));
+        // TODO
     }
 
 
