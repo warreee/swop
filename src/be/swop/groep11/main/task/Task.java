@@ -281,19 +281,7 @@ public class Task {
      * Geeft de status van deze taak, er wordt telkens een nieuw object aangemaakt zodat de interne variabele niet wordt terugggeven.
      */
     public TaskStatus getStatus() {
-        TaskStatus result = null;
-        if (this.status instanceof TaskAvailable) {
-            result = new TaskAvailable();
-        } else if (this.status instanceof TaskUnavailable) {
-            result = new TaskUnavailable();
-        } else if (this.status instanceof TaskExecuting) {
-            result = new TaskExecuting();
-        } else if (this.status instanceof TaskFailed) {
-            result = new TaskFailed();
-        } else if (this.status instanceof TaskFailed) {
-            result = new TaskFailed();
-        }
-        return result;
+        return status.getStatus;
     }
 
     public void execute() {
@@ -310,11 +298,11 @@ public class Task {
         makeDependentTasksAvailable();
     }
 
-    public void makeAvailable() {
+    private void makeAvailable() {
         status.makeAvailable(this);
     }
 
-    public void makeUnAvailable() {
+    private void makeUnAvailable() {
         status.makeUnavailable(this);
     }
 

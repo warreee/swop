@@ -9,6 +9,11 @@ import java.time.LocalDateTime;
 public class TaskAvailable extends TaskStatus {
 
     @Override
+    public TaskStatusString getTaskStatusString() {
+        return TaskStatusString.AVAILABLE;
+    }
+
+    @Override
     protected void execute(Task task) {
         if (checkPlan()){
             TaskStatus executing = new TaskExecuting();

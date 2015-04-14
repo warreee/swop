@@ -105,11 +105,11 @@ public class TaskController {
             if(startTime != null){
                 task.setStartTime(startTime);
             }
-            if(task.hasStartTime() && endTime != null){ // TODO: we controleren hier dubbel, want dit wordt ook nog is canHaveAsStartTime gezet
+            if(task.hasStartTime() && endTime != null){
                 task.setEndTime(endTime);
             }
            if(!status.isEmpty()){
-               task.setNewStatus(TaskStatus.valueOf(status));
+               doTransition(status, task);
            }
             if (startTime == null && endTime == null && status.isEmpty())
                 ui.printMessage("Geen updates gedaan");
@@ -120,6 +120,24 @@ public class TaskController {
             ui.printException(e);
             updateTask(task);
         }
+    }
+
+    private void doTransition(String status, Task task) throws IllegalArgumentException {
+        status = status.toLowerCase();
+        switch (status) {
+            case "execute":
+                task.execute();
+                break;
+            case "fail":
+                task.fail();
+                break;
+            case "finish":
+                task.finish();
+                break;
+            default:
+                throw new IllegalArgumentException("Een verkeerd commando werd meegegeven!");
+        }
+
     }
 
 
