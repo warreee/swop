@@ -8,6 +8,11 @@ import java.time.LocalDateTime;
  */
 public class TaskUnavailable extends TaskStatus {
 
+    @Override
+    public TaskStatusString getTaskStatusString() {
+        return TaskStatusString.UNAVAILABLE;
+    }
+
     /**
      * Geeft als duur, de geschatte duur van de taak terug.
      * @param task de taak waarvan de geschatte duur wordt teruggegeven.

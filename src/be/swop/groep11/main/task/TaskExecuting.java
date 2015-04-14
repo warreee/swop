@@ -10,6 +10,11 @@ import java.time.LocalDateTime;
 public class TaskExecuting extends TaskStatus {
 
     @Override
+    public TaskStatusString getTaskStatusString() {
+        return TaskStatusString.EXECUTING;
+    }
+
+    @Override
     protected void execute(Task task) {
         throw new IllegalStateTransition("De taak was reeds aan het uitvoeren!");
     }
@@ -22,6 +27,8 @@ public class TaskExecuting extends TaskStatus {
         }
 
     }
+
+    // TODO: fail nog doen
 
     /**
      * Geeft de geschatte duur van de taak die aan het uitvoeren is, indien de taak over tijd is

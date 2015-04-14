@@ -9,9 +9,19 @@ import java.util.Set;
  */
 public abstract class TaskStatus implements Cloneable {
 
+    protected enum TaskStatusString {
+        FINISHED,
+        EXECUTING,
+        AVAILABLE,
+        UNAVAILABLE,
+        FAILED
+    }
+
     protected TaskStatus() {
 
     }
+
+    public abstract TaskStatusString getTaskStatusString();
 
     @Override
     protected TaskStatus clone() throws CloneNotSupportedException {

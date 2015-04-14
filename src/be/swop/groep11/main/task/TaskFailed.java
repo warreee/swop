@@ -8,6 +8,11 @@ import java.time.LocalDateTime;
  */
 public class TaskFailed extends TaskStatus {
 
+    @Override
+    public TaskStatusString getTaskStatusString() {
+        return TaskStatusString.FAILED;
+    }
+
     /**
      * Geeft de tijd terug dat de gefaalde taak heeft geduurd.
      * @param task de taak die gefaald is.
