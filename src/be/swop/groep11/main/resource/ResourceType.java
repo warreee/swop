@@ -4,10 +4,12 @@ import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequiresConstraint;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import com.google.common.collect.ImmutableList;
+import org.mockito.cglib.core.Local;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 
 class ResourceType implements  IResourceType{
@@ -129,5 +131,35 @@ class ResourceType implements  IResourceType{
     @Override
     public int amountOfInstances() {
         return instances.size();
+    }
+
+    /**
+     * Geeft een lijst van alle resource instanties van dit resource type, die beschikbaar zijn vanaf een gegeven starttijd
+     * voor een gegeven duur. De lijst is gesorteerd volgens toenemende eindtijd van de eerstvolgende beschikbare tijdsspanne
+     * van elke resource instantie.
+     * @param startTime De gegeven starttijd
+     * @param duration  De gegeven duur
+     */
+    public List<ResourceInstance> getAvailableInstances(LocalDateTime startTime, Duration duration) {
+        List<ResourceInstance> availableInstances = new ArrayList<>();
+
+        // voeg alle resource instances toe die beschikbaar zijn vanaf startTime
+        for (ResourceInstance instance : this.getResourceInstances()) {
+            if (instance.getNextAvailableTimeSpan(startTime, duration).getStartTime().equals(startTime)) {
+                availableInstances.add(instance);
+            }
+        }
+
+        // sorteer de instances volgens toenemende eindtijd van de eerstvolgende beschikbare tijdsspanne
+        class ResourceInstanceComparator implements Comparator<ResourceInstance> {
+            @Override
+            public int compare(ResourceInstance instance1, ResourceInstance instance2) {
+                return instance1.getNextAvailableTimeSpan(startTime, duration).getEndTime()
+                        .compareTo(instance2.getNextAvailableTimeSpan(startTime, duration).getEndTime());
+            }
+        }
+        Collections.sort(availableInstances, new ResourceInstanceComparator());
+
+        return availableInstances;
     }
 }
