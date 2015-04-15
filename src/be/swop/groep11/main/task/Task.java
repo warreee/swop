@@ -550,18 +550,4 @@ public class Task {
 
     private IRequirementList requirementList;
 
-    /**
-     * Geeft een kopie van deze taak.
-     */
-    public Task copy() {
-        try {
-            Task clone = (Task) this.clone();
-            // TODO: plan kopiëren?
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            // dit zou niet mogen gebeuren
-            return null;
-        }
-    }
-
 }

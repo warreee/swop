@@ -349,20 +349,4 @@ public class Project {
         return ImmutableList.copyOf(tasks);
     }
 
-    /**
-     * Geeft een kopie van dit project met een lijst van de kopieen van de taken van dit project.
-     */
-    public Project copy() {
-        try {
-            Project clone = (Project) this.clone();
-            clone.tasks = new ArrayList();
-            for (Task task : this.tasks) {
-                clone.tasks.add(task.copy());
-            }
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            // dit zou niet mogen gebeuren
-            return null;
-        }
-    }
 }
