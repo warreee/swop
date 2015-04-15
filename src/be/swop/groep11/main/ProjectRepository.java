@@ -4,6 +4,7 @@ package be.swop.groep11.main;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskStatus;
 import com.google.common.collect.ImmutableList;
+import com.rits.cloning.Cloner;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -100,10 +101,15 @@ public class ProjectRepository {
         }
 
         public void setProjects(List<Project> projects) {
-            this.projects = new ArrayList<>();
-            for (Project project : projects) {
-                this.projects.add(project.copy()); // hou kopies van projecten bij!
-            }
+            /*
+                Library gebruikt om een deep clone te maken van een object
+                (hier dus van projects lijst).
+                TODO 1: werkt dit? (pas als Task compileert...)
+                TODO 2: mogen we dit zo oplossen? (zou redelijk wat werk besparen...)
+             */
+            Cloner cloner = new Cloner();
+            List<Project> projectsClone = cloner.deepClone(projects);
+            this.projects = projectsClone;
         }
 
     }
