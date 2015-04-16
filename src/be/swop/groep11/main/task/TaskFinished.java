@@ -15,6 +15,11 @@ public class TaskFinished extends TaskStatus {
     }
 
     @Override
+    public TaskStatus getTaskStatus() {
+        return new TaskFinished();
+    }
+
+    @Override
     protected void execute(Task task) {
         throw new IllegalStateTransition("Een gefinishste taak kan niet opnieuw worden uitgevoerd");
     }

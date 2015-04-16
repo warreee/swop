@@ -13,6 +13,11 @@ public class TaskUnavailable extends TaskStatus {
         return TaskStatusString.UNAVAILABLE;
     }
 
+    @Override
+    public TaskStatus getTaskStatus() {
+        return new TaskUnavailable();
+    }
+
     /**
      * Geeft als duur, de geschatte duur van de taak terug.
      * @param task de taak waarvan de geschatte duur wordt teruggegeven.

@@ -15,6 +15,11 @@ public class TaskExecuting extends TaskStatus {
     }
 
     @Override
+    public TaskStatus getTaskStatus() {
+        return new TaskExecuting();
+    }
+
+    @Override
     protected void execute(Task task) {
         throw new IllegalStateTransition("De taak was reeds aan het uitvoeren!");
     }

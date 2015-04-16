@@ -14,6 +14,11 @@ public class TaskAvailable extends TaskStatus {
     }
 
     @Override
+    public TaskStatus getTaskStatus() {
+        return new TaskAvailable();
+    }
+
+    @Override
     protected void execute(Task task) {
         if (checkPlan()){
             TaskStatus executing = new TaskExecuting();

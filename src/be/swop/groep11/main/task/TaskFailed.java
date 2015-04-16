@@ -13,6 +13,11 @@ public class TaskFailed extends TaskStatus {
         return TaskStatusString.FAILED;
     }
 
+    @Override
+    public TaskStatus getTaskStatus() {
+        return new TaskFailed();
+    }
+
     /**
      * Geeft de tijd terug dat de gefaalde taak heeft geduurd.
      * @param task de taak die gefaald is.
