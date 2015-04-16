@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class TaskUnavailable extends TaskStatus {
 
     @Override
-    public TaskStatusString getTaskStatusString() {
+    public TaskStatusString getStatusString() {
         return TaskStatusString.UNAVAILABLE;
     }
 

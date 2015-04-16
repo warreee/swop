@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class TaskExecuting extends TaskStatus {
 
     @Override
-    public TaskStatusString getTaskStatusString() {
+    public TaskStatusString getStatusString() {
         return TaskStatusString.EXECUTING;
     }
 

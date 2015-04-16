@@ -10,7 +10,7 @@ public class TaskFinished extends TaskStatus {
 
 
     @Override
-    public TaskStatusString getTaskStatusString() {
+    public TaskStatusString getStatusString() {
         return TaskStatusString.FINISHED;
     }
 

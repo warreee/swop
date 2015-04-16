@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class TaskFailed extends TaskStatus {
 
     @Override
-    public TaskStatusString getTaskStatusString() {
+    public TaskStatusString getStatusString() {
         return TaskStatusString.FAILED;
     }
 

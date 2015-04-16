@@ -2,7 +2,7 @@ package be.swop.groep11.main;
 
 import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.IResourceType;
-import be.swop.groep11.main.resource.ResourceTypeBuilder;
+//import be.swop.groep11.main.resource.ResourceTypeBuilder;
 import be.swop.groep11.main.resource.ResourceTypeRepository;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskStatus;
@@ -42,12 +42,12 @@ public class InputParser {
     public static void main(String[] args) {
         TMSystem tmSystem = new TMSystem();
         ProjectRepository projectRepository = new ProjectRepository(tmSystem);
-        InputParser inputParser = new InputParser(projectRepository, );
+/*        InputParser inputParser = new InputParser(projectRepository, );
         try {
             inputParser.parseInputFile();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
 
@@ -235,12 +235,12 @@ public class InputParser {
             task.setEndTime(endTime);
         }
 
-        if (mapTask.get("status") != null) {
+/*        if (mapTask.get("status") != null) {
             TaskStatus status = stringToStatus(mapTask.get("status"));
             if (!status.equals(TaskStatus.UNAVAILABLE)) {
                 task.setNewStatus(status);
             }
-        }
+        }*/
 
 
     }
@@ -256,7 +256,7 @@ public class InputParser {
 
         TaskStatus result = null;
 
-        try {
+       /* try {
             for (TaskStatus status : TaskStatus.values()){
                 if (strStatus.equalsIgnoreCase(status.toString())){
                     result = status;
@@ -265,7 +265,7 @@ public class InputParser {
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
-
+        */
         return result;
     }
 

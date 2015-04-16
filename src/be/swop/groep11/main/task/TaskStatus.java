@@ -21,9 +21,9 @@ public abstract class TaskStatus implements Cloneable {
 
     }
 
-    public abstract TaskStatusString getTaskStatusString();
+    protected abstract TaskStatusString getStatusString();
 
-    public abstract TaskStatus getTaskStatus();
+    protected abstract TaskStatus getTaskStatus();
 
     @Override
     protected TaskStatus clone() throws CloneNotSupportedException {
