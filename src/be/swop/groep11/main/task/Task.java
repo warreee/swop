@@ -378,6 +378,10 @@ public class Task {
         this.status = status;
     }
 
+    public boolean isValidDependingOn(Task dependingOn) {
+        return this.getStatus().isValidDependingOn(this, dependingOn);
+    }
+
     public static enum FinishedStatus {
         EARLY,
         ONTIME,

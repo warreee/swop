@@ -72,6 +72,4 @@ public class TaskAvailable extends TaskStatus {
 
 
 
-
-
 }

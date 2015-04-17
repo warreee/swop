@@ -56,22 +56,8 @@ public class DependencyConstraint {
      * @return              Waar indien de task afhankelijk kan zijn van dependingOn,
      * (Indien het toevoegen van de dependency constraint geen lussen veroorzaakt)
      */
-    public static boolean isValidDependingOn(Task task, Task dependingOn) {
-        if (task == dependingOn) // TODO: werkt dit wel?
-            return false;
-        if (task.getStatus() == TaskStatus.FINISHED || task.getStatus() == TaskStatus.FAILED){
-            return false; // Aan een FINISHED of FAILED task kunnen geen nieuwe depency constraint meer toegewezen worden.
-        }
-        Set<Task> dependingOnTasks = dependingOn.getDependingOnTasks();
-        if (dependingOnTasks.contains(task))
-            // dan hangt dependingOn af van task,
-            // dus nu zeggen dat task afhankelijk is van dependingOn zou een lus veroorzaken
-            return false;
-        if(! task.getProject().equals(dependingOn.getProject())){
-            // De 2 taken moeten aan hetzelfde project toebehoren.
-            return false;
-        }
-        return true;
+    public static boolean isValidDependingOn(Task task, Task dependingOn) { // TODO: waarom static?
+        return task.isValidDependingOn(dependingOn);
     }
 
     /**
