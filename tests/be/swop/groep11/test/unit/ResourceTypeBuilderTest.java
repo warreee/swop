@@ -5,7 +5,7 @@ package be.swop.groep11.test.unit;
  */
 public class ResourceTypeBuilderTest {
 
-/*    private ResourceTypeBuilder builderA;
+    private ResourceTypeBuilder builderA;
     private ResourceTypeBuilder builderB;
 
 
@@ -108,5 +108,5 @@ public class ResourceTypeBuilderTest {
     @Test (expected = IllegalArgumentException.class)
     public void testAddInstance_invalid() throws Exception {
         builderA.addResourceInstance("");
-    }*/
+    }
 }

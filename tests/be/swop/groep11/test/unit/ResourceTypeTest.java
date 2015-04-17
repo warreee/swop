@@ -4,7 +4,6 @@ package be.swop.groep11.test.unit;
  * Created by robin on 8/04/15.
  */
 public class ResourceTypeTest {
-/*
     IResourceType t1, t2, t3, t4, t5, t6;
     private ResourceTypeRepository repo;
 
@@ -60,6 +59,5 @@ public class ResourceTypeTest {
         // We zetten de ResourceTypeConstraints van type 1. Dit zou een exception moeten geven.
         t1.setResourceTypeConstraints(allConstraints);
     }
-*/
 
 }
