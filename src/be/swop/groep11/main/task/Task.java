@@ -38,7 +38,7 @@ public class Task {
         if (! canHaveAsProject(project)) {
             throw new IllegalArgumentException("Ongeldig project");
         }
-        makeAvailable();
+        this.setStatus(new TaskAvailable());
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
