@@ -70,12 +70,12 @@ public class CommandLineInterface implements UserInterface {
 
         if (readYamlFile) {
             // run inputreader
-            InputParser ir = new InputParser(projectRepository, );
+            /*InputParser ir = new InputParser(projectRepository, );
             try {
                 ir.parseInputFile();
             } catch (FileNotFoundException e) {
                 printMessage("Yaml file niet gevonden");
-            }
+            }*/
         }
 
         // maak de controllers aan
@@ -394,7 +394,7 @@ public class CommandLineInterface implements UserInterface {
         else if (task.getFinishedStatus() == Task.FinishedStatus.OVERDUE) {
             finishedStatus = "late";
         }
-        java.lang.System.out.printf(format, "Status: ", task.getStatus().name() + " " + finishedStatus);
+        java.lang.System.out.printf(format, "Status: ", task.getStatusString() + " " + finishedStatus); // TODO: hier stond getStatus.name(), we hadden toch nooit een functie .name() ?
 
         // on time?
         String onTime = "ja";

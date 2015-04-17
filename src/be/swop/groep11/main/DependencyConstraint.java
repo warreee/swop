@@ -57,7 +57,7 @@ public class DependencyConstraint {
      * (Indien het toevoegen van de dependency constraint geen lussen veroorzaakt)
      */
     public static boolean isValidDependingOn(Task task, Task dependingOn) {
-        if (task == dependingOn)
+        if (task == dependingOn) // TODO: werkt dit wel?
             return false;
         if (task.getStatus() == TaskStatus.FINISHED || task.getStatus() == TaskStatus.FAILED){
             return false; // Aan een FINISHED of FAILED task kunnen geen nieuwe depency constraint meer toegewezen worden.
