@@ -13,6 +13,8 @@ public class MainController extends AbstractController {
     private final ProjectRepository projectRepository;
     private final TMSystem tmSystem;
 
+    //TODO documentatie, als ook tmSystem naar SystemTime
+
     public MainController(UserInterface userInterface,TMSystem tmSystem,ProjectRepository projectRepository) {
         super(userInterface);
         this.tmSystem = tmSystem;
@@ -22,17 +24,17 @@ public class MainController extends AbstractController {
     @Override
     public void advanceTime() throws IllegalArgumentException {
         AbstractController controller = new AdvanceTimeController(getTMSystem(),getUserInterface());
-        getUserInterface().addController(controller);
+        controller.activate();
         controller.advanceTime();
-        getUserInterface().removeController(controller);
+        controller.deActivate();
     }
 
     @Override
     public void createProject() throws IllegalArgumentException {
         AbstractController controller = new ProjectController(getProjectRepository(),new User("root"),getUserInterface());
-        getUserInterface().addController(controller);
+        controller.activate();
         controller.createProject();
-        getUserInterface().removeController(controller);
+        controller.deActivate();
     }
 
     private ProjectRepository getProjectRepository() {
@@ -45,9 +47,9 @@ public class MainController extends AbstractController {
     @Override
     public void createTask() throws IllegalArgumentException {
         AbstractController controller = new TaskController(getProjectRepository(),getUserInterface());
-        getUserInterface().addController(controller);
+        controller.activate();
         controller.createTask();
-        getUserInterface().removeController(controller);
+        controller.deActivate();
     }
 
     @Override
@@ -58,25 +60,25 @@ public class MainController extends AbstractController {
     @Override
     public void showProjects() throws IllegalArgumentException {
         AbstractController controller = new ProjectController(getProjectRepository(),new User("root"),getUserInterface());
-        getUserInterface().addController(controller);
+        controller.activate();
         controller.showProjects();
-        getUserInterface().removeController(controller);
+        controller.deActivate();
     }
 
     @Override
     public void updateTask() throws IllegalArgumentException {
         AbstractController controller = new TaskController(getProjectRepository(),getUserInterface());
-        getUserInterface().addController(controller);
+        controller.activate();
         controller.updateTask();
-        getUserInterface().removeController(controller);
+        controller.deActivate();
     }
 
     @Override
     public void startSimulation() throws IllegalArgumentException {
         ProjectRepository repo = null; //Welke repository?
         AbstractController controller = new SimulationController(repo,getUserInterface());
-        getUserInterface().addController(controller);
+        controller.activate();
         controller.startSimulation();
-        getUserInterface().removeController(controller);
+        controller.deActivate();
     }
 }

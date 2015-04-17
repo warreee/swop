@@ -3,7 +3,6 @@ package be.swop.groep11.main.ui;
 import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.TMSystem;
-import be.swop.groep11.main.User;
 import be.swop.groep11.main.controllers.*;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.commands.CancelException;
@@ -35,7 +34,7 @@ public class CommandLineInterface implements UserInterface {
     private ProjectController projectController;
     private TaskController taskController;
     private AdvanceTimeController advanceTimeController;
-
+//TODO cleanup nodig, move main to new app class?
     /**
      * Run de CommandLineInterface
      * Wanneer als argument "yaml" wordt opgegeven, wordt het programma met het bestand input/input.tman
@@ -52,7 +51,7 @@ public class CommandLineInterface implements UserInterface {
         // maak een nieuwe system aan
         TMSystem TMSystem = new TMSystem();
         ProjectRepository projectRepository = TMSystem.getProjectRepository();
-        cli.addController(new MainController(cli,TMSystem,projectRepository));
+        cli.addControllerToStack(new MainController(cli, TMSystem, projectRepository));
         // lees commando's
         cli.run();
     }
@@ -67,9 +66,6 @@ public class CommandLineInterface implements UserInterface {
         this.br = new BufferedReader(new InputStreamReader(java.lang.System.in));
         this.exit = false;
 
-/*        // maak een nieuwe system aan
-        TMSystem TMSystem = new TMSystem();
-        ProjectRepository projectRepository = TMSystem.getProjectRepository();*/
 
         if (readYamlFile) {
             // run inputreader
@@ -80,15 +76,7 @@ public class CommandLineInterface implements UserInterface {
                 printMessage("Yaml file niet gevonden");
             }*/
         }
-
-        // maak de controllers aan
-        User user = new User("ROOT");
-/*
-        this.projectController = new ProjectController(projectRepository, user, this);
-        this.taskController = new TaskController(projectRepository, this);
-        this.advanceTimeController = new AdvanceTimeController(TMSystem,this);
-*/
-
+        //Maak strategies aan voor de commands
         initStrategy();
     }
 
@@ -158,11 +146,11 @@ public class CommandLineInterface implements UserInterface {
     private AbstractController getCurrentController() {
         return abstractControllers.getLast();
     }
-    public void addController(AbstractController abstractController){
+    public void addControllerToStack(AbstractController abstractController){
         abstractControllers.addLast(abstractController);
     }
 
-    public void removeController(AbstractController abstractController){
+    public void removeControllerFromStack(AbstractController abstractController){
         abstractControllers.remove(abstractController);
     }
 

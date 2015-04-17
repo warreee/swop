@@ -45,4 +45,18 @@ public abstract class AbstractController {
         throw new IllegalArgumentException("Niet ondersteund");
 
     }
+
+    /**
+     * Set's this controller on top of stack in UI.
+     */
+    protected void activate(){
+        getUserInterface().addControllerToStack(this);
+    }
+
+    /**
+     * Removes this controller from the stack in UI.
+     */
+    protected void deActivate(){
+        getUserInterface().removeControllerFromStack(this);
+    }
 }

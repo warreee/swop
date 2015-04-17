@@ -94,12 +94,12 @@ abstract class EmptyTestUI implements UserInterface {
     }
 
     @Override
-    public void addController(AbstractController abstractController) {
+    public void addControllerToStack(AbstractController abstractController) {
 
     }
 
     @Override
-    public void removeController(AbstractController abstractController) {
+    public void removeControllerFromStack(AbstractController abstractController) {
 
     }
 }

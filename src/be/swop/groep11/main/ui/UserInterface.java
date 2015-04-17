@@ -101,7 +101,7 @@ public interface UserInterface {
 
 
 
-    public void addController(AbstractController abstractController);
-    public void removeController(AbstractController abstractController);
+    public void addControllerToStack(AbstractController abstractController);
+    public void removeControllerFromStack(AbstractController abstractController);
 
 }
