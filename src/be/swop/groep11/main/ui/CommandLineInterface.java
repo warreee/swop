@@ -4,10 +4,7 @@ import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.TMSystem;
 import be.swop.groep11.main.User;
-import be.swop.groep11.main.controllers.AbstractController;
-import be.swop.groep11.main.controllers.AdvanceTimeController;
-import be.swop.groep11.main.controllers.ProjectController;
-import be.swop.groep11.main.controllers.TaskController;
+import be.swop.groep11.main.controllers.*;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.commands.Command;
@@ -52,7 +49,10 @@ public class CommandLineInterface implements UserInterface {
 
         // maak een nieuwe CommandLineInterface aan
         CommandLineInterface cli = new CommandLineInterface(readYamlFile);
-
+        // maak een nieuwe system aan
+        TMSystem TMSystem = new TMSystem();
+        ProjectRepository projectRepository = TMSystem.getProjectRepository();
+        cli.addController(new MainController(cli,TMSystem,projectRepository));
         // lees commando's
         cli.run();
     }
@@ -67,9 +67,9 @@ public class CommandLineInterface implements UserInterface {
         this.br = new BufferedReader(new InputStreamReader(java.lang.System.in));
         this.exit = false;
 
-        // maak een nieuwe system aan
+/*        // maak een nieuwe system aan
         TMSystem TMSystem = new TMSystem();
-        ProjectRepository projectRepository = TMSystem.getProjectRepository();
+        ProjectRepository projectRepository = TMSystem.getProjectRepository();*/
 
         if (readYamlFile) {
             // run inputreader
@@ -83,12 +83,16 @@ public class CommandLineInterface implements UserInterface {
 
         // maak de controllers aan
         User user = new User("ROOT");
+/*
         this.projectController = new ProjectController(projectRepository, user, this);
         this.taskController = new TaskController(projectRepository, this);
         this.advanceTimeController = new AdvanceTimeController(TMSystem,this);
+*/
 
         initStrategy();
     }
+
+
 
     private void run(){
         try {
@@ -147,6 +151,8 @@ public class CommandLineInterface implements UserInterface {
         addCommandStrategy(Command.SHOWPROJECTS, AbstractController::showProjects);
         addCommandStrategy(Command.HELP, AbstractController::showHelp);
         addCommandStrategy(Command.EXIT, controller -> exit=true);
+        addCommandStrategy(Command.CANCEL, controller -> {});
+
     }
 
     private AbstractController getCurrentController() {

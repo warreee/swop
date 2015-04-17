@@ -1,22 +1,10 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.resource.DailyAvailability;
-import be.swop.groep11.main.resource.IResourceType;
-import be.swop.groep11.main.resource.ResourceType;
-import be.swop.groep11.main.resource.ResourceTypeRepository;
-import be.swop.groep11.main.resource.constraint.ConflictConstraint;
-import be.swop.groep11.main.resource.constraint.RequirementConstraint;
-import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.time.LocalTime;
-import java.util.ArrayList;
-
 /**
  * Created by robin on 8/04/15.
  */
 public class ResourceTypeTest {
+/*
     IResourceType t1, t2, t3, t4, t5, t6;
     private ResourceTypeRepository repo;
 
@@ -72,5 +60,6 @@ public class ResourceTypeTest {
         // We zetten de ResourceTypeConstraints van type 1. Dit zou een exception moeten geven.
         t1.setResourceTypeConstraints(allConstraints);
     }
+*/
 
 }

@@ -1,19 +1,11 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.resource.*;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.time.LocalTime;
-
-import static org.junit.Assert.*;
-
 /**
  * Created by Ronald on 13/04/2015.
  */
 public class ResourceTypeBuilderTest {
 
-    private ResourceTypeBuilder builderA;
+/*    private ResourceTypeBuilder builderA;
     private ResourceTypeBuilder builderB;
 
 
@@ -116,5 +108,5 @@ public class ResourceTypeBuilderTest {
     @Test (expected = IllegalArgumentException.class)
     public void testAddInstance_invalid() throws Exception {
         builderA.addResourceInstance("");
-    }
+    }*/
 }

@@ -10,14 +10,18 @@ import be.swop.groep11.main.ui.UserInterface;
  */
 public class MainController extends AbstractController {
 
-    public MainController(UserInterface userInterface) {
-        //TODO fix references, add properties
+    private final ProjectRepository projectRepository;
+    private final TMSystem tmSystem;
+
+    public MainController(UserInterface userInterface,TMSystem tmSystem,ProjectRepository projectRepository) {
         super(userInterface);
+        this.tmSystem = tmSystem;
+        this.projectRepository = projectRepository;
     }
 
     @Override
     public void advanceTime() throws IllegalArgumentException {
-        AbstractController controller = new AdvanceTimeController(getSystemTime(),getUserInterface());
+        AbstractController controller = new AdvanceTimeController(getTMSystem(),getUserInterface());
         getUserInterface().addController(controller);
         controller.advanceTime();
         getUserInterface().removeController(controller);
@@ -32,10 +36,10 @@ public class MainController extends AbstractController {
     }
 
     private ProjectRepository getProjectRepository() {
-        return null;
+        return projectRepository;
     }
-    private TMSystem getSystemTime() {
-        return null;
+    private TMSystem getTMSystem() {
+        return tmSystem;
     }
 
     @Override

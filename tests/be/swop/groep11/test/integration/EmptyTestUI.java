@@ -1,6 +1,7 @@
 package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.Project;
+import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;
@@ -92,4 +93,13 @@ abstract class EmptyTestUI implements UserInterface {
         }
     }
 
+    @Override
+    public void addController(AbstractController abstractController) {
+
+    }
+
+    @Override
+    public void removeController(AbstractController abstractController) {
+
+    }
 }
