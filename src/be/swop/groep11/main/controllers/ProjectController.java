@@ -14,9 +14,8 @@ import java.time.LocalDateTime;
 /**
  * Bevat de stappen om de use cases "Show Projects" en "Create Project" uit te voeren.
  */
-public class ProjectController {
+public class ProjectController extends AbstractController {
 
-    private UserInterface ui;
     private final User user;
     private ProjectRepository projectRepository;
 
@@ -26,9 +25,9 @@ public class ProjectController {
      * @param user Gebruiker die projecten aanmaakt
      * @param ui Gebruikersinterface
      */
-    public ProjectController(ProjectRepository projectRepository,User user, UserInterface ui){
+    public ProjectController(ProjectRepository projectRepository, User user, UserInterface ui){
+        super(ui);
         this.projectRepository = projectRepository;
-        this.ui = ui;
         this.user = user;
     }
 
@@ -38,14 +37,14 @@ public class ProjectController {
     public void showProjects() {
         try {
             ImmutableList<Project> projects = projectRepository.getProjects();
-            Project project = ui.selectProjectFromList(projects);
-            ui.showProjectDetails(project);
+            Project project =  getUserInterface().selectProjectFromList(projects);
+            getUserInterface().showProjectDetails(project);
 
             ImmutableList<Task> tasks = project.getTasks();
-            Task task = ui.selectTaskFromList(tasks);
-            ui.showTaskDetails(task);
+            Task task =  getUserInterface().selectTaskFromList(tasks);
+            getUserInterface().showTaskDetails(task);
         } catch (CancelException | EmptyListException e) {
-            ui.printException(e);
+            getUserInterface().printException(e);
         }
     }
 
@@ -54,18 +53,18 @@ public class ProjectController {
      */
     public void createProject(){
         try {
-            String projectName = ui.requestString("Project naam:");
-            String description = ui.requestString("Project beschrijving:");
-            LocalDateTime creationTime = ui.requestDatum("Creation time:");
-            LocalDateTime dueTime = ui.requestDatum("Due time:");
+            String projectName =  getUserInterface().requestString("Project naam:");
+            String description =  getUserInterface().requestString("Project beschrijving:");
+            LocalDateTime creationTime =  getUserInterface().requestDatum("Creation time:");
+            LocalDateTime dueTime =  getUserInterface().requestDatum("Due time:");
 
             projectRepository.addNewProject(projectName, description ,creationTime, dueTime, user);
-            ui.printMessage("Project toegevoegd");
+            getUserInterface().printMessage("Project toegevoegd");
         } catch (IllegalArgumentException e) {
-            ui.printException(e);
+            getUserInterface().printException(e);
             createProject();
         } catch (CancelException e) {
-            ui.printException(e);
+            getUserInterface().printException(e);
         }
 
     }

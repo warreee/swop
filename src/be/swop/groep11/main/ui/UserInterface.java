@@ -1,6 +1,7 @@
 package be.swop.groep11.main.ui;
 
 import be.swop.groep11.main.Project;
+import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.commands.CancelException;
 import com.google.common.collect.ImmutableList;
@@ -98,5 +99,9 @@ public interface UserInterface {
      */
     public void showTaskDetails(Task task);
 
+
+
+    public void addController(AbstractController abstractController);
+    public void removeController(AbstractController abstractController);
 
 }

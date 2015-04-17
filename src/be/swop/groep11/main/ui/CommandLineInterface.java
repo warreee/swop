@@ -1,26 +1,29 @@
 package be.swop.groep11.main.ui;
 
-import be.swop.groep11.main.*;
+import be.swop.groep11.main.Project;
+import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.TMSystem;
+import be.swop.groep11.main.User;
+import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.controllers.AdvanceTimeController;
 import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.controllers.TaskController;
-import be.swop.groep11.main.Project;
-import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.commands.Command;
+import be.swop.groep11.main.ui.commands.CommandStrategy;
 import be.swop.groep11.main.ui.commands.IllegalCommandException;
 import com.google.common.collect.ImmutableList;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * Commandline gebruikersinterface die UserInterface implementeert.
@@ -83,6 +86,8 @@ public class CommandLineInterface implements UserInterface {
         this.projectController = new ProjectController(projectRepository, user, this);
         this.taskController = new TaskController(projectRepository, this);
         this.advanceTimeController = new AdvanceTimeController(TMSystem,this);
+
+        initStrategy();
     }
 
     private void run(){
@@ -107,7 +112,7 @@ public class CommandLineInterface implements UserInterface {
     }
 
     private  void executeCommand(Command command) {
-        switch (command) {
+        /*switch (command) {
             case EXIT:
                 exit = true;
                 break;
@@ -115,6 +120,7 @@ public class CommandLineInterface implements UserInterface {
                 printHelp();
                 break;
             case CREATEPROJECT:
+
                 getProjectController().createProject();
                 break;
             case ADVANCETIME:
@@ -129,7 +135,36 @@ public class CommandLineInterface implements UserInterface {
             case SHOWPROJECTS:
                 getProjectController().showProjects();
                 break;
-        }
+        }*/
+        commandStrategies.get(command).execute(getCurrentController());
+    }
+
+    private void initStrategy(){
+        addCommandStrategy(Command.CREATETASK, AbstractController::createTask);
+        addCommandStrategy(Command.CREATEPROJECT, AbstractController::createProject);
+        addCommandStrategy(Command.ADVANCETIME, AbstractController::advanceTime);
+        addCommandStrategy(Command.UPDATETASK, AbstractController::updateTask);
+        addCommandStrategy(Command.SHOWPROJECTS, AbstractController::showProjects);
+        addCommandStrategy(Command.HELP, AbstractController::showHelp);
+        addCommandStrategy(Command.EXIT, controller -> exit=true);
+    }
+
+    private AbstractController getCurrentController() {
+        return abstractControllers.getLast();
+    }
+    public void addController(AbstractController abstractController){
+        abstractControllers.addLast(abstractController);
+    }
+
+    public void removeController(AbstractController abstractController){
+        abstractControllers.remove(abstractController);
+    }
+
+    private LinkedList<AbstractController> abstractControllers = new LinkedList<>();
+    private HashMap<Command,CommandStrategy> commandStrategies = new HashMap<>();
+
+    private void addCommandStrategy(Command command,CommandStrategy strategy){
+        this.commandStrategies.put(command, strategy);
     }
 
     private boolean exit;
@@ -252,6 +287,9 @@ public class CommandLineInterface implements UserInterface {
             return false;
         }
     }
+
+
+
 
     /**
      * Toont een tekstweergave van een lijst projecten.

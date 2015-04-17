@@ -3,7 +3,6 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.task.TaskStatus;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.CancelException;
@@ -17,18 +16,17 @@ import java.util.List;
 /**
  * Bevat de stappen om de use cases "Create Task" en "Update Task" uit te voeren.
  */
-public class TaskController {
+public class TaskController extends AbstractController {
 
     private ProjectRepository projectRepository;
-    private UserInterface ui;
 
     /**
      * Constructor om een nieuwe task controller te maken.
      * @param ui Gebruikersinterface
      */
     public TaskController(ProjectRepository projectRepository, UserInterface ui) {
+        super(ui);
         this.projectRepository = projectRepository;
-        this.ui = ui;
     }
 
     /**
@@ -36,30 +34,30 @@ public class TaskController {
      */
     public void createTask(){
         try {
-            Project project = ui.selectProjectFromList(projectRepository.getProjects());
-            String description = ui.requestString("Beschrijving:");
-            Double acceptableDeviation = ui.requestDouble("Aanvaardbare afwijking in procent:") / 100;
-            Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf(ui.requestNumber("Geschatte duur in minuten:")).longValue());
+            Project project =  getUserInterface().selectProjectFromList(projectRepository.getProjects());
+            String description =  getUserInterface().requestString("Beschrijving:");
+            Double acceptableDeviation =  getUserInterface().requestDouble("Aanvaardbare afwijking in procent:") / 100;
+            Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf( getUserInterface().requestNumber("Geschatte duur in minuten:")).longValue());
 
             List<Task> tasks = new ArrayList<Task>(project.getTasks());
             List<Task> selectedTasks = new ArrayList<Task>();
-            while (ui.requestString("Voeg een afhankelijkheid toe? (y/N)").equalsIgnoreCase("y")) {
+            while ( getUserInterface().requestString("Voeg een afhankelijkheid toe? (y/N)").equalsIgnoreCase("y")) {
                 if (tasks.isEmpty()) {
-                    ui.printMessage("Geen taken om toe te voegen...");
+                    getUserInterface().printMessage("Geen taken om toe te voegen...");
                     break;
                 }
                 else {
-                    ui.printMessage("Opmerking: de nieuwe taak zal van de hieronder gekozen taak afhangen.");
-                    Task task = ui.selectTaskFromList(ImmutableList.copyOf(tasks));
+                    getUserInterface().printMessage("Opmerking: de nieuwe taak zal van de hieronder gekozen taak afhangen.");
+                    Task task =  getUserInterface().selectTaskFromList(ImmutableList.copyOf(tasks));
                     tasks.remove(task);
                     selectedTasks.add(task);
                 }
             }
 
             Task alternativeTaskFor = null;
-            if ( (! project.getFailedTasks().isEmpty()) && ui.requestString("Is deze taak een alternatieve taak? (y/N)").equalsIgnoreCase("y")) {
-                ui.printMessage("Deze taak zal een zal een alternatieve taak zijn voor de geselecteerde taak.");
-                alternativeTaskFor = ui.selectTaskFromList(project.getFailedTasks());
+            if ( (! project.getFailedTasks().isEmpty()) &&  getUserInterface().requestString("Is deze taak een alternatieve taak? (y/N)").equalsIgnoreCase("y")) {
+                getUserInterface().printMessage("Deze taak zal een zal een alternatieve taak zijn voor de geselecteerde taak.");
+                alternativeTaskFor =  getUserInterface().selectTaskFromList(project.getFailedTasks());
             }
 
             project.addNewTask(description, acceptableDeviation, estimatedDuration);
@@ -72,14 +70,14 @@ public class TaskController {
             if (alternativeTaskFor != null) {
                 alternativeTaskFor.setAlternativeTask(project.getTasks().get(project.getTasks().size() - 1));
             }
-            ui.printMessage("Taak toegevoegd");
+            getUserInterface().printMessage("Taak toegevoegd");
         }
         catch (IllegalArgumentException e) {
-            ui.printException(e);
+            getUserInterface().printException(e);
             createTask();
         }
         catch (EmptyListException|CancelException e) {
-            ui.printException(e);
+            getUserInterface().printException(e);
         }
     }
 
@@ -88,19 +86,19 @@ public class TaskController {
      */
     public void updateTask() {
         try {
-            Task task = ui.selectTaskFromList(projectRepository.getAllAvailableTasks());
+            Task task =  getUserInterface().selectTaskFromList(projectRepository.getAllAvailableTasks());
             updateTask(task);
         }
         catch (EmptyListException|CancelException e) {
-            ui.printException(e);
+            getUserInterface().printException(e);
         }
     }
 
     private void updateTask(Task task) throws CancelException{
         try {
-            LocalDateTime startTime = ui.requestDatum("Starttijd (of laat leeg om starttijd niet te wijzigen):");
-            LocalDateTime endTime = ui.requestDatum("Eindtijd (of laat leeg om eindtijd niet te wijzigen):");
-            String status = ui.requestString("Status: FAILED of FINISHED (of laat leeg om status niet te wijzigen):");
+            LocalDateTime startTime =  getUserInterface().requestDatum("Starttijd (of laat leeg om starttijd niet te wijzigen):");
+            LocalDateTime endTime =  getUserInterface().requestDatum("Eindtijd (of laat leeg om eindtijd niet te wijzigen):");
+            String status =  getUserInterface().requestString("Status: FAILED of FINISHED (of laat leeg om status niet te wijzigen):");
 
             if(startTime != null){
                 task.setStartTime(startTime);
@@ -112,12 +110,12 @@ public class TaskController {
                doTransition(status, task);
            }
             if (startTime == null && endTime == null && status.isEmpty())
-                ui.printMessage("Geen updates gedaan");
+                getUserInterface().printMessage("Geen updates gedaan");
             else
-                ui.printMessage("Taak geupdated");
+                getUserInterface().printMessage("Taak geupdated");
         }
         catch (IllegalArgumentException e) {
-            ui.printException(e);
+            getUserInterface().printException(e);
             updateTask(task);
         }
     }
