@@ -558,4 +558,12 @@ public class Task {
 
     private IRequirementList requirementList;
 
+    /**
+     * Deze methode zorgt ervoor dat taken hun resources kunnen vrijgeven indien ze vroegtijdig stoppen bvb.
+     * TODO: implementeren, moet dit wel hier staan?
+     */
+    protected void releaseResources(){
+
+    }
+
 }

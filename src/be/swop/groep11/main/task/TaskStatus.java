@@ -59,7 +59,7 @@ public abstract class TaskStatus implements Cloneable {
     public abstract Duration getDuration(Task task, LocalDateTime currentSystemTime);
 
 
-    /** TODO: vragen aan michiel
+    /**
      * Controleer of de gegeven start tijd geldig is voor deze taak.
      *
      * @param startTime De starttijd om te controleren

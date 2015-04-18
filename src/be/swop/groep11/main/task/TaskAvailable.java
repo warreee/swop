@@ -20,9 +20,11 @@ public class TaskAvailable extends TaskStatus {
 
     @Override
     protected void execute(Task task) {
-        if (checkPlan()){
+        if (task.getStartTime() != null) {
             TaskStatus executing = new TaskExecuting();
             task.setStatus(executing);
+        } else {
+            throw new IllegalStateTransition("Er was geen starttijd gezet, hierdoor kon de taak niet uitgevoerd worden!");
         }
     }
 

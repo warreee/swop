@@ -26,9 +26,12 @@ public class TaskExecuting extends TaskStatus {
 
     @Override
     protected void finish(Task task) {
-        if (super.checkPlan()){
+        if (task.getStartTime() != null && task.getEndTime() != null) {
             TaskStatus finished = new TaskFinished();
             task.setStatus(finished);
+            task.releaseResources(); // TODO: implementatie in task doen!
+        } else {
+            throw new IllegalStateTransition("Het project heeft geen correcte start en/of eindtijd \n en kan dus niet gefinisd worden!");
         }
 
     }

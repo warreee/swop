@@ -3,7 +3,6 @@ package be.swop.groep11.test.unit;
 import be.swop.groep11.main.*;
 import be.swop.groep11.main.task.IllegalStateTransition;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.task.TaskStatus;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,11 +38,11 @@ public class TaskStatusTest {
     }
 
 
-    /**
+/*    *//**
      * Taken zijn standaard geïnitialiseerd op available!
      * @throws InvocationTargetException
      * @throws IllegalAccessException
-     */
+     *//*
     @Test(expected = IllegalStateTransition.class)
     public void availableToAvailableTest() throws Exception {
 
@@ -51,11 +50,11 @@ public class TaskStatusTest {
 
     }
 
-    /**
+    *//**
      * Maak een taak unavailable, daarna terug available en daarna nog is available TODO: huh?
      * @throws InvocationTargetException
      * @throws IllegalAccessException
-     */
+     *//*
     @Test(expected = IllegalStateTransition.class)
     public void availableToAvailableTest2() throws InvocationTargetException, IllegalAccessException {
         methodMakeUnAvailable.invoke(task1);
@@ -68,18 +67,66 @@ public class TaskStatusTest {
         methodMakeUnAvailable.invoke(task1);
         task1.addNewDependencyConstraint(task2);
         methodMakeAvailable.invoke(task1);
+    } */
+
+//////////////////////// AVAILABLE___TO____ //////////////////////
+
+    @Test (expected = IllegalStateTransition.class)
+    public void availableToExecuting() throws Exception {
+        assertTrue(task1.getStatusString().equals("AVAILABLE"));
+        task1.execute();
+        assertTrue(task1.getStatusString().equals("AVAILABLE"));
+        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.execute();
+        assertTrue(task1.getStatusString().equals("EXECUTING"));
     }
 
     @Test (expected = IllegalStateTransition.class)
     public void availableToFailedTest() throws Exception {
+        assertTrue(task1.getStatusString().equals("AVAILABLE"));
         task1.fail();
+        assertTrue(task1.getStatusString().equals("AVAILABLE"));
     }
 
 
     @Test (expected = IllegalStateTransition.class)
     public void availableToFinishedTest() throws Exception {
+        assertTrue(task1.getStatusString().equals("AVAILABLE"));
         task1.finish();
+        assertTrue(task1.getStatusString().equals("AVAILABLE"));
     }
+
+    //////////////////////// EXECUTING___TO____ //////////////////////
+
+    @Test (expected = IllegalStateTransition.class)
+    public void executingToFinishedTest() throws Exception {
+        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.execute();
+        assertTrue(task1.getStatusString().equals("EXECUTING"));
+        task1.finish();
+        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
+        task1.finish();
+        assertTrue(task1.getStatusString().equals("FINISHED"));
+    }
+
+    @Test (expected = IllegalStateTransition.class)
+    public void executingToFailed() throws Exception {
+        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.execute();
+        // TODO heeft een gefailde taak ook een eindtijd? zie ook githubissue
+        task1.fail();
+        assertTrue(task1.getStatusString().equals("FAILED"));
+    }
+
+    @Test (expected = IllegalStateTransition.class)
+    public void executingToExecuting() throws Exception {
+        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.execute();
+        task1.execute();
+    }
+
+    //////////////////////// FINISHED___TO____ //////////////////////
+
 
 
 /*
