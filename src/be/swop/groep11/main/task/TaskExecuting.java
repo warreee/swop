@@ -46,7 +46,7 @@ public class TaskExecuting extends TaskStatus {
      * @return de duur van de taak.
      */
     @Override
-    public Duration getDuration(Task task, LocalDateTime currentSystemTime) {
+    protected Duration getDuration(Task task, LocalDateTime currentSystemTime) {
 
         return task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration();
     }

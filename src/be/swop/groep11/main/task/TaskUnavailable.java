@@ -25,7 +25,7 @@ public class TaskUnavailable extends TaskStatus {
      * @return de geschatte duur van de taak.
      */
     @Override
-    public Duration getDuration(Task task, LocalDateTime currentSystemTime) {
+    protected Duration getDuration(Task task, LocalDateTime currentSystemTime) {
         return task.getEstimatedDuration();
     }
 

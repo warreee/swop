@@ -330,8 +330,8 @@ public class Project {
         LocalDateTime currentSystemTime = this.getProjectRepository().getTmSystem().getCurrentSystemTime(); // TODO: zo lang voor de tijd?
         Duration total = Duration.ofHours(0);
         for(Task task :tasks){
-            TaskStatus status = task.getStatus();
-            total.plus(status.getDuration(task, currentSystemTime)); // TODO: Hier wordt task opnieuw doorgegeven, kan dit wel de bedoeling zijn als we eerst status uit datzelfde task object halen
+
+            total.plus(task.getDuration(currentSystemTime));
         }
         return total;
     }

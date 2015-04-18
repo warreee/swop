@@ -566,4 +566,13 @@ public class Task {
 
     }
 
+    /**
+     * Geeft de duration terug van de taak.
+     * @param currentSystemTime
+     * @return
+     */
+    public Duration getDuration(LocalDateTime currentSystemTime){
+        return this.status.getDuration(this, currentSystemTime);
+    }
+
 }
