@@ -38,6 +38,7 @@ public class TaskStatusTest {
         methodMakeUnAvailable.setAccessible(true);
     }
 
+
     /**
      * Taken zijn standaard geïnitialiseerd op available!
      * @throws InvocationTargetException
@@ -68,6 +69,18 @@ public class TaskStatusTest {
         task1.addNewDependencyConstraint(task2);
         methodMakeAvailable.invoke(task1);
     }
+
+    @Test (expected = IllegalStateTransition.class)
+    public void availableToFailedTest() throws Exception {
+        task1.fail();
+    }
+
+
+    @Test (expected = IllegalStateTransition.class)
+    public void availableToFinishedTest() throws Exception {
+        task1.finish();
+    }
+
 
 /*
 
