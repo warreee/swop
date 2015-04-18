@@ -1,11 +1,14 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.*;
+import be.swop.groep11.main.task.IllegalStateTransition;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskStatus;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -17,9 +20,10 @@ public class TaskStatusTest {
 
     Project project;
     Task task1, task2;
+    Method methodMakeAvailable, methodMakeUnAvailable;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchMethodException {
         LocalDateTime date = LocalDateTime.of(2015, 3, 12, 8, 0);
         ProjectRepository projectRepository = new TMSystem().getProjectRepository();
         project = new Project("Test project", "Mijn eerste project", date, date.plusHours(6), new User("Ik"),projectRepository);
@@ -27,21 +31,52 @@ public class TaskStatusTest {
         project.addNewTask("Taak2", 0.1, Duration.ofHours(1));
         task1 = project.getTasks().get(0);
         task2 = project.getTasks().get(1);
+
+        methodMakeAvailable = Task.class.getDeclaredMethod("makeAvailable");
+        methodMakeUnAvailable = Task.class.getDeclaredMethod("makeUnAvailable");
+        methodMakeAvailable.setAccessible(true);
+        methodMakeUnAvailable.setAccessible(true);
     }
 
-    @Test
-    public void true2() throws Exception {
-        assertTrue(true);
+    /**
+     * Taken zijn standaard geïnitialiseerd op available!
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
+    @Test(expected = IllegalStateTransition.class)
+    public void availableToAvailableTest() throws Exception {
+
+        methodMakeAvailable.invoke(task1);
+
     }
-/*    @Test
-    public void availableToAvailableTest() throws IllegalStateTransition {
-        task1.makeAvailable();
-        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
+
+    /**
+     * Maak een taak unavailable, daarna terug available en daarna nog is available TODO: huh?
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
+    @Test(expected = IllegalStateTransition.class)
+    public void availableToAvailableTest2() throws InvocationTargetException, IllegalAccessException {
+        methodMakeUnAvailable.invoke(task1);
+        methodMakeAvailable.invoke(task1);
+        methodMakeAvailable.invoke(task1);
+    }
+
+    @Test (expected = IllegalStateTransition.class)
+    public void availableToUnavailableTest() throws Exception {
+        methodMakeUnAvailable.invoke(task1);
+        task1.addNewDependencyConstraint(task2);
+        methodMakeAvailable.invoke(task1);
+    }
+
+/*
+
+
+    task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
         task1.makeAvailable();
         task1.addNewDependencyConstraint(task2); // Dit zou ervoor moeten zorgen dat taak1 op UNVAILABLE komt.
-        assertFalse(TaskStatus.isValidNewStatus(TaskStatus.AVAILABLE, task1));
-    }
+
 
     @Test
     public void availableToFinishedTest() throws Exception {

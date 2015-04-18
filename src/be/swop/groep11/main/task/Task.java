@@ -307,11 +307,11 @@ public class Task {
         makeDependentTasksAvailable();
     }
 
-    private void makeAvailable() {
+    protected void makeAvailable() {
         status.makeAvailable(this);
     }
 
-    private void makeUnAvailable() {
+    protected void makeUnAvailable() {
         status.makeUnavailable(this);
     }
 
