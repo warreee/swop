@@ -6,10 +6,7 @@ import be.swop.groep11.main.ProjectRepositoryMemento;
 import be.swop.groep11.main.TMSystem;
 import be.swop.groep11.main.controllers.*;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.ui.commands.CancelException;
-import be.swop.groep11.main.ui.commands.Command;
-import be.swop.groep11.main.ui.commands.CommandStrategy;
-import be.swop.groep11.main.ui.commands.IllegalCommandException;
+import be.swop.groep11.main.ui.commands.*;
 import com.google.common.collect.ImmutableList;
 
 import java.io.BufferedReader;
@@ -53,7 +50,9 @@ public class CommandLineInterface implements UserInterface {
         // maak een nieuwe system aan
         TMSystem TMSystem = new TMSystem();
         ProjectRepository projectRepository = TMSystem.getProjectRepository();
-        cli.addControllerToStack(new MainController(cli, TMSystem, projectRepository));
+        //Aanmaken main controller
+        MainController main = new MainController(cli, TMSystem, projectRepository);
+        cli.addControllerToStack(main);
         // lees commando's
         cli.run();
     }
@@ -106,31 +105,6 @@ public class CommandLineInterface implements UserInterface {
     }
 
     private  void executeCommand(Command command) {
-        /*switch (command) {
-            case EXIT:
-                exit = true;
-                break;
-            case HELP:
-                printHelp();
-                break;
-            case CREATEPROJECT:
-
-                getProjectController().createProject();
-                break;
-            case ADVANCETIME:
-                getAdvanceTimeController().advanceTime();
-                break;
-            case UPDATETASK:
-                getTaskController().updateTask();
-                break;
-            case CREATETASK:
-                getTaskController().createTask();
-                break;
-            case SHOWPROJECTS:
-                getProjectController().showProjects();
-                break;
-        }*/
-
         if (commandStrategies.get(command) != null) {
             commandStrategies.get(command).execute(getCurrentController());
 
@@ -168,7 +142,18 @@ public class CommandLineInterface implements UserInterface {
         addCommandStrategy(Command.STARTSIMULATION, AbstractController::startSimulation);
         addCommandStrategy(Command.HELP, AbstractController::showHelp);
         addCommandStrategy(Command.EXIT, controller -> exit=true);
-        addCommandStrategy(Command.CANCEL, controller -> {});
+        addCommandStrategy(Command.CANCEL, controller -> {
+        });
+
+        /*
+            Betere versie van CommandStrategy om aan SubType specifieke methodes te raken, en toch
+            garantie te hebben dat het een AbstractController implementatie is.
+
+            CommandStrategyAlternatief<TaskController> createTaskStrat = TaskController::createTask;
+            CommandStrategyAlternatief<TaskController> updateTaskStrat = TaskController::updateTask;
+        */
+
+
 
     }
 
@@ -183,6 +168,11 @@ public class CommandLineInterface implements UserInterface {
         abstractControllers.remove(abstractController);
     }
 
+    /**
+     * Houdt lijst van Controllers bij die "actief zijn".
+     * De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit.
+     *
+     */
     private LinkedList<AbstractController> abstractControllers = new LinkedList<>();
     private HashMap<Command,CommandStrategy> commandStrategies = new HashMap<>();
 
@@ -536,8 +526,8 @@ public class CommandLineInterface implements UserInterface {
         this.isInSimulationMode = false;
         this.commandStrategies = new HashMap<>();
         this.initStrategy();
-        this.printMessage("Simulatiemodus beëindigd\n"+
-            "Alle commando's zijn terug beschikbaar");
+        this.printMessage("Simulatiemodus beëindigd\n" +
+                "Alle commando's zijn terug beschikbaar");
     }
 
     private boolean isInSimulationMode() {

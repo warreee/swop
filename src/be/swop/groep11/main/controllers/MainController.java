@@ -16,7 +16,7 @@ public class MainController extends AbstractController {
 
     private ProjectRepositoryMemento storedProjectRepository;
 
-    //TODO documentatie, als ook tmSystem naar SystemTime
+    //TODO documentatie, als ook tmSystem naar SystemTime, als ook reduceren van duplicate code.
 
     public MainController(UserInterface userInterface,TMSystem tmSystem,ProjectRepository projectRepository) {
         super(userInterface);
@@ -86,7 +86,9 @@ public class MainController extends AbstractController {
 
     @Override
     public void endSimulation() throws IllegalArgumentException {
-        AbstractController controller = new SimulationController(this,getProjectRepository(),getUserInterface());
+        /*TODO endSimulation kan niet gebeuren in de Main Controller, aangezien er eerst een simulatie gestart moet zijn.
+         Moet exception gooien. Dus default implementatie via AbstractController */
+        AbstractController controller = new SimulationController(this, getProjectRepository(), getUserInterface());
         controller.activate();
         controller.endSimulation();
         controller.deActivate();
