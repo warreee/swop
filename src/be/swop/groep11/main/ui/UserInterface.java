@@ -1,6 +1,6 @@
 package be.swop.groep11.main.ui;
 
-import be.swop.groep11.main.Project;
+import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.commands.CancelException;

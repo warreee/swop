@@ -1,6 +1,9 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.*;
+import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.TMSystem;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.IllegalStateTransition;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;

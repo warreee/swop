@@ -1,4 +1,4 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.core;
 
 /**
  * Stelt een gebruiker met een naam voor.

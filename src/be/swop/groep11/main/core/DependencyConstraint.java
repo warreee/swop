@@ -1,9 +1,6 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.core;
 
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.task.TaskStatus;
-
-import java.util.Set;
 
 /**
  * Stelt de afhankelijkheid van een taak voor.

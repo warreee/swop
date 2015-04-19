@@ -1,6 +1,5 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.core;
 
-import be.swop.groep11.main.Project;
 import com.rits.cloning.Cloner;
 
 import java.util.List;

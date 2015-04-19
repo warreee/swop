@@ -1,6 +1,6 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.TMSystem;
+import be.swop.groep11.main.core.TMSystem;
 import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.UserInterface;
 

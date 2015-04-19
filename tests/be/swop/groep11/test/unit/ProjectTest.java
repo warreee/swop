@@ -1,9 +1,9 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.Project;
-import be.swop.groep11.main.ProjectRepository;
-import be.swop.groep11.main.TMSystem;
-import be.swop.groep11.main.User;
+import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.TMSystem;
+import be.swop.groep11.main.core.User;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

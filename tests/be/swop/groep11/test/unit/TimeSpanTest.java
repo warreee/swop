@@ -1,6 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.TimeSpan;
+import be.swop.groep11.main.core.TimeSpan;
 import org.junit.*;
 
 import java.time.LocalDateTime;

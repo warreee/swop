@@ -1,8 +1,9 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.*;
-import be.swop.groep11.main.Project;
-import be.swop.groep11.main.ProjectRepository;
+import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.TMSystem;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskStatus;
 import org.junit.Before;
@@ -16,7 +17,7 @@ public class TaskTest {
 
     private Task task1, task2, task3;
     private Project project;
-    TMSystem TMSystem;
+    be.swop.groep11.main.core.TMSystem TMSystem;
 
     @Before
     public void setUp() throws Exception {

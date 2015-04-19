@@ -1,6 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.TMSystem;
+import be.swop.groep11.main.core.TMSystem;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,8 +1,8 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.ProjectRepository;
-import be.swop.groep11.main.ProjectRepositoryMemento;
-import be.swop.groep11.main.User;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.ProjectRepositoryMemento;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.CancelException;
 
@@ -60,7 +60,7 @@ public class SimulationController extends AbstractController {
         UserInterface ui = this.getUserInterface();
         try {
             /**
-             *  Mogelijk alternatief: definiëren van nieuwe Command's in de Command Enum
+             *  Mogelijk alternatief: definiï¿½ren van nieuwe Command's in de Command Enum
              *  Die overeenkomen met de Continue,cancel en realize.
              *  Bijvoorbeeld: SIM_Continue, SIM_Cancel, SIM_Realize
              *  Bepaal voor ieder van deze Commands een CommandStrategy

@@ -1,8 +1,7 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.core;
 
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskFailed;
-import be.swop.groep11.main.task.TaskStatus;
 import com.google.common.collect.ImmutableList;
 
 import java.time.DayOfWeek;

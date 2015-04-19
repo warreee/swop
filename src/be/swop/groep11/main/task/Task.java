@@ -1,10 +1,9 @@
 package be.swop.groep11.main.task;
 
-import be.swop.groep11.main.DependencyConstraint;
-import be.swop.groep11.main.Project;
-import be.swop.groep11.main.TimeSpan;
+import be.swop.groep11.main.core.DependencyConstraint;
+import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.resource.IRequirementList;
-import be.swop.groep11.main.resource.Resource;
 import be.swop.groep11.main.resource.ResourceInstance;
 import be.swop.groep11.main.resource.ResourceRequirement;
 import com.google.common.collect.ImmutableList;

@@ -1,4 +1,4 @@
-package be.swop.groep11.main;
+package be.swop.groep11.main.core;
 
 import be.swop.groep11.main.resource.*;
 import com.google.common.collect.ImmutableList;

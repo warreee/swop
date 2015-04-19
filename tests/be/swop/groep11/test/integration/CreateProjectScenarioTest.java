@@ -1,8 +1,8 @@
 package be.swop.groep11.test.integration;
 
-import be.swop.groep11.main.ProjectRepository;
-import be.swop.groep11.main.TMSystem;
-import be.swop.groep11.main.User;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.TMSystem;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.ui.commands.CancelException;
 import org.junit.Before;

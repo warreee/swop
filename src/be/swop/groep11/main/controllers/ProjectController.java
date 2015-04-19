@@ -1,9 +1,9 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.Project;
-import be.swop.groep11.main.ProjectRepository;
+import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.User;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;

@@ -1,9 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.*;
-import be.swop.groep11.main.Project;
-import be.swop.groep11.main.ProjectRepository;
-import be.swop.groep11.main.DependencyConstraint;
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
