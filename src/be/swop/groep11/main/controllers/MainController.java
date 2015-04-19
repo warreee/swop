@@ -1,6 +1,7 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.ProjectRepository;
+import be.swop.groep11.main.ProjectRepositoryMemento;
 import be.swop.groep11.main.TMSystem;
 import be.swop.groep11.main.User;
 import be.swop.groep11.main.ui.UserInterface;
@@ -12,6 +13,8 @@ public class MainController extends AbstractController {
 
     private final ProjectRepository projectRepository;
     private final TMSystem tmSystem;
+
+    private ProjectRepositoryMemento storedProjectRepository;
 
     //TODO documentatie, als ook tmSystem naar SystemTime
 
@@ -75,10 +78,25 @@ public class MainController extends AbstractController {
 
     @Override
     public void startSimulation() throws IllegalArgumentException {
-        ProjectRepository repo = null; //Welke repository?
-        AbstractController controller = new SimulationController(repo,getUserInterface());
+        AbstractController controller = new SimulationController(this,getProjectRepository(),getUserInterface());
         controller.activate();
         controller.startSimulation();
         controller.deActivate();
+    }
+
+    @Override
+    public void endSimulation() throws IllegalArgumentException {
+        AbstractController controller = new SimulationController(this,getProjectRepository(),getUserInterface());
+        controller.activate();
+        controller.endSimulation();
+        controller.deActivate();
+    }
+
+    public ProjectRepositoryMemento getStoredProjectRepository() {
+        return storedProjectRepository;
+    }
+
+    public void setStoredProjectRepository(ProjectRepositoryMemento storedProjectRepository) {
+        this.storedProjectRepository = storedProjectRepository;
     }
 }

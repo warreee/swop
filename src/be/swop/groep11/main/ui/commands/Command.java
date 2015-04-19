@@ -15,7 +15,10 @@ public enum Command {
     ADVANCETIME("Advance Time"),
     UPDATETASK("Update Task"),
     CREATETASK("Create Task"),
-    SHOWPROJECTS("Show Projects");
+    SHOWPROJECTS("Show Projects"),
+    PLANTASK("Plan Task"),
+    STARTSIMULATION("Start Simulation"),
+    ENDSIMULATION("End Simulation");
 
     Command(String command){
         this.command = command;

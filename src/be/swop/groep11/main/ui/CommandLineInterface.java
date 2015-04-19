@@ -2,6 +2,7 @@ package be.swop.groep11.main.ui;
 
 import be.swop.groep11.main.Project;
 import be.swop.groep11.main.ProjectRepository;
+import be.swop.groep11.main.ProjectRepositoryMemento;
 import be.swop.groep11.main.TMSystem;
 import be.swop.groep11.main.controllers.*;
 import be.swop.groep11.main.task.Task;
@@ -18,8 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * Commandline gebruikersinterface die UserInterface implementeert.
@@ -34,6 +34,8 @@ public class CommandLineInterface implements UserInterface {
     private ProjectController projectController;
     private TaskController taskController;
     private AdvanceTimeController advanceTimeController;
+    private SimulationController simulationController;
+
 //TODO cleanup nodig, move main to new app class?
     /**
      * Run de CommandLineInterface
@@ -128,7 +130,33 @@ public class CommandLineInterface implements UserInterface {
                 getProjectController().showProjects();
                 break;
         }*/
-        commandStrategies.get(command).execute(getCurrentController());
+
+        if (commandStrategies.get(command) != null) {
+            commandStrategies.get(command).execute(getCurrentController());
+
+            if (this.isInSimulationMode()
+                    && command != Command.STARTSIMULATION
+                    && command != Command.CANCEL
+                    && command != Command.EXIT
+                    && command != Command.HELP) {
+                // in de simulatiemodus moet na het uitvoeren van elk commando gecontroleerd worden
+                // of simulatiemodus moet beëindigd worden
+                commandStrategies.put(Command.ENDSIMULATION, AbstractController::endSimulation);
+                commandStrategies.get(Command.ENDSIMULATION).execute(getCurrentController());
+                commandStrategies.remove(Command.ENDSIMULATION);
+            }
+
+            else if (this.isInSimulationMode() && command == Command.CANCEL) {
+                commandStrategies.put(Command.ENDSIMULATION, AbstractController::endSimulation);
+                commandStrategies.get(Command.ENDSIMULATION).execute(getCurrentController());
+                commandStrategies.remove(Command.ENDSIMULATION);
+            }
+        }
+
+        else {
+            // commando niet gevonden
+            this.printMessage("Dit commando is niet toegestaan");
+        }
     }
 
     private void initStrategy(){
@@ -137,6 +165,7 @@ public class CommandLineInterface implements UserInterface {
         addCommandStrategy(Command.ADVANCETIME, AbstractController::advanceTime);
         addCommandStrategy(Command.UPDATETASK, AbstractController::updateTask);
         addCommandStrategy(Command.SHOWPROJECTS, AbstractController::showProjects);
+        addCommandStrategy(Command.STARTSIMULATION, AbstractController::startSimulation);
         addCommandStrategy(Command.HELP, AbstractController::showHelp);
         addCommandStrategy(Command.EXIT, controller -> exit=true);
         addCommandStrategy(Command.CANCEL, controller -> {});
@@ -464,6 +493,59 @@ public class CommandLineInterface implements UserInterface {
             java.lang.System.out.printf(format, "Alternatieve taak: ", task.getAlternativeTask().getDescription());
         }
     }
+
+    /**
+     * Start de simulatiemodus.
+     * Implementeert startSimulationMode uit UserInterface
+     */
+    @Override
+    public void startSimulationMode() {
+        List<Command> allowedCommands = new ArrayList<>();
+        allowedCommands.add(Command.SHOWPROJECTS);
+        allowedCommands.add(Command.CREATETASK);
+        allowedCommands.add(Command.PLANTASK);
+        allowedCommands.add(Command.HELP);
+        allowedCommands.add(Command.EXIT);
+        allowedCommands.add(Command.CANCEL);
+
+        List<Command> currentCommands = new ArrayList<Command>(this.commandStrategies.keySet());
+        for (Command command : currentCommands) {
+            if (! allowedCommands.contains(command)) {
+                this.commandStrategies.remove(command);
+            }
+        }
+
+        this.isInSimulationMode = true;
+
+        this.printMessage("Simulatiemodus gestart\n" +
+                "Mogelijke commando's zijn nu:\n" +
+                "show projects\n" +
+                "create task\n" +
+                "plan task\n" +
+                "cancel\n" +
+                "help\n" +
+                "exit");
+    }
+
+    /**
+     * Eindigt de simulatiemodus.
+     * Implementeert endSimulationMode uit UserInterface
+     */
+    @Override
+    public void endSimulationMode() {
+        this.isInSimulationMode = false;
+        this.commandStrategies = new HashMap<>();
+        this.initStrategy();
+        this.printMessage("Simulatiemodus beëindigd\n"+
+            "Alle commando's zijn terug beschikbaar");
+    }
+
+    private boolean isInSimulationMode() {
+        return this.isInSimulationMode;
+    }
+
+    private boolean isInSimulationMode = false;
+    private ProjectRepositoryMemento memento;
 
     private void checkCancel(String str) throws CancelException{
         if(Command.checkCancel(str)){
