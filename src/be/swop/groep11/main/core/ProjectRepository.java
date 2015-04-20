@@ -18,11 +18,12 @@ public class ProjectRepository {
 
     private SystemTime systemTime;
 
+
     /**
      * Contstructor om een nieuwe project repository aan te maken.
      * @param systemTime de systeemtijd
      */
-    public ProjectRepository(TMSystem tmSystem, SystemTime systemTime) {
+    public ProjectRepository(SystemTime systemTime) {
         projects = new ArrayList<>();
         this.systemTime = systemTime;
     }
