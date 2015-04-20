@@ -8,6 +8,7 @@ import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourceInstance;
 import be.swop.groep11.main.resource.ResourceRequirement;
 import com.google.common.collect.ImmutableList;
+import org.mockito.cglib.core.Local;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -298,20 +299,20 @@ public class Task {
         return this.getStatus().getStatusString().toString();
     }
 
-    public void execute() {
-        status.execute(this);
+    public void execute(LocalDateTime startTime) {
+        status.execute(this, startTime);
     }
 
     /**
      * Hier moeten we makeDependentTasksAvailable() niet gebruiken, eerst alternatieven checken!
      */
-    public void fail() {
-        status.fail(this);
+    public void fail(LocalDateTime endTime) {
+        status.fail(this, endTime);
 
     }
 
-    public void finish() {
-        status.finish(this);
+    public void finish(LocalDateTime endTime) {
+        status.finish(this, endTime);
         makeDependentTasksAvailable();
     }
 
@@ -490,16 +491,15 @@ public class Task {
     }
 
     /**
-     * Geeft de eerstvolgende n tijdsspannes na een gegeven starttijd waarin deze taak kan uitgevoerd worden.
-     * De tijdsspannes starten steeds op een uur (zonder minuten).
-     * @param n         Het aantal gevraagde tijdsspannes
-     * @param startTime De gegeven starttijd
-     * @return Een lijst van de eerstvolgende n tijdsspannes
+     * Geeft de eerste n mogelijke starttijden na de huidige systeemtijd waarin deze taak kan uitgevoerd worden.
+     * De starttijden vallen steeds op een uur (dus zonder minuten).
+     * @param n Het aantal gevraagde starttijden
+     * @return Een lijst van de eerste n mogelijke starttijden
      */
-    public List<TimeSpan> getNextTimeSpans(int n, LocalDateTime startTime) {
-        List<TimeSpan> timeSpans = new ArrayList<>();
+    public List<LocalDateTime> getNextStartTimes(int n) { // TODO: testen!
+        List<LocalDateTime> timeSpans = new ArrayList<>();
 
-        LocalDateTime nextStartTime = this.getNextHour(startTime);
+        LocalDateTime nextStartTime = this.getNextHour(this.getSystemTime()); // TODO: systeemtijd opvragen vanuit Task
         while (timeSpans.size() < n) {
 
             // lijst van "te alloceren resource instanties"
@@ -521,7 +521,12 @@ public class Task {
                 }
             }
 
-            // TODO afwerken ...
+            if (enoughInstances) {
+                timeSpans.add(nextStartTime);
+            }
+            else {
+                nextStartTime = nextStartTime.plusHours(1);
+            }
         }
 
         return timeSpans;
@@ -564,7 +569,7 @@ public class Task {
         this.requirementList = requirementList;
     }
 
-    private IRequirementList requirementList;
+    private IRequirementList requirementList; // TODO: requirement list meegeven bij creëren van taak en deze variabele final maken
 
     /**
      * Deze methode zorgt ervoor dat taken hun resources kunnen vrijgeven indien ze vroegtijdig stoppen bvb.

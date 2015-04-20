@@ -1,6 +1,9 @@
 package be.swop.groep11.main.task;
 
+import org.mockito.cglib.core.Local;
+
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -19,22 +22,19 @@ public class TaskAvailable extends TaskStatus {
     }
 
     @Override
-    protected void execute(Task task) {
-        if (task.getStartTime() != null) {
-            TaskStatus executing = new TaskExecuting();
-            task.setStatus(executing);
-        } else {
-            throw new IllegalStateTransition("Er was geen starttijd gezet, hierdoor kon de taak niet uitgevoerd worden!");
-        }
+    protected void execute(Task task, LocalDateTime startTime) {
+        task.setStartTime(startTime);
+        TaskStatus executing = new TaskExecuting();
+        task.setStatus(executing);
     }
 
     @Override
-    protected void finish(Task task) {
+    protected void finish(Task task, LocalDateTime endTime) {
         throw new IllegalStateTransition("Een taak moet eerst worden uitgevoerd voor hij gefinish wordt");
     }
 
     @Override
-    protected void fail(Task task) {
+    protected void fail(Task task, LocalDateTime endTime) {
         throw new IllegalStateTransition("Een taak kan niet van Available naar Fail gaan");
     }
 
