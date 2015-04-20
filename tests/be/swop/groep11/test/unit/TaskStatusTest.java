@@ -28,7 +28,7 @@ public class TaskStatusTest {
     public void setUp() throws NoSuchMethodException {
         LocalDateTime date = LocalDateTime.of(2015, 3, 12, 8, 0);
         ProjectRepository projectRepository = new TMSystem().getProjectRepository();
-        project = new Project("Test project", "Mijn eerste project", date, date.plusHours(6), new User("Ik"), projectRepository);
+        project = new Project("Test project", "Mijn eerste project", date, date.plusHours(6), new User("Ik"), );
         project.addNewTask("Taak1", 0.1, Duration.ofHours(1));
         project.addNewTask("Taak2", 0.1, Duration.ofHours(1));
         task1 = project.getTasks().get(0);

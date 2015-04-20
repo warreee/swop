@@ -2,6 +2,7 @@ package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.core.DependencyConstraint;
 import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourceInstance;
@@ -29,11 +30,12 @@ public class Task {
      * @param estimatedDuration     De verwachte duur van de nieuwe taak
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
      * @param project               Het project waarbij de nieuwe taak hoort
+     * @param systemTime
      * @throws java.lang.IllegalArgumentException
      *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project) throws IllegalArgumentException {
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project, SystemTime systemTime) throws IllegalArgumentException {
         if (! canHaveAsProject(project)) {
             throw new IllegalArgumentException("Ongeldig project");
         }
@@ -43,7 +45,11 @@ public class Task {
         setAcceptableDeviation(acceptableDeviation);
         this.dependencyConstraints = new HashSet<>();
         this.project = project;
+        this.systemTime = systemTime;
+
     }
+
+    private SystemTime systemTime;
 
     /**
      * Beschrijving
@@ -296,9 +302,12 @@ public class Task {
         status.execute(this);
     }
 
+    /**
+     * Hier moeten we makeDependentTasksAvailable() niet gebruiken, eerst alternatieven checken!
+     */
     public void fail() {
         status.fail(this);
-        makeDependentTasksAvailable(); // TODO: in iteratie 1 deden we dit enkel bij finish, klopt het als dit hier ook gebeurd?
+
     }
 
     public void finish() {
@@ -461,7 +470,7 @@ public class Task {
      * @return 0.1 staat voor 10%, 0.2 staat voor 20%.
      */
     public double getOverTimePercentage(){
-        LocalDateTime systemTime = getProject().getProjectRepository().getTmSystem().getCurrentSystemTime();
+        LocalDateTime systemTime = this.systemTime.getCurrentSystemTime();
         if(!hasStartTime()){
             return 0.0; // Project is nog niet gestart. Dus over time is 0.
         }

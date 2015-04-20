@@ -15,22 +15,16 @@ import java.util.List;
 public class ProjectRepository {
 
     private ArrayList<Project> projects;
-    private TMSystem tmSystem;
+
+    private SystemTime systemTime;
 
     /**
      * Contstructor om een nieuwe project repository aan te maken.
-     * @param tmSystem Het systeem
+     * @param systemTime de systeemtijd
      */
-    public ProjectRepository(TMSystem tmSystem) {
+    public ProjectRepository(TMSystem tmSystem, SystemTime systemTime) {
         projects = new ArrayList<>();
-        this.tmSystem = tmSystem;
-    }
-
-    /**
-     * Geeft het systeem van deze project repository.
-     */
-    public TMSystem getTmSystem() {
-        return tmSystem;
+        this.systemTime = systemTime;
     }
 
     /**
@@ -52,7 +46,7 @@ public class ProjectRepository {
      * @throws IllegalArgumentException De opgegeven parameters voor het project zijn ongeldig.
      */
     public void addNewProject(String name, String description,LocalDateTime creationTime, LocalDateTime duetime, User user) throws IllegalArgumentException{
-        Project proj = new Project(name, description, creationTime, duetime, user, this);
+        Project proj = new Project(name, description, creationTime, duetime, user, systemTime);
         projects.add(proj);
     }
 
