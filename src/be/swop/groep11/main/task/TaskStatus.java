@@ -1,5 +1,7 @@
 package be.swop.groep11.main.task;
 
+import org.mockito.cglib.core.Local;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -32,15 +34,15 @@ public abstract class TaskStatus implements Cloneable {
         return (TaskStatus) super.clone();
     }
 
-    protected void execute(Task task) {
+    protected void execute(Task task, LocalDateTime startTime) {
         throw new IllegalStateTransition("De taak kan niet naar de status EXECUTING gaan vanuit de huidige status");
     }
 
-    protected void finish(Task task){
+    protected void finish(Task task, LocalDateTime endTime){
         throw new IllegalStateTransition("De taak kan niet naar de status FINISHED gaan vanuit de huidige status");
     }
 
-    protected void fail(Task task){
+    protected void fail(Task task, LocalDateTime endTime){
         throw new IllegalStateTransition("De taak kan niet naar de status FAIL gaan vanuit de huidige status");
     }
 

@@ -1,9 +1,6 @@
 package be.swop.groep11.main.task;
 
-import be.swop.groep11.main.core.DependencyConstraint;
-import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourceInstance;
 import be.swop.groep11.main.resource.ResourceRequirement;
@@ -17,7 +14,7 @@ import java.util.*;
 
 /**
  * Stelt een taak voor met een beschrijving, starttijd, eindtijd, verwachte duur en een aanvaardbare marge.
- * Een taak behoort tot 1 project en heeft een lijst van dependency constraints.
+ * Een taak behoort heeft een lijst van dependency constraints.
  */
 public class Task {
 
@@ -29,24 +26,19 @@ public class Task {
      * @param description           De omschrijving van de nieuwe taak
      * @param estimatedDuration     De verwachte duur van de nieuwe taak
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
-     * @param project               Het project waarbij de nieuwe taak hoort
      * @param systemTime
+     * @param dependencyGraph
      * @throws java.lang.IllegalArgumentException
      *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project, SystemTime systemTime) throws IllegalArgumentException {
-        if (! canHaveAsProject(project)) {
-            throw new IllegalArgumentException("Ongeldig project");
-        }
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph) throws IllegalArgumentException {
         this.setStatus(new TaskAvailable());
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
-        this.dependencyConstraints = new HashSet<>();
-        this.project = project;
         this.systemTime = systemTime;
-
+        this.dependencyGraph = dependencyGraph;
     }
 
     private SystemTime systemTime;
@@ -163,7 +155,7 @@ public class Task {
      * Wijzigt de starttijd van de taak.
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
      */
-    public void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
+    protected void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
         if (! this.status.canHaveAsStartTime(this, startTime))
             throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
@@ -185,7 +177,7 @@ public class Task {
      * @param endTime De nieuwe eindtijd van deze taak
      * @throws java.lang.IllegalArgumentException De eindtijd is niet geldig.
      */
-    public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
+    protected void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
         if (! status.canHaveAsEndTime(this, endTime))
             throw new IllegalArgumentException("Ongeldige eindtijd");
         this.endTime = endTime;
@@ -207,40 +199,17 @@ public class Task {
         return this.endTime != null;
     }
 
-    /**
-     * Project waarbij de taak hoort
-     */
-    private final Project project;
+    private DependencyGraph dependencyGraph;
 
-    /**
-     * Geeft het project van de taak.
-     */
-    public Project getProject() {
-        return project;
+    public Set<Task> getDependentTasks() {
+        return dependencyGraph.getDependentTasks(this);
+    }
+
+    public Set<Task> getDependingOnTasks() {
+        return dependencyGraph.getDependingOnTasks(this);
     }
 
 
-    /**
-     * Controleert of een gegeven project een geldig project is voor deze taak.
-     *
-     * @param project   Het gegeven project
-     * @return          Waar als er nog geen associatie bestaat tussen het project deze taak.
-     */
-    public boolean canHaveAsProject(Project project) {
-        return project != null;
-    }
-
-    /**
-     * Set van alle dependency constraints van deze taak
-     */
-    private Set<DependencyConstraint> dependencyConstraints;
-
-    /**
-     * Geeft een immutable list van alle dependency constraints van de taak.
-     */
-    public ImmutableList<DependencyConstraint> getDependencyConstraints() {
-        return ImmutableList.copyOf(dependencyConstraints);
-    }
 
     /**
      * Voegt een dependency constraint toe voor deze taak.
@@ -248,39 +217,15 @@ public class Task {
      * @param dependingOn De taak waarvan deze taak moet afhangen
      */
     public void addNewDependencyConstraint(Task dependingOn) {
-        dependencyConstraints.add(new DependencyConstraint(this, dependingOn));
+        dependencyGraph.addDependency(this, dependingOn);
 
-            makeUnAvailable();
+        makeUnAvailable();
 
     }
 
-    /**
-     * Geeft een set van alle taken waarvan deze taak (recursief) afhankelijk is.
-     */
-    public Set<Task> getDependingOnTasks() {
-        HashSet<Task> dependingOnTasks = new HashSet<>();
-        for (DependencyConstraint dependencyConstraint : this.dependencyConstraints) {
-            // voeg de dependingOn taak van de dependency constraint toe
-            dependingOnTasks.add(dependencyConstraint.getDependingOn());
-            // voeg alle taken toe waarvan de dependingOn taak afhankelijk is
-            dependingOnTasks.addAll(dependencyConstraint.getDependingOn().getDependingOnTasks());
-        }
-        return dependingOnTasks;
-    }
 
-    /**
-     * Geeft een set van alle taken die van deze taak afhankelijk zijn.
-     */
-    public Set<Task> getDependentTasks() {
-        HashSet<Task> dependentTasks = new HashSet<>();
-        Project project = this.getProject();
-        ImmutableList<Task> tasks = project.getTasks();
-        for (Task task : tasks) {
-            if (task.getDependingOnTasks().contains(this))
-                dependentTasks.add(task);
-        }
-        return dependentTasks;
-    }
+
+
 
     /**
      * Status van de taak
@@ -298,20 +243,20 @@ public class Task {
         return this.getStatus().getStatusString().toString();
     }
 
-    public void execute() {
-        status.execute(this);
+    public void execute(LocalDateTime startTime) {
+        status.execute(this, startTime);
     }
 
     /**
      * Hier moeten we makeDependentTasksAvailable() niet gebruiken, eerst alternatieven checken!
      */
-    public void fail() {
-        status.fail(this);
+    public void fail(LocalDateTime endTime) {
+        status.fail(this, endTime);
 
     }
 
-    public void finish() {
-        status.finish(this);
+    public void finish(LocalDateTime endTime) {
+        status.finish(this, endTime);
         makeDependentTasksAvailable();
     }
 
@@ -466,13 +411,13 @@ public class Task {
     }
 
     /**
-     * Berekent hoeveel een project overtijd is zonder rekening te houden met de acceptable deviation.
+     * Berekent hoeveel een task overtijd is zonder rekening te houden met de acceptable deviation.
      * @return 0.1 staat voor 10%, 0.2 staat voor 20%.
      */
     public double getOverTimePercentage(){
         LocalDateTime systemTime = this.systemTime.getCurrentSystemTime();
         if(!hasStartTime()){
-            return 0.0; // Project is nog niet gestart. Dus over time is 0.
+            return 0.0; // Task is nog niet gestart. Dus over time is 0.
         }
         double minutes;
         if(hasStartTime() && hasEndTime()) {
@@ -490,16 +435,15 @@ public class Task {
     }
 
     /**
-     * Geeft de eerstvolgende n tijdsspannes na een gegeven starttijd waarin deze taak kan uitgevoerd worden.
-     * De tijdsspannes starten steeds op een uur (zonder minuten).
-     * @param n         Het aantal gevraagde tijdsspannes
-     * @param startTime De gegeven starttijd
-     * @return Een lijst van de eerstvolgende n tijdsspannes
+     * Geeft de eerste n mogelijke starttijden na de huidige systeemtijd waarin deze taak kan uitgevoerd worden.
+     * De starttijden vallen steeds op een uur (dus zonder minuten).
+     * @param n Het aantal gevraagde starttijden
+     * @return Een lijst van de eerste n mogelijke starttijden
      */
-    public List<TimeSpan> getNextTimeSpans(int n, LocalDateTime startTime) {
-        List<TimeSpan> timeSpans = new ArrayList<>();
+    public List<LocalDateTime> getNextStartTimes(int n) { // TODO: testen!
+        List<LocalDateTime> timeSpans = new ArrayList<>();
 
-        LocalDateTime nextStartTime = this.getNextHour(startTime);
+        LocalDateTime nextStartTime = this.getNextHour(this.systemTime.getCurrentSystemTime());
         while (timeSpans.size() < n) {
 
             // lijst van "te alloceren resource instanties"
@@ -521,7 +465,12 @@ public class Task {
                 }
             }
 
-            // TODO afwerken ...
+            if (enoughInstances) {
+                timeSpans.add(nextStartTime);
+            }
+            else {
+                nextStartTime = nextStartTime.plusHours(1);
+            }
         }
 
         return timeSpans;
@@ -564,7 +513,7 @@ public class Task {
         this.requirementList = requirementList;
     }
 
-    private IRequirementList requirementList;
+    private IRequirementList requirementList; // TODO: requirement list meegeven bij creëren van taak en deze variabele final maken
 
     /**
      * Deze methode zorgt ervoor dat taken hun resources kunnen vrijgeven indien ze vroegtijdig stoppen bvb.
