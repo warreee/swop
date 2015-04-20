@@ -20,23 +20,25 @@ public class TaskExecuting extends TaskStatus {
     }
 
     @Override
-    protected void execute(Task task) {
+    protected void execute(Task task, LocalDateTime startTime) {
         throw new IllegalStateTransition("De taak was reeds aan het uitvoeren!");
     }
 
     @Override
-    protected void finish(Task task) {
-        if (task.getStartTime() != null && task.getEndTime() != null) {
-            TaskStatus finished = new TaskFinished();
-            task.setStatus(finished);
-            task.releaseResources(); // TODO: implementatie in task doen!
-        } else {
-            throw new IllegalStateTransition("Het project heeft geen correcte start en/of eindtijd \n en kan dus niet gefinisd worden!");
-        }
-
+    protected void finish(Task task, LocalDateTime endTime) {
+        task.setEndTime(endTime);
+        TaskStatus finished = new TaskFinished();
+        task.setStatus(finished);
+        task.releaseResources(); // TODO: implementatie in task doen!
     }
 
-    // TODO: fail nog doen
+    @Override
+    protected void fail(Task task, LocalDateTime endTime) {
+        task.setEndTime(endTime);
+        TaskStatus failed = new TaskFailed();
+        task.setStatus(failed);
+        task.releaseResources(); // TODO: implementatie in task doen!
+    }
 
     /**
      * Geeft de geschatte duur van de taak die aan het uitvoeren is, indien de taak over tijd is

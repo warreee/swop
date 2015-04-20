@@ -5,6 +5,7 @@ import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourceInstance;
 import be.swop.groep11.main.resource.ResourceRequirement;
 import com.google.common.collect.ImmutableList;
+import org.mockito.cglib.core.Local;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -161,7 +162,7 @@ public class Task {
      * Wijzigt de starttijd van de taak.
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
      */
-    public void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
+    protected void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
         if (! this.status.canHaveAsStartTime(this, startTime))
             throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
@@ -183,7 +184,7 @@ public class Task {
      * @param endTime De nieuwe eindtijd van deze taak
      * @throws java.lang.IllegalArgumentException De eindtijd is niet geldig.
      */
-    public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
+    protected void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
         if (! status.canHaveAsEndTime(this, endTime))
             throw new IllegalArgumentException("Ongeldige eindtijd");
         this.endTime = endTime;
@@ -296,20 +297,20 @@ public class Task {
         return this.getStatus().getStatusString().toString();
     }
 
-    public void execute() {
-        status.execute(this);
+    public void execute(LocalDateTime startTime) {
+        status.execute(this, startTime);
     }
 
     /**
      * Hier moeten we makeDependentTasksAvailable() niet gebruiken, eerst alternatieven checken!
      */
-    public void fail() {
-        status.fail(this);
+    public void fail(LocalDateTime endTime) {
+        status.fail(this, endTime);
 
     }
 
-    public void finish() {
-        status.finish(this);
+    public void finish(LocalDateTime endTime) {
+        status.finish(this, endTime);
         makeDependentTasksAvailable();
     }
 
@@ -488,16 +489,15 @@ public class Task {
     }
 
     /**
-     * Geeft de eerstvolgende n tijdsspannes na een gegeven starttijd waarin deze taak kan uitgevoerd worden.
-     * De tijdsspannes starten steeds op een uur (zonder minuten).
-     * @param n         Het aantal gevraagde tijdsspannes
-     * @param startTime De gegeven starttijd
-     * @return Een lijst van de eerstvolgende n tijdsspannes
+     * Geeft de eerste n mogelijke starttijden na de huidige systeemtijd waarin deze taak kan uitgevoerd worden.
+     * De starttijden vallen steeds op een uur (dus zonder minuten).
+     * @param n Het aantal gevraagde starttijden
+     * @return Een lijst van de eerste n mogelijke starttijden
      */
-    public List<TimeSpan> getNextTimeSpans(int n, LocalDateTime startTime) {
-        List<TimeSpan> timeSpans = new ArrayList<>();
+    public List<LocalDateTime> getNextStartTimes(int n) { // TODO: testen!
+        List<LocalDateTime> timeSpans = new ArrayList<>();
 
-        LocalDateTime nextStartTime = this.getNextHour(startTime);
+        LocalDateTime nextStartTime = this.getNextHour(this.systemTime.getCurrentSystemTime());
         while (timeSpans.size() < n) {
 
             // lijst van "te alloceren resource instanties"
@@ -519,7 +519,12 @@ public class Task {
                 }
             }
 
-            // TODO afwerken ...
+            if (enoughInstances) {
+                timeSpans.add(nextStartTime);
+            }
+            else {
+                nextStartTime = nextStartTime.plusHours(1);
+            }
         }
 
         return timeSpans;
@@ -562,7 +567,7 @@ public class Task {
         this.requirementList = requirementList;
     }
 
-    private IRequirementList requirementList;
+    private IRequirementList requirementList; // TODO: requirement list meegeven bij creëren van taak en deze variabele final maken
 
     /**
      * Deze methode zorgt ervoor dat taken hun resources kunnen vrijgeven indien ze vroegtijdig stoppen bvb.
