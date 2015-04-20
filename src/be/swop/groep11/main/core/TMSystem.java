@@ -26,7 +26,8 @@ public class TMSystem {
      *           | !canHaveAsSystemTime(systemTime)
      */
     public TMSystem(LocalDateTime currentSystemTime) throws IllegalArgumentException {
-        this.projectRepository = new ProjectRepository(this);
+        SystemTime systemTime = new SystemTime();
+        this.projectRepository = new ProjectRepository(systemTime);
         this.resourceTypeRepository = new ResourceTypeRepository();
         setCurrentSystemTime(currentSystemTime);
     }

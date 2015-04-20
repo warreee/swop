@@ -23,8 +23,6 @@ public class SimulationController extends AbstractController {
     * Show Projects
     *
     * */
-
-
     public SimulationController(MainController mainController, ProjectRepository projectRepository, UserInterface userInterface) {
         super(userInterface);
         this.mainController = mainController;

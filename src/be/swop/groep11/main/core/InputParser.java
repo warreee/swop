@@ -41,7 +41,7 @@ public class InputParser {
 
     public static void main(String[] args) {
         TMSystem tmSystem = new TMSystem();
-        ProjectRepository projectRepository = new ProjectRepository(tmSystem);
+//        ProjectRepository projectRepository = new ProjectRepository(tmSystem);
 /*        InputParser inputParser = new InputParser(projectRepository, );
         try {
             inputParser.parseInputFile();

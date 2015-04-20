@@ -99,18 +99,6 @@ public interface UserInterface {
      */
     public void showTaskDetails(Task task);
 
-    /**
-     * Start de simulatiemodus:
-     * alleen de use cases Show Projects, Create Task en Plan Task beschikbaar.
-     */
-    public void startSimulationMode();
-
-    /**
-     * Eindigt de simulatiemodus:
-     * alle use cases terug beschikbaar.
-     */
-    public void endSimulationMode();
-
     public void addControllerToStack(AbstractController abstractController);
     public void removeControllerFromStack(AbstractController abstractController);
     public void showHelp(AbstractController controller);
