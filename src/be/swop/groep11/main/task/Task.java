@@ -164,7 +164,7 @@ public class Task {
      * Wijzigt de starttijd van de taak.
      * @throws java.lang.IllegalArgumentException De starttijd is niet geldig.
      */
-    public void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
+    protected void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
         if (! this.status.canHaveAsStartTime(this, startTime))
             throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
@@ -186,7 +186,7 @@ public class Task {
      * @param endTime De nieuwe eindtijd van deze taak
      * @throws java.lang.IllegalArgumentException De eindtijd is niet geldig.
      */
-    public void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
+    protected void setEndTime(LocalDateTime endTime) throws IllegalArgumentException {
         if (! status.canHaveAsEndTime(this, endTime))
             throw new IllegalArgumentException("Ongeldige eindtijd");
         this.endTime = endTime;
@@ -499,7 +499,7 @@ public class Task {
     public List<LocalDateTime> getNextStartTimes(int n) { // TODO: testen!
         List<LocalDateTime> timeSpans = new ArrayList<>();
 
-        LocalDateTime nextStartTime = this.getNextHour(this.getSystemTime()); // TODO: systeemtijd opvragen vanuit Task
+        LocalDateTime nextStartTime = this.getNextHour(this.systemTime.getCurrentSystemTime());
         while (timeSpans.size() < n) {
 
             // lijst van "te alloceren resource instanties"
