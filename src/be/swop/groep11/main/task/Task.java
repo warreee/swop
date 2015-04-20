@@ -1,14 +1,10 @@
 package be.swop.groep11.main.task;
 
-import be.swop.groep11.main.core.DependencyConstraint;
-import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourceInstance;
 import be.swop.groep11.main.resource.ResourceRequirement;
 import com.google.common.collect.ImmutableList;
-import org.mockito.cglib.core.Local;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -32,11 +28,12 @@ public class Task {
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
      * @param project               Het project waarbij de nieuwe taak hoort
      * @param systemTime
+     * @param dependencyGraph
      * @throws java.lang.IllegalArgumentException
      *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project, SystemTime systemTime) throws IllegalArgumentException {
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project, SystemTime systemTime, DependencyGraph dependencyGraph) throws IllegalArgumentException {
         if (! canHaveAsProject(project)) {
             throw new IllegalArgumentException("Ongeldig project");
         }
@@ -44,10 +41,10 @@ public class Task {
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
-        this.dependencyConstraints = new HashSet<>();
+        this.dependencyConstraints = new HashSet<>(); // TODO verwijderen
         this.project = project;
         this.systemTime = systemTime;
-
+        this.dependencyGraph = dependencyGraph;
     }
 
     private SystemTime systemTime;
@@ -208,6 +205,17 @@ public class Task {
         return this.endTime != null;
     }
 
+    private DependencyGraph dependencyGraph;
+
+    public Set<Task> getDependentTasks() {
+        return dependencyGraph.getDependentTasks(this);
+    }
+
+    public Set<Task> getDependingOnTasks() {
+        return dependencyGraph.getDependingOnTasks(this);
+    }
+
+
     /**
      * Project waarbij de taak hoort
      */
@@ -249,39 +257,15 @@ public class Task {
      * @param dependingOn De taak waarvan deze taak moet afhangen
      */
     public void addNewDependencyConstraint(Task dependingOn) {
-        dependencyConstraints.add(new DependencyConstraint(this, dependingOn));
+        dependencyGraph.addDependency(this, dependingOn);
 
-            makeUnAvailable();
+        makeUnAvailable();
 
     }
 
-    /**
-     * Geeft een set van alle taken waarvan deze taak (recursief) afhankelijk is.
-     */
-    public Set<Task> getDependingOnTasks() {
-        HashSet<Task> dependingOnTasks = new HashSet<>();
-        for (DependencyConstraint dependencyConstraint : this.dependencyConstraints) {
-            // voeg de dependingOn taak van de dependency constraint toe
-            dependingOnTasks.add(dependencyConstraint.getDependingOn());
-            // voeg alle taken toe waarvan de dependingOn taak afhankelijk is
-            dependingOnTasks.addAll(dependencyConstraint.getDependingOn().getDependingOnTasks());
-        }
-        return dependingOnTasks;
-    }
 
-    /**
-     * Geeft een set van alle taken die van deze taak afhankelijk zijn.
-     */
-    public Set<Task> getDependentTasks() {
-        HashSet<Task> dependentTasks = new HashSet<>();
-        Project project = this.getProject();
-        ImmutableList<Task> tasks = project.getTasks();
-        for (Task task : tasks) {
-            if (task.getDependingOnTasks().contains(this))
-                dependentTasks.add(task);
-        }
-        return dependentTasks;
-    }
+
+
 
     /**
      * Status van de taak
