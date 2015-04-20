@@ -18,7 +18,8 @@ public enum Command {
     SHOWPROJECTS("Show Projects"),
     PLANTASK("Plan Task"),
     STARTSIMULATION("Start Simulation"),
-    ENDSIMULATION("End Simulation");
+    ENDSIMULATION("End Simulation"),
+    INVALIDCOMMAND("");
 
     Command(String command){
         this.command = command;
@@ -51,8 +52,10 @@ public enum Command {
                 result = com;
             }
         }
-        if(result == null)
-            throw new IllegalCommandException("Ongeldig commando");
+        if(result == null){
+            return INVALIDCOMMAND;
+//            throw new IllegalCommandException("Ongeldig commando");
+        }
         return result;
     }
 
