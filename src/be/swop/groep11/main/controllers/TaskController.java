@@ -6,11 +6,14 @@ import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.CancelException;
+import be.swop.groep11.main.ui.commands.Command;
+import be.swop.groep11.main.ui.commands.CommandStrategy;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -138,8 +141,15 @@ public class TaskController extends AbstractController {
 
     }
 
+    @Override
+    public void showHelp() throws IllegalArgumentException {
+        getUserInterface().printMessage("Help task controller!");
+    }
 
-
-
-
+    @Override
+    public HashMap<Command, CommandStrategy> getCommandStrategies() {
+        HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
+        map.put(Command.HELP,() -> System.out.println("help task controller"));
+        return map;
+    }
 }

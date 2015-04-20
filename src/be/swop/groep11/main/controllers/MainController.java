@@ -5,6 +5,10 @@ import be.swop.groep11.main.core.ProjectRepositoryMemento;
 import be.swop.groep11.main.core.TMSystem;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.ui.UserInterface;
+import be.swop.groep11.main.ui.commands.Command;
+import be.swop.groep11.main.ui.commands.CommandStrategy;
+
+import java.util.HashMap;
 
 /**
  * Created by Ronald on 17/04/2015.
@@ -100,5 +104,18 @@ public class MainController extends AbstractController {
 
     public void setStoredProjectRepository(ProjectRepositoryMemento storedProjectRepository) {
         this.storedProjectRepository = storedProjectRepository;
+    }
+
+    public HashMap<Command,CommandStrategy> getCommandStrategies(){
+        HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
+        map.put(Command.HELP,() -> System.out.println("help main controller"));
+        map.put(Command.CREATETASK,this::createTask);
+        map.put(Command.UPDATETASK, this::updateTask);
+        map.put(Command.PLANTASK,this::planTask);
+        map.put(Command.CREATEPROJECT,this::createProject);
+        map.put(Command.SHOWPROJECTS,this::showProjects);
+        map.put(Command.ADVANCETIME,this::advanceTime);
+        map.put(Command.STARTSIMULATION,this::startSimulation);
+        return map;
     }
 }

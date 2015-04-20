@@ -25,13 +25,6 @@ public class CommandLineInterface implements UserInterface {
 
     private BufferedReader br;
 
-    /**
-     * Controllers
-     */
-    private ProjectController projectController;
-    private TaskController taskController;
-    private AdvanceTimeController advanceTimeController;
-    private SimulationController simulationController;
 
 //TODO cleanup nodig, move main to new app class?
     /**
@@ -77,11 +70,7 @@ public class CommandLineInterface implements UserInterface {
                 printMessage("Yaml file niet gevonden");
             }*/
         }
-        //Maak strategies aan voor de commands
-        initStrategy();
     }
-
-
 
     private void run(){
         try {
@@ -103,84 +92,45 @@ public class CommandLineInterface implements UserInterface {
             e.printStackTrace();
         }
     }
+    private boolean exit;
+
 
     private  void executeCommand(Command command) {
-        if (commandStrategies.get(command) != null) {
-            commandStrategies.get(command).execute(getCurrentController());
-
-            if (this.isInSimulationMode()
-                    && command != Command.STARTSIMULATION
-                    && command != Command.CANCEL
-                    && command != Command.EXIT
-                    && command != Command.HELP) {
-                // in de simulatiemodus moet na het uitvoeren van elk commando gecontroleerd worden
-                // of simulatiemodus moet beëindigd worden
-                commandStrategies.put(Command.ENDSIMULATION, AbstractController::endSimulation);
-                commandStrategies.get(Command.ENDSIMULATION).execute(getCurrentController());
-                commandStrategies.remove(Command.ENDSIMULATION);
-            }
-
-            else if (this.isInSimulationMode() && command == Command.CANCEL) {
-                commandStrategies.put(Command.ENDSIMULATION, AbstractController::endSimulation);
-                commandStrategies.get(Command.ENDSIMULATION).execute(getCurrentController());
-                commandStrategies.remove(Command.ENDSIMULATION);
-            }
+        System.out.println(getCurrentController());
+        CommandStrategy strat = currentCommandStrategies.get(getCurrentController()).get(command);
+        if(strat != null) {
+            strat.execute();
         }
-
-        else {
-            // commando niet gevonden
-            this.printMessage("Dit commando is niet toegestaan");
-        }
-    }
-
-    private void initStrategy(){
-        addCommandStrategy(Command.CREATETASK, AbstractController::createTask);
-        addCommandStrategy(Command.CREATEPROJECT, AbstractController::createProject);
-        addCommandStrategy(Command.ADVANCETIME, AbstractController::advanceTime);
-        addCommandStrategy(Command.UPDATETASK, AbstractController::updateTask);
-        addCommandStrategy(Command.SHOWPROJECTS, AbstractController::showProjects);
-        addCommandStrategy(Command.STARTSIMULATION, AbstractController::startSimulation);
-        addCommandStrategy(Command.HELP, AbstractController::showHelp);
-        addCommandStrategy(Command.EXIT, controller -> exit=true);
-        addCommandStrategy(Command.CANCEL, controller -> {
-        });
-
-        /*
-            Betere versie van CommandStrategy om aan SubType specifieke methodes te raken, en toch
-            garantie te hebben dat het een AbstractController implementatie is.
-
-            CommandStrategyAlternatief<TaskController> createTaskStrat = TaskController::createTask;
-            CommandStrategyAlternatief<TaskController> updateTaskStrat = TaskController::updateTask;
-        */
-
-
-
     }
 
     private AbstractController getCurrentController() {
-        return abstractControllers.getLast();
+        return controllerStack.getLast();
     }
+
+    @Override
     public void addControllerToStack(AbstractController abstractController){
-        abstractControllers.addLast(abstractController);
+        controllerStack.addLast(abstractController);
+        currentCommandStrategies.put(getCurrentController(), getCurrentController().getCommandStrategies());
     }
 
+    @Override
     public void removeControllerFromStack(AbstractController abstractController){
-        abstractControllers.remove(abstractController);
+        controllerStack.remove(abstractController);
+        currentCommandStrategies.remove(abstractController);
     }
+    private HashMap<AbstractController,HashMap<Command,CommandStrategy>> currentCommandStrategies = new HashMap<>();
 
+    /**
+     * Lijst van controllers,
+     */
+    private LinkedList<AbstractController> controllerStack = new LinkedList<>();
     /**
      * Houdt lijst van Controllers bij die "actief zijn".
      * De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit.
      *
      */
-    private LinkedList<AbstractController> abstractControllers = new LinkedList<>();
     private HashMap<Command,CommandStrategy> commandStrategies = new HashMap<>();
 
-    private void addCommandStrategy(Command command,CommandStrategy strategy){
-        this.commandStrategies.put(command, strategy);
-    }
-
-    private boolean exit;
 
     private void printHelp(){
         StringBuilder sb = new StringBuilder();
@@ -525,7 +475,7 @@ public class CommandLineInterface implements UserInterface {
     public void endSimulationMode() {
         this.isInSimulationMode = false;
         this.commandStrategies = new HashMap<>();
-        this.initStrategy();
+//        this.initStrategy();
         this.printMessage("Simulatiemodus beëindigd\n" +
                 "Alle commando's zijn terug beschikbaar");
     }
@@ -560,24 +510,5 @@ public class CommandLineInterface implements UserInterface {
             e.printStackTrace();
         }
         return result;
-    }
-
-
-    /**
-     * Geeft de project controller voor deze command line gebruikersinterface
-     */
-    private ProjectController getProjectController() {
-        return projectController;
-    }
-
-    /**
-     * Geeft de task controller voor deze command line gebruikersinterface
-     */
-    private TaskController getTaskController() {
-        return taskController;
-    }
-
-    public AdvanceTimeController getAdvanceTimeController() {
-        return advanceTimeController;
     }
 }
