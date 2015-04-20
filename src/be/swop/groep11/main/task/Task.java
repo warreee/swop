@@ -1,9 +1,6 @@
 package be.swop.groep11.main.task;
 
-import be.swop.groep11.main.core.DependencyConstraint;
-import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourceInstance;
 import be.swop.groep11.main.resource.ResourceRequirement;
@@ -31,11 +28,12 @@ public class Task {
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
      * @param project               Het project waarbij de nieuwe taak hoort
      * @param systemTime
+     * @param dependencyGraph
      * @throws java.lang.IllegalArgumentException
      *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project, SystemTime systemTime) throws IllegalArgumentException {
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project, SystemTime systemTime, DependencyGraph dependencyGraph) throws IllegalArgumentException {
         if (! canHaveAsProject(project)) {
             throw new IllegalArgumentException("Ongeldig project");
         }

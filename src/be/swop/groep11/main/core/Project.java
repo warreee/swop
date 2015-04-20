@@ -222,7 +222,8 @@ public class Project {
      *                              Gooi indien één of meerdere van de parameters niet geldig zijn.
      */
     public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) throws IllegalArgumentException {
-        Task task = new Task(description, estimatedDuration, acceptableDeviation, this, systemTime);
+        DependencyGraph dependencyGraph = new DependencyGraph();
+        Task task = new Task(description, estimatedDuration, acceptableDeviation, this, systemTime, dependencyGraph);
         tasks.add(task);
     }
 
