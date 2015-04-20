@@ -20,23 +20,28 @@ public class DependencyGraph {
         dependentMap = new HashMap<>();
     }
 
+    /**
+     * Dependent hangt af van de dependingOn. Dus dependingOn moet eerst worden uitgevoerd.
+     * @param dependent
+     * @param dependingOn
+     */
 
-    public void addDependency(Task task, Task dependingOn) {
+    public void addDependency(Task dependent, Task dependingOn) {
 
-        if (dependingOnMap.containsKey(task)){
-            dependingOnMap.get(task).add(dependingOn);
+        if (dependingOnMap.containsKey(dependent)){
+            dependingOnMap.get(dependent).add(dependingOn);
         } else {
             ArrayList<Task> dependingOnList = new ArrayList<>();
             dependingOnList.add(dependingOn);
-            dependingOnMap.put(task, dependingOnList);
+            dependingOnMap.put(dependent, dependingOnList);
         }
 
-        if (dependentMap.containsKey(task)){
-            dependentMap.get(task).add(dependingOn);
+        if (dependentMap.containsKey(dependent)){
+            dependentMap.get(dependent).add(dependingOn);
         } else {
             ArrayList<Task> dependedList = new ArrayList<>();
             dependedList.add(dependingOn);
-            dependentMap.put(task, dependedList);
+            dependentMap.put(dependent, dependedList);
         }
     }
 
@@ -48,7 +53,5 @@ public class DependencyGraph {
         return new HashSet<>(dependingOnMap.get(task));
     }
 
-
-    //private void addDependingOn(Ta)
 
 }

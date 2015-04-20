@@ -14,7 +14,7 @@ import java.util.*;
 
 /**
  * Stelt een taak voor met een beschrijving, starttijd, eindtijd, verwachte duur en een aanvaardbare marge.
- * Een taak behoort tot 1 project en heeft een lijst van dependency constraints.
+ * Een taak behoort heeft een lijst van dependency constraints.
  */
 public class Task {
 
@@ -26,23 +26,17 @@ public class Task {
      * @param description           De omschrijving van de nieuwe taak
      * @param estimatedDuration     De verwachte duur van de nieuwe taak
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
-     * @param project               Het project waarbij de nieuwe taak hoort
      * @param systemTime
      * @param dependencyGraph
      * @throws java.lang.IllegalArgumentException
      *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, Project project, SystemTime systemTime, DependencyGraph dependencyGraph) throws IllegalArgumentException {
-        if (! canHaveAsProject(project)) {
-            throw new IllegalArgumentException("Ongeldig project");
-        }
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph) throws IllegalArgumentException {
         this.setStatus(new TaskAvailable());
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
-        this.dependencyConstraints = new HashSet<>(); // TODO verwijderen
-        this.project = project;
         this.systemTime = systemTime;
         this.dependencyGraph = dependencyGraph;
     }
@@ -216,40 +210,6 @@ public class Task {
     }
 
 
-    /**
-     * Project waarbij de taak hoort
-     */
-    private final Project project;
-
-    /**
-     * Geeft het project van de taak.
-     */
-    public Project getProject() {
-        return project;
-    }
-
-
-    /**
-     * Controleert of een gegeven project een geldig project is voor deze taak.
-     *
-     * @param project   Het gegeven project
-     * @return          Waar als er nog geen associatie bestaat tussen het project deze taak.
-     */
-    public boolean canHaveAsProject(Project project) {
-        return project != null;
-    }
-
-    /**
-     * Set van alle dependency constraints van deze taak
-     */
-    private Set<DependencyConstraint> dependencyConstraints;
-
-    /**
-     * Geeft een immutable list van alle dependency constraints van de taak.
-     */
-    public ImmutableList<DependencyConstraint> getDependencyConstraints() {
-        return ImmutableList.copyOf(dependencyConstraints);
-    }
 
     /**
      * Voegt een dependency constraint toe voor deze taak.
@@ -451,13 +411,13 @@ public class Task {
     }
 
     /**
-     * Berekent hoeveel een project overtijd is zonder rekening te houden met de acceptable deviation.
+     * Berekent hoeveel een task overtijd is zonder rekening te houden met de acceptable deviation.
      * @return 0.1 staat voor 10%, 0.2 staat voor 20%.
      */
     public double getOverTimePercentage(){
         LocalDateTime systemTime = this.systemTime.getCurrentSystemTime();
         if(!hasStartTime()){
-            return 0.0; // Project is nog niet gestart. Dus over time is 0.
+            return 0.0; // Task is nog niet gestart. Dus over time is 0.
         }
         double minutes;
         if(hasStartTime() && hasEndTime()) {
