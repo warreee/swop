@@ -22,10 +22,33 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Commandline gebruikersinterface die UserInterface implementeert.
  */
+
+class Test{
+    String a;
+    String b;
+    String c;
+
+    public Test(String a, String b, String c) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+    }
+
+    @Override
+    public String toString() {
+        return "Test{" +
+                "a='" + a + '\'' +
+                ", b='" + b + '\'' +
+                ", c='" + c + '\'' +
+                '}';
+    }
+}
+
 public class CommandLineInterface implements UserInterface {
 
     private BufferedReader br;
@@ -45,7 +68,16 @@ public class CommandLineInterface implements UserInterface {
 
         // maak een nieuwe CommandLineInterface aan
         CommandLineInterface cli = new CommandLineInterface(readYamlFile);
-        // maak een nieuwe system aan
+
+//        Voorbeeld selectFromList
+//        ArrayList<Test> sss = new ArrayList<>();
+//        sss.add(new Test("cola", "fristi", "icetea"));
+//        sss.add(new Test("audi", "bmw", "aaaa"));
+//
+//        Test response = cli.selectFromList(sss,test -> test.a + " " + test.b + " " +test.c);
+//        System.out.println(response);
+
+        //maak een nieuwe system aan
         TMSystem TMSystem = new TMSystem();
         ProjectRepository projectRepository = TMSystem.getProjectRepository();
         //Aanmaken main controller
@@ -54,6 +86,7 @@ public class CommandLineInterface implements UserInterface {
         // lees commando's
         cli.run();
     }
+
 
     /**
      * Constructor om een nieuwe commandline gebruikersinterface te maken.
@@ -163,17 +196,11 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public void showProjectList(ImmutableList<Project> projects) {
         String format = "%4s %-35s %-20s %-20s %n";
-        java.lang.System.out.printf(format, "nr.", "Naam", "Status", "");
+        System.out.printf(format, "nr.", "Naam", "Status", "");
         for (int i=0; i<projects.size(); i++) {
             Project project = projects.get(i);
-            String overTime = "on time";
-            if (project.isOverTime())
-                overTime = "over time";
-            java.lang.System.out.printf(format,
-                    i,
-                    project.getName(),
-                    project.getProjectStatus().name(),
-                    "("+overTime+")"); // TODO: hier is nog geen methode voor in Project!!!!!!!
+            String overTime = (project.isOverTime())? "over time" : "on time";
+            System.out.printf(format,i,project.getName(),project.getProjectStatus().name(),"("+overTime+")"); // TODO: hier is nog geen methode voor in Project!!!!!!!
         }
     }
 
@@ -344,15 +371,16 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public int requestNumber(String request) throws CancelException {
-        String input = requestInput(request);
+        return getIntFromUser.getUserInput(request);
+      /*  String input = getStringFromUser.getUserInput(request);
         resolveCancel(input);
 
         while (! isInteger(input)){
             java.lang.System.out.println("Ongeldige invoer: moet een geheel getal zijn");
-            input = requestInput(request);
+            input = getStringFromUser.getUserInput(request);
             resolveCancel(input);
         }
-        return Integer.parseInt(input);
+        return Integer.parseInt(input);*/
     }
 
     private static boolean isInteger(String string) {
@@ -371,15 +399,16 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public double requestDouble(String request) throws CancelException {
-        String input = requestInput(request);
-        resolveCancel(input);
-
-        while (! isDouble(input)){
-            java.lang.System.out.println("Ongeldige invoer: moet een double zijn");
-            input = requestInput(request);
-            resolveCancel(input);
-        }
-        return Double.parseDouble(input);
+        return getDoubleFromUser.getUserInput(request);
+//        String input = getStringFromUser.getUserInput(request);
+//        resolveCancel(input);
+//
+//        while (! isDouble(input)){
+//            java.lang.System.out.println("Ongeldige invoer: moet een double zijn");
+//            input = getStringFromUser.getUserInput(request);
+//            resolveCancel(input);
+//        }
+//        return Double.parseDouble(input);
     }
 
     private static boolean isDouble(String string) {
@@ -398,9 +427,10 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public String requestString(String request) throws CancelException {
-        String input = requestInput(request);
-        resolveCancel(input);
-        return input;
+        return getStringFromUser.getUserInput(request);
+//        String input = getStringFromUser.getUserInput(request);
+//        resolveCancel(input);
+//        return input;
     }
 
     /**
@@ -410,21 +440,22 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public LocalDateTime requestDatum(String request) throws CancelException {
-        String input = requestInput(request + " formaat: yyyy-mm-dd hh:mm");
-        if (input.isEmpty())
-            return null;
-        resolveCancel(input);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        while (! isValidDateTimeFormat(input, formatter)) {
-            java.lang.System.out.println("Ongeldig formaat");
-            input = requestInput(request + " formaat: yyyy-mm-dd hh:mm");
-            if (input.isEmpty())
-                return null;
-            resolveCancel(input);
-        }
-        LocalDateTime dateTime = LocalDateTime.parse(input, formatter);
-        return dateTime;
+        return getDateFromUser.getUserInput(request);
+//        String input = getStringFromUser.getUserInput(request + " formaat: yyyy-mm-dd hh:mm");
+//        if (input.isEmpty())
+//            return null;
+//        resolveCancel(input);
+//
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//        while (! isValidDateTimeFormat(input, formatter)) {
+//            java.lang.System.out.println("Ongeldig formaat");
+//            input = getStringFromUser.getUserInput(request + " formaat: yyyy-mm-dd hh:mm");
+//            if (input.isEmpty())
+//                return null;
+//            resolveCancel(input);
+//        }
+//        LocalDateTime dateTime = LocalDateTime.parse(input, formatter);
+//        return dateTime;
     }
     private void resolveCancel(String str) throws CancelException{
         if(Command.checkCancel(str)){
@@ -445,31 +476,27 @@ public class CommandLineInterface implements UserInterface {
         return num;
     }
 
-    /**
-     *
-     * @param request
-     * @return
-     * @throws CancelException Indien de gebruiker cancel ingeeft
-     */
-    private String requestInput(String request) {
-        if(request.length() > 30){
-            System.out.println(request);
-        }else{
-            System.out.printf("%30s%3s",request,":");
-        }
-        String result = "";
-        try {
-            result = br.readLine();
-            resolveCancel(result);
-            resolveEmpty(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+//    /**
+//     *
+//     * @param request
+//     * @return
+//     * @throws CancelException Indien de gebruiker cancel ingeeft
+//     */
+//    private String requestInput(String request) {
+//        System.out.println(request);
+//        String result = "";
+//        try {
+//            result = br.readLine();
+//            resolveCancel(result);
+//            resolveEmpty(result);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
 
 
-    userInput<String> getStringFromUser = request -> {
+    public UserInput<String> getStringFromUser = request -> {
         System.out.println(request);
         String result = "";
         try {
@@ -482,16 +509,39 @@ public class CommandLineInterface implements UserInterface {
         return result;
     };
     //Throws NumberFormatException
-    userInput<Double> getDoubleFromUser = request -> {
-        String response = getStringFromUser.getUserInput(request);
-        return new Double(response);
+    public UserInput<Double> getDoubleFromUser = request -> {
+        String response = getStringFromUser.apply(request);
+        boolean correct = false;
+        Double result = null;
+        do{
+            try {
+                result = new Double(response);
+                correct = true;
+            } catch (NumberFormatException e) {
+                printMessage("Verkeerde input, probeer opnieuw.");
+                correct = false;
+            }
+        }while(!correct);
+
+        return result;
     };
     //Throws NumberFormatException
-    userInput<Integer> getIntFromUser = request -> {
-        String response = getStringFromUser.getUserInput(request);
-        return new Integer(response);
-    };
+    public UserInput<Integer> getIntFromUser = request -> {
+        String response = getStringFromUser.apply(request);
+        boolean correct = false;
+        Integer result = null;
+        do{
+            try {
+                result = new Integer(response);
+                correct = true;
+            } catch (NumberFormatException e) {
+                printMessage("Verkeerde input, probeer opnieuw.");
+                correct = false;
+            }
+        }while(!correct);
 
+        return result;
+    };
 
 
     /**
@@ -504,26 +554,28 @@ public class CommandLineInterface implements UserInterface {
      * @return          Een getal van Type <T> dat uit [min,max] komt.
      * @throws CancelException  gooi indien de gebruiker het Command.CANCEL in geeft.
      */
-    private <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException{
+    private <T extends Number & Comparable<T>> T numberBetween(Function<String,T> userInput,T min,T max)throws CancelException{
         boolean correct = false;
         T response = null;
         do{
             try {
-                response = userInput.getUserInput("Gelieve een getal tussen " + min + " & " + max + " te geven.");
-                correct = (response.compareTo(min) >= 0 && response.compareTo(max) <= 1);
+                response = userInput.apply("Gelieve een getal tussen " + min + " & " + max + " te geven.");
+                correct = ((response.compareTo(min) > 0 ||response.compareTo(min) == 0) && (response.compareTo(max) < 1 ||response.compareTo(max) == 0));
             } catch (NumberFormatException e) {
-                printMessage("Verkeerde input, probeer opnieuw.");
                 correct = false;
+            }
+            if(!correct){
+                printMessage("Verkeerde input, probeer opnieuw.");
             }
         }while(!correct);
         return response;
     }
 
-    userInput<LocalDateTime> getDateFromUser = request -> {
+    public UserInput<LocalDateTime> getDateFromUser = request -> {
         LocalDateTime result = null;
         boolean correct = false;
         do{
-            String response = getStringFromUser.getUserInput(request + " formaat: yyyy-mm-dd hh:mm");
+            String response = getStringFromUser.apply(request + " formaat: yyyy-mm-dd hh:mm");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             try {
                 result = LocalDateTime.parse(response, formatter);
@@ -536,40 +588,43 @@ public class CommandLineInterface implements UserInterface {
         return result;
     };
 
-    userInput<Task> getTaskFromList = request -> {
-
-        return null;
-    };
-
-
-    private <T> void lllll(List<T> tList,ListSelector<T> listSelector,Consumer<T> listPrinter){
-//        Function<List<T>,T> foo = tList1 -> null;
-        ListSelector<T> selectTask = list -> {
-            if(list == null || list.isEmpty()){ throw new EmptyListException("Lege lijst.");}
-            int max = list.size();
-            int min = 1;
+    //TODO selectMultipleFromList
+    /**
+     * Laat de gebruiker een element kiezen uit de gegeven lijst.
+     * @param tList             De lijst waaruit men kan kiezen
+     * @param listEntryPrinter  De manier waarop ieder element wordt voorgesteld
+     * @param <T>               Het type van het geslecteerde element
+     * @return                  Geeft het element dat de gebruiker selecteerde.
+     * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
+     */
+    @Override
+    public <T> T selectFromList(List<T> tList,Function<T,String> listEntryPrinter)throws CancelException{
+        Function<List<T>,T> listSelector = list -> {
+            if(list == null || list.isEmpty()){ throw new CancelException("Lege lijst.");}
+            int max = list.size()-1;
+            int min = 0;
             int selection = numberBetween(getIntFromUser,min,max);
 
-            return list.get(selection-1);
+            return list.get(selection);
         };
-        tList.stream().forEachOrdered(listPrinter);
-        T task = selectTask.select(tList);
+        Consumer<List<T>> listPrint = list -> {
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i< list.size(); i++){
+                sb.append(String.format("%3d. %s\n", i, listEntryPrinter.apply(list.get(i))));
+            }
+            System.out.println(sb.toString());
+        };
+
+        listPrint.accept(tList);
+        T selection = listSelector.apply(tList);
+        return selection;
     }
 
+    @Override
+    public <T> T requestUserInput(String request,UserInput<T> userInput) throws CancelException {
+        return userInput.getUserInput(request);
+    }
 
-
-
-//    public <T> T selectOptionFromList(List<T> list,Consumer<T> listPrinter){
-//        list.stream().forEachOrdered(listPrinter);
-//
-//        //Show list elements
-//        //User enters nr associated with list element
-//        //returns selected element
-//        return null;
-//    }
-
-
-    private String format = "%-2s%s%-2s";
     public void showHelp(AbstractController abstractController) throws IllegalArgumentException{
         ArrayList<Command> list = new ArrayList<>();
 
@@ -578,10 +633,9 @@ public class CommandLineInterface implements UserInterface {
                 list.add(entry.getKey());
             }
         }
-
         StringBuilder sb = new StringBuilder();
         for(Command cmd : list){
-            sb.append(String.format(format, "|", cmd.getCommandStr()," "));
+            sb.append(String.format("%-2s%s%1s", "|", cmd.getCommandStr()," "));
         }
         sb.append("|");
         printMessage(sb.toString());

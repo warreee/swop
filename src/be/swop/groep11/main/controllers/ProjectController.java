@@ -37,7 +37,13 @@ public class ProjectController extends AbstractController {
     public void showProjects() {
         try {
             ImmutableList<Project> projects = projectRepository.getProjects();
-            Project project =  getUserInterface().selectProjectFromList(projects);
+
+            //TODO vraag of dit gezien wordt als UI specifieke informatie of toch domein informatie. Vermoedelijk domein info, aangezien men hier kan bepalen waarop de gebruiker zijn keuze kan baseren.
+            Project project = getUserInterface().selectFromList(projects, (proj -> {
+                String overTime = (proj.isOverTime()) ? "over time" : "on time";
+                return String.format("%-35s %-20s %-20s %n", proj.getName(), proj.getProjectStatus().name(), "(" + overTime + ")");
+            }));
+//            Project project =  getUserInterface().selectProjectFromList(projects);
             getUserInterface().showProjectDetails(project);
 
             ImmutableList<Task> tasks = project.getTasks();
@@ -53,10 +59,10 @@ public class ProjectController extends AbstractController {
      */
     public void createProject(){
         try {
-            String projectName =  getUserInterface().requestString("Project naam:");
-            String description =  getUserInterface().requestString("Project beschrijving:");
-            LocalDateTime creationTime =  getUserInterface().requestDatum("Creation time:");
-            LocalDateTime dueTime =  getUserInterface().requestDatum("Due time:");
+            String projectName =  getUserInterface().requestString("Project naam");
+            String description =  getUserInterface().requestString("Project beschrijving");
+            LocalDateTime creationTime =  getUserInterface().requestDatum("Creation time");
+            LocalDateTime dueTime =  getUserInterface().requestDatum("Due time");
 
             projectRepository.addNewProject(projectName, description ,creationTime, dueTime, user);
             getUserInterface().printMessage("Project toegevoegd");

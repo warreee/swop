@@ -7,6 +7,8 @@ import be.swop.groep11.main.ui.commands.CancelException;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Interface die de methodes bevat die een gebruikersinterface moet implementeren
@@ -17,7 +19,7 @@ public interface UserInterface {
      * Toont een lijst van projecten.
      * @param projects Lijst van projecten
      */
-    public void showProjectList(ImmutableList<Project> projects);
+    void showProjectList(ImmutableList<Project> projects);
 
     /**
      * Selecteert een project uit een lijst van projecten.
@@ -26,7 +28,7 @@ public interface UserInterface {
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van projecten is leeg.
      * @throws be.swop.groep11.main.ui.commands.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException;
+    Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException;
 
     /**
      * Vraagt een invoer van de gebruiker.
@@ -35,7 +37,7 @@ public interface UserInterface {
      * @return De invoer van de gebruiker
      * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    public String requestString(String request) throws CancelException;
+    String requestString(String request) throws CancelException;
 
     /**
      * Vraagt een geheel getal als invoer van de gebruiker.
@@ -44,7 +46,7 @@ public interface UserInterface {
      * @return De invoer van de gebruiker
      * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    public int requestNumber(String request) throws CancelException;
+    int requestNumber(String request) throws CancelException;
 
     /**
      * Vraagt een double als invoer van de gebruiker.
@@ -53,7 +55,7 @@ public interface UserInterface {
      * @return De invoer van de gebruiker
      * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    public double requestDouble(String request) throws CancelException;
+    double requestDouble(String request) throws CancelException;
 
     /**
      * Vraagt een datum en tijd als invoer van de gebruiker.
@@ -62,23 +64,23 @@ public interface UserInterface {
      * @return De invoer van de gebruiker
      * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    public LocalDateTime requestDatum(String request) throws CancelException;
+    LocalDateTime requestDatum(String request) throws CancelException;
 
     /**
      * Toont een boodschap aan de gebruiker.
      */
-    public void printMessage(String message);
+    void printMessage(String message);
 
     /**
      * Toont een exception aan de gebruiker
      */
-    public void printException(Exception e);
+    void printException(Exception e);
 
     /**
      * Toont een lijst van taken.
      * @param tasks Lijst van taken
      */
-    public void showTaskList(ImmutableList<Task> tasks);
+    void showTaskList(ImmutableList<Task> tasks);
 
     /**
      * Selecteert een taak uit een lijst van taken.
@@ -87,20 +89,32 @@ public interface UserInterface {
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van taken is leeg.
      * @throws be.swop.groep11.main.ui.commands.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
+    Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
 
     /**
      * Toont de details van een project.
      */
-    public void showProjectDetails(Project project);
+    void showProjectDetails(Project project);
 
     /**
      * Toont de details van een taak.
      */
-    public void showTaskDetails(Task task);
+    void showTaskDetails(Task task);
 
-    public void addControllerToStack(AbstractController abstractController);
-    public void removeControllerFromStack(AbstractController abstractController);
-    public void showHelp(AbstractController controller);
+    void addControllerToStack(AbstractController abstractController);
+    void removeControllerFromStack(AbstractController abstractController);
+    void showHelp(AbstractController controller);
+
+    /**
+     * Laat de gebruiker een element kiezen uit de gegeven lijst.
+     * @param tList             De lijst waaruit men kan kiezen
+     * @param listEntryPrinter  De manier waarop ieder element wordt voorgesteld
+     * @param <T>               Het type van het geslecteerde element
+     * @return                  Geeft het element dat de gebruiker selecteerde.
+     * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
+     */
+    <T> T selectFromList(List<T> tList, Function<T, String> listEntryPrinter)throws CancelException;
+
+    <T> T requestUserInput(String request,UserInput<T> userInput) throws CancelException;
 
 }
