@@ -96,7 +96,7 @@ public class CommandLineInterface implements UserInterface {
 
 
     private  void executeCommand(Command command) {
-        System.out.println(getCurrentController());
+//        System.out.println(getCurrentController());
         CommandStrategy strat = currentCommandStrategies.get(getCurrentController()).get(command);
         if(strat != null) {
             strat.execute();
@@ -131,16 +131,6 @@ public class CommandLineInterface implements UserInterface {
      */
     private HashMap<Command,CommandStrategy> commandStrategies = new HashMap<>();
 
-
-    private void printHelp(){
-        StringBuilder sb = new StringBuilder();
-        for(Command cmd: Command.values()){
-            sb.append(" | ");
-            sb.append(cmd.getCommandStr());
-        }
-        sb.append(" | ");
-        printMessage(sb.toString());
-    }
 
     @Override
     public void printMessage(String message) {
@@ -510,5 +500,26 @@ public class CommandLineInterface implements UserInterface {
             e.printStackTrace();
         }
         return result;
+    }
+
+
+
+    private String format = "%-2s%s%-2s";
+
+    public void showHelp(AbstractController abstractController) throws IllegalArgumentException{
+        ArrayList<Command> list = new ArrayList<>();
+
+        for(Map.Entry<Command,CommandStrategy> entry : abstractController.getCommandStrategies().entrySet()){
+            if(!entry.getValue().equals(abstractController.getInvalidStrategy())){
+                list.add(entry.getKey());
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(Command cmd : list){
+            sb.append(String.format(format, "|", cmd.getCommandStr()," "));
+        }
+        sb.append("|");
+        printMessage(sb.toString());
     }
 }

@@ -142,11 +142,6 @@ public class TaskController extends AbstractController {
     }
 
     @Override
-    public void showHelp() throws IllegalArgumentException {
-        getUserInterface().printMessage("Help task controller!");
-    }
-
-    @Override
     public HashMap<Command, CommandStrategy> getCommandStrategies() {
         HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
         map.put(Command.HELP,() -> System.out.println("help task controller"));

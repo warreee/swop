@@ -113,5 +113,6 @@ public interface UserInterface {
 
     public void addControllerToStack(AbstractController abstractController);
     public void removeControllerFromStack(AbstractController abstractController);
+    public void showHelp(AbstractController controller);
 
 }
