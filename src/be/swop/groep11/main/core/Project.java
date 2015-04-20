@@ -26,6 +26,7 @@ public class Project {
      * @param creationTime  Creation time voor het project
      * @param dueTime       Due time voor het project
      * @param creator       Wie het project heeft aangemaakt
+     * @param systemTime
      * @throws IllegalArgumentException
      *                      | !isValidDescription(description)
      *                      | !isValidProjectName(name)
@@ -33,12 +34,12 @@ public class Project {
      *                      | !isValidUser(creator)
      *                      | !isValidProjectID(projectID)
      */
-    public Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, User creator, ProjectRepository repo) throws IllegalArgumentException{
+    public Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, User creator, SystemTime systemTime) throws IllegalArgumentException{
         setProjectName(name);
         setCreationAndDueTime(creationTime, dueTime);
         setCreator(creator);
         setDescription(description);
-        setProjectRepository(repo);
+        this.systemTime = systemTime;
     }
 
     /**
@@ -134,6 +135,11 @@ public class Project {
         return ProjectStatus.FINISHED;
     }
 
+
+    private SystemTime systemTime;
+
+
+
     /**
      * @return Een ImmutableList die alle taken bevat.
      */
@@ -160,42 +166,6 @@ public class Project {
         }
         this.creator = creator;
     }
-
-    /**
-     * Geeft de ProjectRepository voor dit project.
-     */
-    public ProjectRepository getProjectRepository() {
-        return projectRepository;
-    }
-
-    /**
-     *
-     * @param projectRepository     De nieuwe projectRepository
-     * @throws IllegalArgumentException
-     *                              Throws indien !canHaveAsProjectRepository(projectRepository)
-     */
-    public void setProjectRepository(ProjectRepository projectRepository) throws IllegalArgumentException {
-        if(!canHaveAsProjectRepository(projectRepository)){
-            throw new IllegalArgumentException("Invalid repository.");
-        }
-        this.projectRepository = projectRepository;
-    }
-
-    /**
-     * Geeft aan of de gegeven projectRepository een geldig repository is of niet.
-     * @param projectRepository De nieuwe projectRepository
-     * @return                  Waar indien this.projectRepository == null en projectRepository != null
-     */
-    public boolean canHaveAsProjectRepository(ProjectRepository projectRepository){
-        if(this.projectRepository == null){
-            return projectRepository != null;
-        }else if(projectRepository != null){
-            return false;
-        }
-        return false;
-    }
-
-    private ProjectRepository projectRepository;
 
 
 
@@ -252,7 +222,7 @@ public class Project {
      *                              Gooi indien één of meerdere van de parameters niet geldig zijn.
      */
     public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) throws IllegalArgumentException {
-        Task task = new Task(description, estimatedDuration, acceptableDeviation, this);
+        Task task = new Task(description, estimatedDuration, acceptableDeviation, this, systemTime);
         tasks.add(task);
     }
 
@@ -326,7 +296,7 @@ public class Project {
      * @return
      */
     private Duration calculateTotalDuration(Set<Task> tasks){
-        LocalDateTime currentSystemTime = this.getProjectRepository().getTmSystem().getCurrentSystemTime(); // TODO: zo lang voor de tijd?
+        LocalDateTime currentSystemTime = systemTime.getCurrentSystemTime();
         Duration total = Duration.ofHours(0);
         for(Task task :tasks){
 
