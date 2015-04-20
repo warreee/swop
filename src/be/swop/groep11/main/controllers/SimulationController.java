@@ -5,6 +5,10 @@ import be.swop.groep11.main.core.ProjectRepositoryMemento;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.CancelException;
+import be.swop.groep11.main.ui.commands.Command;
+import be.swop.groep11.main.ui.commands.CommandStrategy;
+
+import java.util.HashMap;
 
 /**
  * Bevat de stappen om de use case "Running a simulation" uit te voeren.
@@ -35,9 +39,9 @@ public class SimulationController extends AbstractController {
     //Store initial state
     private ProjectRepositoryMemento originalState;
 
+    private ProjectRepository projectRepository;
 
     private MainController mainController;
-    private ProjectRepository projectRepository;
     private TaskController taskController;
     private ProjectController projectController;
 
@@ -47,46 +51,49 @@ public class SimulationController extends AbstractController {
     public void startSimulation() {
         UserInterface ui = this.getUserInterface();
         try {
-            ui.startSimulationMode();
+//            ui.startSimulationMode();
             // hou de huidige state van projectRepository bij
+
             storeState();
         } catch (CancelException e) {
-            ui.endSimulationMode();
+//            ui.endSimulationMode();
             getUserInterface().printException(e);
         }
     }
 
     public void endSimulation() {
-        UserInterface ui = this.getUserInterface();
-        try {
-            /**
-             *  Mogelijk alternatief: defini�ren van nieuwe Command's in de Command Enum
-             *  Die overeenkomen met de Continue,cancel en realize.
-             *  Bijvoorbeeld: SIM_Continue, SIM_Cancel, SIM_Realize
-             *  Bepaal voor ieder van deze Commands een CommandStrategy
-             *          CommandStrategyAlternatief<SimulationController> simContinue = SimulationController::simContinue;
-             *          CommandStrategyAlternatief<SimulationController> simCancel = SimulationController::simCancel;
-             *          CommandStrategyAlternatief<SimulationController> simRealize = SimulationController::simRealize;
-             */
-
-            String command = ui.requestString("Wat wil je doen met de huidige simulatie?\n"
-                                                + "continue = verdergaan met de simulatie\n"
-                                                + "cancel   = stoppen met de simulatie (en dus niet realiseren)\n"
-                                                + "realize  = de simulatie realiseren");
-            if (command.equalsIgnoreCase("continue")) {
-                // doe niets, want de simulatie is al gestart
-            }
-            else if (command.equalsIgnoreCase("realize")) {
-                // realiseer de simulatie
-                this.realizeState();
-                ui.endSimulationMode();
-                ui.printMessage("Simulatie werd gerealiseerd");
-            }
-        } catch (CancelException e) {
-            restoreState();
-            ui.endSimulationMode();
-            ui.printMessage("Simulatie werd niet gerealiseerd");
-        }
+//        UserInterface ui = this.getUserInterface();
+//        try {
+//            /**
+//             *  Mogelijk alternatief: defini�ren van nieuwe Command's in de Command Enum
+//             *  Die overeenkomen met de Continue,cancel en realize.
+//             *  Bijvoorbeeld: SIM_Continue, SIM_Cancel, SIM_Realize
+//             *  Bepaal voor ieder van deze Commands een CommandStrategy
+//             *          CommandStrategyAlternatief<SimulationController> simContinue = SimulationController::simContinue;
+//             *          CommandStrategyAlternatief<SimulationController> simCancel = SimulationController::simCancel;
+//             *          CommandStrategyAlternatief<SimulationController> simRealize = SimulationController::simRealize;
+//             */
+//
+//            String command = ui.requestString("Wat wil je doen met de huidige simulatie?\n"
+//                                                + "continue = verdergaan met de simulatie\n"
+//                                                + "cancel   = stoppen met de simulatie (en dus niet realiseren)\n"
+//                                                + "realize  = de simulatie realiseren");
+//            if (command.equalsIgnoreCase("continue")) {
+//                // doe niets, want de simulatie is al gestart
+//            }
+//            else if (command.equalsIgnoreCase("realize")) {
+//                // realiseer de simulatie
+//                this.realizeState();
+//                ui.endSimulationMode();
+//                ui.printMessage("Simulatie werd gerealiseerd");
+//            }
+//        } catch (CancelException e) {
+//            restoreState();
+//            ui.endSimulationMode();
+//            ui.printMessage("Simulatie werd niet gerealiseerd");
+//        }
+//        super.endSimulation();
+        deActivate();
     }
 
     private void storeState() {
@@ -128,19 +135,6 @@ public class SimulationController extends AbstractController {
         this.projectController.deActivate();
     }
 
-    @Override
-    public void showHelp() throws IllegalArgumentException {
-//       Mogelijke help functie
-        getUserInterface().printMessage("Simulatiemodus gestart\n" +
-                "Mogelijke commando's zijn nu:\n" +
-                "show projects\n" +
-                "create task\n" +
-                "plan task\n" +
-                "cancel\n" +
-                "help\n" +
-                "exit");
-    }
-
     //TODO onderstaande voorbeeld is niet volledig,
     public void simContinue() {
 
@@ -152,5 +146,15 @@ public class SimulationController extends AbstractController {
 
     public void simCancel() {
 
+    }
+
+    public HashMap<Command,CommandStrategy> getCommandStrategies(){
+        HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
+        map.put(Command.CREATETASK,taskController::createTask);
+        map.put(Command.UPDATETASK, taskController::updateTask);
+        map.put(Command.PLANTASK,taskController::planTask);
+        map.put(Command.SHOWPROJECTS,projectController::showProjects);
+        map.put(Command.ENDSIMULATION,this::endSimulation);
+        return map;
     }
 }

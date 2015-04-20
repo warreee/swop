@@ -1,6 +1,12 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.ui.UserInterface;
+import be.swop.groep11.main.ui.commands.Command;
+import be.swop.groep11.main.ui.commands.CommandStrategy;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by Ronald on 17/04/2015.
@@ -49,9 +55,32 @@ public abstract class AbstractController {
         throw new IllegalArgumentException("Niet ondersteund");
     }
 
-    public void showHelp() throws IllegalArgumentException{
-        throw new IllegalArgumentException("Niet ondersteund");
 
+    private String format = "%-2s%s%-2s";
+    private CommandStrategy invalid = () -> getUserInterface().printMessage("Ongeldig commando, Abstract controller");
+    public CommandStrategy getInvalidStrategy(){
+        //TODO fix hack?
+        return this.invalid;
+    }
+//    public void showHelp() throws IllegalArgumentException{
+//        ArrayList<Command> list = new ArrayList<>();
+//
+//        for(Map.Entry<Command,CommandStrategy> entry : getCommandStrategies().entrySet()){
+//            if(!entry.getValue().equals(invalid)){
+//                list.add(entry.getKey());
+//            }
+//        }
+//
+//        StringBuilder sb = new StringBuilder();
+//        for(Command cmd : list){
+//            sb.append(String.format(format, "|", cmd.getCommandStr()," "));
+//        }
+//        sb.append("|");
+//        getUserInterface().printMessage(sb.toString());
+//    }
+
+    protected void exitProgram() {
+        System.out.println("want to exit,TODO IMPLEMENT");
     }
 
     /**
@@ -66,5 +95,20 @@ public abstract class AbstractController {
      */
     protected void deActivate(){
         getUserInterface().removeControllerFromStack(this);
+    }
+
+
+    public HashMap<Command,CommandStrategy> getCommandStrategies(){
+        HashMap<Command,CommandStrategy> map = new HashMap<>();
+        //Alles standaard invalid strategy gedrag
+        ArrayList<Command> list = new ArrayList<>(Arrays.asList(Command.values()));
+        for(Command cmd : list){
+            map.put(cmd,invalid);
+        }
+        map.put(Command.EXIT, this::exitProgram);
+        map.put(Command.INVALIDCOMMAND, invalid);
+        map.put(Command.HELP, () -> getUserInterface().showHelp(this));
+
+        return map;
     }
 }
