@@ -25,7 +25,7 @@ public class TaskTest {
         ProjectRepository repo = TMSystem.getProjectRepository();
         project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
-                new User("Alfred J. Kwak"), repo);
+                new User("Alfred J. Kwak"), );
         project.addNewTask("Test taak", 0.1, Duration.ofHours(8));
         project.addNewTask("Test taak 1", 0, Duration.ofMinutes(30));
         project.addNewTask("Test taak 2", 0.2, Duration.ofHours(16));
@@ -41,27 +41,27 @@ public class TaskTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Null() throws Exception {
-        Task invalidTask = new Task(null, Duration.ofHours(8), 0.1, project);
+        Task invalidTask = new Task(null, Duration.ofHours(8), 0.1, project, );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Empty() throws Exception {
-        Task invalidTask = new Task("", Duration.ofHours(8), 0.1, project);
+        Task invalidTask = new Task("", Duration.ofHours(8), 0.1, project, );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDuration_Negative() throws Exception {
-        Task invalidTask = new Task("Test taak", Duration.ofHours(-1), 0.1, project);
+        Task invalidTask = new Task("Test taak", Duration.ofHours(-1), 0.1, project, );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidAcceptableDeviation_Negative() throws Exception {
-        Task invalidTask = new Task("Test taak", Duration.ofHours(8), -0.1, project);
+        Task invalidTask = new Task("Test taak", Duration.ofHours(8), -0.1, project, );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidProject_Null() throws Exception {
-        Task invalidTask = new Task("Test taak", Duration.ofHours(8), 0.1, null);
+        Task invalidTask = new Task("Test taak", Duration.ofHours(8), 0.1, null, );
     }
 
    /* @Test(expected = Exception.class)
@@ -166,7 +166,7 @@ public class TaskTest {
     public void hasTaskTest() {
         assertTrue(project.hasTask(task2));
         // Deze task heeft een referentie naar project, maar is niet aan project toegevoegd.
-        Task t = new Task("beschrijving", Duration.ofHours(8), 0.1, project);
+        Task t = new Task("beschrijving", Duration.ofHours(8), 0.1, project, );
         assertFalse(project.hasTask(t));
 
     }
