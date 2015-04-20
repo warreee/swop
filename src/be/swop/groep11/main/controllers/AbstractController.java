@@ -51,10 +51,6 @@ public abstract class AbstractController {
         throw new IllegalArgumentException("Niet ondersteund");
     }
 
-    public void endSimulation() throws IllegalArgumentException{
-        throw new IllegalArgumentException("Niet ondersteund");
-    }
-
     private CommandStrategy invalid = () -> getUserInterface().printMessage("Ongeldig commando, Abstract controller");
     /**
      * Geeft het gedrag indien een Command niet ondersteund wordt door de controller.

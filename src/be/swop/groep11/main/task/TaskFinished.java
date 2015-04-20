@@ -20,17 +20,17 @@ public class TaskFinished extends TaskStatus {
     }
 
     @Override
-    protected void execute(Task task) {
+    protected void execute(Task task,LocalDateTime time) {
         throw new IllegalStateTransition("Een gefinishste taak kan niet opnieuw worden uitgevoerd");
     }
 
     @Override
-    protected void finish(Task task) {
+    protected void finish(Task task,LocalDateTime time) {
         throw new IllegalStateTransition("De taak was reeds gefinishd");
     }
 
     @Override
-    protected void fail(Task task) {
+    protected void fail(Task task,LocalDateTime time) {
         throw new IllegalStateTransition("Een gefinishste taak kan niet gefaild worden!");
     }
 

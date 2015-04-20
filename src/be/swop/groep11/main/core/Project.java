@@ -223,7 +223,7 @@ public class Project {
      */
     public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) throws IllegalArgumentException {
         DependencyGraph dependencyGraph = new DependencyGraph();
-        Task task = new Task(description, estimatedDuration, acceptableDeviation, this, systemTime, dependencyGraph);
+        Task task = new Task(description, estimatedDuration, acceptableDeviation, systemTime, dependencyGraph);
         tasks.add(task);
     }
 

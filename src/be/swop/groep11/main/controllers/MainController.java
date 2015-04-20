@@ -1,7 +1,6 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.ProjectRepositoryMemento;
 import be.swop.groep11.main.core.TMSystem;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.ui.UserInterface;
@@ -18,7 +17,6 @@ public class MainController extends AbstractController {
     private final ProjectRepository projectRepository;
     private final TMSystem tmSystem;
 
-    private ProjectRepositoryMemento storedProjectRepository;
 
     //TODO documentatie, als ook tmSystem naar SystemTime, als ook reduceren van duplicate code.
 
@@ -84,14 +82,6 @@ public class MainController extends AbstractController {
         this.simController.startSimulation();
         //Mag niet deActivaten omdat de simulatie controller nog actief moet zijn, totdat end simulation is opgeroepen
         //controller.deActivate();
-    }
-
-    public ProjectRepositoryMemento getStoredProjectRepository() {
-        return storedProjectRepository;
-    }
-
-    public void setStoredProjectRepository(ProjectRepositoryMemento storedProjectRepository) {
-        this.storedProjectRepository = storedProjectRepository;
     }
 
     public HashMap<Command,CommandStrategy> getCommandStrategies(){

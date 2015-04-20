@@ -28,7 +28,7 @@ public interface UserInterface {
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van projecten is leeg.
      * @throws be.swop.groep11.main.ui.commands.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException;
+    Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException; //TODO Kan weg
 
     /**
      * Vraagt een invoer van de gebruiker.
@@ -89,7 +89,7 @@ public interface UserInterface {
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van taken is leeg.
      * @throws be.swop.groep11.main.ui.commands.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
+    Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException; //TODO Kan weg
 
     /**
      * Toont de details van een project.
@@ -115,6 +115,18 @@ public interface UserInterface {
      */
     <T> T selectFromList(List<T> tList, Function<T, String> listEntryPrinter)throws CancelException;
 
-    <T> T requestUserInput(String request,UserInput<T> userInput) throws CancelException;
+    <T> T requestUserInput(String request,userInput<T> userInput) throws CancelException;
+
+    /**
+     * Vraag een getal aan de user tussen een min en max waarde.
+     *
+     * @param userInput de functie waarmee de invoer aan de gebruiker gevraagd wordt.
+     * @param min       De minimum toegelaten waarde (inclusief)
+     * @param max       De maximum toegelaten waarde (inclusief)
+     * @param <T>       Het Type van het gevraagde getal tussen min en max.
+     * @return          Een getal van Type <T> dat uit [min,max] komt.
+     * @throws CancelException  gooi indien de gebruiker het Command.CANCEL in geeft.
+     */
+    <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException;
 
 }

@@ -4,10 +4,9 @@ import com.rits.cloning.Cloner;
 
 import java.util.List;
 
-public class ProjectRepositoryMemento {
+public class ProjectRepositoryMemento implements IProjectRepositoryMemento {
 
     private List<Project> projects;
-
     public List<Project> getProjects() {
         return this.projects;
     }

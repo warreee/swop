@@ -18,6 +18,7 @@ public enum Command {
     SHOWPROJECTS("Show Projects"),
     PLANTASK("Plan Task"),
     STARTSIMULATION("Start Simulation"),
+    REALIZESIMULATION("Realize simulation"),
     ENDSIMULATION("End Simulation"),
     INVALIDCOMMAND("");
 

@@ -2,10 +2,7 @@ package be.swop.groep11.main.ui;
 
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.controllers.MainController;
-import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.ProjectRepositoryMemento;
-import be.swop.groep11.main.core.TMSystem;
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.commands.Command;
@@ -19,7 +16,6 @@ import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -27,32 +23,9 @@ import java.util.function.Function;
 /**
  * Commandline gebruikersinterface die UserInterface implementeert.
  */
-
-class Test{
-    String a;
-    String b;
-    String c;
-
-    public Test(String a, String b, String c) {
-        this.a = a;
-        this.b = b;
-        this.c = c;
-    }
-
-    @Override
-    public String toString() {
-        return "Test{" +
-                "a='" + a + '\'' +
-                ", b='" + b + '\'' +
-                ", c='" + c + '\'' +
-                '}';
-    }
-}
-
 public class CommandLineInterface implements UserInterface {
 
     private BufferedReader br;
-
 
 //TODO cleanup nodig, move main to new app class?
     /**
@@ -68,14 +41,6 @@ public class CommandLineInterface implements UserInterface {
 
         // maak een nieuwe CommandLineInterface aan
         CommandLineInterface cli = new CommandLineInterface(readYamlFile);
-
-//        Voorbeeld selectFromList
-//        ArrayList<Test> sss = new ArrayList<>();
-//        sss.add(new Test("cola", "fristi", "icetea"));
-//        sss.add(new Test("audi", "bmw", "aaaa"));
-//
-//        Test response = cli.selectFromList(sss,test -> test.a + " " + test.b + " " +test.c);
-//        System.out.println(response);
 
         //maak een nieuwe system aan
         TMSystem TMSystem = new TMSystem();
@@ -111,7 +76,6 @@ public class CommandLineInterface implements UserInterface {
 
     private void run(){
         try {
-
             while (! exit) {
                 try {
                     String commandString = br.readLine();
@@ -130,11 +94,10 @@ public class CommandLineInterface implements UserInterface {
     }
     private boolean exit;
 
-
-    private  void executeCommand(Command command) {
-        CommandStrategy strat = currentCommandStrategies.get(getCurrentController()).get(command);
-        if(strat != null) {
-            strat.execute();
+    private void executeCommand(Command command) {
+        CommandStrategy strategy = currentCommandStrategies.get(getCurrentController()).get(command);
+        if(strategy != null) {
+            strategy.execute();
         }
     }
 
@@ -153,40 +116,27 @@ public class CommandLineInterface implements UserInterface {
         controllerStack.remove(abstractController);
         currentCommandStrategies.remove(abstractController);
     }
-    private HashMap<AbstractController,HashMap<Command,CommandStrategy>> currentCommandStrategies = new HashMap<>();
 
-    /**
-     * Lijst van controllers,
-     */
-    private LinkedList<AbstractController> controllerStack = new LinkedList<>();
     /**
      * Houdt lijst van Controllers bij die "actief zijn".
      * De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit.
      *
      */
-    private HashMap<Command,CommandStrategy> commandStrategies = new HashMap<>();
+    private LinkedList<AbstractController> controllerStack = new LinkedList<>();
 
-
+    /**
+     * Gegeven een controller verkrijg de corresponderende CommandStrategies voor de aanvaarde commands in die controller.
+     */
+    private HashMap<AbstractController,HashMap<Command,CommandStrategy>> currentCommandStrategies = new HashMap<>();
 
     @Override
     public void printMessage(String message) {
-        java.lang.System.out.printf(message + "\n");
+        System.out.printf(message + "\n");
     }
 
     @Override
     public void printException(Exception e) {
-        java.lang.System.out.printf(e.getMessage() + "\n");
-    }
-
-
-    private static boolean isValidDateTimeFormat(String string, DateTimeFormatter formatter) {
-        try {
-            LocalDateTime dateTime = LocalDateTime.parse(string,formatter);
-            return true;
-        }
-        catch (DateTimeParseException e) {
-            return false;
-        }
+        System.out.printf(e.getMessage() + "\n");
     }
 
     /**
@@ -252,8 +202,8 @@ public class CommandLineInterface implements UserInterface {
                 onTime = "nee ("+percentage+"%)";
             }
 
-            java.lang.System.out.printf(format, i, task.getDescription() + asterix, task.getStatus(),
-                    onTime, task.getProject().getName());
+//            System.out.printf(format, i, task.getDescription() + asterix, task.getStatus(),
+//                    onTime, task.getProject().getName());
         }
     }
 
@@ -363,7 +313,7 @@ public class CommandLineInterface implements UserInterface {
         }
     }
 
-    private ProjectRepositoryMemento memento;
+    private IProjectRepositoryMemento memento;
 
     /**
      * Laat de gebruiker een geheel getal ingeven.
@@ -372,25 +322,6 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public int requestNumber(String request) throws CancelException {
         return getIntFromUser.getUserInput(request);
-      /*  String input = getStringFromUser.getUserInput(request);
-        resolveCancel(input);
-
-        while (! isInteger(input)){
-            java.lang.System.out.println("Ongeldige invoer: moet een geheel getal zijn");
-            input = getStringFromUser.getUserInput(request);
-            resolveCancel(input);
-        }
-        return Integer.parseInt(input);*/
-    }
-
-    private static boolean isInteger(String string) {
-        try {
-            int d = Integer.parseInt(string);
-            return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
     }
 
     /**
@@ -400,25 +331,6 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public double requestDouble(String request) throws CancelException {
         return getDoubleFromUser.getUserInput(request);
-//        String input = getStringFromUser.getUserInput(request);
-//        resolveCancel(input);
-//
-//        while (! isDouble(input)){
-//            java.lang.System.out.println("Ongeldige invoer: moet een double zijn");
-//            input = getStringFromUser.getUserInput(request);
-//            resolveCancel(input);
-//        }
-//        return Double.parseDouble(input);
-    }
-
-    private static boolean isDouble(String string) {
-        try {
-            double d = Double.parseDouble(string);
-            return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
     }
 
     /**
@@ -428,9 +340,6 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public String requestString(String request) throws CancelException {
         return getStringFromUser.getUserInput(request);
-//        String input = getStringFromUser.getUserInput(request);
-//        resolveCancel(input);
-//        return input;
     }
 
     /**
@@ -441,21 +350,6 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public LocalDateTime requestDatum(String request) throws CancelException {
         return getDateFromUser.getUserInput(request);
-//        String input = getStringFromUser.getUserInput(request + " formaat: yyyy-mm-dd hh:mm");
-//        if (input.isEmpty())
-//            return null;
-//        resolveCancel(input);
-//
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-//        while (! isValidDateTimeFormat(input, formatter)) {
-//            java.lang.System.out.println("Ongeldig formaat");
-//            input = getStringFromUser.getUserInput(request + " formaat: yyyy-mm-dd hh:mm");
-//            if (input.isEmpty())
-//                return null;
-//            resolveCancel(input);
-//        }
-//        LocalDateTime dateTime = LocalDateTime.parse(input, formatter);
-//        return dateTime;
     }
     private void resolveCancel(String str) throws CancelException{
         if(Command.checkCancel(str)){
@@ -476,27 +370,7 @@ public class CommandLineInterface implements UserInterface {
         return num;
     }
 
-//    /**
-//     *
-//     * @param request
-//     * @return
-//     * @throws CancelException Indien de gebruiker cancel ingeeft
-//     */
-//    private String requestInput(String request) {
-//        System.out.println(request);
-//        String result = "";
-//        try {
-//            result = br.readLine();
-//            resolveCancel(result);
-//            resolveEmpty(result);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return result;
-//    }
-
-
-    public UserInput<String> getStringFromUser = request -> {
+    public userInput<String> getStringFromUser = request -> {
         System.out.println(request);
         String result = "";
         try {
@@ -509,7 +383,7 @@ public class CommandLineInterface implements UserInterface {
         return result;
     };
     //Throws NumberFormatException
-    public UserInput<Double> getDoubleFromUser = request -> {
+    public userInput<Double> getDoubleFromUser = request -> {
         String response = getStringFromUser.apply(request);
         boolean correct = false;
         Double result = null;
@@ -526,7 +400,7 @@ public class CommandLineInterface implements UserInterface {
         return result;
     };
     //Throws NumberFormatException
-    public UserInput<Integer> getIntFromUser = request -> {
+    public userInput<Integer> getIntFromUser = request -> {
         String response = getStringFromUser.apply(request);
         boolean correct = false;
         Integer result = null;
@@ -554,7 +428,7 @@ public class CommandLineInterface implements UserInterface {
      * @return          Een getal van Type <T> dat uit [min,max] komt.
      * @throws CancelException  gooi indien de gebruiker het Command.CANCEL in geeft.
      */
-    private <T extends Number & Comparable<T>> T numberBetween(Function<String,T> userInput,T min,T max)throws CancelException{
+    public <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException{
         boolean correct = false;
         T response = null;
         do{
@@ -571,7 +445,7 @@ public class CommandLineInterface implements UserInterface {
         return response;
     }
 
-    public UserInput<LocalDateTime> getDateFromUser = request -> {
+    public userInput<LocalDateTime> getDateFromUser = request -> {
         LocalDateTime result = null;
         boolean correct = false;
         do{
@@ -621,7 +495,7 @@ public class CommandLineInterface implements UserInterface {
     }
 
     @Override
-    public <T> T requestUserInput(String request,UserInput<T> userInput) throws CancelException {
+    public <T> T requestUserInput(String request,userInput<T> userInput) throws CancelException {
         return userInput.getUserInput(request);
     }
 

@@ -71,7 +71,7 @@ public class ProjectRepository {
     /**
      * Geeft een ProjectRepositoryMemento object die de status van deze project repository bevat.
      */
-    public ProjectRepositoryMemento createMemento() {
+    public IProjectRepositoryMemento createMemento() {
         ProjectRepositoryMemento memento = new ProjectRepositoryMemento();
         memento.setProjects(this.projects);
         return memento;
@@ -81,8 +81,7 @@ public class ProjectRepository {
      * Wijzigt de status van deze project repository naar de status van een gegeven ProjectRepositoryMemento object.
      * @param memento Het ProjectRepositoryMemento object met de status
      */
-    public void setMemento(ProjectRepositoryMemento memento) {
+    public void setMemento(IProjectRepositoryMemento memento) {
         this.projects = (ArrayList<Project>) memento.getProjects();
     }
-
 }
