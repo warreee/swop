@@ -145,38 +145,16 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showProjectList(ImmutableList<Project> projects) {
-        String format = "%4s %-35s %-20s %-20s %n";
+/*        String format = "%4s %-35s %-20s %-20s %n";
         System.out.printf(format, "nr.", "Naam", "Status", "");
         for (int i=0; i<projects.size(); i++) {
             Project project = projects.get(i);
             String overTime = (project.isOverTime())? "over time" : "on time";
             System.out.printf(format,i,project.getName(),project.getProjectStatus().name(),"("+overTime+")"); // TODO: hier is nog geen methode voor in Project!!!!!!!
-        }
+        }*/
     }
 
-    /**
-     * Laat de gebruiker een project selecteren uit een lijst van projecten
-     * en geeft het nummer van het geselecteerde project in de lijst terug.
-     * Implementeert selectProjectFromList in UserInterface
-     */
-    @Override
-    public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException{
-        if(projects.isEmpty()){
-            throw new EmptyListException("Geen projecten aanwezig");
-        }
 
-        java.lang.System.out.println("Kies een project:");
-        showProjectList(projects);
-
-        try {
-            int nr = getNumberBetween(0, projects.size()-1);
-            Project proj = projects.get(nr);
-            return proj;
-        }
-        catch (IllegalInputException e) {
-            return selectProjectFromList(projects);
-        }
-    }
 
     /**
      * Toont een tekstversie van een lijst van taken aan de gebruiker
@@ -184,8 +162,9 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showTaskList(ImmutableList<Task> tasks) {
-        String format = "%4s %-35s %-20s %-15s %-35s %n";
-        java.lang.System.out.printf(format, "nr.", "Omschrijving", "Status", "On time?", "Project");
+
+/*        String format = "%4s %-35s %-20s %-15s %-35s %n";
+        System.out.printf(format, "nr.", "Omschrijving", "Status", "On time?", "Project");
         for (int i=0; i<tasks.size(); i++) {
             Task task = tasks.get(i);
 
@@ -202,9 +181,9 @@ public class CommandLineInterface implements UserInterface {
                 onTime = "nee ("+percentage+"%)";
             }
 
-//            System.out.printf(format, i, task.getDescription() + asterix, task.getStatus(),
-//                    onTime, task.getProject().getName());
-        }
+            System.out.printf(format, i, task.getDescription() + asterix, task.getStatus(),
+                    onTime, task.getProject().getName());
+        }*/
     }
 
     /**
@@ -214,21 +193,44 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException {
-        if(tasks.isEmpty()){
-            throw new EmptyListException("Geen taken aanwezig");
-        }
+        String format = "%-35s %-20s %-15s %-35s %n";
+        System.out.println(String.format(format, "Omschrijving", "Status", "On time?"));
 
-        java.lang.System.out.println("Kies een taak:");
-        showTaskList(tasks);
+        return selectFromList(tasks, (task -> {
+            String asterix = (task.isUnacceptablyOverTime())? "*": "";
+            String onTime = task.isOverTime()?"nee ("+Math.round(task.getOverTimePercentage()*100)+"%)":"ja";
 
-        try {
-            int nr = getNumberBetween(0, tasks.size()-1);
-            Task task = tasks.get(nr);
-            return task;
-        }
-        catch (IllegalInputException e) {
-            return selectTaskFromList(tasks);
-        }
+            return String.format(format, task.getDescription() + asterix, task.getStatus(),onTime);
+        }));
+    }
+
+    /**
+     * Laat de gebruiker een project selecteren uit een lijst van projecten
+     * en geeft het nummer van het geselecteerde project in de lijst terug.
+     * Implementeert selectProjectFromList in UserInterface
+     */
+    @Override
+    public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException{
+        return selectFromList(projects, (project -> {
+            String overTime = (project.isOverTime()) ? "over time" : "on time";
+            return String.format("%-35s %-20s %-20s %n", project.getName(), project.getProjectStatus().name(), "(" + overTime + ")");
+        }));
+//
+//        if(projects.isEmpty()){
+//            throw new EmptyListException("Geen projecten aanwezig");
+//        }
+//
+//        java.lang.System.out.println("Kies een project:");
+//        showProjectList(projects);
+//
+//        try {
+//            int nr = getNumberBetween(0, projects.size()-1);
+//            Project proj = projects.get(nr);
+//            return proj;
+//        }
+//        catch (IllegalInputException e) {
+//            return selectProjectFromList(projects);
+//        }
     }
 
     /**
@@ -260,9 +262,9 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public void showTaskDetails(Task task) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        java.lang.System.out.println("*** Taak details ***");
+        System.out.println("*** Taak details ***");
         String format = "%-25s %s %n";
-        java.lang.System.out.printf(format, "Beschrijving: ", task.getDescription());
+        System.out.printf(format, "Beschrijving: ", task.getDescription());
 
         String finishedStatus = "";
         if (task.getFinishedStatus() == Task.FinishedStatus.EARLY) {
@@ -274,7 +276,7 @@ public class CommandLineInterface implements UserInterface {
         else if (task.getFinishedStatus() == Task.FinishedStatus.OVERDUE) {
             finishedStatus = "late";
         }
-        java.lang.System.out.printf(format, "Status: ", task.getStatusString() + " " + finishedStatus); // TODO: hier stond getStatus.name(), we hadden toch nooit een functie .name() ?
+        System.out.printf(format, "Status: ", task.getStatusString() + " " + finishedStatus); // TODO: hier stond getStatus.name(), we hadden toch nooit een functie .name() ?
 
         // on time?
         String onTime = "ja";
@@ -287,17 +289,17 @@ public class CommandLineInterface implements UserInterface {
         Duration estimatedDuration = task.getEstimatedDuration();
         long estimatedDurationHours = estimatedDuration.getSeconds() / (60*60);
         long estimatedDurationMinutes = (estimatedDuration.getSeconds() % (60*60)) / 60;
-        java.lang.System.out.printf(format, "Geschatte duur: ", estimatedDurationHours + "u" + estimatedDurationMinutes + "min");
+        System.out.printf(format, "Geschatte duur: ", estimatedDurationHours + "u" + estimatedDurationMinutes + "min");
 
         double acceptDevPercent = task.getAcceptableDeviation()*100;
-        java.lang.System.out.printf(format, "Aanvaardbare afwijking: ", acceptDevPercent+"%");
+       System.out.printf(format, "Aanvaardbare afwijking: ", acceptDevPercent+"%");
 
         if (task.getStartTime() != null) {
-            java.lang.System.out.printf(format, "Starttijd: ", task.getStartTime().format(formatter));
+           System.out.printf(format, "Starttijd: ", task.getStartTime().format(formatter));
         }
 
         if (task.getEndTime() != null) {
-            java.lang.System.out.printf(format, "Eindtijd: ", task.getEndTime().format(formatter));
+            System.out.printf(format, "Eindtijd: ", task.getEndTime().format(formatter));
         }
 
         java.lang.System.out.println("Afhankelijk van:");
@@ -312,8 +314,6 @@ public class CommandLineInterface implements UserInterface {
             java.lang.System.out.printf(format, "Alternatieve taak: ", task.getAlternativeTask().getDescription());
         }
     }
-
-    private IProjectRepositoryMemento memento;
 
     /**
      * Laat de gebruiker een geheel getal ingeven.
@@ -362,15 +362,7 @@ public class CommandLineInterface implements UserInterface {
         }
     }
 
-    private int getNumberBetween(int min,int max)throws IllegalInputException, CancelException{
-        int num = requestNumber("Gelieve een getal tussen " + min + " & " + max + " te geven.");
-        if(!(num <= max && num >= min)){
-            throw new IllegalInputException("Getal niet tussen "  + min + " & " + max + "");
-        }
-        return num;
-    }
-
-    public userInput<String> getStringFromUser = request -> {
+    userInput<String> getStringFromUser = request -> {
         System.out.println(request);
         String result = "";
         try {
@@ -383,7 +375,7 @@ public class CommandLineInterface implements UserInterface {
         return result;
     };
     //Throws NumberFormatException
-    public userInput<Double> getDoubleFromUser = request -> {
+    userInput<Double> getDoubleFromUser = request -> {
         String response = getStringFromUser.apply(request);
         boolean correct = false;
         Double result = null;
@@ -400,7 +392,7 @@ public class CommandLineInterface implements UserInterface {
         return result;
     };
     //Throws NumberFormatException
-    public userInput<Integer> getIntFromUser = request -> {
+    userInput<Integer> getIntFromUser = request -> {
         String response = getStringFromUser.apply(request);
         boolean correct = false;
         Integer result = null;
@@ -417,6 +409,22 @@ public class CommandLineInterface implements UserInterface {
         return result;
     };
 
+    userInput<LocalDateTime> getDateFromUser = request -> {
+        LocalDateTime result = null;
+        boolean correct = false;
+        do{
+            String response = getStringFromUser.apply(request + " formaat: yyyy-mm-dd hh:mm");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            try {
+                result = LocalDateTime.parse(response, formatter);
+                correct = true;
+            } catch (Exception e) {
+                printMessage("Verkeerde input, komt niet overeen met het formaat. Probeer opnieuw");
+                correct = false;
+            }
+        }while(!correct);
+        return result;
+    };
 
     /**
      * Vraag een getal aan de user tussen een min en max waarde.
@@ -445,22 +453,7 @@ public class CommandLineInterface implements UserInterface {
         return response;
     }
 
-    public userInput<LocalDateTime> getDateFromUser = request -> {
-        LocalDateTime result = null;
-        boolean correct = false;
-        do{
-            String response = getStringFromUser.apply(request + " formaat: yyyy-mm-dd hh:mm");
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            try {
-                result = LocalDateTime.parse(response, formatter);
-                correct = true;
-            } catch (Exception e) {
-                printMessage("Verkeerde input, komt niet overeen met het formaat. Probeer opnieuw");
-                correct = false;
-            }
-        }while(!correct);
-        return result;
-    };
+
 
     //TODO selectMultipleFromList
     /**

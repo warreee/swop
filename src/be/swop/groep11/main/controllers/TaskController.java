@@ -2,6 +2,7 @@ package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;
@@ -11,7 +12,6 @@ import be.swop.groep11.main.ui.commands.CommandStrategy;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +27,8 @@ public class TaskController extends AbstractController {
      * Constructor om een nieuwe task controller te maken.
      * @param ui Gebruikersinterface
      */
-    public TaskController(ProjectRepository projectRepository, UserInterface ui) {
-        super(ui);
+    public TaskController(ProjectRepository projectRepository, UserInterface ui,SystemTime systemTime) {
+        super(ui,systemTime);
         this.projectRepository = projectRepository;
     }
 
@@ -89,33 +89,19 @@ public class TaskController extends AbstractController {
      */
     public void updateTask() {
         try {
+            //TODO select from list voor ieder project apart
             Task task =  getUserInterface().selectTaskFromList(projectRepository.getAllAvailableTasks());
             updateTask(task);
         }
-        catch (EmptyListException|CancelException e) {
+        catch (CancelException e) {
             getUserInterface().printException(e);
         }
     }
 
     private void updateTask(Task task) throws CancelException{
         try {
-            LocalDateTime startTime =  getUserInterface().requestDatum("Starttijd (of laat leeg om starttijd niet te wijzigen):");
-            LocalDateTime endTime =  getUserInterface().requestDatum("Eindtijd (of laat leeg om eindtijd niet te wijzigen):");
             String status =  getUserInterface().requestString("Status: FAILED of FINISHED (of laat leeg om status niet te wijzigen):");
-
-            if(startTime != null){
-                task.setStartTime(startTime);
-            }
-            if(task.hasStartTime() && endTime != null){
-                task.setEndTime(endTime);
-            }
-           if(!status.isEmpty()){
-               doTransition(status, task);
-           }
-            if (startTime == null && endTime == null && status.isEmpty())
-                getUserInterface().printMessage("Geen updates gedaan");
-            else
-                getUserInterface().printMessage("Taak geupdated");
+            doTransition(status, task);
         }
         catch (IllegalArgumentException e) {
             getUserInterface().printException(e);
@@ -127,24 +113,26 @@ public class TaskController extends AbstractController {
         status = status.toLowerCase();
         switch (status) {
             case "execute":
-                task.execute();
+                task.execute(getSysteTime().getCurrentSystemTime());
                 break;
             case "fail":
-                task.fail();
+                task.fail(getSysteTime().getCurrentSystemTime());
                 break;
             case "finish":
-                task.finish();
+                task.finish(getSysteTime().getCurrentSystemTime());
                 break;
             default:
-                throw new IllegalArgumentException("Een verkeerd commando werd meegegeven!");
+                throw new IllegalArgumentException("Een verkeerd status werd meegegeven!");
         }
 
     }
 
+
     @Override
     public HashMap<Command, CommandStrategy> getCommandStrategies() {
         HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
-        map.put(Command.HELP,() -> System.out.println("help task controller"));
+        map.put(Command.CREATETASK,this::createTask);
+        map.put(Command.UPDATETASK,this::updateTask);
         return map;
     }
 }

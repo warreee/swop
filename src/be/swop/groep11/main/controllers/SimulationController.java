@@ -2,6 +2,7 @@ package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.IProjectRepositoryMemento;
 import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.CancelException;
@@ -22,12 +23,12 @@ public class SimulationController extends AbstractController {
     * Resolve Conflict
     * Show Projects
     * */
-    public SimulationController(MainController mainController, ProjectRepository projectRepository, UserInterface userInterface) {
-        super(userInterface);
+    public SimulationController(SystemTime systemTime, ProjectRepository projectRepository, UserInterface userInterface) {
+        super(userInterface,systemTime);
         this.projectRepository = projectRepository;
 
-        this.taskController = new TaskController(projectRepository,getUserInterface());
-        this.projectController = new ProjectController(projectRepository,new User("Simulation"),getUserInterface());
+        this.taskController = new TaskController(projectRepository,getUserInterface(),systemTime);
+        this.projectController = new ProjectController(projectRepository,new User("Simulation"),getUserInterface(),getSysteTime());
 
     }
     //Store initial state

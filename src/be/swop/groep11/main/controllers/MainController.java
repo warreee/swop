@@ -1,7 +1,7 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.TMSystem;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.Command;
@@ -15,20 +15,18 @@ import java.util.HashMap;
 public class MainController extends AbstractController {
 
     private final ProjectRepository projectRepository;
-    private final TMSystem tmSystem;
 
 
     //TODO documentatie, als ook tmSystem naar SystemTime, als ook reduceren van duplicate code.
 
-    public MainController(UserInterface userInterface,TMSystem tmSystem,ProjectRepository projectRepository) {
-        super(userInterface);
-        this.tmSystem = tmSystem;
+    public MainController(UserInterface userInterface,SystemTime systemTime,ProjectRepository projectRepository) {
+        super(userInterface,systemTime);
         this.projectRepository = projectRepository;
     }
 
     @Override
     public void advanceTime() throws IllegalArgumentException {
-        AbstractController controller = new AdvanceTimeController(getTMSystem(),getUserInterface());
+        AbstractController controller = new AdvanceTimeController(getUserInterface(),getSysteTime());
         controller.activate();
         controller.advanceTime();
         controller.deActivate();
@@ -36,7 +34,7 @@ public class MainController extends AbstractController {
 
     @Override
     public void createProject() throws IllegalArgumentException {
-        AbstractController controller = new ProjectController(getProjectRepository(),new User("root"),getUserInterface());
+        AbstractController controller = new ProjectController(getProjectRepository(),new User("root"),getUserInterface(),getSysteTime());
         controller.activate();
         controller.createProject();
         controller.deActivate();
@@ -45,13 +43,10 @@ public class MainController extends AbstractController {
     private ProjectRepository getProjectRepository() {
         return projectRepository;
     }
-    private TMSystem getTMSystem() {
-        return tmSystem;
-    }
 
     @Override
     public void createTask() throws IllegalArgumentException {
-        AbstractController controller = new TaskController(getProjectRepository(),getUserInterface());
+        AbstractController controller = new TaskController(getProjectRepository(),getUserInterface(),getSysteTime());
         controller.activate();
         controller.createTask();
         controller.deActivate();
@@ -59,7 +54,7 @@ public class MainController extends AbstractController {
 
     @Override
     public void showProjects() throws IllegalArgumentException {
-        AbstractController controller = new ProjectController(getProjectRepository(),new User("root"),getUserInterface());
+        AbstractController controller = new ProjectController(getProjectRepository(),new User("root"),getUserInterface(),getSysteTime());
         controller.activate();
         controller.showProjects();
         controller.deActivate();
@@ -67,7 +62,7 @@ public class MainController extends AbstractController {
 
     @Override
     public void updateTask() throws IllegalArgumentException {
-        AbstractController controller = new TaskController(getProjectRepository(),getUserInterface());
+        AbstractController controller = new TaskController(getProjectRepository(),getUserInterface(),getSysteTime());
         controller.activate();
         controller.updateTask();
         controller.deActivate();
@@ -77,7 +72,7 @@ public class MainController extends AbstractController {
 
     @Override
     public void startSimulation() throws IllegalArgumentException {
-        this.simController = new SimulationController(this,getProjectRepository(),getUserInterface());
+        this.simController = new SimulationController(getSysteTime(),getProjectRepository(),getUserInterface());
         this.simController.activate();
         this.simController.startSimulation();
         //Mag niet deActivaten omdat de simulatie controller nog actief moet zijn, totdat end simulation is opgeroepen

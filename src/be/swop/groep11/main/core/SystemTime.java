@@ -21,4 +21,9 @@ public class SystemTime {
     }
 
     private LocalDateTime currentSystemTime;
+
+    public void updateSystemTime(LocalDateTime newTime)throws IllegalArgumentException{
+        //TODO implement, check if valid new time, niet in het verleden, IllegalArgumentException indien geen geldige nieuwe tijd
+    }
+
 }

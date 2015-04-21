@@ -1,5 +1,6 @@
 package be.swop.groep11.main.controllers;
 
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.Command;
 import be.swop.groep11.main.ui.commands.CommandStrategy;
@@ -14,9 +15,15 @@ import java.util.HashMap;
 public abstract class AbstractController {
 
     private final UserInterface userInterface;
+    private final SystemTime systeTime;
 
-    public AbstractController(UserInterface userInterface) {
+    public AbstractController(UserInterface userInterface,SystemTime systemTime) {
+        this.systeTime = systemTime;
         this.userInterface = userInterface;
+    }
+
+    protected SystemTime getSysteTime() {
+        return systeTime;
     }
 
     protected UserInterface getUserInterface(){
