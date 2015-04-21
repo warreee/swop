@@ -12,6 +12,10 @@ public class SystemTime {
         setCurrentSystemTime(LocalDateTime.now());
     }
 
+    public SystemTime(LocalDateTime systemTime){
+        this.currentSystemTime = systemTime;
+    }
+
     public LocalDateTime getCurrentSystemTime() {
         return currentSystemTime;
     }
