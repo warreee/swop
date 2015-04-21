@@ -1,11 +1,10 @@
 package be.swop.groep11.main.core;
 
 import be.swop.groep11.main.task.Task;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by warreee on 4/20/15.
@@ -39,18 +38,34 @@ public class DependencyGraph {
         if (dependentMap.containsKey(dependent)){
             dependentMap.get(dependent).add(dependingOn);
         } else {
-            ArrayList<Task> dependedList = new ArrayList<>();
-            dependedList.add(dependingOn);
-            dependentMap.put(dependent, dependedList);
+            ArrayList<Task> dependentList = new ArrayList<>();
+            dependentList.add(dependingOn);
+            dependentMap.put(dependent, dependentList);
         }
     }
 
     public Set<Task> getDependentTasks(Task task){
-        return new HashSet<>(dependentMap.get(task));
+        ImmutableList<Task> copy = ImmutableList.copyOf(dependentMap.get(task));
+        return new HashSet<>(copy);
     }
 
     public Set<Task> getDependingOnTasks(Task task){
-        return new HashSet<>(dependingOnMap.get(task));
+        ImmutableList<Task> copy = ImmutableList.copyOf(dependingOnMap.get(task));
+        return new HashSet<>(copy);
+    }
+
+    public void changeDepeningOnAlternativeTask(Task failedTask, Task alternativeTask) {
+        ArrayList<Task> dependentTasksFailedTask = dependentMap.get(failedTask);
+        for (Task dtft : dependentTasksFailedTask) {
+            addDependency(dtft, alternativeTask);
+        }
+        removeDependency(failedTask);
+
+    }
+
+    private void removeDependency(Task failedTask) {
+        dependentMap.remove(failedTask);
+        dependingOnMap.entrySet().stream().filter(entry -> entry.getValue().contains(failedTask)).forEach(entry -> entry.getValue().remove(failedTask));
     }
 
 

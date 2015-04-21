@@ -28,7 +28,12 @@ public interface UserInterface {
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van projecten is leeg.
      * @throws be.swop.groep11.main.ui.commands.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException; //TODO Kan weg
+    default Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException{
+        return selectFromList(projects, (project -> {
+            String overTime = (project.isOverTime()) ? "over time" : "on time";
+            return String.format("%-35s %-20s %-20s %n", project.getName(), project.getProjectStatus().name(), "(" + overTime + ")");
+        }));
+    }
 
     /**
      * Vraagt een invoer van de gebruiker.
@@ -89,7 +94,7 @@ public interface UserInterface {
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van taken is leeg.
      * @throws be.swop.groep11.main.ui.commands.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException; //TODO Kan weg
+    Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
 
     /**
      * Toont de details van een project.
