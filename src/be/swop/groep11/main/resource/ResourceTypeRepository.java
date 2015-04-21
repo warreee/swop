@@ -72,6 +72,17 @@ public class ResourceTypeRepository {
     }
 
     /**
+     * Voegt een nieuwe ResourceType met requiredTypes en conflictingTypes toe. De DailyAvailability is voor een ganse
+     * dag.
+     * @param name De naam van de toe te voegen ResourceType
+     * @param requireTypes De ResourceTypes(lijst) waarvan het toe te voegen ResourceType afhangt.
+     * @param conflictingTypes De ResourceTypes(lijst) waarmee het toe te voegen ResourceType conflicteerd.
+     */
+    public void addNewResourceType(String name,  List<IResourceType> requireTypes, List<IResourceType> conflictingTypes){
+        addNewResourceType(name, new DailyAvailability(LocalTime.MIN, LocalTime.MAX), requireTypes, conflictingTypes);
+    }
+
+    /**
      *
      * @param name De naam van het op te vragen ResourceType
      * @throws NoSuchElementException   wordt gegooid als de naam niet in deze repository zit.
