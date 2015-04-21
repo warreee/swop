@@ -292,13 +292,7 @@ public class Task {
     public void setAlternativeTask(Task alternativeTask) throws IllegalArgumentException {
         if (! canSetAlternativeTask(this, alternativeTask))
             throw new IllegalArgumentException("Kan de alternatieve taak niet wijzigen");
-        for (Task task : getDependentTasks()) {
-            for (DependencyConstraint dependencyConstraint : task.getDependencyConstraints()) {
-                if (dependencyConstraint.getDependingOn() == this ) {
-                    dependencyConstraint.setDependingOn(alternativeTask);
-                }
-            }
-        }
+        dependencyGraph.changeDepeningOnAlternativeTask(this, alternativeTask);
         this.alternativeTask = alternativeTask;
     }
 
