@@ -18,7 +18,6 @@ public class MainController extends AbstractController {
 
 
     //TODO documentatie, als ook tmSystem naar SystemTime, als ook reduceren van duplicate code.
-
     public MainController(UserInterface userInterface,SystemTime systemTime,ProjectRepository projectRepository) {
         super(userInterface,systemTime);
         this.projectRepository = projectRepository;

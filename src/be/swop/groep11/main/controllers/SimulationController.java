@@ -118,6 +118,7 @@ public class SimulationController extends AbstractController {
         this.projectController.deActivate();
     }
 
+    @Override
     public HashMap<Command,CommandStrategy> getCommandStrategies(){
         HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
         map.put(Command.CREATETASK,taskController::createTask);

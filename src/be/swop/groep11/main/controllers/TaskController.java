@@ -126,8 +126,6 @@ public class TaskController extends AbstractController {
         }
 
     }
-
-
     @Override
     public HashMap<Command, CommandStrategy> getCommandStrategies() {
         HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
