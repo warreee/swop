@@ -1,7 +1,6 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.TMSystem;
 import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.Command;
@@ -30,7 +29,7 @@ public class AdvanceTimeController extends AbstractController {
     public void advanceTime(){
         try {
             LocalDateTime newSystemTime =  getUserInterface().requestDatum("Nieuwe systeemtijd:");
-            getSysteTime().updateSystemTime(newSystemTime);
+            getSystemTime().updateSystemTime(newSystemTime);
             getUserInterface().printMessage("Systeemtijd aangepast");
         } catch (IllegalArgumentException e) {
             getUserInterface().printException(e);

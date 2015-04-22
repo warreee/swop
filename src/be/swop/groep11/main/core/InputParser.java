@@ -2,8 +2,7 @@ package be.swop.groep11.main.core;
 
 import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.IResourceType;
-import be.swop.groep11.main.resource.ResourceManager;
-import be.swop.groep11.main.resource.ResourceTypeRepository;
+import be.swop.groep11.main.resource.ResourceManager;;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskStatus;
 import org.yaml.snakeyaml.Yaml;
@@ -291,13 +290,13 @@ public class InputParser {
 
         if (mapTask.get("startTime") != null) {
             LocalDateTime startTime = parseTime(mapTask.get("startTime"));
-            task.setStartTime(startTime);
+//            task.setStartTime(startTime);
         }
 
 
         if (mapTask.get("endTime") != null) {
             LocalDateTime endTime = parseTime(mapTask.get("endTime"));
-            task.setEndTime(endTime);
+//            task.setEndTime(endTime);
         }
 
 

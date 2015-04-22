@@ -106,10 +106,10 @@ public interface UserInterface {
      */
     void showTaskDetails(Task task);
 
-    void addControllerToStack(AbstractController abstractController);
-    void removeControllerFromStack(AbstractController abstractController);
+/*    void addControllerToStack(AbstractController abstractController);
+    void removeControllerFromStack(AbstractController abstractController);*/
     void showHelp(AbstractController controller);
-
+    ActionMapping getActionMapping();
     /**
      * Laat de gebruiker een element kiezen uit de gegeven lijst.
      * @param tList             De lijst waaruit men kan kiezen

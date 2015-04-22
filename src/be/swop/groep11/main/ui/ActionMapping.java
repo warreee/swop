@@ -12,36 +12,80 @@ import java.util.LinkedList;
  */
 public class ActionMapping {
 
+    private UserInterface userInterface;
 
-    private AbstractController getCurrentController() {
-        return controllerStack.getLast();
+    public ActionMapping(UserInterface userInterface ) {
+        this.userInterface = userInterface;
     }
 
-    public void addControllerToStack(AbstractController abstractController){
+    public void activateController(AbstractController abstractController){
         controllerStack.addLast(abstractController);
-        currentCommandStrategies.put(getCurrentController(), getCurrentController().getCommandStrategies());
+        controllerCommandStrategies.put(getActiveController(), getActiveController().getCommandStrategies());
     }
 
-    public void removeControllerFromStack(AbstractController abstractController){
+    public void deActivateController(AbstractController abstractController){
         controllerStack.remove(abstractController);
-        currentCommandStrategies.remove(abstractController);
+        controllerCommandStrategies.remove(abstractController);
     }
     /**
      * Houdt lijst van Controllers bij die "actief zijn".
      * De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit.
      *
+     * Soort van execution stack
      */
     private LinkedList<AbstractController> controllerStack = new LinkedList<>();
-
-
-    private HashMap<Command,CommandStrategy> map;
-
     /**
      * Gegeven een controller verkrijg de corresponderende CommandStrategies voor de aanvaarde commands in die controller.
      */
-    private HashMap<AbstractController,HashMap<Command,CommandStrategy>> currentCommandStrategies = new HashMap<>();
+    private HashMap<AbstractController,HashMap<Command,CommandStrategy>> controllerCommandStrategies = new HashMap<>();
 
-    private void addCommandStrategy(AbstractController controller,Command command,CommandStrategy strategy){
-
+    public void addCommandStrategy(AbstractController controller,Command command,CommandStrategy strategy) {
+        HashMap<Command,CommandStrategy> map = controllerCommandStrategies.get(controller);
+        if(map == null){
+            //Niets te vinden
+            //Geen mapping voor gegeven controller
+            map = new HashMap<Command,CommandStrategy>();
+        }
+        map.put(command,strategy);
+        controllerCommandStrategies.put(controller,map);
     }
+
+    public void removeCommandStrategy(AbstractController controller, Command command) {
+        HashMap<Command,CommandStrategy> map = controllerCommandStrategies.get(controller);
+        if(map == null){
+            //Niets te vinden
+            throw new IllegalArgumentException("Geen mapping aanwezig voor de gegeven controller");
+        }
+        map.remove(command);
+    }
+
+    private AbstractController getActiveController(){
+        return controllerStack.getLast();
+    }
+
+    private HashMap<Command,CommandStrategy> getMappingFor(AbstractController controller)throws IllegalArgumentException{
+        HashMap<Command,CommandStrategy> map = controllerCommandStrategies.get(controller);
+        if(map == null){
+            //Niets te vinden
+            throw new IllegalArgumentException("Geen mapping aanwezig voor de gegeven controller");
+        }
+        return map;
+    }
+
+    public void executeAction(Command command){
+        HashMap<Command,CommandStrategy> map = getMappingFor(getActiveController());
+
+        CommandStrategy strategy = map.get(command);
+        if(strategy != null){
+            strategy.execute();
+        }
+        //TODO foutmelding/exception indien geen strategy aanwezig?
+    }
+
+    private UserInterface getUserInterface() {
+        return userInterface;
+    }
+
+    private CommandStrategy invalid = () -> getUserInterface().printMessage("Ongeldig commando, Abstract controller");
+
 }

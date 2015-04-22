@@ -28,7 +28,7 @@ public class SimulationController extends AbstractController {
         this.projectRepository = projectRepository;
 
         this.taskController = new TaskController(projectRepository,getUserInterface(),systemTime);
-        this.projectController = new ProjectController(projectRepository,new User("Simulation"),getUserInterface(),getSysteTime());
+        this.projectController = new ProjectController(projectRepository,new User("Simulation"),getUserInterface(), getSystemTime());
 
     }
     //Store initial state
@@ -76,12 +76,12 @@ public class SimulationController extends AbstractController {
         deActivate();
     }
 
-    private void realize() {
+    public void realize() {
         //projectRepository bezit all alle veranderingen ...
 
         deActivate();
     }
-    private void cancel() {
+    public void cancel() {
         restoreState();
         getUserInterface().printMessage("Canceled Simulation");
 

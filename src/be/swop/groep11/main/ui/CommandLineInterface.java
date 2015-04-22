@@ -1,8 +1,9 @@
 package be.swop.groep11.main.ui;
 
-import be.swop.groep11.main.controllers.AbstractController;
-import be.swop.groep11.main.controllers.MainController;
-import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.controllers.*;
+import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.commands.Command;
@@ -16,7 +17,9 @@ import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -47,7 +50,37 @@ public class CommandLineInterface implements UserInterface {
         ProjectRepository projectRepository = new ProjectRepository(systemTime);
         //Aanmaken main controller
         MainController main = new MainController(cli, systemTime, projectRepository);
-        cli.addControllerToStack(main);
+        ActionMapping actionMapping = cli.getActionMapping();
+        actionMapping.activateController(main);
+
+        actionMapping.addCommandStrategy(main, Command.CREATETASK, main::createTask);
+        actionMapping.addCommandStrategy(main, Command.UPDATETASK, main::updateTask);
+        actionMapping.addCommandStrategy(main,Command.PLANTASK,main::planTask);
+        actionMapping.addCommandStrategy(main,Command.CREATEPROJECT,main::createProject);
+        actionMapping.addCommandStrategy(main,Command.SHOWPROJECTS,main::showProjects);
+        actionMapping.addCommandStrategy(main, Command.ADVANCETIME, main::advanceTime);
+        actionMapping.addCommandStrategy(main, Command.STARTSIMULATION, main::startSimulation);
+
+        ProjectController projectController = main.getProjectController();
+        actionMapping.addCommandStrategy(projectController, Command.SHOWPROJECTS, projectController::showProjects);
+        actionMapping.addCommandStrategy(projectController, Command.CREATEPROJECT, projectController::createProject);
+
+        TaskController taskController = main.getTaskController();
+        actionMapping.addCommandStrategy(taskController, Command.CREATETASK, taskController::createTask);
+        actionMapping.addCommandStrategy(taskController, Command.UPDATETASK, taskController::updateTask);
+
+        AdvanceTimeController advanceTimeController = main.getAdvanceTimeController();
+        actionMapping.addCommandStrategy(advanceTimeController, Command.ADVANCETIME, advanceTimeController::advanceTime);
+
+        SimulationController simulationController = main.getSimulationController();
+        actionMapping.addCommandStrategy(simulationController, Command.CREATETASK, taskController::createTask);
+        actionMapping.addCommandStrategy(simulationController, Command.UPDATETASK, taskController::updateTask);
+        actionMapping.addCommandStrategy(simulationController, Command.PLANTASK, taskController::planTask);
+        actionMapping.addCommandStrategy(simulationController, Command.SHOWPROJECTS, projectController::showProjects);
+        actionMapping.addCommandStrategy(simulationController, Command.REALIZESIMULATION, simulationController::realize);
+        actionMapping.addCommandStrategy(simulationController, Command.CANCEL, simulationController::cancel); //Cancel Simulation
+
+
         // lees commando's
         cli.run();
     }
@@ -94,40 +127,16 @@ public class CommandLineInterface implements UserInterface {
     }
     private boolean exit;
 
+    private ActionMapping actionMapping = new ActionMapping(this);
+
+    @Override
+    public ActionMapping getActionMapping() {
+        return actionMapping;
+    }
+
     private void executeCommand(Command command) {
-        CommandStrategy strategy = currentCommandStrategies.get(getCurrentController()).get(command);
-        if(strategy != null) {
-            strategy.execute();
-        }
+        actionMapping.executeAction(command);//
     }
-
-    private AbstractController getCurrentController() {
-        return controllerStack.getLast();
-    }
-
-    @Override
-    public void addControllerToStack(AbstractController abstractController){
-        controllerStack.addLast(abstractController);
-        currentCommandStrategies.put(getCurrentController(), getCurrentController().getCommandStrategies());
-    }
-
-    @Override
-    public void removeControllerFromStack(AbstractController abstractController){
-        controllerStack.remove(abstractController);
-        currentCommandStrategies.remove(abstractController);
-    }
-
-    /**
-     * Houdt lijst van Controllers bij die "actief zijn".
-     * De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit.
-     *
-     */
-    private LinkedList<AbstractController> controllerStack = new LinkedList<>();
-
-    /**
-     * Gegeven een controller verkrijg de corresponderende CommandStrategies voor de aanvaarde commands in die controller.
-     */
-    private HashMap<AbstractController,HashMap<Command,CommandStrategy>> currentCommandStrategies = new HashMap<>();
 
     @Override
     public void printMessage(String message) {
@@ -153,8 +162,6 @@ public class CommandLineInterface implements UserInterface {
             System.out.printf(format,i,project.getName(),project.getProjectStatus().name(),"("+overTime+")"); // TODO: hier is nog geen methode voor in Project!!!!!!!
         }*/
     }
-
-
 
     /**
      * Toont een tekstversie van een lijst van taken aan de gebruiker
