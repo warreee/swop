@@ -1,16 +1,15 @@
 package be.swop.groep11.main.resource;
 
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Een resource manager houdt alle resource types in het systeem bij en de reservaties voor de resource instanties
@@ -21,7 +20,7 @@ public class ResourceManager {
     /**
      * Constructor om een nieuwe resource manager aan te maken.
      */
-    public ResourceManager(){
+    public ResourceManager() {
         //TODO garantie developers als resourceType niet in de constructor van ResourceManager?
         //Zeker zijn dat developers beschikbaar zijn als type
         addDeveloperType();
@@ -177,7 +176,7 @@ public class ResourceManager {
 
     }
 
-    //////////////////////////////////////// RESOURCE ALLOCATIONS //////////////////////////////////////////////////////
+    //////////////////////////////////////// RESOURCE RESERVATIONS /////////////////////////////////////////////////////
 
     /**
      * Maakt een reservatie voor een resource instantie gedurende een bepaalde tijdsspanne.
@@ -185,9 +184,16 @@ public class ResourceManager {
      * @param resourceInstance De te reserveren resource instantie
      * @param timeSpan         De gegeven tijdsspanne
      * @param isSpecific       True als de resource instantie specifiek gekozen is
+     * @throws IllegalArgumentException De resource instantie is niet beschikbaar in de gegeven tijdsspanne,
+     *                                  of de gegeven taak is null
      */
     public void makeReservation(Task task, ResourceInstance resourceInstance, TimeSpan timeSpan, boolean isSpecific) {
-        // TODO: implementatie + exceptions!
+        if (task == null)
+            throw new IllegalArgumentException("Taak mag niet null zijn");
+        if (! isAvailable(resourceInstance, timeSpan))
+            throw new IllegalArgumentException("De resource instantie is niet beschikbaar in de gegeven tijdsspanne");
+
+        this.addReservation(task, new ResourceReservation(task, resourceInstance, timeSpan, isSpecific));
     }
 
     /**
@@ -197,10 +203,7 @@ public class ResourceManager {
      * @return True als de resource instantie beschikbaar is.
      */
     public boolean isAvailable(ResourceInstance resourceInstance, TimeSpan timeSpan) {
-        /* TODO: controleren of er geen reservaties voor resourceInstance tijdens de huidige systeemtijd
-                 en ook er ook geen utilizations zijn voor resourceInstance tijdens de huidige systeemtijd
-         */
-        return false;
+        return this.getConflictingReservations(resourceInstance, timeSpan).isEmpty();
     }
 
     /**
@@ -248,6 +251,36 @@ public class ResourceManager {
         return timeSpan;
     }
 
+    /**
+     * Geeft een lijst van alle resource instanties van een resource type, die beschikbaar zijn vanaf een gegeven starttijd
+     * voor een gegeven duur. De lijst is gesorteerd volgens toenemende eindtijd van de eerstvolgende beschikbare tijdsspanne
+     * van elke resource instantie.
+     * @param resourceType Het gegeven resource type
+     * @param startTime    De gegeven starttijd
+     * @param duration     De gegeven duur
+     */
+    public List<ResourceInstance> getAvailableInstances(IResourceType resourceType, LocalDateTime startTime, Duration duration) {
+        List<ResourceInstance> availableInstances = new ArrayList<>();
+
+        // voeg alle resource instances toe die beschikbaar zijn vanaf startTime
+        for (ResourceInstance instance : resourceType.getResourceInstances()) {
+            if (this.getNextAvailableTimeSpan(instance, startTime, duration).getStartTime().equals(startTime)) {
+                availableInstances.add(instance);
+            }
+        }
+
+        // sorteer de instances volgens toenemende eindtijd van de eerstvolgende beschikbare tijdsspanne
+        class ResourceInstanceComparator implements Comparator<ResourceInstance> {
+            @Override
+            public int compare(ResourceInstance instance1, ResourceInstance instance2) {
+                return getNextAvailableTimeSpan(instance1, startTime, duration).getEndTime()
+                        .compareTo(getNextAvailableTimeSpan(instance2, startTime, duration).getEndTime());
+            }
+        }
+        Collections.sort(availableInstances, new ResourceInstanceComparator());
+
+        return availableInstances;
+    }
 
     /**
      * Geeft een lijst van conflicterende reservaties voor een resource instantie in een bepaalde tijdsspanne.
@@ -257,7 +290,7 @@ public class ResourceManager {
      */
     private List<ResourceReservation> getConflictingReservations(ResourceInstance resourceInstance, TimeSpan timeSpan) {
         List<ResourceReservation> conflictingReservations = new ArrayList<>();
-        ImmutableList<ResourceReservation> reservations = null; // TODO: lijst van reservaties voor de resourceInstantie meegeven!
+        ImmutableList<ResourceReservation> reservations = this.getReservations(resourceInstance);
         for (ResourceReservation reservation : reservations) {
             if (timeSpan.overlapsWith(reservation.getTimeSpan())) {
                 conflictingReservations.add(reservation);
@@ -277,5 +310,60 @@ public class ResourceManager {
 
     // TODO: reservaties vroeger laten eindigien
 
-    // TODO: reservaties bijhouden + getter
+    /**
+     * Geeft een immutable list van alle reservaties.
+     */
+    public ImmutableList<ResourceReservation> getReservations() {
+        List<ResourceReservation> allReservations = new LinkedList<>();
+        for (List<ResourceReservation> taskReservations : this.reservations.values()) {
+            allReservations.addAll(taskReservations);
+        }
+        return ImmutableList.copyOf(allReservations);
+    }
+
+    /**
+     * Geeft een immutable list van alle reservaties van een taak.
+     * @param task De gegeven taak
+     */
+    public ImmutableList<ResourceReservation> getReservations(Task task) {
+        if (reservations.containsKey(task)) {
+            return ImmutableList.copyOf(new LinkedList<ResourceReservation>());
+        }
+        else {
+            return ImmutableList.copyOf(reservations.get(task));
+        }
+    }
+
+    /**
+     * Geeft een immutable list van alle reservaties van een resource instantie.
+     * @param resourceInstance De resource instantie
+     */
+    public ImmutableList<ResourceReservation> getReservations(ResourceInstance resourceInstance) {
+        ImmutableList<ResourceReservation> allReservations = this.getReservations();
+        List<ResourceReservation> resourceReservations = new LinkedList<>();
+        for (ResourceReservation reservation : allReservations) {
+            if (reservation.getResourceInstance() == resourceInstance) {
+                resourceReservations.add(reservation);
+            }
+        }
+        return ImmutableList.copyOf(resourceReservations);
+    }
+
+    /**
+     * Hashmap die voor elke taak een lijst reservaties bijhoudt
+     */
+    private Map<Task,List<ResourceReservation>> reservations = new HashMap<>();
+
+    private void addReservation(Task task, ResourceReservation reservation) {
+        if (reservations.containsKey(task)) {
+            List<ResourceReservation> taskReservations = reservations.get(task);
+            taskReservations.add(reservation);
+        }
+        else {
+            List<ResourceReservation> taskReservations = new LinkedList<>();
+            taskReservations.add(reservation);
+            reservations.put(task,taskReservations);
+        }
+    }
+
 }
