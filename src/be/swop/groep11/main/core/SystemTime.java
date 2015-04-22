@@ -20,7 +20,7 @@ public class SystemTime {
         return currentSystemTime;
     }
 
-    private void setCurrentSystemTime(LocalDateTime currentSystemTime) {
+    public void setCurrentSystemTime(LocalDateTime currentSystemTime) {
         this.currentSystemTime = currentSystemTime;
     }
 
