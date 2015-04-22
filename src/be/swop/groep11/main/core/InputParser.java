@@ -1,9 +1,6 @@
 package be.swop.groep11.main.core;
 
-import be.swop.groep11.main.resource.DailyAvailability;
-import be.swop.groep11.main.resource.IResourceType;
-import be.swop.groep11.main.resource.ResourceManager;
-import be.swop.groep11.main.resource.ResourceTypeRepository;
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskStatus;
 import org.yaml.snakeyaml.Yaml;
@@ -26,12 +23,12 @@ import java.util.Map;
  * Klasse voor het inlezen van de de input file, deze moet staan in /input met de naam input.tman
  */
 public class InputParser {
-    // TODO: nieuwe implementatie ResourceTypeRepo afwachten. (Overschakelen naar ResourceManager?)
     User user = new User("InputParser");
     ProjectRepository projectRepository;
     ArrayList<Project> projectList = new ArrayList<>();
     ArrayList<Task> taskList = new ArrayList<>();
     ArrayList<IResourceType> resourceTypeList = new ArrayList<>();
+    ArrayList<ResourceInstance> resourceInstanceList = new ArrayList<>();
     ArrayList<DailyAvailability> dailyAvailabilityList = new ArrayList<>();
     private ResourceManager resourceManager;
     private SystemTime systemTime;
@@ -164,8 +161,7 @@ public class InputParser {
         ArrayList tasks = (ArrayList) tasksMap.get("tasks");
         for(Object task: tasks){
             Map<String, String> taskMap = (Map<String, String>) task;
-            int projectIndex = Integer.valueOf(String.valueOf(taskMap.get("project")));
-            // TODO: Complete
+            addTask(taskMap);
         }
     }
 
@@ -360,14 +356,13 @@ public class InputParser {
         projectRepository.addNewProject(name, description, creationTime, dueTime, user);
 
         // Haalt het laatst toegevoegde project op.
-        projectList.add(projectRepository.getProjects().get(projectRepository.getProjects().size() - 1 ));
+        projectList.add(projectRepository.getProjects().get(projectRepository.getProjects().size() - 1));
     }
 
     private void addTask(Map<String, String> propertiesList) {
 
         // TODO: planning er in steken.
         // TODO: reservations er nog in steken.
-        // TODO: Status nog eens goed controlleren
 
         String description = propertiesList.get("description");
         Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
@@ -420,12 +415,6 @@ public class InputParser {
         ArrayList<IResourceType> con = new ArrayList<>();
         Arrays.stream(parseStringArray(requires)).forEach(x -> req.add(resourceTypeList.get(x)));
         Arrays.stream(parseStringArray(conflictsWith)).forEach(x -> con.add(resourceTypeList.get(x)));
-//        for(int i: parseStringArray(requires)){
-//            req.add(resourceTypeList.get(i));
-//        }
-//        for(int i: parseStringArray(conflictsWith)){
-//            con.add(resourceTypeList.get(i));
-//        }
 
         // Voeg de IResourceType eindelijk toe.
         if(dailyAvailability.isEmpty()){
@@ -436,6 +425,7 @@ public class InputParser {
             DailyAvailability da = dailyAvailabilityList.get(Integer.valueOf(dailyAvailability));
             resourceManager.addNewResourceType(name, da, req, con);
         }
+        resourceTypeList.add(resourceManager.getResourceTypeByName(name));
     }
 
     /**
@@ -451,20 +441,34 @@ public class InputParser {
     }
 
     /**
-     * Gebruikt een aangemaakt project om een taak aan toe te voegen
-     *
-     * @param propertiesList de eigenschappen van de taak in tman formaat
-     * @param project        het project waar de taak aan wordt toegevoegd.
+     * Voegt een nieuwe ResourceInstance toe aan een bestaand ResourceType.
+     * @param propertiesList
      */
-    private void addTaskToProject(Map<String, String> propertiesList, Project project) {
-
-        String description = propertiesList.get("description");
-        Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
-        Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation"))) / 100;
-        project.addNewTask(description, acceptableDeviation, duration);
-        taskList.add(project.getTasks().get(project.getTasks().size() - 1));
+    private void addResource(Map<String, String> propertiesList){
+        String name = propertiesList.get("name");
+        IResourceType resourceType = resourceTypeList.get(Integer.valueOf(propertiesList.get("type")));
+        resourceManager.addResourceInstance(resourceType, name);
+        int size = resourceManager.getResourceTypeByName(name).getResourceInstances().size();
+        resourceInstanceList.add(resourceManager.getResourceTypeByName(name).getResourceInstances().get(size - 1));
     }
 
+    private void addDeveloper(Map<String, String> propertiesList){
+        String name = propertiesList.get("name");
+        IResourceType resourceType = resourceManager.getResourceTypeByName("Developer");
+        resourceManager.addResourceInstance(resourceType, name);
+    }
+
+    private void addPlanning(Map<String, String> propertiesList){
+        //TODO: implementeren.
+    }
+
+    private void addReservation(Map<String, String> propertiesList){
+        ResourceInstance resourceInstance = resourceInstanceList.get(Integer.valueOf(propertiesList.get("resource")));
+        Task task = taskList.get(Integer.valueOf(propertiesList.get("task")));
+        LocalDateTime startTime = parseTime(propertiesList.get("startTime"));
+        LocalDateTime endTime = parseTime(propertiesList.get("endTime"));
+        resourceManager.makeReservation(task, resourceInstance, new TimeSpan(startTime, endTime), true);
+    }
 
     /**
      * Maakt van een array in stringformaat een int[]
