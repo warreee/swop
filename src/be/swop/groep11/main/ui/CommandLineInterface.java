@@ -1,14 +1,13 @@
 package be.swop.groep11.main.ui;
 
+import be.swop.groep11.main.actions.*;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.actions.*;
 import com.google.common.collect.ImmutableList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,8 +26,8 @@ public class CommandLineInterface implements UserInterface {
      * Constructor om een nieuwe commandline gebruikersinterface te maken.
      * Maakt een nieuw TaskMan object aan en initialiseert de controllers.
      */
-    public CommandLineInterface() {
-        this.br = new BufferedReader(new InputStreamReader(java.lang.System.in));
+    public CommandLineInterface(BufferedReader bufferedReader) {
+        this.bufferedReader = bufferedReader;
         this.exit = false;
     }
 
@@ -36,20 +35,20 @@ public class CommandLineInterface implements UserInterface {
         try {
             while (! exit) {
                 try {
-                    String commandString = br.readLine();
+                    String commandString = bufferedReader.readLine();
                     Action com = Action.getInput(commandString);
                     executeCommand(com);
                 }catch (IllegalActionException ec){
                        printException(ec);
                 }
             }
-            br.close();
+            bufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     private boolean exit;
-    private BufferedReader br;
+    private BufferedReader bufferedReader;
     private ActionMapping actionMapping;
 
     @Override
@@ -111,7 +110,8 @@ public class CommandLineInterface implements UserInterface {
     private String projectFormatStr = "%-35s %-20s %-20s %n";
     Function<Project,String> showProjectEntry =  (project -> {
         String overTime = (project.isOverTime()) ? "over time" : "on time";
-        return String.format(projectFormatStr, project.getName(), project.getProjectStatus().name(), "(" + overTime + ")"); // TODO: hier is nog geen methode voor in Project!!!!!!!
+        // TODO: project overtime Method?
+        return String.format(projectFormatStr, project.getName(), project.getProjectStatus().name(), "(" + overTime + ")");
     });
 
     /**
@@ -300,7 +300,7 @@ public class CommandLineInterface implements UserInterface {
         System.out.println(request);
         String result = "";
         try {
-            result = br.readLine();
+            result = bufferedReader.readLine();
             resolveCancel(result);
             resolveEmpty(result);
         } catch (IOException e) {

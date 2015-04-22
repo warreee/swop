@@ -40,11 +40,11 @@ public class ActionMapping {
     private UserInterface userInterface;
     // Houdt lijst van Controllers bij die "actief zijn". De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit. Soort van execution stack
     private LinkedList<AbstractController> controllerStack = new LinkedList<>();
-    //Gegeven een controller verkrijg de corresponderende CommandStrategies voor de aanvaarde commands in die controller.
+    //Gegeven een controller verkrijg de corresponderende ActionStrategies voor de aanvaarde commands in die controller.
     private HashMap<AbstractController,HashMap<Action,ActionStrategy>> controllerActionStrategies = new HashMap<>();
     private HashMap<Action,ActionStrategy> defaultActionStrategies = new HashMap<>();
 
-    public void addCommandStrategy(AbstractController controller,Action action,ActionStrategy strategy) {
+    public void addActionStrategy(AbstractController controller, Action action, ActionStrategy strategy) {
         HashMap<Action,ActionStrategy> map = controllerActionStrategies.get(controller);
         if(map == null){
             //Niets te vinden
@@ -55,7 +55,7 @@ public class ActionMapping {
         controllerActionStrategies.put(controller, map);
     }
 
-    private void removeCommandStrategy(AbstractController controller, Action action) {
+    private void removeActionStrategy(AbstractController controller, Action action) {
         HashMap<Action,ActionStrategy> map = controllerActionStrategies.get(controller);
         if(map == null){
             //Niets te vinden
@@ -77,7 +77,7 @@ public class ActionMapping {
         if(strategy != null){
             strategy.execute();
         }else{
-            //Command niet herkend!
+            //Action niet herkend!
             getInvalid().execute();
         }
     }
@@ -91,13 +91,13 @@ public class ActionMapping {
     }
 
     public void addDefaultStrategy(Action action, ActionStrategy strategy) {
-        if(!isValidCommandStrategy(action, strategy)) {
+        if(!isValidActionStrategy(action, strategy)) {
             throw new IllegalArgumentException("Invalid command & commandStrategy");
         }
         getDefaultMap().put(action, strategy);
     }
 
-    private boolean isValidCommandStrategy(Action action, ActionStrategy strategy) {
+    private boolean isValidActionStrategy(Action action, ActionStrategy strategy) {
         return action != null & strategy != null;
     }
 
