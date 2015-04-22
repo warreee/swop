@@ -43,6 +43,7 @@ public class ResourceManager {
         typeBuilders.put(newTypeBuilder.getResourceType(),newTypeBuilder);
         newTypeBuilder.withDailyAvailability(availability);
         //Add require constraints
+        // TODO: vraag Robin: Waarom deze check juist?
         if(!requireTypes.isEmpty()){
             for (IResourceType reqType : requireTypes) {
                 newTypeBuilder.withRequirementConstraint(reqType);
