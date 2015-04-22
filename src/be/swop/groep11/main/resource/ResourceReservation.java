@@ -1,27 +1,25 @@
-package be.swop.groep11.main.core;
+package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.resource.ResourceInstance;
+import be.swop.groep11.main.core.TimeSpan;
 
 /**
  * Stelt de allocatie van een resource instantie gedurende een bepaalde tijdsspanne voor.
  */
-public class ResourceAllocation {
+public abstract class ResourceReservation {
 
     /**
-     * Constructor om een resource allocatie aan te maken met een resource instantie en een tijdsspanne
+     * Constructor om een resource reservatie aan te maken met een resource instantie en een tijdsspanne
      * @param resourceInstance De resource instantie
      * @param timeSpan         De tijdsspanne
-     * @throws java.lang.IllegalArgumentException De resource instantie of tijdsspanne is null,
-     *                                            of de allocatie is niet geldig voor de resource instantie.
+     * @throws java.lang.IllegalArgumentException De resource instantie of tijdsspanne is null
      */
-    public ResourceAllocation(ResourceInstance resourceInstance, TimeSpan timeSpan) throws IllegalArgumentException {
+    public ResourceReservation(ResourceInstance resourceInstance, TimeSpan timeSpan) throws IllegalArgumentException {
         if (resourceInstance == null)
             throw new IllegalArgumentException("Resource instantie mag niet null zijn");
         if (timeSpan == null)
             throw new IllegalArgumentException("Tijdsspanne mag niet null zijn");
         this.resourceInstance = resourceInstance;
         this.timeSpan = timeSpan;
-        resourceInstance.addAllocation(this); // nodig om vanuit de resource instance alle allocaties ervan te kunnen opvragen
     }
 
     private TimeSpan timeSpan;

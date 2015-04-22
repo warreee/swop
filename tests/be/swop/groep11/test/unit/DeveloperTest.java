@@ -1,11 +1,8 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.core.Developer;
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.core.TimeSpan;
-import be.swop.groep11.main.resource.DailyAvailability;
-import be.swop.groep11.main.resource.IResourceType;
-import be.swop.groep11.main.core.ResourceAllocation;
-import be.swop.groep11.main.resource.ResourceTypeRepository;
+import be.swop.groep11.main.resource.ResourceManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,14 +27,14 @@ public class DeveloperTest {
 
     @Before
     public void setUp() throws Exception {
-        ResourceTypeRepository repo = new ResourceTypeRepository();
+        ResourceManager repo = new ResourceManager();
         repo.addNewResourceType("dev",new DailyAvailability(LocalTime.of(8,0),LocalTime.of(17,0)));
         IResourceType developerType = repo.getResourceTypeByName("dev");
         developer = new Developer("Jos", developerType);
-        ResourceAllocation allocation1 = new ResourceAllocation(developer, new TimeSpan(LocalDateTime.of(2015,4,8,8,0), LocalDateTime.of(2015,4,10,14,0)));
-        ResourceAllocation allocation2 = new ResourceAllocation(developer, new TimeSpan(LocalDateTime.of(2015,4,13,8,0), LocalDateTime.of(2015,4,13,12,30)));
-        ResourceAllocation allocation3 = new ResourceAllocation(developer, new TimeSpan(LocalDateTime.of(2015,4,14,13,0), LocalDateTime.of(2015,4,14,13,30)));
-        ResourceAllocation allocation4 = new ResourceAllocation(developer, new TimeSpan(LocalDateTime.of(2015,4,15,12,0), LocalDateTime.of(2015,4,15,13,0)));
+        ResourceReservation allocation1 = new ResourceReservation(developer, new TimeSpan(LocalDateTime.of(2015,4,8,8,0), LocalDateTime.of(2015,4,10,14,0)));
+        ResourceReservation allocation2 = new ResourceReservation(developer, new TimeSpan(LocalDateTime.of(2015,4,13,8,0), LocalDateTime.of(2015,4,13,12,30)));
+        ResourceReservation allocation3 = new ResourceReservation(developer, new TimeSpan(LocalDateTime.of(2015,4,14,13,0), LocalDateTime.of(2015,4,14,13,30)));
+        ResourceReservation allocation4 = new ResourceReservation(developer, new TimeSpan(LocalDateTime.of(2015,4,15,12,0), LocalDateTime.of(2015,4,15,13,0)));
     }
 
     @Test
@@ -82,34 +79,34 @@ public class DeveloperTest {
 
     @Test
     public void addAllocation_ValidTest() {
-        ResourceAllocation allocationA = mock(ResourceAllocation.class);
+        ResourceReservation allocationA = mock(ResourceReservation.class);
         when(allocationA.getResourceInstance()).thenReturn(developer);
         when(allocationA.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015,4,1,8,0), LocalDateTime.of(2015,4,2,20,0)));
 
-        ResourceAllocation allocationB = mock(ResourceAllocation.class);
+        ResourceReservation allocationB = mock(ResourceReservation.class);
         when(allocationB.getResourceInstance()).thenReturn(developer);
         when(allocationB.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015,4,3,8,0), LocalDateTime.of(2015,4,8,8,0)));
 
-        developer.addAllocation(allocationA);
-        developer.addAllocation(allocationB);
+        developer.addUtilization(allocationA);
+        developer.addUtilization(allocationB);
     }
 
     @Test (expected=IllegalArgumentException.class)
     public void addAllocation_InValidTest1() {
-        ResourceAllocation allocationA = mock(ResourceAllocation.class);
+        ResourceReservation allocationA = mock(ResourceReservation.class);
         when(allocationA.getResourceInstance()).thenReturn(developer);
         when(allocationA.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015,4,1,8,0), LocalDateTime.of(2015,4,28,20,0)));
 
-        developer.addAllocation(allocationA);
+        developer.addUtilization(allocationA);
     }
 
     @Test (expected=IllegalArgumentException.class)
     public void addAllocation_InValidTest2() {
-        ResourceAllocation allocationB = mock(ResourceAllocation.class);
+        ResourceReservation allocationB = mock(ResourceReservation.class);
         when(allocationB.getResourceInstance()).thenReturn(developer);
         when(allocationB.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015,4,1,8,0), LocalDateTime.of(2015,4,8,9,0)));
 
-        developer.addAllocation(allocationB);
+        developer.addUtilization(allocationB);
     }
 
 }

@@ -1,7 +1,10 @@
 package be.swop.groep11.main.resource;
 
+import be.swop.groep11.main.core.TimeSpan;
 import com.google.common.collect.ImmutableList;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,10 +12,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 
-public class ResourceTypeRepository {
+public class ResourceManager {
 
-    public ResourceTypeRepository(){
-        //TODO garantie developers als resourceType niet in de constructor van ResourceTypeRepository?
+    public ResourceManager(){
+        //TODO garantie developers als resourceType niet in de constructor van ResourceManager?
         //Zeker zijn dat developers beschikbaar zijn als type
         addDeveloperType();
     }
@@ -164,4 +167,105 @@ public class ResourceTypeRepository {
         typeBuilders.get(ownerType).addResourceInstance(inst);
 
     }
+
+    //////////////////////////////////////// RESOURCE ALLOCATIONS //////////////////////////////////////////////////////
+
+    /**
+     * Maakt een reservatie voor een resource instantie gedurende een bepaalde tijdsspanne.
+     * @param resourceInstance De te reserveren resource instantie
+     * @param timeSpan         De gegeven tijdsspanne
+     * @param isSpecific       True als de resource instantie specifiek gekozen is
+     */
+    public void makeReservation(ResourceInstance resourceInstance, TimeSpan timeSpan, boolean isSpecific) {
+        // TODO: implementatie + exceptions!
+    }
+
+    /**
+     * Controleert of een resource instantie beschikbaar is gedurende een gegeven tijdsspanne.
+     * @param resourceInstance De te controleren resource instantie
+     * @param timeSpan         De gegeven tijdsspanne
+     * @return True als de resource instantie beschikbaar is.
+     */
+    public boolean isAvailable(ResourceInstance resourceInstance, TimeSpan timeSpan) {
+        /* TODO: controleren of er geen reservaties voor resourceInstance tijdens de huidige systeemtijd
+                 en ook er ook geen utilizations zijn voor resourceInstance tijdens de huidige systeemtijd
+         */
+        return false;
+    }
+
+    /**
+     * Geeft de eerst volgende tijdsspanne waarin een resource instantie voor een gegeven duur beschikbaar is,
+     * na een gegeven starttijd. De starttijd van de tijdsspanne is steeds op een uur (zonder minuten).
+     * Hierbij wordt rekening gehouden dat de resource instantie niet noodzakelijk 24/7 beschikbaar is.
+     * en er al reservaties kunnen zijn.
+     * @param resourceInstance De resource instantie
+     * @param startTime        De gegeven starttijd
+     * @param duration         De gegeven duur
+     */
+    public TimeSpan getNextAvailableTimeSpan(ResourceInstance resourceInstance, LocalDateTime startTime, Duration duration) {
+        IResourceType resourceType = resourceInstance.getResourceType();
+
+        // bereken de "echte starttijd": hangt af van de dagelijkse beschikbaarheid en moet op een uur (zonder minuten) vallen
+        LocalDateTime realStartTime;
+        if (resourceType.getDailyAvailability() == null) {
+            realStartTime = getNextHour(startTime);
+        }
+        else {
+            // de "echte" starttijd is dan het eerste moment dat binnen de dagelijkse beschikbaarheid ligt
+            realStartTime = resourceType.getDailyAvailability().getNextTime(getNextHour(startTime));
+        }
+
+        // bereken de eindtijd van een reservatie vanaf realStartTime voor duration: vraag dit aan de resourceInstance!
+        LocalDateTime realEndTime = resourceInstance.calculateEndTime(realStartTime, duration);
+
+        // maak van de start- en eindtijd een tijdsspanne
+        TimeSpan timeSpan = new TimeSpan(realStartTime, realEndTime);
+
+        // is de resource wel beschikbaar in die tijdsspanne?
+        if (! isAvailable(resourceInstance, timeSpan)) {
+            List<ResourceReservation> conflictingAllocations = getConflictingReservations(resourceInstance, timeSpan);
+            // bereken hiermee de volgende mogelijke starttijd = de grootste van alle eindtijden van de resources
+            LocalDateTime nextStartTime = realStartTime;
+            for (ResourceReservation allocation : conflictingAllocations) {
+                if (allocation.getTimeSpan().getEndTime().isAfter(nextStartTime)) {
+                    nextStartTime = allocation.getTimeSpan().getEndTime();
+                }
+            }
+
+            return getNextAvailableTimeSpan(resourceInstance, nextStartTime, duration);
+        }
+
+        return timeSpan;
+    }
+
+
+    /**
+     * Geeft een lijst van conflicterende reservaties voor een resource instantie in een bepaalde tijdsspanne.
+     * @param resourceInstance De gegeven resource instantie
+     * @param timeSpan         De gegeven tijdsspanne
+     * @return Lijst van reservaties voor de resource instantie waarvan de tijdsspanne overlapt met de gegeven tijdsspanne
+     */
+    private List<ResourceReservation> getConflictingReservations(ResourceInstance resourceInstance, TimeSpan timeSpan) {
+        List<ResourceReservation> conflictingReservations = new ArrayList<>();
+        ImmutableList<ResourceReservation> reservations = null; // TODO: lijst van reservaties voor de resourceInstantie meegeven!
+        for (ResourceReservation reservation : reservations) {
+            if (timeSpan.overlapsWith(reservation.getTimeSpan())) {
+                conflictingReservations.add(reservation);
+            }
+        }
+        return conflictingReservations;
+    }
+
+    private LocalDateTime getNextHour(LocalDateTime dateTime) {
+        if (dateTime.getMinute() == 0)
+            return dateTime;
+        else
+            return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour()+1,0));
+    }
+
+    // TODO: reservaties verwijderen
+
+    // TODO: reservaties vroeger laten eindigien
+
+    // TODO: reservaties bijhouden + getter
 }

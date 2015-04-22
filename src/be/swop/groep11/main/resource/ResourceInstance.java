@@ -1,8 +1,8 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.core.ResourceAllocation;
 import be.swop.groep11.main.core.TimeSpan;
 import com.google.common.collect.ImmutableList;
+import org.mockito.cglib.core.Local;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -13,42 +13,21 @@ import java.time.LocalDateTime;
 public interface ResourceInstance {
 
     /**
-     * Controleert of de resource instantie beschikbaar is gedurende een gegeven tijdsspanne.
-     * @param timeSpan De gegeven tijdsspanne
-     * @return True als deze resource instantie beschikbaar is.
+     * Geeft de naam van de resource instantie terug.
      */
-    public boolean isAvailable(TimeSpan timeSpan);
-
-    /**
-     * Geeft de eerst volgende tijdsspanne waarin de resource instantie voor een gegeven duur beschikbaar is,
-     * na een gegeven starttijd.
-     * @param startTime De gegeven starttijd
-     * @param duration  De gegeven duur
-     */
-    public TimeSpan getNextAvailableTimeSpan(LocalDateTime startTime, Duration duration);
+    String getName();
 
     /**
      * Geeft het resource type van de resource instantie.
      */
-    public IResourceType getResourceType();
+    IResourceType getResourceType();
 
     /**
-     * Geeft de naam van de resource instantie terug.
+     * Berekent de eindtijd als de resource instantie vanaf een bepaalde starttijd voor een bepaalde duur zou
+     * gereserveerd worden.
+     * @param startTime De gegeven starttijd
+     * @param duration  De gegeven duur
      */
-    public String getName();
+    LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration);
 
-    /**
-     * Geeft een lijst van resource allocaties voor de resource instantie.
-     */
-    public ImmutableList<ResourceAllocation> getAllocations();
-
-    /**
-     * Voegt een resource allocatie toe.
-     */
-    public void addAllocation(ResourceAllocation allocation);
-
-    /**
-     * Verwijdert een resource allocatie.
-     */
-    public void removeAllocation(ResourceAllocation allocation);
 }
