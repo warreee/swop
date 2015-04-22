@@ -43,10 +43,10 @@ public class CommandLineInterface implements UserInterface {
         CommandLineInterface cli = new CommandLineInterface(readYamlFile);
 
         //maak een nieuwe system aan
-        TMSystem TMSystem = new TMSystem();
-        ProjectRepository projectRepository = TMSystem.getProjectRepository();
+        SystemTime systemTime = new SystemTime();
+        ProjectRepository projectRepository = new ProjectRepository(systemTime);
         //Aanmaken main controller
-        MainController main = new MainController(cli, TMSystem, projectRepository);
+        MainController main = new MainController(cli, systemTime, projectRepository);
         cli.addControllerToStack(main);
         // lees commando's
         cli.run();

@@ -122,7 +122,7 @@ public interface UserInterface {
 
     <T> T requestUserInput(String request,userInput<T> userInput) throws CancelException;
 
-    /**
+ /*   *//**
      * Vraag een getal aan de user tussen een min en max waarde.
      *
      * @param userInput de functie waarmee de invoer aan de gebruiker gevraagd wordt.
@@ -131,7 +131,7 @@ public interface UserInterface {
      * @param <T>       Het Type van het gevraagde getal tussen min en max.
      * @return          Een getal van Type <T> dat uit [min,max] komt.
      * @throws CancelException  gooi indien de gebruiker het Command.CANCEL in geeft.
-     */
-    <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException;
+     *//*
+    <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException;*/
 
 }
