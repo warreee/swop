@@ -1,6 +1,7 @@
 package be.swop.groep11.main.resource;
 
 import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
@@ -11,9 +12,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-
+/**
+ * Een resource manager houdt alle resource types in het systeem bij en de reservaties voor de resource instanties
+ * van de resource types. Een resource manager kan resource instanties reserveren en vrijgeven.
+ */
 public class ResourceManager {
 
+    /**
+     * Constructor om een nieuwe resource manager aan te maken.
+     */
     public ResourceManager(){
         //TODO garantie developers als resourceType niet in de constructor van ResourceManager?
         //Zeker zijn dat developers beschikbaar zijn als type
@@ -29,7 +36,8 @@ public class ResourceManager {
             addNewResourceType("Developer", new DailyAvailability(LocalTime.of(8, 0), LocalTime.of(17, 0)));
         }
     }
-//TODO documentatie
+
+    //TODO documentatie
     /**
      * Voegt een nieuwe ResourceType toe zonder start en eindtijd voor de beschikbaarheid.
      * @param name De naam van de toe te voegen ResourceType
@@ -172,11 +180,12 @@ public class ResourceManager {
 
     /**
      * Maakt een reservatie voor een resource instantie gedurende een bepaalde tijdsspanne.
+     * @param task             De taak waarvoor de reservatie moet gemaakt worden.
      * @param resourceInstance De te reserveren resource instantie
      * @param timeSpan         De gegeven tijdsspanne
      * @param isSpecific       True als de resource instantie specifiek gekozen is
      */
-    public void makeReservation(ResourceInstance resourceInstance, TimeSpan timeSpan, boolean isSpecific) {
+    public void makeReservation(Task task, ResourceInstance resourceInstance, TimeSpan timeSpan, boolean isSpecific) {
         // TODO: implementatie + exceptions!
     }
 
