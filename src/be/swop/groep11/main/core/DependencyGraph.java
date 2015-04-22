@@ -26,7 +26,7 @@ public class DependencyGraph {
      */
 
     public void addDependency(Task dependent, Task dependingOn) {
-
+        // TODO: check: is valid...
         if (dependingOnMap.containsKey(dependent)){
             dependingOnMap.get(dependent).add(dependingOn);
         } else {
