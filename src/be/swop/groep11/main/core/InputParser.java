@@ -2,6 +2,7 @@ package be.swop.groep11.main.core;
 
 import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.IResourceType;
+import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.resource.ResourceTypeRepository;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskStatus;
@@ -25,26 +26,25 @@ import java.util.Map;
  * Klasse voor het inlezen van de de input file, deze moet staan in /input met de naam input.tman
  */
 public class InputParser {
-
+    // TODO: nieuwe implementatie ResourceTypeRepo afwachten. (Overschakelen naar ResourceManager?)
     User user = new User("InputParser");
     ProjectRepository projectRepository;
     ArrayList<Project> projectList = new ArrayList<>();
     ArrayList<Task> taskList = new ArrayList<>();
     ArrayList<IResourceType> resourceTypeList = new ArrayList<>();
     ArrayList<DailyAvailability> dailyAvailabilityList = new ArrayList<>();
-    private ResourceTypeRepository typeRepo;
+    private ResourceManager resourceManager;
     private SystemTime systemTime;
 
-    public InputParser(ProjectRepository projectRepository, ResourceTypeRepository typeRepo) {
+    public InputParser(ProjectRepository projectRepository, ResourceManager typeRepo) {
         this.projectRepository = projectRepository;
-        this.typeRepo = typeRepo;
+        this.resourceManager = typeRepo;
     }
 
 
     public static void main(String[] args) throws FileNotFoundException {
-        TMSystem tmSystem = new TMSystem();
-        ProjectRepository projectRepository = new ProjectRepository(tmSystem);
-        ResourceTypeRepository typeRepo = new ResourceTypeRepository();
+        ProjectRepository projectRepository = new ProjectRepository(new SystemTime(LocalDateTime.now()));
+        ResourceManager typeRepo = new ResourceManager();
         InputParser parser = new InputParser(projectRepository, typeRepo);
         parser.parseInputFile();
     }
@@ -226,7 +226,7 @@ public class InputParser {
         }
 
         for (String typeName : types) {
-            typeRepo.addNewResourceType(typeName);
+            resourceManager.addNewResourceType(typeName);
 
         }
     }
@@ -235,24 +235,24 @@ public class InputParser {
         if (typeName == null || typeName.isEmpty()) {
             throw new IllegalArgumentException("Ongeldige naam voor type.");
         }
-        IResourceType ownerType = typeRepo.getResourceTypeByName(typeName);
+        IResourceType ownerType = resourceManager.getResourceTypeByName(typeName);
 
-        typeRepo.withDailyAvailability(ownerType, availability);
+        resourceManager.withDailyAvailability(ownerType, availability);
 
         //add require constraints
         for (String req : requires) {
-            IResourceType reqType = typeRepo.getResourceTypeByName(req);
-            typeRepo.withRequirementConstraint(ownerType, reqType);
+            IResourceType reqType = resourceManager.getResourceTypeByName(req);
+            resourceManager.withRequirementConstraint(ownerType, reqType);
         }
         //Add conflicting constraints
         for (String con : conflicts) {
-            IResourceType conflictType = typeRepo.getResourceTypeByName(con);
-            typeRepo.withConflictConstraint(ownerType, conflictType);
+            IResourceType conflictType = resourceManager.getResourceTypeByName(con);
+            resourceManager.withConflictConstraint(ownerType, conflictType);
         }
 
         //Add instances
         for (String inst : instances) {
-            typeRepo.addResourceInstance(ownerType, inst);
+            resourceManager.addResourceInstance(ownerType, inst);
         }
     }
 
@@ -430,11 +430,11 @@ public class InputParser {
         // Voeg de IResourceType eindelijk toe.
         if(dailyAvailability.isEmpty()){
             // Er is geen dailyAvailability.
-            typeRepo.addNewResourceType(name, req, con);
+            resourceManager.addNewResourceType(name, req, con);
         } else {
             // Er is wel een dailyAvailability.
             DailyAvailability da = dailyAvailabilityList.get(Integer.valueOf(dailyAvailability));
-            typeRepo.addNewResourceType(name, da, req, con);
+            resourceManager.addNewResourceType(name, da, req, con);
         }
     }
 
