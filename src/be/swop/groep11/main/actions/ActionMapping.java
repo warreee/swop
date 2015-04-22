@@ -10,7 +10,7 @@ import java.util.LinkedList;
  * Created by Ronald on 22/04/2015.
  */
 public class ActionMapping {
-
+    //TODO betere naam voor de klasse ActionMapping zoeken.
     /**
      *
      * @param userInterface
