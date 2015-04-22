@@ -1,6 +1,5 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.ui.UserInterface;
 
 /**
@@ -8,8 +7,8 @@ import be.swop.groep11.main.ui.UserInterface;
  */
 public class PlanningController extends AbstractController {
 
-    public PlanningController(UserInterface userInterface, SystemTime systemTime) {
-        super(userInterface, systemTime);
+    public PlanningController(UserInterface userInterface) {
+        super(userInterface);
     }
 
    /* private PlanningController(){

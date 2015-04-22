@@ -7,13 +7,10 @@ import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.CancelException;
-import be.swop.groep11.main.ui.commands.Command;
-import be.swop.groep11.main.ui.commands.CommandStrategy;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -22,14 +19,20 @@ import java.util.List;
 public class TaskController extends AbstractController {
 
     private ProjectRepository projectRepository;
+    private SystemTime systemTime;
 
     /**
      * Constructor om een nieuwe task controller te maken.
      * @param ui Gebruikersinterface
      */
     public TaskController(ProjectRepository projectRepository, UserInterface ui,SystemTime systemTime) {
-        super(ui,systemTime);
+        super(ui);
         this.projectRepository = projectRepository;
+        this.systemTime = systemTime;
+    }
+
+    private SystemTime getSystemTime() {
+        return systemTime;
     }
 
     /**
@@ -126,11 +129,5 @@ public class TaskController extends AbstractController {
         }
 
     }
-    @Override
-    public HashMap<Command, CommandStrategy> getCommandStrategies() {
-        HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
-        map.put(Command.CREATETASK,this::createTask);
-        map.put(Command.UPDATETASK,this::updateTask);
-        return map;
-    }
+
 }

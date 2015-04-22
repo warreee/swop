@@ -1,33 +1,27 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.ui.UserInterface;
-import be.swop.groep11.main.ui.commands.Command;
-import be.swop.groep11.main.ui.commands.CommandStrategy;
-
-import java.util.HashMap;
 
 /**
  * Created by Ronald on 17/04/2015.
  */
 public class MainController extends AbstractController {
 
-    private final ProjectRepository projectRepository;
     private final SimulationController simulationController;
     private final ProjectController projectController;
     private final AdvanceTimeController advanceTimeController;
     private final TaskController taskController;
+    private final PlanningController planningController;
 
-    //TODO documentatie, als ook tmSystem naar SystemTime, als ook reduceren van duplicate code.
-    public MainController(UserInterface userInterface,SystemTime systemTime,ProjectRepository projectRepository) {
-        super(userInterface,systemTime);
-        this.projectRepository = projectRepository;
-        this.advanceTimeController =  new AdvanceTimeController(getUserInterface(), getSystemTime());
-        this.projectController = new ProjectController(getProjectRepository(),new User("root"),getUserInterface(), getSystemTime());
-        this.taskController = new TaskController(getProjectRepository(),getUserInterface(), getSystemTime());
-        this.simulationController = new SimulationController(getSystemTime(),getProjectRepository(),getUserInterface());
+    public MainController(UserInterface userInterface, AdvanceTimeController advanceTimeController, ProjectRepository projectRepository,
+                          SimulationController simulationController, ProjectController projectController, TaskController taskController,PlanningController planningController) {
+        super(userInterface);
+        this.advanceTimeController = advanceTimeController;
+        this.simulationController = simulationController;
+        this.projectController = projectController;
+        this.taskController = taskController;
+        this.planningController = planningController;
     }
 
     @Override
@@ -42,10 +36,6 @@ public class MainController extends AbstractController {
         projectController.activate();
         projectController.createProject();
         projectController.deActivate();
-    }
-
-    private ProjectRepository getProjectRepository() {
-        return projectRepository;
     }
 
     @Override
@@ -78,28 +68,19 @@ public class MainController extends AbstractController {
         //simulationController.deActivate();
     }
 
-    public AdvanceTimeController getAdvanceTimeController() {
+    private AdvanceTimeController getAdvanceTimeController() {
         return advanceTimeController;
     }
-    public ProjectController getProjectController() {
+    private ProjectController getProjectController() {
         return projectController;
     }
-    public SimulationController getSimulationController() {
+    private SimulationController getSimulationController() {
         return simulationController;
     }
-    public TaskController getTaskController() {
+    private TaskController getTaskController() {
         return taskController;
     }
-
-    public HashMap<Command,CommandStrategy> getCommandStrategies(){
-        HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
-        map.put(Command.CREATETASK,this::createTask);
-        map.put(Command.UPDATETASK, this::updateTask);
-        map.put(Command.PLANTASK,this::planTask);
-        map.put(Command.CREATEPROJECT,this::createProject);
-        map.put(Command.SHOWPROJECTS,this::showProjects);
-        map.put(Command.ADVANCETIME,this::advanceTime);
-        map.put(Command.STARTSIMULATION,this::startSimulation);
-        return map;
+    private PlanningController getPlanningController() {
+        return planningController;
     }
 }

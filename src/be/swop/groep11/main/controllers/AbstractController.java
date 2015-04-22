@@ -1,14 +1,8 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.ui.ActionMapping;
 import be.swop.groep11.main.ui.UserInterface;
-import be.swop.groep11.main.ui.commands.Command;
 import be.swop.groep11.main.ui.commands.CommandStrategy;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Created by Ronald on 17/04/2015.
@@ -16,18 +10,13 @@ import java.util.HashMap;
 public abstract class AbstractController {
 
     private final UserInterface userInterface;
-    private final SystemTime systemTime;
     private final ActionMapping actionMapping;
 
-    public AbstractController(UserInterface userInterface, SystemTime systemTime) {
-        this.systemTime = systemTime;
+    public AbstractController(UserInterface userInterface) {
         this.userInterface = userInterface;
         this.actionMapping = userInterface.getActionMapping();//Temp?
     }
 
-    protected SystemTime getSystemTime() {
-        return systemTime;
-    }
 
     protected UserInterface getUserInterface() {
         return userInterface;
@@ -94,18 +83,4 @@ public abstract class AbstractController {
         actionMapping.deActivateController(this);
     }
 
-
-    public HashMap<Command, CommandStrategy> getCommandStrategies() {
-        HashMap<Command, CommandStrategy> map = new HashMap<>();
-        //Alles standaard invalid strategy gedrag
-        ArrayList<Command> list = new ArrayList<>(Arrays.asList(Command.values()));
-        for (Command cmd : list) {
-            map.put(cmd, getInvalidStrategy());
-        }
-        map.put(Command.EXIT, this::exitProgram);
-        map.put(Command.INVALIDCOMMAND, invalid);
-        map.put(Command.HELP, () -> getUserInterface().showHelp(this));
-
-        return map;
-    }
 }

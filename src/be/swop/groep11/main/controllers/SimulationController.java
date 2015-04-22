@@ -2,14 +2,8 @@ package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.IProjectRepositoryMemento;
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.ui.UserInterface;
 import be.swop.groep11.main.ui.commands.CancelException;
-import be.swop.groep11.main.ui.commands.Command;
-import be.swop.groep11.main.ui.commands.CommandStrategy;
-
-import java.util.HashMap;
 
 /**
  * Bevat de stappen om de use case "Running a simulation" uit te voeren.
@@ -23,20 +17,17 @@ public class SimulationController extends AbstractController {
     * Resolve Conflict
     * Show Projects
     * */
-    public SimulationController(SystemTime systemTime, ProjectRepository projectRepository, UserInterface userInterface) {
-        super(userInterface,systemTime);
+    public SimulationController(UserInterface userInterface,ProjectRepository projectRepository) {
+        super(userInterface);
         this.projectRepository = projectRepository;
+        //Zelfde project repository als alle andere controllers, geen nood om actions(commands) te deligeren via simulatiecontroller.
 
-        this.taskController = new TaskController(projectRepository,getUserInterface(),systemTime);
-        this.projectController = new ProjectController(projectRepository,new User("Simulation"),getUserInterface(), getSystemTime());
 
     }
     //Store initial state
     private IProjectRepositoryMemento originalState;
     private ProjectRepository projectRepository;
 
-    private TaskController taskController;
-    private ProjectController projectController;
 
     /**
      * Voert de stappen voor "Start Simulation" uit.
@@ -116,17 +107,5 @@ public class SimulationController extends AbstractController {
         this.projectController.activate();
         this.projectController.showProjects();
         this.projectController.deActivate();
-    }
-
-    @Override
-    public HashMap<Command,CommandStrategy> getCommandStrategies(){
-        HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
-        map.put(Command.CREATETASK,taskController::createTask);
-        map.put(Command.UPDATETASK, taskController::updateTask);
-        map.put(Command.PLANTASK,taskController::planTask);
-        map.put(Command.SHOWPROJECTS, projectController::showProjects);
-        map.put(Command.REALIZESIMULATION, this::realize);
-        map.put(Command.CANCEL, this::cancel); //Cancel Simulation
-        return map;
     }
 }

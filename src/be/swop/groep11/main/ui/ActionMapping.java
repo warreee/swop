@@ -20,12 +20,10 @@ public class ActionMapping {
 
     public void activateController(AbstractController abstractController){
         controllerStack.addLast(abstractController);
-        controllerCommandStrategies.put(getActiveController(), getActiveController().getCommandStrategies());
     }
 
     public void deActivateController(AbstractController abstractController){
         controllerStack.remove(abstractController);
-        controllerCommandStrategies.remove(abstractController);
     }
     /**
      * Houdt lijst van Controllers bij die "actief zijn".
@@ -44,7 +42,7 @@ public class ActionMapping {
         if(map == null){
             //Niets te vinden
             //Geen mapping voor gegeven controller
-            map = new HashMap<Command,CommandStrategy>();
+            map = new HashMap<>();
         }
         map.put(command,strategy);
         controllerCommandStrategies.put(controller,map);

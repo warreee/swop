@@ -20,7 +20,13 @@ public class AdvanceTimeController extends AbstractController {
      * @param ui Gebruikersinterface
      */
     public AdvanceTimeController(UserInterface ui, SystemTime systemTime) {
-        super(ui,systemTime);
+        super(ui);
+        this.systemTime = systemTime;
+    }
+    private SystemTime systemTime;
+
+    private SystemTime getSystemTime() {
+        return systemTime;
     }
 
     /**
@@ -39,10 +45,4 @@ public class AdvanceTimeController extends AbstractController {
         }
     }
 
-    @Override
-    public HashMap<Command,CommandStrategy> getCommandStrategies(){
-        HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
-        map.put(Command.ADVANCETIME,this::advanceTime);
-        return map;
-    }
 }

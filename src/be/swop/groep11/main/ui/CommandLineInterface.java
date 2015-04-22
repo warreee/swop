@@ -4,6 +4,7 @@ import be.swop.groep11.main.controllers.*;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.commands.CancelException;
 import be.swop.groep11.main.ui.commands.Command;
@@ -48,31 +49,34 @@ public class CommandLineInterface implements UserInterface {
         //maak een nieuwe system aan
         SystemTime systemTime = new SystemTime();
         ProjectRepository projectRepository = new ProjectRepository(systemTime);
+        //Aanmaken van controllers
+        TaskController taskController = new TaskController(projectRepository, cli, systemTime);
+        ProjectController projectController = new ProjectController(projectRepository, new User("ROOT"), cli);
+        AdvanceTimeController advanceTimeController = new AdvanceTimeController(cli, systemTime);
+        SimulationController simulationController = new SimulationController(cli, projectRepository);
+        PlanningController planningController = new PlanningController(cli);
         //Aanmaken main controller
-        MainController main = new MainController(cli, systemTime, projectRepository);
+        MainController main = new MainController(cli, advanceTimeController,projectRepository,simulationController,projectController,taskController,planningController);
+
         ActionMapping actionMapping = cli.getActionMapping();
         actionMapping.activateController(main);
 
         actionMapping.addCommandStrategy(main, Command.CREATETASK, main::createTask);
         actionMapping.addCommandStrategy(main, Command.UPDATETASK, main::updateTask);
-        actionMapping.addCommandStrategy(main,Command.PLANTASK,main::planTask);
-        actionMapping.addCommandStrategy(main,Command.CREATEPROJECT,main::createProject);
-        actionMapping.addCommandStrategy(main,Command.SHOWPROJECTS,main::showProjects);
+        actionMapping.addCommandStrategy(main, Command.PLANTASK,main::planTask);
+        actionMapping.addCommandStrategy(main, Command.CREATEPROJECT,main::createProject);
+        actionMapping.addCommandStrategy(main, Command.SHOWPROJECTS,main::showProjects);
         actionMapping.addCommandStrategy(main, Command.ADVANCETIME, main::advanceTime);
         actionMapping.addCommandStrategy(main, Command.STARTSIMULATION, main::startSimulation);
 
-        ProjectController projectController = main.getProjectController();
         actionMapping.addCommandStrategy(projectController, Command.SHOWPROJECTS, projectController::showProjects);
         actionMapping.addCommandStrategy(projectController, Command.CREATEPROJECT, projectController::createProject);
 
-        TaskController taskController = main.getTaskController();
         actionMapping.addCommandStrategy(taskController, Command.CREATETASK, taskController::createTask);
         actionMapping.addCommandStrategy(taskController, Command.UPDATETASK, taskController::updateTask);
 
-        AdvanceTimeController advanceTimeController = main.getAdvanceTimeController();
         actionMapping.addCommandStrategy(advanceTimeController, Command.ADVANCETIME, advanceTimeController::advanceTime);
 
-        SimulationController simulationController = main.getSimulationController();
         actionMapping.addCommandStrategy(simulationController, Command.CREATETASK, taskController::createTask);
         actionMapping.addCommandStrategy(simulationController, Command.UPDATETASK, taskController::updateTask);
         actionMapping.addCommandStrategy(simulationController, Command.PLANTASK, taskController::planTask);
@@ -501,6 +505,7 @@ public class CommandLineInterface implements UserInterface {
 
     public void showHelp(AbstractController abstractController) throws IllegalArgumentException{
         ArrayList<Command> list = new ArrayList<>();
+        //TODO fix show help, nu met actionMapping
 
         for(Map.Entry<Command,CommandStrategy> entry : abstractController.getCommandStrategies().entrySet()){
             if(!entry.getValue().equals(abstractController.getInvalidStrategy())){
