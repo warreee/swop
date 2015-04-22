@@ -2,8 +2,8 @@ package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.IProjectRepositoryMemento;
 import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.actions.ActionMapping;
 import be.swop.groep11.main.ui.UserInterface;
-import be.swop.groep11.main.ui.commands.CancelException;
 
 /**
  * Bevat de stappen om de use case "Running a simulation" uit te voeren.
@@ -17,12 +17,10 @@ public class SimulationController extends AbstractController {
     * Resolve Conflict
     * Show Projects
     * */
-    public SimulationController(UserInterface userInterface,ProjectRepository projectRepository) {
-        super(userInterface);
+    public SimulationController(ActionMapping actionMapping,ProjectRepository projectRepository) {
+        super(actionMapping);
         this.projectRepository = projectRepository;
         //Zelfde project repository als alle andere controllers, geen nood om actions(commands) te deligeren via simulatiecontroller.
-
-
     }
     //Store initial state
     private IProjectRepositoryMemento originalState;
@@ -33,20 +31,14 @@ public class SimulationController extends AbstractController {
      * Voert de stappen voor "Start Simulation" uit.
      */
     public void startSimulation() {
+        // hou de huidige state van projectRepository bij
         storeState();
         UserInterface ui = this.getUserInterface();
-        try {
-            // hou de huidige state van projectRepository bij
-            ui.showHelp(this);
-
-        } catch (CancelException e) {
-            getUserInterface().printException(e);
-        }
+        ui.showHelp(this);
     }
 
     public void endSimulation() {
         //TODO endSimulation kan weg
-        UserInterface ui = this.getUserInterface();
       /*  try {
             String command = ui.requestString("Wat wil je doen met de huidige simulatie?\n"
                                                 + "continue = verdergaan met de simulatie\n"
@@ -75,7 +67,6 @@ public class SimulationController extends AbstractController {
     public void cancel() {
         restoreState();
         getUserInterface().printMessage("Canceled Simulation");
-
         deActivate();
     }
 
@@ -88,24 +79,5 @@ public class SimulationController extends AbstractController {
         if (memento != null) {
             this.projectRepository.setMemento(memento);
         }
-    }
-
-    @Override
-    public void createTask() throws IllegalArgumentException {
-        this.taskController.activate();
-        this.taskController.createTask();
-        this.taskController.deActivate();
-    }
-
-    @Override
-    public void planTask() throws IllegalArgumentException {
-        super.planTask();
-    }
-
-    @Override
-    public void showProjects() throws IllegalArgumentException {
-        this.projectController.activate();
-        this.projectController.showProjects();
-        this.projectController.deActivate();
     }
 }

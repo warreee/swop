@@ -1,8 +1,7 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.ui.ActionMapping;
+import be.swop.groep11.main.actions.ActionMapping;
 import be.swop.groep11.main.ui.UserInterface;
-import be.swop.groep11.main.ui.commands.CommandStrategy;
 
 /**
  * Created by Ronald on 17/04/2015.
@@ -12,17 +11,15 @@ public abstract class AbstractController {
     private final UserInterface userInterface;
     private final ActionMapping actionMapping;
 
-    public AbstractController(UserInterface userInterface) {
-        this.userInterface = userInterface;
-        this.actionMapping = userInterface.getActionMapping();//Temp?
+    public AbstractController(ActionMapping actionMapping) {
+        this.actionMapping = actionMapping;
+        this.userInterface = actionMapping.getUserInterface();
+
     }
-
-
     protected UserInterface getUserInterface() {
         return userInterface;
     }
 
-    //TODO andere exception, geeft problemen want illegalargument wordt gebruikt indien eind gebruiker verkeerde input geeft.
     public void createTask() throws IllegalArgumentException {
         throw new IllegalArgumentException("Niet ondersteund");
     }
@@ -56,19 +53,6 @@ public abstract class AbstractController {
         throw new IllegalArgumentException("Niet ondersteund");
     }
 
-    private CommandStrategy invalid = () -> getUserInterface().printMessage("Ongeldig commando, Abstract controller");
-
-    /**
-     * Geeft het gedrag indien een Command niet ondersteund wordt door de controller.
-     */
-    public CommandStrategy getInvalidStrategy() {
-        return invalid;
-    }
-
-    protected void exitProgram() {
-        System.out.println("want to exit,TODO IMPLEMENT");
-    }
-
     /**
      * Set's this controller on top of stack in UI.
      */
@@ -82,5 +66,4 @@ public abstract class AbstractController {
     protected void deActivate() {
         actionMapping.deActivateController(this);
     }
-
 }

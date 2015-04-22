@@ -4,9 +4,9 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.actions.ActionMapping;
 import be.swop.groep11.main.ui.EmptyListException;
-import be.swop.groep11.main.ui.UserInterface;
-import be.swop.groep11.main.ui.commands.CancelException;
+import be.swop.groep11.main.actions.CancelException;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
@@ -25,8 +25,8 @@ public class TaskController extends AbstractController {
      * Constructor om een nieuwe task controller te maken.
      * @param ui Gebruikersinterface
      */
-    public TaskController(ProjectRepository projectRepository, UserInterface ui,SystemTime systemTime) {
-        super(ui);
+    public TaskController(ActionMapping actionMapping,ProjectRepository projectRepository,SystemTime systemTime) {
+        super(actionMapping);
         this.projectRepository = projectRepository;
         this.systemTime = systemTime;
     }
@@ -45,8 +45,8 @@ public class TaskController extends AbstractController {
             Double acceptableDeviation =  getUserInterface().requestDouble("Aanvaardbare afwijking in procent:") / 100;
             Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf( getUserInterface().requestNumber("Geschatte duur in minuten:")).longValue());
 
-            List<Task> tasks = new ArrayList<Task>(project.getTasks());
-            List<Task> selectedTasks = new ArrayList<Task>();
+            List<Task> tasks = new ArrayList<>(project.getTasks());
+            List<Task> selectedTasks = new ArrayList<>();
             while ( getUserInterface().requestString("Voeg een afhankelijkheid toe? (y/N)").equalsIgnoreCase("y")) {
                 if (tasks.isEmpty()) {
                     getUserInterface().printMessage("Geen taken om toe te voegen...");
@@ -127,7 +127,5 @@ public class TaskController extends AbstractController {
             default:
                 throw new IllegalArgumentException("Een verkeerd status werd meegegeven!");
         }
-
     }
-
 }

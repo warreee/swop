@@ -1,13 +1,10 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.ui.commands.CancelException;
-import be.swop.groep11.main.ui.UserInterface;
-import be.swop.groep11.main.ui.commands.Command;
-import be.swop.groep11.main.ui.commands.CommandStrategy;
+import be.swop.groep11.main.actions.ActionMapping;
+import be.swop.groep11.main.actions.CancelException;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 /**
  * Bevat de stappen om de use case "Advance Time" uit te voeren.
@@ -19,8 +16,8 @@ public class AdvanceTimeController extends AbstractController {
      * @param TMSystem Task man die de systeemtijd bijhoudt
      * @param ui Gebruikersinterface
      */
-    public AdvanceTimeController(UserInterface ui, SystemTime systemTime) {
-        super(ui);
+    public AdvanceTimeController(ActionMapping actionMapping, SystemTime systemTime) {
+        super(actionMapping);
         this.systemTime = systemTime;
     }
     private SystemTime systemTime;

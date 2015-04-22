@@ -1,4 +1,4 @@
-package be.swop.groep11.main.ui.commands;
+package be.swop.groep11.main.actions;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Ronald on 28/02/2015.
  */
-public enum Command {
+public enum Action {
 
     EXIT("exit"),
     CANCEL("cancel"),
@@ -22,40 +22,38 @@ public enum Command {
     ENDSIMULATION("End Simulation"),
     INVALIDCOMMAND("");
 
-    Command(String command){
-        this.command = command;
-        String regex = "((?i)(\\b"+ command +"\\b))"; //Niet hoofdletter gevoelig
+    Action(String action){
+        this.action = action;
+        String regex = "((?i)(\\b"+ action +"\\b))"; //Niet hoofdletter gevoelig
         this.pattern = Pattern.compile(regex);
     }
-    private final String command;
+    private final String action;
     private final Pattern pattern;
 
     public String getCommandStr(){
-        return this.command;
+        return this.action;
     }
 
     /**
      * Geeft een Command terug corresponderend met de gebruikers invoer.
-     * @effect  Indien command parameters verwacht worden deze opgeslagen in de hashmap.
+     * @effect  Indien action parameters verwacht worden deze opgeslagen in de hashmap.
      * @param input
      * @return
-     * @throws IllegalCommandException
+     * @throws IllegalActionException
      *         Indien er geen corresponderende Command is voor de gebruikers invoer.
      *         Of indien er onvoldoende of verkeerde parameters gegeven zijn door de gebruiker.
      *
      */
-    public static Command getInput(String input)throws IllegalCommandException {
-        Command result = null;
-        for (Command com : Command.values()) {
-            Matcher matcher = com.pattern.matcher(input);
-
+    public static Action getInput(String input)throws IllegalActionException {
+        Action result = null;
+        for (Action action : Action.values()) {
+            Matcher matcher = action.pattern.matcher(input);
             if(matcher.matches()){
-                result = com;
+                result = action;
             }
         }
         if(result == null){
             return INVALIDCOMMAND;
-//            throw new IllegalCommandException("Ongeldig commando");
         }
         return result;
     }

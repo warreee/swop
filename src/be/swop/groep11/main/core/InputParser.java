@@ -35,9 +35,9 @@ public class InputParser {
     private ResourceManager resourceManager;
     private SystemTime systemTime;
 
-    public InputParser(ProjectRepository projectRepository, ResourceManager typeRepo) {
+    public InputParser(ProjectRepository projectRepository, ResourceManager resourceManager) {
         this.projectRepository = projectRepository;
-        this.resourceManager = typeRepo;
+        this.resourceManager = resourceManager;
     }
 
 

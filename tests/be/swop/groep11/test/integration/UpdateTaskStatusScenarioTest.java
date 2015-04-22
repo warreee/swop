@@ -7,7 +7,7 @@ import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.EmptyListException;
-import be.swop.groep11.main.ui.commands.CancelException;
+import be.swop.groep11.main.actions.CancelException;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;

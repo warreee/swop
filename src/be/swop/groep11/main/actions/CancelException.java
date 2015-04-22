@@ -1,4 +1,4 @@
-package be.swop.groep11.main.ui.commands;
+package be.swop.groep11.main.actions;
 
 /**
  * Created by Ronald on 10/03/2015.

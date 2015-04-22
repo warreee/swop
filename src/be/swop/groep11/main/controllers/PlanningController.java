@@ -1,14 +1,14 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.ui.UserInterface;
+import be.swop.groep11.main.actions.ActionMapping;
 
 /**
  * Created by Ronald on 22/04/2015.
  */
 public class PlanningController extends AbstractController {
 
-    public PlanningController(UserInterface userInterface) {
-        super(userInterface);
+    public PlanningController(ActionMapping actionMapping) {
+        super(actionMapping);
     }
 
    /* private PlanningController(){
