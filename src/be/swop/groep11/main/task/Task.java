@@ -529,4 +529,21 @@ public class Task {
         return this.status.getDuration(this, currentSystemTime);
     }
 
+    /**
+     * Plant deze taak.
+     * @param plannedStartTime De geplande starttijd voor deze taak
+     */
+    public void plan(LocalDateTime plannedStartTime) {
+        this.plannedStartTime = plannedStartTime;
+    }
+
+    /**
+     * Controleert of deze taak gepland is.
+     */
+    public boolean isPlanned() {
+        return this.plannedStartTime != null;
+    }
+
+    private LocalDateTime plannedStartTime;
+
 }
