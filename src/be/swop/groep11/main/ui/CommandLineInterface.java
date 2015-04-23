@@ -57,7 +57,7 @@ public class CommandLineInterface implements UserInterface {
     }
 
     private boolean canHaveAsActionMapping(ActionBehaviourMapping actionBehaviourMapping) {
-        return actionBehaviourMapping != null && this.actionBehaviourMapping == null && actionBehaviourMapping.getUserInterface() == this;
+        return actionBehaviourMapping != null && this.actionBehaviourMapping == null;
     }
 
     public void setActionBehaviourMapping(ActionBehaviourMapping actionBehaviourMapping){

@@ -1,7 +1,6 @@
 package be.swop.groep11.main.actions;
 
 import be.swop.groep11.main.controllers.AbstractController;
-import be.swop.groep11.main.ui.UserInterface;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -12,33 +11,16 @@ import java.util.LinkedList;
 public class ActionBehaviourMapping {
     /**
      *  Constructor voor aanmaken van een ActionBehaviourMapping
-     * @param userInterface     De userInterface waarmee deze ActionBehaviourMapping gebruikt wordt.
      * @param invalidStrategy   De ActionStrategy(gedrag) uit te voeren, indien een action niet geldig is.
      * @throws IllegalArgumentException
-     *                          Gooi indien de gegeven userInterface of invalidStrategy niet geinitialiseerd zijn.
-     *                          Gooi indien de gegeven userInterface alreeds een ActionBehaviourMapping bezit.
+     *                          Gooi indien de gegeven invalidStrategy niet geinitialiseerd is.
      */
-    public ActionBehaviourMapping(UserInterface userInterface, ActionBehaviour invalidStrategy) {
-        if (!canHaveAsUserInterface(userInterface)) {
-            throw new IllegalArgumentException("Ongeldige userInterface");
-        }
+    public ActionBehaviourMapping( ActionBehaviour invalidStrategy) {
+
         if (!canHaveAsInvalidStrategy(invalidStrategy)) {
             throw new IllegalArgumentException("Ongeldige invalidBehaviour strategy");
         }
-        this.userInterface = userInterface;
         this.invalidBehaviour = invalidStrategy;
-        //ActionMapping moet eerst een UI hebben alvorens de UI een ActionMapping kan "setten".
-        userInterface.setActionBehaviourMapping(this);
-    }
-
-    /**
-     * Check of deze ActionBehaviourMapping geassocieerd kan worden met de gegeven userInterface
-     * @param userInterface De te controleren userInterface
-     * @return              Waar indien de userInterface geinitialiseerd is en
-     *                      de userInterface reeds geen ActionBehaviourMapping bezit
-     */
-    private boolean canHaveAsUserInterface(UserInterface userInterface) {
-        return userInterface != null && userInterface.getActionBehaviourMapping() == null;
     }
 
     /**
@@ -52,7 +34,6 @@ public class ActionBehaviourMapping {
     }
 
     private ActionBehaviour invalidBehaviour;
-    private UserInterface userInterface;
     // Houdt lijst van Controllers bij die "actief zijn". De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit. Soort van execution stack
     private LinkedList<AbstractController> controllerStack = new LinkedList<>();
     //Gegeven een controller verkrijg de corresponderende ActionBehaviours voor de aanvaarde commands in die controller.
@@ -100,10 +81,14 @@ public class ActionBehaviourMapping {
 
     /**
      * Verwijder de gegeven AbstractController van de executionStack.
-     * @param abstractController    De te verwijderen AbstractController
+     * @param controller    De te verwijderen AbstractController
      */
-    public void deActivateController(AbstractController abstractController){
-        controllerStack.remove(abstractController);
+    public void deActivateController(AbstractController controller){
+        if(controller != null && controller.equals(controllerStack.peekLast())){
+            //Gegeven controller is idd laatst toegevoegde controller.
+            controllerStack.remove(controller);
+        }
+        //TODO throw new Exception indien de gegeven controller niet de laatst toegevoegde was?
     }
 
     /**
@@ -178,13 +163,6 @@ public class ActionBehaviourMapping {
      */
     public AbstractController getActiveController(){
         return controllerStack.getLast();
-    }
-
-    /**
-     * @return De UserInterface geassocieerd met deze ActionBehaviourMapping
-     */
-    public UserInterface getUserInterface() {
-        return userInterface;
     }
 
     /**

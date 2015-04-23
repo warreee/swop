@@ -48,7 +48,8 @@ public class App {
         // maak een nieuwe CommandLineInterface aan
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(java.lang.System.in));
         cli = new CommandLineInterface(bufferedReader);
-        actionBehaviourMapping = new ActionBehaviourMapping(cli,() -> cli.printMessage("Ongeldig command"));
+        actionBehaviourMapping = new ActionBehaviourMapping(() -> cli.printMessage("Ongeldige action"));
+        cli.setActionBehaviourMapping(actionBehaviourMapping);
 
         //maak een nieuwe system aan
         systemTime = new SystemTime();
@@ -70,12 +71,12 @@ public class App {
 
     private void initControllers(){
         //Aanmaken van controllers
-        taskController = new TaskController(actionBehaviourMapping,projectRepository, systemTime);
-        projectController = new ProjectController(projectRepository, new User("ROOT"), actionBehaviourMapping);
-        advanceTimeController = new AdvanceTimeController(actionBehaviourMapping, systemTime);
-        simulationController = new SimulationController(actionBehaviourMapping, projectRepository);
-        planningController = new PlanningController(actionBehaviourMapping,projectRepository,resourceManager);
-        main = new MainController(actionBehaviourMapping, advanceTimeController,simulationController,projectController,taskController,planningController);
+        taskController = new TaskController(projectRepository, systemTime,cli );
+        projectController = new ProjectController(projectRepository, new User("ROOT"), cli );
+        advanceTimeController = new AdvanceTimeController( systemTime, cli);
+        simulationController = new SimulationController(actionBehaviourMapping, projectRepository, cli);
+        planningController = new PlanningController(projectRepository,resourceManager, cli);
+        main = new MainController(actionBehaviourMapping, advanceTimeController,simulationController,projectController,taskController,planningController,cli );
 
     }
 

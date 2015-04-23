@@ -1,19 +1,16 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.ui.UserInterface;
 
 /**
  * Created by Ronald on 17/04/2015.
  */
 public abstract class AbstractController {
-
+    //TODO make interface?
     private final UserInterface userInterface;
-    private final ActionBehaviourMapping actionBehaviourMapping;
 
-    public AbstractController(ActionBehaviourMapping actionBehaviourMapping) {
-        this.actionBehaviourMapping = actionBehaviourMapping;
-        this.userInterface = actionBehaviourMapping.getUserInterface();
+    public AbstractController(UserInterface userInterface) {
+        this.userInterface = userInterface;
 
     }
     protected UserInterface getUserInterface() {
@@ -53,17 +50,5 @@ public abstract class AbstractController {
         throw new IllegalArgumentException("Niet ondersteund");
     }
 
-    /**
-     * Set's this controller on top of stack in UI.
-     */
-    protected void activate() {
-        actionBehaviourMapping.activateController(this);
-    }
 
-    /**
-     * Removes this controller from the stack in UI.
-     */
-    protected void deActivate() {
-        actionBehaviourMapping.deActivateController(this);
-    }
 }

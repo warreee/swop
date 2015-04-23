@@ -3,6 +3,7 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.actions.CancelException;
+import be.swop.groep11.main.ui.UserInterface;
 
 import java.time.LocalDateTime;
 
@@ -15,9 +16,10 @@ public class AdvanceTimeController extends AbstractController {
      * Constructor om een nieuwe advance time controller te maken.
      * @param TMSystem Task man die de systeemtijd bijhoudt
      * @param ui Gebruikersinterface
+     * @param userInterface
      */
-    public AdvanceTimeController(ActionBehaviourMapping actionBehaviourMapping, SystemTime systemTime) {
-        super(actionBehaviourMapping);
+    public AdvanceTimeController(SystemTime systemTime, UserInterface userInterface) {
+        super(userInterface);
         this.systemTime = systemTime;
     }
     private SystemTime systemTime;

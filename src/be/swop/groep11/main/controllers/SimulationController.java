@@ -17,13 +17,15 @@ public class SimulationController extends AbstractController {
     * Resolve Conflict
     * Show Projects
     * */
-    public SimulationController(ActionBehaviourMapping actionBehaviourMapping,ProjectRepository projectRepository) {
-        super(actionBehaviourMapping);
+    public SimulationController(ActionBehaviourMapping actionBehaviourMapping, ProjectRepository projectRepository, UserInterface userInterface) {
+        super(userInterface);
+        this.actionBehaviourMapping = actionBehaviourMapping;
         this.projectRepository = projectRepository;
         //Zelfde project repository als alle andere controllers, geen nood om actions(commands) te deligeren via simulatiecontroller.
     }
     //Store initial state
     private IProjectRepositoryMemento originalState;
+    private ActionBehaviourMapping actionBehaviourMapping;
     private ProjectRepository projectRepository;
 
 
@@ -37,9 +39,8 @@ public class SimulationController extends AbstractController {
         ui.showHelp(this);
     }
 
-    public void endSimulation() {
-        //TODO endSimulation kan weg
-      /*  try {
+/*    public void endSimulation() {
+      *//*  try {
             String command = ui.requestString("Wat wil je doen met de huidige simulatie?\n"
                                                 + "continue = verdergaan met de simulatie\n"
                                                 + "cancel   = stoppen met de simulatie (en dus niet realiseren)\n"
@@ -55,19 +56,19 @@ public class SimulationController extends AbstractController {
         } catch (CancelException e) {
             restoreState();
             ui.printMessage("Simulatie werd niet gerealiseerd");
-        }*/
-        deActivate();
-    }
+        }*//*
+        deActivate(this);
+    }*/
 
     public void realize() {
         //projectRepository bezit all alle veranderingen ...
 
-        deActivate();
+        deActivate(this);
     }
     public void cancel() {
         restoreState();
         getUserInterface().printMessage("Canceled Simulation");
-        deActivate();
+        deActivate(this);
     }
 
     private void storeState() {
@@ -79,5 +80,19 @@ public class SimulationController extends AbstractController {
         if (memento != null) {
             this.projectRepository.setMemento(memento);
         }
+    }
+
+    /**
+     * Set's this controller on top of stack in UI.
+     */
+    protected void activate(AbstractController controller) {
+        actionBehaviourMapping.activateController(controller);
+    }
+
+    /**
+     * Removes this controller from the stack in UI.
+     */
+    protected void deActivate(AbstractController controller) {
+        actionBehaviourMapping.deActivateController(controller);
     }
 }

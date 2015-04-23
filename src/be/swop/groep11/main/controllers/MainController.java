@@ -1,6 +1,7 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
+import be.swop.groep11.main.ui.UserInterface;
 
 /**
  * Created by Ronald on 17/04/2015.
@@ -9,13 +10,15 @@ public class MainController extends AbstractController {
 
     private final SimulationController simulationController;
     private final ProjectController projectController;
+    private ActionBehaviourMapping actionBehaviourMapping;
     private final AdvanceTimeController advanceTimeController;
     private final TaskController taskController;
     private final PlanningController planningController;
 
-    public MainController(ActionBehaviourMapping actionBehaviourMapping, AdvanceTimeController advanceTimeController,SimulationController simulationController,
-                          ProjectController projectController, TaskController taskController,PlanningController planningController) {
-        super(actionBehaviourMapping);
+    public MainController(ActionBehaviourMapping actionBehaviourMapping, AdvanceTimeController advanceTimeController, SimulationController simulationController,
+                          ProjectController projectController, TaskController taskController, PlanningController planningController, UserInterface userInterface) {
+        super(userInterface);
+        this.actionBehaviourMapping = actionBehaviourMapping;
         this.advanceTimeController = advanceTimeController;
         this.simulationController = simulationController;
         this.projectController = projectController;
@@ -25,46 +28,60 @@ public class MainController extends AbstractController {
 
     @Override
     public void advanceTime() throws IllegalArgumentException {
-        advanceTimeController.activate();
+        activate(advanceTimeController);
         advanceTimeController.advanceTime();
-        advanceTimeController.deActivate();
+        deActivate(advanceTimeController);
     }
 
     @Override
     public void createProject() throws IllegalArgumentException {
-        projectController.activate();
+        activate(projectController);
         projectController.createProject();
-        projectController.deActivate();
+        deActivate(projectController);
     }
 
     @Override
     public void createTask() throws IllegalArgumentException {
-        taskController.activate();
+        activate(taskController);
         taskController.createTask();
-        taskController.deActivate();
+        deActivate(taskController);
     }
 
     @Override
     public void showProjects() throws IllegalArgumentException {
-        projectController.activate();
+        activate(projectController);
         projectController.showProjects();
-        projectController.deActivate();
+        deActivate(projectController);
     }
 
     @Override
     public void updateTask() throws IllegalArgumentException {
-        taskController.activate();
+        activate(taskController);
         taskController.updateTask();
-        taskController.deActivate();
+        deActivate(taskController);
     }
 
 
     @Override
     public void startSimulation() throws IllegalArgumentException {
-        simulationController.activate();
+        activate(simulationController);
         simulationController.startSimulation();
         //Mag niet deActivaten omdat de simulatie controller nog actief moet zijn, totdat end simulation is opgeroepen
         //simulationController.deActivate();
+    }
+
+    /**
+     * Set's this controller on top of stack in UI.
+     */
+    protected void activate(AbstractController controller) {
+        actionBehaviourMapping.activateController(controller);
+    }
+
+    /**
+     * Removes this controller from the stack in UI.
+     */
+    protected void deActivate(AbstractController controller) {
+        actionBehaviourMapping.deActivateController(controller);
     }
 
     private AdvanceTimeController getAdvanceTimeController() {

@@ -7,6 +7,7 @@ import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.actions.CancelException;
+import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
@@ -21,12 +22,13 @@ public class ProjectController extends AbstractController {
 
     /**
      * Constructor om een nieuwe project controller te maken.
+     * @param ui Gebruikersinterface
      * @param projectRepository Project repository om projecten aan toe te voegen
      * @param user Gebruiker die projecten aanmaakt
-     * @param ui Gebruikersinterface
+     * @param userInterface
      */
-    public ProjectController(ProjectRepository projectRepository, User user, ActionBehaviourMapping actionBehaviourMapping){
-        super(actionBehaviourMapping);
+    public ProjectController(ProjectRepository projectRepository, User user,UserInterface userInterface){
+        super(userInterface);
         this.projectRepository = projectRepository;
         this.user = user;
     }

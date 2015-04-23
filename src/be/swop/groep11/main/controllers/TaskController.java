@@ -7,6 +7,7 @@ import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.actions.CancelException;
+import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
@@ -24,9 +25,10 @@ public class TaskController extends AbstractController {
     /**
      * Constructor om een nieuwe task controller te maken.
      * @param ui Gebruikersinterface
+     * @param userInterface
      */
-    public TaskController(ActionBehaviourMapping actionBehaviourMapping,ProjectRepository projectRepository,SystemTime systemTime) {
-        super(actionBehaviourMapping);
+    public TaskController( ProjectRepository projectRepository, SystemTime systemTime, UserInterface userInterface) {
+        super(userInterface);
         this.projectRepository = projectRepository;
         this.systemTime = systemTime;
     }

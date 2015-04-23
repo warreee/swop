@@ -1,15 +1,21 @@
 package be.swop.groep11.test.integration;
 
-import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.TMSystem;
-import be.swop.groep11.main.core.User;
-import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.actions.CancelException;
+import be.swop.groep11.main.controllers.ProjectController;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.User;
+import be.swop.groep11.main.resource.ResourceManager;
+import be.swop.groep11.main.ui.UserInterface;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Ronald on 11/03/2015.
@@ -21,304 +27,104 @@ public class CreateProjectScenarioTest {
     @Before
     public void setUp() throws Exception {
         now = LocalDateTime.now();
-        projectRepository = new TMSystem().getProjectRepository();
+        SystemTime systemTime = new SystemTime(now);
+        ResourceManager resourceManager = new ResourceManager();
+        projectRepository = new ProjectRepository(systemTime,resourceManager);
         user = new User("Test");
 
-        projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10),new User("TEST"));
+        projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10), new User("TEST"));
         projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8));
     }
 
     @Test
     public void createProject_validTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
+        UserInterface mocked = mock(UserInterface.class);
+        //stubbing
+        when(mocked.requestString("some arg")).thenReturn("Naam").thenReturn("Omschrijving");
+        when(mocked.requestDatum("some arg")).thenReturn(now).thenReturn(now.plusDays(1));
 
-            private int i = 0;
-            @Override
-            public String requestString(String request) throws CancelException {
-                String result = "";
-                if(i==0){
-                    result = "Naam";
-                } else if (i==1){
-                    result = "Omschrijving";
-                }
-                i++;
-                return result;
-            }
-
-            private int j = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(j==0){
-                    result = now;
-                } else if (j==1){
-                    result = now.plusDays(1);
-                }
-                j++;
-                return result;
-            }
-        };
-        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        ProjectController projectController = new ProjectController(projectRepository,user,mocked);
         projectController.createProject();
     }
 
     @Test (expected = StopTestException.class)
     public void createProject_invalidNameTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
+        UserInterface mocked = mock(UserInterface.class);
+        //stubbing
+        when(mocked.requestString(anyString())).thenReturn("").thenReturn("Omschrijving");
+        when(mocked.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
+        doThrow(new StopTestException("Cancel")).when(mocked).printException(any());
 
-            private int i = 0;
-            @Override
-            public String requestString(String request) throws CancelException {
-                String result = "";
-                if(i==0){
-                    result = "";
-                } else if (i==1){
-                    result = "Omschrijving";
-                }
-                i++;
-                return result;
-            }
-
-            private int j = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(j==0){
-                    result = now;
-                } else if (j==1){
-                    result = now.plusDays(1);
-                }
-                j++;
-                return result;
-            }
-
-            @Override
-            public void printException(Exception e) {
-                throw new StopTestException("Cancel");
-            }
-        };
-        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        ProjectController projectController = new ProjectController(projectRepository,user,mocked);
         projectController.createProject();
     }
 
     @Test (expected = StopTestException.class)
     public void createProject_invalidDescriptionTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
-            private int i = 0;
-            @Override
-            public String requestString(String request) throws CancelException {
-                String result = "";
-                if(i==0){
-                    result = "Naam";
-                } else if (i==1){
-                    result = "";
-                }
-                i++;
-                return result;
-            }
+        UserInterface mocked = mock(UserInterface.class);
+        //stubbing
+        when(mocked.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
+        when(mocked.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
+        doThrow(new StopTestException("Cancel")).when(mocked).printException(any());
 
-            private int j = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(j==0){
-                    result = now;
-                } else if (j==1){
-                    result = now.plusDays(1);
-                }
-                j++;
-                return result;
-            }
-
-            @Override
-            public void printException(Exception e) {
-                throw new StopTestException("Cancel");
-            }
-        };
-        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        ProjectController projectController = new ProjectController(projectRepository,user,mocked);
         projectController.createProject();
     }
 
     @Test (expected = StopTestException.class)
     public void createProject_invalidCreationAndDueTimeTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
-            private int i = 0;
-            @Override
-            public String requestString(String request) throws CancelException {
-                String result = "";
-                if(i==0){
-                    result = "Naam";
-                } else if (i==1){
-                    result = "Omschrijving";
-                }
-                i++;
-                return result;
-            }
+        UserInterface mocked = mock(UserInterface.class);
+        //stubbing
+        when(mocked.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
+        when(mocked.requestDatum(anyString())).thenReturn(now.plusDays(1)).thenReturn(now);
+        doThrow(new StopTestException("Cancel")).when(mocked).printException(any());
 
-            private int j = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(j==0){
-                    result = now.plusDays(1);
-                } else if (j==1){
-                    result = now;
-                }
-                j++;
-                return result;
-            }
-
-            @Override
-            public void printException(Exception e) {
-                throw new StopTestException("Cancel");
-            }
-        };
-        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        ProjectController projectController = new ProjectController(projectRepository,user,mocked);
         projectController.createProject();
     }
 
     @Test
     public void createProject_CancelNameTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
-            private int i = 0;
-            @Override
-            public String requestString(String request) throws CancelException {
-                String result = "";
-                if(i==0){
-                    throw new CancelException("Cancel");
-                } else if (i==1){
-                    result = "Omschrijving";
-                }
-                i++;
-                return result;
-            }
+        UserInterface mocked = mock(UserInterface.class);
+        //stubbing
+        when(mocked.requestString(anyString())).thenThrow(new CancelException("Cancel in test")).thenReturn("Omschrijving");
+        when(mocked.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
 
-            private int j = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(j==0){
-                    result = now;
-                } else if (j==1){
-                    result = now.plusDays(1);
-                }
-                j++;
-                return result;
-            }
-
-
-
-        };
-        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        ProjectController projectController = new ProjectController(projectRepository,user,mocked);
         //Cancel exception wordt opgevangen in de controller.
         projectController.createProject();
     }
 
     @Test
     public void createProject_CancelDescriptionTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
-            private int i = 0;
-            @Override
-            public String requestString(String request) throws CancelException {
-                String result = "";
-                if(i==0){
-                    result = "ProjectNaam";
-                } else if (i==1){
-                    throw new CancelException("Cancel");
-                }
-                i++;
-                return result;
-            }
+        UserInterface mocked = mock(UserInterface.class);
+        //stubbing
+        when(mocked.requestString(anyString())).thenReturn("Naam").thenThrow(new CancelException("Cancel in test"));
+        when(mocked.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
 
-            private int j = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(j==0){
-                    result = now;
-                } else if (j==1){
-                    result = now.plusDays(1);
-                }
-                j++;
-                return result;
-            }
-
-
-
-        };
-        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        ProjectController projectController = new ProjectController(projectRepository,user,mocked);
         //Cancel exception wordt opgevangen in de controller.
         projectController.createProject();
     }
     @Test
     public void createProject_CancelCreateTimeTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
-            private int i = 0;
-            @Override
-            public String requestString(String request) throws CancelException {
-                String result = "";
-                if(i==0){
-                    result = "ProjectNaam";
-                } else if (i==1){
-                    result = "Omschrijving";
-                }
-                i++;
-                return result;
-            }
+        UserInterface mocked = mock(UserInterface.class);
+        //stubbing
+        when(mocked.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
+        when(mocked.requestDatum(anyString())).thenThrow(new CancelException("Cancel in test")).thenReturn(now.plusDays(1));
 
-            private int j = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(j==0){
-                    throw new CancelException("Cancel");
-                } else if (j==1){
-                    result = now.plusDays(1);
-                }
-                j++;
-                return result;
-            }
-
-
-
-        };
-        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        ProjectController projectController = new ProjectController(projectRepository,user,mocked);
         //Cancel exception wordt opgevangen in de controller.
         projectController.createProject();
     }
     @Test
     public void createProject_CancelDueTimeTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
-            private int i = 0;
-            @Override
-            public String requestString(String request) throws CancelException {
-                String result = "";
-                if(i==0){
-                    result = "ProjectNaam";
-                } else if (i==1){
-                    result = "Omschrijving";
-                }
-                i++;
-                return result;
-            }
+        UserInterface mocked = mock(UserInterface.class);
+        //stubbing
+        when(mocked.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
+        when(mocked.requestDatum(anyString())).thenReturn(now).thenThrow(new CancelException("Cancel in test"));
 
-            private int j = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(j==0){
-                    result = now;
-                } else if (j==1){
-                    throw new CancelException("Cancel");
-                }
-                j++;
-                return result;
-            }
-
-
-
-        };
-        ProjectController projectController = new ProjectController(projectRepository,user,ui);
+        ProjectController projectController = new ProjectController(projectRepository,user,mocked);
         //Cancel exception wordt opgevangen in de controller.
         projectController.createProject();
     }
