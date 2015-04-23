@@ -395,12 +395,13 @@ public class CommandLineInterface implements UserInterface {
      * Laat de gebruiker een element kiezen uit de gegeven lijst.
      * @param tList             De lijst waaruit men kan kiezen
      * @param listEntryPrinter  De manier waarop ieder element wordt voorgesteld
-     * @param <T>               Het type van het geslecteerde element
+     * @param <T>               Het type van het geselecteerde element
      * @return                  Geeft het element dat de gebruiker selecteerde.
-     * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
+     * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer.
+     * @throws EmptyListException  gooi indien de gegeven lijst leeg is.
      */
     @Override
-    public <T> T selectFromList(List<T> tList,Function<T,String> listEntryPrinter)throws CancelException{
+    public <T> T selectFromList(List<T> tList,Function<T,String> listEntryPrinter)throws CancelException,EmptyListException{
         Function<List<T>,T> listSelector = list -> {
             if(list == null || list.isEmpty()){ throw new CancelException("Lege lijst.");}
             int max = list.size()-1;
@@ -408,9 +409,13 @@ public class CommandLineInterface implements UserInterface {
             int selection = numberBetween(getIntFromUser,min,max);
             return list.get(selection);
         };
-        printList(tList, listEntryPrinter);
-        T selection = listSelector.apply(tList);
-        return selection;
+        if(!tList.isEmpty()){
+            printList(tList, listEntryPrinter);
+            T selection = listSelector.apply(tList);
+            return selection;
+        }else {
+            throw new EmptyListException("Lege lijst");
+        }
     }
 
     private <T> void printList(List<T> list,Function<T,String> listEntryPrinter){
