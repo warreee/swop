@@ -2,6 +2,7 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TMSystem;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.IllegalStateTransition;
@@ -23,12 +24,16 @@ public class TaskStatusTest {
     Project project;
     Task task1, task2;
     Method methodMakeAvailable, methodMakeUnAvailable;
+    private SystemTime systemTime;
+    private LocalDateTime now;
 
     @Before
     public void setUp() throws NoSuchMethodException {
-        LocalDateTime date = LocalDateTime.of(2015, 3, 12, 8, 0);
-        ProjectRepository projectRepository = new TMSystem().getProjectRepository();
-        project = new Project("Test project", "Mijn eerste project", date, date.plusHours(6), new User("Ik"), );
+        now = LocalDateTime.of(2015, 3, 12, 8, 0);
+        systemTime = new SystemTime(now);
+        ProjectRepository projectRepository = new ProjectRepository(systemTime);
+        project = new Project("Test project", "Mijn eerste project", now, now.plusHours(6), new User("ROOT"), systemTime);
+
         project.addNewTask("Taak1", 0.1, Duration.ofHours(1));
         project.addNewTask("Taak2", 0.1, Duration.ofHours(1));
         task1 = project.getTasks().get(0);

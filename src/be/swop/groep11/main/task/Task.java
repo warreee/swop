@@ -3,17 +3,11 @@ package be.swop.groep11.main.task;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.resource.IRequirementList;
-import be.swop.groep11.main.resource.ResourceInstance;
-import be.swop.groep11.main.resource.ResourceManager;
-import be.swop.groep11.main.resource.ResourceRequirement;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -222,14 +216,8 @@ public class Task {
      */
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyGraph.addDependency(this, dependingOn);
-
         makeUnAvailable();
-
     }
-
-
-
-
 
     /**
      * Status van de taak
