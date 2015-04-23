@@ -30,10 +30,17 @@ public class ResourceManager {
      * probleem is met de naam.
      */
     private void addDeveloperType(){
-        if(!containsType("Developer")) {
+        if(developerType == null) {
             addNewResourceType("Developer", new DailyAvailability(LocalTime.of(8, 0), LocalTime.of(17, 0)));
+            developerType = this.getResourceTypeByName("Developer");
         }
     }
+
+    public IResourceType getDeveloperType() {
+        return developerType;
+    }
+
+    private IResourceType developerType;
 
     //TODO documentatie
     /**
@@ -423,14 +430,33 @@ public class ResourceManager {
         /**
          * Controleert of dit plan geldig is.
          *
-         * @return True als de reservaties niet conflicteren met andere reservaties.
+         * @return True als de reservaties niet conflicteren met andere reservaties
+         *         en alle nodige reservaties gemaakt zijn.
          */
         public boolean isValidPlan() {
+
+            // geen conflicten?
             for (ResourceReservation reservation : this.getReservations()) {
                 if (!isAvailable(reservation.getResourceInstance(), reservation.getTimeSpan())) {
                     return false;
                 }
             }
+
+            // nodige reservaties gemaakt?
+            Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
+            while (it.hasNext()) {
+                ResourceRequirement requirement = it.next();
+
+                List<ResourceReservation> reservations = this.getReservations(requirement.getType());
+
+                int nbRequiredInstances = requirement.getAmount();
+                int nbReservations = reservations.size();
+
+                if (nbRequiredInstances != nbReservations) {
+                    return false;
+                }
+            }
+
             return true;
         }
 
@@ -454,6 +480,9 @@ public class ResourceManager {
             this.reservations = calculateDefaultReservations(this.getTask(), this.getStartTime());
         }
 
+        /**
+         * Geeft de taak van dit plan.
+         */
         public Task getTask() {
             return task;
         }
@@ -496,7 +525,7 @@ public class ResourceManager {
          *
          * @return De reservaties van dit plan en die eindigen allemaal op hetzelfde moment.
          */
-        public List<ResourceReservation> getReservations() {
+        public ImmutableList<ResourceReservation> getReservations() {
             List<ResourceReservation> reservations = new LinkedList<>();
             // zorg wel dat alle reservaties op het zelfde moment eindigen!
             for (ResourceReservation reservation : this.reservations) {
@@ -507,7 +536,64 @@ public class ResourceManager {
                             reservation.isSpecific()));
                 }
             }
-            return reservations;
+            return ImmutableList.copyOf(reservations);
+        }
+
+        /**
+         * Geeft de reservaties van dit plan voor een bepaalde resource type.
+         *
+         * @param resourceType Het resource type
+         * @return De reservaties van dit plan en die eindigen allemaal op hetzelfde moment.
+         */
+        public ImmutableList<ResourceReservation> getReservations(IResourceType resourceType) {
+            List<ResourceReservation> reservations = new LinkedList<>();
+            for (ResourceReservation reservation : this.getReservations()) {
+                if (reservation.getResourceInstance().getResourceType() == resourceType) {
+                    reservations.add(reservation);
+                }
+            }
+            return ImmutableList.copyOf(reservations);
+        }
+
+        /**
+         * Voegt een reservatie voor een resource instantie toe aan dit plan.
+         * De toegevoegde reservatie zal een specifieke reservatie zijn.
+         * @param resourceInstance De te reserveren resource instantie
+         * @throws IllegalArgumentException Er is in dit plan al een reservatie voor de gegeven resource instantie gemaakt.
+         */
+        public void addReservation(ResourceInstance resourceInstance) {
+            if (this.hasReservationFor(resourceInstance)) {
+                throw new IllegalArgumentException("Er is in dit plan al een reservatie voor de gegeven resource instantie gemaakt.");
+            }
+
+            this.reservations.add(new ResourceReservation(this.getTask(),
+                    resourceInstance,
+                    new TimeSpan(this.getStartTime(), getNextAvailableTimeSpan(resourceInstance,this.getStartTime(),this.getTask().getEstimatedDuration()).getEndTime()),
+                    true));
+        }
+
+        /**
+         * Verwijdert de reservatie voor een resource instantie uit dit plan.
+         */
+        public void removeReservation(ResourceInstance resourceInstance) {
+            for (ResourceReservation reservation : this.reservations) {
+                if (reservation.getResourceInstance() == resourceInstance) {
+                    this.reservations.remove(reservation);
+                    break;
+                }
+            }
+        }
+
+        /**
+         * Controleert of dit plan een reservatie voor een resource instantie bevat.
+         */
+        public boolean hasReservationFor(ResourceInstance resourceInstance) {
+            for (ResourceReservation reservation : this.reservations) {
+                if (reservation.getResourceInstance() == resourceInstance) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /**
@@ -523,15 +609,17 @@ public class ResourceManager {
             while (it.hasNext()) {
                 ResourceRequirement requirement = it.next();
 
-                List<ResourceInstance> availableInstances = getAvailableInstances(requirement.getType(), timeSpanOfPlan);
+                if (requirement.getType() != getDeveloperType()) {
+                    List<ResourceInstance> availableInstances = getAvailableInstances(requirement.getType(), timeSpanOfPlan);
 
-                int nbRequiredInstances = requirement.getAmount();
-                if (availableInstances.size() < nbRequiredInstances) {
-                    throw new IllegalArgumentException("Er zijn niet genoeg resource instanties beschikbaar voor een plan van task op de gegeven starttijd");
-                } else {
-                    // voeg de nodige reservaties toe
-                    for (int i = 0; i < nbRequiredInstances - 1; i++) {
-                        defaultReservations.add(new ResourceReservation(task, availableInstances.get(i), timeSpanOfPlan, false));
+                    int nbRequiredInstances = requirement.getAmount();
+                    if (availableInstances.size() < nbRequiredInstances) {
+                        throw new IllegalArgumentException("Er zijn niet genoeg resource instanties beschikbaar voor een plan van task op de gegeven starttijd");
+                    } else {
+                        // voeg de nodige reservaties toe
+                        for (int i = 0; i < nbRequiredInstances - 1; i++) {
+                            defaultReservations.add(new ResourceReservation(task, availableInstances.get(i), timeSpanOfPlan, false));
+                        }
                     }
                 }
             }
