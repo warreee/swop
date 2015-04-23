@@ -2,14 +2,8 @@ package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.IProjectRepositoryMemento;
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.User;
+import be.swop.groep11.main.actions.ActionMapping;
 import be.swop.groep11.main.ui.UserInterface;
-import be.swop.groep11.main.ui.commands.CancelException;
-import be.swop.groep11.main.ui.commands.Command;
-import be.swop.groep11.main.ui.commands.CommandStrategy;
-
-import java.util.HashMap;
 
 /**
  * Bevat de stappen om de use case "Running a simulation" uit te voeren.
@@ -23,39 +17,28 @@ public class SimulationController extends AbstractController {
     * Resolve Conflict
     * Show Projects
     * */
-    public SimulationController(SystemTime systemTime, ProjectRepository projectRepository, UserInterface userInterface) {
-        super(userInterface,systemTime);
+    public SimulationController(ActionMapping actionMapping,ProjectRepository projectRepository) {
+        super(actionMapping);
         this.projectRepository = projectRepository;
-
-        this.taskController = new TaskController(projectRepository,getUserInterface(),systemTime);
-        this.projectController = new ProjectController(projectRepository,new User("Simulation"),getUserInterface(),getSysteTime());
-
+        //Zelfde project repository als alle andere controllers, geen nood om actions(commands) te deligeren via simulatiecontroller.
     }
     //Store initial state
     private IProjectRepositoryMemento originalState;
     private ProjectRepository projectRepository;
 
-    private TaskController taskController;
-    private ProjectController projectController;
 
     /**
      * Voert de stappen voor "Start Simulation" uit.
      */
     public void startSimulation() {
+        // hou de huidige state van projectRepository bij
         storeState();
         UserInterface ui = this.getUserInterface();
-        try {
-            // hou de huidige state van projectRepository bij
-            ui.showHelp(this);
-
-        } catch (CancelException e) {
-            getUserInterface().printException(e);
-        }
+        ui.showHelp(this);
     }
 
     public void endSimulation() {
         //TODO endSimulation kan weg
-        UserInterface ui = this.getUserInterface();
       /*  try {
             String command = ui.requestString("Wat wil je doen met de huidige simulatie?\n"
                                                 + "continue = verdergaan met de simulatie\n"
@@ -76,15 +59,14 @@ public class SimulationController extends AbstractController {
         deActivate();
     }
 
-    private void realize() {
+    public void realize() {
         //projectRepository bezit all alle veranderingen ...
 
         deActivate();
     }
-    private void cancel() {
+    public void cancel() {
         restoreState();
         getUserInterface().printMessage("Canceled Simulation");
-
         deActivate();
     }
 
@@ -97,36 +79,5 @@ public class SimulationController extends AbstractController {
         if (memento != null) {
             this.projectRepository.setMemento(memento);
         }
-    }
-
-    @Override
-    public void createTask() throws IllegalArgumentException {
-        this.taskController.activate();
-        this.taskController.createTask();
-        this.taskController.deActivate();
-    }
-
-    @Override
-    public void planTask() throws IllegalArgumentException {
-        super.planTask();
-    }
-
-    @Override
-    public void showProjects() throws IllegalArgumentException {
-        this.projectController.activate();
-        this.projectController.showProjects();
-        this.projectController.deActivate();
-    }
-
-    @Override
-    public HashMap<Command,CommandStrategy> getCommandStrategies(){
-        HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
-        map.put(Command.CREATETASK,taskController::createTask);
-        map.put(Command.UPDATETASK, taskController::updateTask);
-        map.put(Command.PLANTASK,taskController::planTask);
-        map.put(Command.SHOWPROJECTS, projectController::showProjects);
-        map.put(Command.REALIZESIMULATION, this::realize);
-        map.put(Command.CANCEL, this::cancel); //Cancel Simulation
-        return map;
     }
 }

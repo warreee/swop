@@ -23,6 +23,7 @@ import java.util.Map;
  * Klasse voor het inlezen van de de input file, deze moet staan in /input met de naam input.tman
  */
 public class InputParser {
+    // TODO: nieuwe implementatie ResourceTypeRepo afwachten. (Overschakelen naar ResourceManager?)
     User user = new User("InputParser");
     ProjectRepository projectRepository;
     ArrayList<Project> projectList = new ArrayList<>();
@@ -33,9 +34,9 @@ public class InputParser {
     private ResourceManager resourceManager;
     private SystemTime systemTime;
 
-    public InputParser(ProjectRepository projectRepository, ResourceManager typeRepo) {
+    public InputParser(ProjectRepository projectRepository, ResourceManager resourceManager) {
         this.projectRepository = projectRepository;
-        this.resourceManager = typeRepo;
+        this.resourceManager = resourceManager;
     }
 
 
@@ -287,13 +288,13 @@ public class InputParser {
 
         if (mapTask.get("startTime") != null) {
             LocalDateTime startTime = parseTime(mapTask.get("startTime"));
-            task.setStartTime(startTime);
+//            task.setStartTime(startTime);
         }
 
 
         if (mapTask.get("endTime") != null) {
             LocalDateTime endTime = parseTime(mapTask.get("endTime"));
-            task.setEndTime(endTime);
+//            task.setEndTime(endTime);
         }
 
 
@@ -356,7 +357,7 @@ public class InputParser {
         projectRepository.addNewProject(name, description, creationTime, dueTime, user);
 
         // Haalt het laatst toegevoegde project op.
-        projectList.add(projectRepository.getProjects().get(projectRepository.getProjects().size() - 1));
+        projectList.add(projectRepository.getProjects().get(projectRepository.getProjects().size() - 1 ));
     }
 
     private void addTask(Map<String, String> propertiesList) {

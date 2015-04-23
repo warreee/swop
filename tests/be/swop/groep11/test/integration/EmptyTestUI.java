@@ -5,8 +5,8 @@ import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.ui.UserInterface;
-import be.swop.groep11.main.ui.commands.CancelException;
-import be.swop.groep11.main.ui.commands.Command;
+import be.swop.groep11.main.actions.CancelException;
+import be.swop.groep11.main.actions.Action;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
@@ -88,7 +88,7 @@ abstract class EmptyTestUI implements UserInterface {
     }
 
     protected void checkCancel(String str) throws CancelException{
-        if(Command.checkCancel(str)){
+        if(Action.checkCancel(str)){
             throw new CancelException("Cancel nu!");
         }
     }

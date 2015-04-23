@@ -2,18 +2,14 @@ package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.core.User;
-import be.swop.groep11.main.ui.commands.CancelException;
+import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.actions.ActionMapping;
 import be.swop.groep11.main.ui.EmptyListException;
-import be.swop.groep11.main.ui.UserInterface;
-import be.swop.groep11.main.ui.commands.Command;
-import be.swop.groep11.main.ui.commands.CommandStrategy;
+import be.swop.groep11.main.actions.CancelException;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 /**
  * Bevat de stappen om de use cases "Show Projects" en "Create Project" uit te voeren.
@@ -29,10 +25,14 @@ public class ProjectController extends AbstractController {
      * @param user Gebruiker die projecten aanmaakt
      * @param ui Gebruikersinterface
      */
-    public ProjectController(ProjectRepository projectRepository, User user, UserInterface ui,SystemTime systemTime){
-        super(ui,systemTime);
+    public ProjectController(ProjectRepository projectRepository, User user, ActionMapping actionMapping ){
+        super(actionMapping);
         this.projectRepository = projectRepository;
         this.user = user;
+    }
+
+    protected ProjectRepository getProjectRepository() {
+        return projectRepository;
     }
 
     /**
@@ -41,11 +41,6 @@ public class ProjectController extends AbstractController {
     public void showProjects() {
         try {
             ImmutableList<Project> projects = projectRepository.getProjects();
-
-//            Project project = getUserInterface().selectFromList(projects, (proj -> {
-//                String overTime = (proj.isOverTime()) ? "over time" : "on time";
-//                return String.format("%-35s %-20s %-20s %n", proj.getName(), proj.getProjectStatus().name(), "(" + overTime + ")");
-//            }));
             Project project =  getUserInterface().selectProjectFromList(projects);
             getUserInterface().showProjectDetails(project);
 
@@ -77,13 +72,4 @@ public class ProjectController extends AbstractController {
         }
 
     }
-
-    @Override
-    public HashMap<Command, CommandStrategy> getCommandStrategies() {
-        HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
-        map.put(Command.SHOWPROJECTS,this::showProjects);
-        map.put(Command.CREATEPROJECT,this::createProject);
-        return map;
-    }
-
 }

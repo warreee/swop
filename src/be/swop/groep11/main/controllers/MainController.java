@@ -1,92 +1,85 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.User;
-import be.swop.groep11.main.ui.UserInterface;
-import be.swop.groep11.main.ui.commands.Command;
-import be.swop.groep11.main.ui.commands.CommandStrategy;
-
-import java.util.HashMap;
+import be.swop.groep11.main.actions.ActionMapping;
 
 /**
  * Created by Ronald on 17/04/2015.
  */
 public class MainController extends AbstractController {
 
-    private final ProjectRepository projectRepository;
+    private final SimulationController simulationController;
+    private final ProjectController projectController;
+    private final AdvanceTimeController advanceTimeController;
+    private final TaskController taskController;
+    private final PlanningController planningController;
 
-
-    //TODO documentatie, als ook tmSystem naar SystemTime, als ook reduceren van duplicate code.
-    public MainController(UserInterface userInterface,SystemTime systemTime,ProjectRepository projectRepository) {
-        super(userInterface,systemTime);
-        this.projectRepository = projectRepository;
+    public MainController(ActionMapping actionMapping, AdvanceTimeController advanceTimeController,SimulationController simulationController,
+                          ProjectController projectController, TaskController taskController,PlanningController planningController) {
+        super(actionMapping);
+        this.advanceTimeController = advanceTimeController;
+        this.simulationController = simulationController;
+        this.projectController = projectController;
+        this.taskController = taskController;
+        this.planningController = planningController;
     }
 
     @Override
     public void advanceTime() throws IllegalArgumentException {
-        AbstractController controller = new AdvanceTimeController(getUserInterface(),getSysteTime());
-        controller.activate();
-        controller.advanceTime();
-        controller.deActivate();
+        advanceTimeController.activate();
+        advanceTimeController.advanceTime();
+        advanceTimeController.deActivate();
     }
 
     @Override
     public void createProject() throws IllegalArgumentException {
-        AbstractController controller = new ProjectController(getProjectRepository(),new User("root"),getUserInterface(),getSysteTime());
-        controller.activate();
-        controller.createProject();
-        controller.deActivate();
-    }
-
-    private ProjectRepository getProjectRepository() {
-        return projectRepository;
+        projectController.activate();
+        projectController.createProject();
+        projectController.deActivate();
     }
 
     @Override
     public void createTask() throws IllegalArgumentException {
-        AbstractController controller = new TaskController(getProjectRepository(),getUserInterface(),getSysteTime());
-        controller.activate();
-        controller.createTask();
-        controller.deActivate();
+        taskController.activate();
+        taskController.createTask();
+        taskController.deActivate();
     }
 
     @Override
     public void showProjects() throws IllegalArgumentException {
-        AbstractController controller = new ProjectController(getProjectRepository(),new User("root"),getUserInterface(),getSysteTime());
-        controller.activate();
-        controller.showProjects();
-        controller.deActivate();
+        projectController.activate();
+        projectController.showProjects();
+        projectController.deActivate();
     }
 
     @Override
     public void updateTask() throws IllegalArgumentException {
-        AbstractController controller = new TaskController(getProjectRepository(),getUserInterface(),getSysteTime());
-        controller.activate();
-        controller.updateTask();
-        controller.deActivate();
+        taskController.activate();
+        taskController.updateTask();
+        taskController.deActivate();
     }
 
-    private SimulationController simController;
 
     @Override
     public void startSimulation() throws IllegalArgumentException {
-        this.simController = new SimulationController(getSysteTime(),getProjectRepository(),getUserInterface());
-        this.simController.activate();
-        this.simController.startSimulation();
+        simulationController.activate();
+        simulationController.startSimulation();
         //Mag niet deActivaten omdat de simulatie controller nog actief moet zijn, totdat end simulation is opgeroepen
-        //controller.deActivate();
+        //simulationController.deActivate();
     }
 
-    public HashMap<Command,CommandStrategy> getCommandStrategies(){
-        HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
-        map.put(Command.CREATETASK,this::createTask);
-        map.put(Command.UPDATETASK, this::updateTask);
-        map.put(Command.PLANTASK,this::planTask);
-        map.put(Command.CREATEPROJECT,this::createProject);
-        map.put(Command.SHOWPROJECTS,this::showProjects);
-        map.put(Command.ADVANCETIME,this::advanceTime);
-        map.put(Command.STARTSIMULATION,this::startSimulation);
-        return map;
+    private AdvanceTimeController getAdvanceTimeController() {
+        return advanceTimeController;
+    }
+    private ProjectController getProjectController() {
+        return projectController;
+    }
+    private SimulationController getSimulationController() {
+        return simulationController;
+    }
+    private TaskController getTaskController() {
+        return taskController;
+    }
+    private PlanningController getPlanningController() {
+        return planningController;
     }
 }
