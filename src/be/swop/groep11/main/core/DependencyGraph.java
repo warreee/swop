@@ -77,6 +77,7 @@ public class DependencyGraph {
     private void removeDependency(Task failedTask) {
         dependentMap.remove(failedTask);
         dependingOnMap.entrySet().stream().filter(entry -> entry.getValue().contains(failedTask)).forEach(entry -> entry.getValue().remove(failedTask));
+        dependingOnMap.remove(failedTask);
     }
 
 
