@@ -4,7 +4,7 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.actions.ActionMapping;
+import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.actions.CancelException;
 import com.google.common.collect.ImmutableList;
@@ -25,8 +25,8 @@ public class TaskController extends AbstractController {
      * Constructor om een nieuwe task controller te maken.
      * @param ui Gebruikersinterface
      */
-    public TaskController(ActionMapping actionMapping,ProjectRepository projectRepository,SystemTime systemTime) {
-        super(actionMapping);
+    public TaskController(ActionBehaviourMapping actionBehaviourMapping,ProjectRepository projectRepository,SystemTime systemTime) {
+        super(actionBehaviourMapping);
         this.projectRepository = projectRepository;
         this.systemTime = systemTime;
     }

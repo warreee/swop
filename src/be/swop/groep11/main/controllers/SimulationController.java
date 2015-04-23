@@ -2,7 +2,7 @@ package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.IProjectRepositoryMemento;
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.actions.ActionMapping;
+import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.ui.UserInterface;
 
 /**
@@ -17,8 +17,8 @@ public class SimulationController extends AbstractController {
     * Resolve Conflict
     * Show Projects
     * */
-    public SimulationController(ActionMapping actionMapping,ProjectRepository projectRepository) {
-        super(actionMapping);
+    public SimulationController(ActionBehaviourMapping actionBehaviourMapping,ProjectRepository projectRepository) {
+        super(actionBehaviourMapping);
         this.projectRepository = projectRepository;
         //Zelfde project repository als alle andere controllers, geen nood om actions(commands) te deligeren via simulatiecontroller.
     }

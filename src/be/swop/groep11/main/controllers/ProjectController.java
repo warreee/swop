@@ -4,7 +4,7 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.actions.ActionMapping;
+import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.actions.CancelException;
 import com.google.common.collect.ImmutableList;
@@ -25,8 +25,8 @@ public class ProjectController extends AbstractController {
      * @param user Gebruiker die projecten aanmaakt
      * @param ui Gebruikersinterface
      */
-    public ProjectController(ProjectRepository projectRepository, User user, ActionMapping actionMapping ){
-        super(actionMapping);
+    public ProjectController(ProjectRepository projectRepository, User user, ActionBehaviourMapping actionBehaviourMapping){
+        super(actionBehaviourMapping);
         this.projectRepository = projectRepository;
         this.user = user;
     }

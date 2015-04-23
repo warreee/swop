@@ -3,7 +3,7 @@ package be.swop.groep11.main.ui;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.actions.ActionMapping;
+import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.actions.CancelException;
 import com.google.common.collect.ImmutableList;
 
@@ -106,9 +106,9 @@ public interface UserInterface {
 
     void wantsToExit();
 
-    ActionMapping getActionMapping();
+    ActionBehaviourMapping getActionBehaviourMapping();
 
-    void setActionMapping(ActionMapping actionMapping);
+    void setActionBehaviourMapping(ActionBehaviourMapping actionBehaviourMapping);
 
         /**
          * Laat de gebruiker een element kiezen uit de gegeven lijst.

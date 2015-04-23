@@ -1,6 +1,6 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.actions.ActionMapping;
+import be.swop.groep11.main.actions.ActionBehaviourMapping;
 
 /**
  * Created by Ronald on 17/04/2015.
@@ -13,9 +13,9 @@ public class MainController extends AbstractController {
     private final TaskController taskController;
     private final PlanningController planningController;
 
-    public MainController(ActionMapping actionMapping, AdvanceTimeController advanceTimeController,SimulationController simulationController,
+    public MainController(ActionBehaviourMapping actionBehaviourMapping, AdvanceTimeController advanceTimeController,SimulationController simulationController,
                           ProjectController projectController, TaskController taskController,PlanningController planningController) {
-        super(actionMapping);
+        super(actionBehaviourMapping);
         this.advanceTimeController = advanceTimeController;
         this.simulationController = simulationController;
         this.projectController = projectController;

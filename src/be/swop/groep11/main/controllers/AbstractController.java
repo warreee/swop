@@ -1,6 +1,6 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.actions.ActionMapping;
+import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.ui.UserInterface;
 
 /**
@@ -9,11 +9,11 @@ import be.swop.groep11.main.ui.UserInterface;
 public abstract class AbstractController {
 
     private final UserInterface userInterface;
-    private final ActionMapping actionMapping;
+    private final ActionBehaviourMapping actionBehaviourMapping;
 
-    public AbstractController(ActionMapping actionMapping) {
-        this.actionMapping = actionMapping;
-        this.userInterface = actionMapping.getUserInterface();
+    public AbstractController(ActionBehaviourMapping actionBehaviourMapping) {
+        this.actionBehaviourMapping = actionBehaviourMapping;
+        this.userInterface = actionBehaviourMapping.getUserInterface();
 
     }
     protected UserInterface getUserInterface() {
@@ -57,13 +57,13 @@ public abstract class AbstractController {
      * Set's this controller on top of stack in UI.
      */
     protected void activate() {
-        actionMapping.activateController(this);
+        actionBehaviourMapping.activateController(this);
     }
 
     /**
      * Removes this controller from the stack in UI.
      */
     protected void deActivate() {
-        actionMapping.deActivateController(this);
+        actionBehaviourMapping.deActivateController(this);
     }
 }

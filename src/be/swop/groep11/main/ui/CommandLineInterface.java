@@ -49,29 +49,29 @@ public class CommandLineInterface implements UserInterface {
     }
     private boolean exit;
     private BufferedReader bufferedReader;
-    private ActionMapping actionMapping;
+    private ActionBehaviourMapping actionBehaviourMapping;
 
     @Override
     public void wantsToExit() {
         this.exit = true;
     }
 
-    private boolean canHaveAsActionMapping(ActionMapping actionMapping) {
-        return actionMapping != null && this.actionMapping == null && actionMapping.getUserInterface() == this;
+    private boolean canHaveAsActionMapping(ActionBehaviourMapping actionBehaviourMapping) {
+        return actionBehaviourMapping != null && this.actionBehaviourMapping == null && actionBehaviourMapping.getUserInterface() == this;
     }
 
-    public void setActionMapping(ActionMapping actionMapping){
-        if(!canHaveAsActionMapping(actionMapping)){
+    public void setActionBehaviourMapping(ActionBehaviourMapping actionBehaviourMapping){
+        if(!canHaveAsActionMapping(actionBehaviourMapping)){
             throw new IllegalArgumentException("Gegegven actionMapping is geen geldige voor deze UI.");
         }
-        this.actionMapping = actionMapping;
+        this.actionBehaviourMapping = actionBehaviourMapping;
     }
     @Override
-    public ActionMapping getActionMapping() {
-        return actionMapping;
+    public ActionBehaviourMapping getActionBehaviourMapping() {
+        return actionBehaviourMapping;
     }
     private void executeCommand(Action action) {
-        actionMapping.executeAction(action);
+        actionBehaviourMapping.executeAction(action);
     }
     @Override
     public void printMessage(String message) {
@@ -396,7 +396,7 @@ public class CommandLineInterface implements UserInterface {
 
     public void showHelp(AbstractController abstractController) throws IllegalArgumentException{
         ArrayList<Action> list = new ArrayList<>();
-        for(Map.Entry<Action,ActionStrategy> entry :  actionMapping.getMappingFor(abstractController).entrySet()){
+        for(Map.Entry<Action,ActionBehaviour> entry :  actionBehaviourMapping.getMappingFor(abstractController).entrySet()){
             list.add(entry.getKey());
         }
         StringBuilder sb = new StringBuilder();
