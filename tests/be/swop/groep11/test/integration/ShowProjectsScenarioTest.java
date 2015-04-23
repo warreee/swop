@@ -6,7 +6,6 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.User;
-import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -26,64 +25,54 @@ public class ShowProjectsScenarioTest {
 
     private ProjectRepository projectRepository;
     private User user;
+    private ImmutableList<Project> projects;
+    private ImmutableList<Task> tasks;
+    private UserInterface mockedUI;
+    private ProjectController projectController;
 
     @Before
     public void setUp() throws Exception {
         LocalDateTime now = LocalDateTime.now();
         SystemTime systemTime = new SystemTime(now);
-        ResourceManager resourceManager = new ResourceManager();
+        this.mockedUI = mock(UserInterface.class);
+
         projectRepository = new ProjectRepository(systemTime);
         user = new User("Test");
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10),new User("TEST"));
         projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8));
+
+        this.projectController = new ProjectController(projectRepository, user,mockedUI );
+        this.projects = projectRepository.getProjects();
+        this.tasks = projects.get(0).getTasks();
     }
 
     @Test
     public void showProjects_validTest() throws Exception {
-        ImmutableList<Project> projects = projectRepository.getProjects();
-        ImmutableList<Task> tasks = projects.get(0).getTasks();
-
-        UserInterface mocked = mock(UserInterface.class);
         //stubbing
-        when(mocked.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
-        when(mocked.selectProjectFromList(projects)).thenReturn(projects.get(0));
+        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
 
-        ProjectController projectController = new ProjectController(projectRepository, user,mocked );
         projectController.showProjects();
     }
 
     @Test
     public void showProjects_CancelSelectProjectTest() throws Exception {
-        ImmutableList<Project> projects = projectRepository.getProjects();
-        ImmutableList<Task> tasks = projects.get(0).getTasks();
-
-        UserInterface mocked = mock(UserInterface.class);
         //stubbing
-        when(mocked.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
-        when(mocked.selectProjectFromList(projects)).thenThrow(new CancelException("Cancel in Test"));
+        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        when(mockedUI.selectProjectFromList(projects)).thenThrow(new CancelException("Cancel in Test"));
 
         //Cancel exception wordt opgevangen in de controller.
-        ProjectController projectController = new ProjectController(projectRepository,user,mocked);
         projectController.showProjects();
     }
 
     @Test
     public void showProjects_CancelSelectTaskTest() throws Exception {
-        ImmutableList<Project> projects = projectRepository.getProjects();
-        ImmutableList<Task> tasks = projects.get(0).getTasks();
-
-        UserInterface mocked = mock(UserInterface.class);
         //stubbing
-        when(mocked.selectTaskFromList(tasks)).thenThrow(new CancelException("Cancel in test"));
-        when(mocked.selectProjectFromList(projects)).thenReturn(projects.get(0));
+        when(mockedUI.selectTaskFromList(tasks)).thenThrow(new CancelException("Cancel in test"));
+        when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
 
-
-        ProjectController projectController = new ProjectController(projectRepository,user,mocked);
         //Cancel exception wordt opgevangen in de controller.
         projectController.showProjects();
     }
-
-
-
 }

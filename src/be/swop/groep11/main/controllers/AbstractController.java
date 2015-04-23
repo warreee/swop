@@ -6,13 +6,12 @@ import be.swop.groep11.main.ui.UserInterface;
  * Created by Ronald on 17/04/2015.
  */
 public abstract class AbstractController {
-    //TODO make interface?
     private final UserInterface userInterface;
 
     public AbstractController(UserInterface userInterface) {
         this.userInterface = userInterface;
-
     }
+
     protected UserInterface getUserInterface() {
         return userInterface;
     }
@@ -49,6 +48,4 @@ public abstract class AbstractController {
     public void startSimulation() throws IllegalArgumentException {
         throw new IllegalArgumentException("Niet ondersteund");
     }
-
-
 }
