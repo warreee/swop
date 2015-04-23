@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TMSystemTest {
+public class SystemTimeTest {
 
     private SystemTime systemTime;
     private LocalDateTime newTime;

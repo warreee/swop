@@ -5,7 +5,6 @@ import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.User;
-import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.ui.UserInterface;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,13 +30,11 @@ public class CreateProjectScenarioTest {
     public void setUp() throws Exception {
         now = LocalDateTime.now();
         SystemTime systemTime = new SystemTime(now);
-        ResourceManager resourceManager = new ResourceManager();
         projectRepository = new ProjectRepository(systemTime);
         user = new User("Test");
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10), new User("TEST"));
         projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8));
-        this.projectController = new ProjectController(projectRepository,user,mockedUI);
         mockedUI = mock(UserInterface.class);
 
     }
@@ -48,6 +45,7 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
 
+        this.projectController = new ProjectController(projectRepository,user,mockedUI);
         projectController.createProject();
     }
 
@@ -56,18 +54,20 @@ public class CreateProjectScenarioTest {
         //stubbing
         when(mockedUI.requestString(anyString())).thenReturn("").thenReturn("Omschrijving");
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
-        doThrow(new StopTestException("Cancel")).when(mockedUI).printException(any());
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(IllegalArgumentException.class));
 
+        projectController = new ProjectController(projectRepository,user,mockedUI);
         projectController.createProject();
     }
 
     @Test (expected = StopTestException.class)
     public void createProject_invalidDescriptionTest() throws Exception {
         //stubbing
-        when(mockedUI.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
+        when(mockedUI.requestString(anyString())).thenReturn("Naam").thenReturn("");
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
-        doThrow(new StopTestException("Cancel")).when(mockedUI).printException(any());
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(IllegalArgumentException.class));
 
+        projectController = new ProjectController(projectRepository,user,mockedUI);
         projectController.createProject();
     }
 
@@ -76,46 +76,54 @@ public class CreateProjectScenarioTest {
         //stubbing
         when(mockedUI.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
         when(mockedUI.requestDatum(anyString())).thenReturn(now.plusDays(1)).thenReturn(now);
-        doThrow(new StopTestException("Cancel")).when(mockedUI).printException(any());
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
+        projectController = new ProjectController(projectRepository,user,mockedUI);
         projectController.createProject();
     }
 
-    @Test
+    @Test(expected = StopTestException.class)
     public void createProject_CancelNameTest() throws Exception {
         //stubbing
         when(mockedUI.requestString(anyString())).thenThrow(new CancelException("Cancel in test")).thenReturn("Omschrijving");
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
-        //Cancel exception wordt opgevangen in de controller.
+        projectController = new ProjectController(projectRepository,user,mockedUI);
         projectController.createProject();
     }
 
-    @Test
+    @Test(expected = StopTestException.class)
     public void createProject_CancelDescriptionTest() throws Exception {
         //stubbing
         when(mockedUI.requestString(anyString())).thenReturn("Naam").thenThrow(new CancelException("Cancel in test"));
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
+        projectController = new ProjectController(projectRepository,user,mockedUI);
         projectController.createProject();
     }
-    @Test
+    @Test(expected = StopTestException.class)
     public void createProject_CancelCreateTimeTest() throws Exception {
         //stubbing
         when(mockedUI.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
         when(mockedUI.requestDatum(anyString())).thenThrow(new CancelException("Cancel in test")).thenReturn(now.plusDays(1));
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
+        projectController = new ProjectController(projectRepository,user,mockedUI);
         projectController.createProject();
     }
-    @Test
+    @Test(expected = StopTestException.class)
     public void createProject_CancelDueTimeTest() throws Exception {
         //stubbing
         when(mockedUI.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenThrow(new CancelException("Cancel in test"));
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
+        projectController = new ProjectController(projectRepository,user,mockedUI);
         projectController.createProject();
     }
 }

@@ -33,6 +33,7 @@ public class AdvanceTimeScenarioTest {
         //stubbing
         when(mockedUI.requestDatum(anyString())).thenReturn(now.plusDays(1));
 
+        advanceTimeController = new AdvanceTimeController(systemTime,mockedUI);
         advanceTimeController.advanceTime();
     }
 
@@ -40,16 +41,19 @@ public class AdvanceTimeScenarioTest {
     public void updateTime_invalidNewSystemTimeTest() throws Exception {
         //stubbing
         when(mockedUI.requestDatum(anyString())).thenReturn(now.minusDays(1));
-        doThrow(new StopTestException("Cancel")).when(mockedUI).printException(any());
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(IllegalArgumentException.class));
 
+        advanceTimeController = new AdvanceTimeController(systemTime,mockedUI);
         advanceTimeController.advanceTime();
     }
 
-    @Test
+    @Test(expected = StopTestException.class)
     public void updateTime_CancelTest() throws Exception {
         //stubbing
         when(mockedUI.requestDatum(anyString())).thenThrow(new CancelException("Cancel in test"));
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
+        advanceTimeController = new AdvanceTimeController(systemTime,mockedUI);
         advanceTimeController.advanceTime();
     }
 }

@@ -6,7 +6,6 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.User;
-import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -38,7 +37,6 @@ public class CreateTaskScenarioTest {
         this.mockedUI = mock(UserInterface.class);
 
         systemTime = new SystemTime(now);
-        ResourceManager resourceManager = new ResourceManager();
         projectRepository = new ProjectRepository(systemTime);
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10), new User("TEST"));
@@ -59,36 +57,40 @@ public class CreateTaskScenarioTest {
         taskController.createTask();
     }
 
-    @Test
+    @Test(expected = StopTestException.class)
     public void createTask_CancelBeschrijvingTest() throws Exception {
         //stubbing
         when(mockedUI.requestString(anyString())).thenThrow(new CancelException("Cancel in test"));
         when(mockedUI.requestDouble(anyString())).thenReturn(new Double(50));
         when(mockedUI.requestNumber(anyString())).thenReturn(8);
         when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         //Cancel exception wordt opgevangen in de controller.
         taskController.createTask();
     }
 
-    @Test
+    @Test(expected = StopTestException.class)
     public void createTask_CancelDeviationTest() throws Exception {
         when(mockedUI.requestString(anyString())).thenReturn("beschrijving Test");
         when(mockedUI.requestDouble(anyString())).thenThrow(new CancelException("Cancel in test"));
         when(mockedUI.requestNumber(anyString())).thenReturn(8);
         when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         //Cancel exception wordt opgevangen in de controller.
         taskController.createTask();
     }
 
-    @Test
+    @Test(expected = StopTestException.class)
     public void createTask_CancelDurationTest() throws Exception {
         //stubbing
         when(mockedUI.requestString(anyString())).thenReturn("beschrijving Test");
         when(mockedUI.requestDouble(anyString())).thenReturn(new Double(50));
         when(mockedUI.requestNumber(anyString())).thenThrow(new CancelException("Cancel in test"));
         when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
+
         //Cancel exception wordt opgevangen in de controller.
         taskController.createTask();
     }

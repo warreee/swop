@@ -106,6 +106,7 @@ public class TaskController extends AbstractController {
     private void updateTask(Task task) throws CancelException{
         try {
             String status =  getUserInterface().requestString("Status: FAILED of FINISHED (of laat leeg om status niet te wijzigen):");
+            //TODO implement dit als een selectie uit een lijst. zodat de gebruiker geen verkeerde input kan geven. (ook makkeljker om te testen)
             doTransition(status, task);
         }
         catch (IllegalArgumentException e) {

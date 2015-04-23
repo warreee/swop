@@ -20,14 +20,21 @@ public class SystemTime {
         return currentSystemTime;
     }
 
-    public void setCurrentSystemTime(LocalDateTime currentSystemTime) {
+    public void setCurrentSystemTime(LocalDateTime currentSystemTime)throws IllegalArgumentException {
+        if (!canHaveAsNewSystemTime(currentSystemTime)) {
+            throw new IllegalArgumentException("Ongeldige nieuwe tijd");
+        }
         this.currentSystemTime = currentSystemTime;
+    }
+
+    private boolean canHaveAsNewSystemTime(LocalDateTime currentSystemTime) {
+        return currentSystemTime.isAfter(getCurrentSystemTime());
     }
 
     private LocalDateTime currentSystemTime;
 
-    public void updateSystemTime(LocalDateTime newTime)throws IllegalArgumentException{
-        //TODO implement, check if valid new time, niet in het verleden, IllegalArgumentException indien geen geldige nieuwe tijd
+    public void updateSystemTime(LocalDateTime newTime)throws IllegalArgumentException {
+        setCurrentSystemTime(newTime);
     }
 
 }
