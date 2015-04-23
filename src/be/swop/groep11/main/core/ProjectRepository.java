@@ -1,6 +1,7 @@
 package be.swop.groep11.main.core;
 
 
+import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 
@@ -17,15 +18,18 @@ public class ProjectRepository {
     private ArrayList<Project> projects;
 
     private SystemTime systemTime;
+    private ResourceManager resourceManager;
 
 
     /**
      * Contstructor om een nieuwe project repository aan te maken.
      * @param systemTime de systeemtijd
      */
-    public ProjectRepository(SystemTime systemTime) {
-        projects = new ArrayList<>();
+    public ProjectRepository(SystemTime systemTime,ResourceManager resourceManager) {
+        this.resourceManager = resourceManager;
         this.systemTime = systemTime;
+        projects = new ArrayList<>();
+
     }
 
     /**

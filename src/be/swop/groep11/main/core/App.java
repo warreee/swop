@@ -52,10 +52,10 @@ public class App {
 
         //maak een nieuwe system aan
         systemTime = new SystemTime();
-        projectRepository = new ProjectRepository(systemTime);
-        //TODO temp resourceManager?
         resourceManager = new ResourceManager();
+        projectRepository = new ProjectRepository(systemTime,resourceManager);
     }
+
     private void initInputParser(boolean readYamlFile){
         if (readYamlFile) {
             // run inputreader
@@ -74,7 +74,7 @@ public class App {
         projectController = new ProjectController(projectRepository, new User("ROOT"), actionBehaviourMapping);
         advanceTimeController = new AdvanceTimeController(actionBehaviourMapping, systemTime);
         simulationController = new SimulationController(actionBehaviourMapping, projectRepository);
-        planningController = new PlanningController(actionBehaviourMapping);
+        planningController = new PlanningController(actionBehaviourMapping,projectRepository,resourceManager);
         main = new MainController(actionBehaviourMapping, advanceTimeController,simulationController,projectController,taskController,planningController);
 
     }
