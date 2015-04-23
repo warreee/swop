@@ -323,7 +323,7 @@ public class ResourceManager {
      * @param task De gegeven taak
      */
     public ImmutableList<ResourceReservation> getReservations(Task task) {
-        if (reservations.containsKey(task)) {
+        if (! reservations.containsKey(task)) {
             return ImmutableList.copyOf(new LinkedList<ResourceReservation>());
         }
         else {
