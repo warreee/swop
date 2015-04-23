@@ -17,18 +17,46 @@ public class App {
 
     public static void main(String[] args) {
         boolean readYamlFile = (args.length == 1 && args[0].equals("yaml"));
+        App app = new App(readYamlFile);
+        app.runApp();
+    }
 
+    /**
+     * Constructor voor een nieuwe instantie van App.
+     * @param readYamlFile  Boolean die bepaalt of de yaml file wordt ingelezen of niet.
+     */
+    public App(boolean readYamlFile) {
+        initDomainObjects();
+        initInputParser(readYamlFile);
+        initControllers();
+        initBehaviourMapping();
+    }
+    private SystemTime systemTime;
+    private CommandLineInterface cli;
+    private ResourceManager resourceManager;
+    private ProjectRepository projectRepository;
+    private ActionBehaviourMapping actionBehaviourMapping;
+
+    private MainController main;
+    private TaskController taskController;
+    private ProjectController projectController;
+    private AdvanceTimeController advanceTimeController;
+    private SimulationController simulationController;
+    private PlanningController planningController;
+
+    private void initDomainObjects(){
         // maak een nieuwe CommandLineInterface aan
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(java.lang.System.in));
-        CommandLineInterface cli = new CommandLineInterface(bufferedReader);
-        ActionBehaviourMapping actionBehaviourMapping = new ActionBehaviourMapping(cli,() -> cli.printMessage("Ongeldig command"));
+        cli = new CommandLineInterface(bufferedReader);
+        actionBehaviourMapping = new ActionBehaviourMapping(cli,() -> cli.printMessage("Ongeldig command"));
 
         //maak een nieuwe system aan
-        SystemTime systemTime = new SystemTime();
-        ProjectRepository projectRepository = new ProjectRepository(systemTime);
+        systemTime = new SystemTime();
+        projectRepository = new ProjectRepository(systemTime);
         //TODO temp resourceManager?
-        ResourceManager resourceManager = new ResourceManager();
-
+        resourceManager = new ResourceManager();
+    }
+    private void initInputParser(boolean readYamlFile){
         if (readYamlFile) {
             // run inputreader
             InputParser inputParser = new InputParser(projectRepository,resourceManager );
@@ -38,16 +66,20 @@ public class App {
                 System.out.println("Yaml file niet gevonden");
             }
         }
+    }
 
+    private void initControllers(){
         //Aanmaken van controllers
-        TaskController taskController = new TaskController(actionBehaviourMapping,projectRepository, systemTime);
-        ProjectController projectController = new ProjectController(projectRepository, new User("ROOT"), actionBehaviourMapping);
-        AdvanceTimeController advanceTimeController = new AdvanceTimeController(actionBehaviourMapping, systemTime);
-        SimulationController simulationController = new SimulationController(actionBehaviourMapping, projectRepository);
-        PlanningController planningController = new PlanningController(actionBehaviourMapping);
-        //Aanmaken main controller
-        MainController main = new MainController(actionBehaviourMapping, advanceTimeController,simulationController,projectController,taskController,planningController);
-        actionBehaviourMapping.activateController(main);
+        taskController = new TaskController(actionBehaviourMapping,projectRepository, systemTime);
+        projectController = new ProjectController(projectRepository, new User("ROOT"), actionBehaviourMapping);
+        advanceTimeController = new AdvanceTimeController(actionBehaviourMapping, systemTime);
+        simulationController = new SimulationController(actionBehaviourMapping, projectRepository);
+        planningController = new PlanningController(actionBehaviourMapping);
+        main = new MainController(actionBehaviourMapping, advanceTimeController,simulationController,projectController,taskController,planningController);
+
+    }
+
+    private void initBehaviourMapping(){
         //Default strategies
         actionBehaviourMapping.addDefaultBehaviour(Action.EXIT, () -> {
             cli.printMessage("wants to exit");
@@ -76,6 +108,10 @@ public class App {
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.SHOWPROJECTS, projectController::showProjects);
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.REALIZESIMULATION, simulationController::realize);
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.CANCEL, simulationController::cancel); //Cancel Simulation
+    }
+
+    private void runApp(){
+        actionBehaviourMapping.activateController(main);
         // lees commando's
         cli.run();
     }
