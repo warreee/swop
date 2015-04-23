@@ -104,6 +104,12 @@ public class ResourceManagerTest {
         resourceManager.addResourceInstance(type1, null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void doubleNameInstanceTest() throws Exception {
+        addResourceTypeNameOnly("Test Resource 1");
+        addResourceTypeNameOnly("Test Resource 1");
+    }
+
     @Test
     public void containsTypeTest() throws Exception {
         assertFalse(resourceManager.containsType("Car"));
