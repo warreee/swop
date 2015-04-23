@@ -113,6 +113,9 @@ public class CommandLineInterface implements UserInterface {
         // TODO: project overtime Method?
         return String.format(projectFormatStr, project.getName(), project.getProjectStatus().name(), "(" + overTime + ")");
     });
+    Function<LocalDateTime,String> showLocalDateTimeEntry =  (dateTime -> {
+        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    });
 
     /**
      * Laat de gebruiker een taak selecteren uit een lijst van taken
@@ -133,6 +136,11 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException{
         return selectFromList(projects, showProjectEntry);
+    }
+
+    @Override
+    public LocalDateTime selectLocalDateTimeFromList(List<LocalDateTime> dateTimes) throws EmptyListException, CancelException {
+        return selectFromList(dateTimes,showLocalDateTimeEntry);
     }
 
     /**
@@ -268,6 +276,11 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public LocalDateTime requestDatum(String request) throws CancelException {
         return getDateFromUser.getUserInput(request);
+    }
+
+    @Override
+    public boolean requestBoolean(String request) throws CancelException {
+        return false;
     }
 
     /**

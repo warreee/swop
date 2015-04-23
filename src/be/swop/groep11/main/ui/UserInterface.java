@@ -56,6 +56,8 @@ public interface UserInterface {
      */
     Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
 
+    LocalDateTime selectLocalDateTimeFromList(List<LocalDateTime> dateTimes)throws EmptyListException, CancelException;
+
     /**
      * Vraagt een invoer van de gebruiker.
      * Toont ook de beschrijving van de verwachte invoer.
@@ -91,6 +93,8 @@ public interface UserInterface {
      * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
     LocalDateTime requestDatum(String request) throws CancelException;
+
+    boolean requestBoolean(String request)throws CancelException;
 
     /**
      * Toont een boodschap aan de gebruiker.
@@ -133,5 +137,7 @@ public interface UserInterface {
      * @throws CancelException  gooi indien de gebruiker het Command.CANCEL in geeft.
      *//*
     <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException;*/
+
+    //TODO Yes/No Dialog return boolean
 
 }

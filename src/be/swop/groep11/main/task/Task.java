@@ -321,7 +321,7 @@ public class Task {
         return this.getStatus().isValidDependingOn(this, dependingOn);
     }
 
-    public static enum FinishedStatus {
+    public enum FinishedStatus {
         EARLY,
         ONTIME,
         OVERDUE,

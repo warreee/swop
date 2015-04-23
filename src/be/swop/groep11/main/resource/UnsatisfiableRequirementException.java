@@ -7,7 +7,7 @@ public class UnsatisfiableRequirementException extends RuntimeException {
     private final ResourceRequirement req;
 
     public UnsatisfiableRequirementException(IResourceType requiredType, int amount) {
-        //TODO onderscheid/feedback indien oorzak geen overlapping dailyAvailability ?
+        //TODO onderscheid/feedback indien oorzaak geen overlapping dailyAvailability ?
         this.req = new ResourceRequirement(requiredType,amount);
     }
 
