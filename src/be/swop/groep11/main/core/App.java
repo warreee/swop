@@ -54,7 +54,7 @@ public class App {
         //maak een nieuwe system aan
         systemTime = new SystemTime();
         resourceManager = new ResourceManager();
-        projectRepository = new ProjectRepository(systemTime,resourceManager);
+        projectRepository = new ProjectRepository(systemTime);
     }
 
     private void initInputParser(boolean readYamlFile){

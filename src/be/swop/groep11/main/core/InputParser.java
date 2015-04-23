@@ -43,7 +43,7 @@ public class InputParser {
 
     public static void main(String[] args) throws FileNotFoundException {
         ResourceManager typeRepo = new ResourceManager();
-        ProjectRepository projectRepository = new ProjectRepository(new SystemTime(LocalDateTime.now()),typeRepo);
+        ProjectRepository projectRepository = new ProjectRepository(new SystemTime(LocalDateTime.now()));
 
         InputParser parser = new InputParser(projectRepository, typeRepo);
         parser.parseInputFile();

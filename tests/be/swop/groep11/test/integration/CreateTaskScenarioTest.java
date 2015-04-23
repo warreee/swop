@@ -2,34 +2,57 @@ package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TMSystem;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.controllers.TaskController;
+import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.actions.CancelException;
+import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * Created by Ronald on 11/03/2015.
  */
 public class CreateTaskScenarioTest {
-    private ProjectRepository repository;
     private LocalDateTime now;
+    private ProjectRepository projectRepository;
+    private TaskController taskController;
+    private UserInterface mockedUI;
+
 
     @Before
     public void setUp() throws Exception {
-        repository = new TMSystem().getProjectRepository();
         now = LocalDateTime.now();
-        repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10),new User("TEST"));
+        this.mockedUI = mock(UserInterface.class);
 
+        SystemTime systemTime = new SystemTime(now);
+        ResourceManager resourceManager = new ResourceManager();
+        projectRepository = new ProjectRepository(systemTime);
+
+        projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10), new User("TEST"));
+        this.taskController = new TaskController(projectRepository,systemTime,mockedUI);
     }
 
     @Test
     public void createTask_validTest() throws Exception {
+        when(mockedUI.requestString(anyString())).thenReturn("beschrijving Test");
+        when(mockedUI.requestDouble(anyString())).thenReturn(50);
+
+        when(mockedUI.requestNumber(anyString())).thenReturn(8);
+
+        when(mockedUI.selectProjectFromList(anyString())).thenReturn(now.plusDays(1));
+
+
         EmptyTestUI ui = new EmptyTestUI(now) {
             @Override
             public String requestString(String request) throws CancelException {
