@@ -3,19 +3,18 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.resource.IResourceType;
-import be.swop.groep11.main.resource.ResourceManager;
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.actions.CancelException;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Bevat de stappen om de use cases "Create Task" en "Update Task" uit te voeren.
@@ -28,8 +27,6 @@ public class TaskController extends AbstractController {
 
     /**
      * Constructor om een nieuwe task controller te maken.
-     * @param
-     * ui Gebruikersinterface
      * @param userInterface
      */
     public TaskController( ProjectRepository projectRepository, SystemTime systemTime, UserInterface userInterface, ResourceManager resourceManager) {
@@ -53,15 +50,18 @@ public class TaskController extends AbstractController {
             Double acceptableDeviation =  getUserInterface().requestDouble("Aanvaardbare afwijking in procent:") / 100;
             Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf( getUserInterface().requestNumber("Geschatte duur in minuten:")).longValue());
 
+            // Lees alle resource types in.
+            Map<IResourceType, Integer> resourceTypes = new HashMap<>();
             String message = "Voeg resource types toe? (y/N)";
             while(getUserInterface().requestString(message).trim().equalsIgnoreCase("y")){
-                getUserInterface().selectFromList(resourceManager.getResourceTypes(), (x -> x.getName()));
-                getUserInterface().requestNumber("Hoeveel wil je er?");
-                message = "Wilt u nog resource types toevoegen? (y/N)";
+                IResourceType iResourceType = getUserInterface().selectFromList(resourceManager.getResourceTypes(), (x -> x.getName()));
+                Integer number = getUserInterface().requestNumber("Hoeveel wil je er?");
+                resourceTypes = addToResourceMap(iResourceType, number, resourceTypes);
+                printResourceMap(resourceTypes);
+                message = "\nWilt u nog resource types toevoegen? (y/N)";
             }
 
-
-
+            // Lees de afhankelijkheden in.
             List<Task> tasks = new ArrayList<>(project.getTasks());
             List<Task> selectedTasks = new ArrayList<>();
             while ( getUserInterface().requestString("Voeg een afhankelijkheid toe? (y/N)").trim().equalsIgnoreCase("y")) {
@@ -77,6 +77,7 @@ public class TaskController extends AbstractController {
                 }
             }
 
+            // Vraag de gebruiker dat dit een alternatieve taak voor iets is als dat kan.
             Task alternativeTaskFor = null;
             if ( (! project.getFailedTasks().isEmpty()) &&  getUserInterface().requestString("Is deze taak een alternatieve taak? (y/N)").trim().equalsIgnoreCase("y")) {
                 getUserInterface().printMessage("Deze taak zal een zal een alternatieve taak zijn voor de geselecteerde taak.");
@@ -87,6 +88,10 @@ public class TaskController extends AbstractController {
             // opm.: het toevoegen van afhankelijke taken kan nog geen fouten veroorzaken,
             // dus het is geen probleem dat de taak al gecreëerd is
             Task task = project.getTasks().get(project.getTasks().size()-1);
+
+            // Bouw de IRequirementList en voeg hem toe aan de taak.
+            task.setRequirementList(buildIRequirementList(resourceTypes));
+
             for (Task dependingOn : selectedTasks) {
                 task.addNewDependencyConstraint(dependingOn);
             }
@@ -95,7 +100,7 @@ public class TaskController extends AbstractController {
             }
             getUserInterface().printMessage("Taak toegevoegd");
         }
-        catch (IllegalArgumentException e) {
+        catch (IllegalArgumentException|IllegalRequirementAmountException e) {
             getUserInterface().printException(e);
             createTask();
         }
@@ -116,6 +121,26 @@ public class TaskController extends AbstractController {
         catch (CancelException e) {
             getUserInterface().printException(e);
         }
+    }
+
+    private Map<IResourceType, Integer> addToResourceMap(IResourceType iResourceType, Integer number, Map<IResourceType, Integer> map){
+        if(map.containsKey(iResourceType)){
+            map.put(iResourceType, map.get(iResourceType) + number);
+        } else {
+            map.put(iResourceType, number);
+        }
+        return map;
+    }
+
+    private void printResourceMap(Map<IResourceType, Integer> map){
+        getUserInterface().printMessage("De volgende resource zijn al geselecteerd:\n");
+        map.forEach((x, y) -> getUserInterface().printMessage("\t" + x.getName() + ": " + y));
+    }
+
+    private IRequirementList buildIRequirementList(Map<IResourceType, Integer> map){
+        RequirementListBuilder builder = new RequirementListBuilder();
+        map.forEach(builder::addNewRequirement);
+        return builder.getRequirements();
     }
 
     private void updateTask(Task task) throws CancelException{

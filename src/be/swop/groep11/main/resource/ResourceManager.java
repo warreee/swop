@@ -193,6 +193,8 @@ public class ResourceManager {
         this.addReservation(task, new ResourceReservation(task, resourceInstance, timeSpan, isSpecific));
     }
 
+
+
     /**
      * Controleert of een resource instantie beschikbaar is gedurende een gegeven tijdsspanne.
      * @param resourceInstance De te controleren resource instantie
@@ -307,6 +309,13 @@ public class ResourceManager {
 
     // TODO: reservaties vroeger laten eindigien
 
+    private void endReservationFromTask(Task task){
+        List<ResourceReservation> reservations = this.reservations.get(task);
+        for(ResourceReservation reservation: reservations){
+            // TODO: hoe de reservatie wijzigen?
+        }
+    }
+
     /**
      * Geeft een immutable list van alle reservaties.
      */
@@ -388,7 +397,7 @@ public class ResourceManager {
      * @return Een lijst van lengte n van de eerstvolgende mogelijke plannen
      */
     public List<IPlan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
-        // TODO: dit is nog niet efficiënt genoeg!
+        // TODO: dit is nog niet effici?nt genoeg!
 
         List<IPlan> plans = new LinkedList<>();
 
