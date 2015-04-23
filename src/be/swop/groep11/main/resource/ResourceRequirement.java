@@ -34,11 +34,10 @@ public class ResourceRequirement {
     }
 
     private boolean isValidAmountFor(IResourceType type, int amount) {
-        if( type.hasConstraintFor(type)){
+        if( type.hasConstraintFor(type)){//constraint op zichzelf
             ResourceTypeConstraint constraintB = type.getConstraintFor(type);
-            return constraintB.isAcceptableAmount(amount);
+            return constraintB.isAcceptableAmount(type,amount);
         }
-
         return amount > 0 && amount <= type.amountOfInstances();
     }
 

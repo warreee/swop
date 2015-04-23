@@ -19,8 +19,9 @@ public class DailyAvailability {
      * @throws IllegalArgumentException Ongeldige starttijd en/of eindtijd
      */
     public DailyAvailability(LocalTime startTime, LocalTime endTime) throws IllegalArgumentException {
-        if (! isValidStartTimeEndTime(startTime, endTime))
+        if (! isValidStartTimeEndTime(startTime, endTime)){
             throw new IllegalArgumentException("Ongeldige starttijd en/of eindtijd");
+        }
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -62,8 +63,18 @@ public class DailyAvailability {
      *          beschikbaar zijn.
      */
     public boolean overlapsWith(List<DailyAvailability> availabilityList){
-        //TODO implement overlapsWith
-        return false;
+        //TODO controleer overlapsWith(List<DailyAvailability>)
+        for (DailyAvailability availability : availabilityList) {
+            if(!overlapsWith(availability)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean overlapsWith(DailyAvailability other) {
+        //TODO controleer overlapsWith berekening
+        return containsTime(other.getStartTime()) && Duration.between(other.getStartTime(),getEndTime()).compareTo(Duration.ofHours(1)) >= 0;
     }
 
     /**

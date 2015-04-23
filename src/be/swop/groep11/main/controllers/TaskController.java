@@ -4,16 +4,14 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.ui.EmptyListException;
+import be.swop.groep11.main.actions.CancelException;
 import be.swop.groep11.main.ui.UserInterface;
-import be.swop.groep11.main.ui.commands.CancelException;
-import be.swop.groep11.main.ui.commands.Command;
-import be.swop.groep11.main.ui.commands.CommandStrategy;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -22,14 +20,21 @@ import java.util.List;
 public class TaskController extends AbstractController {
 
     private ProjectRepository projectRepository;
+    private SystemTime systemTime;
 
     /**
      * Constructor om een nieuwe task controller te maken.
      * @param ui Gebruikersinterface
+     * @param userInterface
      */
-    public TaskController(ProjectRepository projectRepository, UserInterface ui,SystemTime systemTime) {
-        super(ui,systemTime);
+    public TaskController( ProjectRepository projectRepository, SystemTime systemTime, UserInterface userInterface) {
+        super(userInterface);
         this.projectRepository = projectRepository;
+        this.systemTime = systemTime;
+    }
+
+    private SystemTime getSystemTime() {
+        return systemTime;
     }
 
     /**
@@ -42,8 +47,8 @@ public class TaskController extends AbstractController {
             Double acceptableDeviation =  getUserInterface().requestDouble("Aanvaardbare afwijking in procent:") / 100;
             Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf( getUserInterface().requestNumber("Geschatte duur in minuten:")).longValue());
 
-            List<Task> tasks = new ArrayList<Task>(project.getTasks());
-            List<Task> selectedTasks = new ArrayList<Task>();
+            List<Task> tasks = new ArrayList<>(project.getTasks());
+            List<Task> selectedTasks = new ArrayList<>();
             while ( getUserInterface().requestString("Voeg een afhankelijkheid toe? (y/N)").equalsIgnoreCase("y")) {
                 if (tasks.isEmpty()) {
                     getUserInterface().printMessage("Geen taken om toe te voegen...");
@@ -101,6 +106,7 @@ public class TaskController extends AbstractController {
     private void updateTask(Task task) throws CancelException{
         try {
             String status =  getUserInterface().requestString("Status: FAILED of FINISHED (of laat leeg om status niet te wijzigen):");
+            //TODO implement dit als een selectie uit een lijst. zodat de gebruiker geen verkeerde input kan geven. (ook makkeljker om te testen)
             doTransition(status, task);
         }
         catch (IllegalArgumentException e) {
@@ -113,24 +119,16 @@ public class TaskController extends AbstractController {
         status = status.toLowerCase();
         switch (status) {
             case "execute":
-                task.execute(getSysteTime().getCurrentSystemTime());
+                task.execute(getSystemTime().getCurrentSystemTime());
                 break;
             case "fail":
-                task.fail(getSysteTime().getCurrentSystemTime());
+                task.fail(getSystemTime().getCurrentSystemTime());
                 break;
             case "finish":
-                task.finish(getSysteTime().getCurrentSystemTime());
+                task.finish(getSystemTime().getCurrentSystemTime());
                 break;
             default:
                 throw new IllegalArgumentException("Een verkeerd status werd meegegeven!");
         }
-
-    }
-    @Override
-    public HashMap<Command, CommandStrategy> getCommandStrategies() {
-        HashMap<Command,CommandStrategy> map = new HashMap<>(super.getCommandStrategies());
-        map.put(Command.CREATETASK,this::createTask);
-        map.put(Command.UPDATETASK,this::updateTask);
-        return map;
     }
 }

@@ -3,7 +3,8 @@ package be.swop.groep11.main.ui;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.ui.commands.CancelException;
+import be.swop.groep11.main.actions.ActionBehaviourMapping;
+import be.swop.groep11.main.actions.CancelException;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
@@ -22,18 +23,38 @@ public interface UserInterface {
     void showProjectList(ImmutableList<Project> projects);
 
     /**
+     * Toont een lijst van taken.
+     * @param tasks Lijst van taken
+     */
+    void showTaskList(ImmutableList<Task> tasks);
+
+    /**
+     * Toont de details van een project.
+     */
+    void showProjectDetails(Project project);
+
+    /**
+     * Toont de details van een taak.
+     */
+    void showTaskDetails(Task task);
+
+    /**
      * Selecteert een project uit een lijst van projecten.
      * @param projects Lijst van projecten
      * @return Nummer van geselecteerde project in lijst
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van projecten is leeg.
-     * @throws be.swop.groep11.main.ui.commands.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     * @throws be.swop.groep11.main.actions.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    default Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException{
-        return selectFromList(projects, (project -> {
-            String overTime = (project.isOverTime()) ? "over time" : "on time";
-            return String.format("%-35s %-20s %-20s %n", project.getName(), project.getProjectStatus().name(), "(" + overTime + ")");
-        }));
-    }
+    Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException;
+
+    /**
+     * Selecteert een taak uit een lijst van taken.
+     * @param tasks Lijst van taken
+     * @return Nummer van geselecteerde taak in lijst
+     * @throws be.swop.groep11.main.ui.EmptyListException De lijst van taken is leeg.
+     * @throws be.swop.groep11.main.actions.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     */
+    Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
 
     /**
      * Vraagt een invoer van de gebruiker.
@@ -81,48 +102,27 @@ public interface UserInterface {
      */
     void printException(Exception e);
 
-    /**
-     * Toont een lijst van taken.
-     * @param tasks Lijst van taken
-     */
-    void showTaskList(ImmutableList<Task> tasks);
-
-    /**
-     * Selecteert een taak uit een lijst van taken.
-     * @param tasks Lijst van taken
-     * @return Nummer van geselecteerde taak in lijst
-     * @throws be.swop.groep11.main.ui.EmptyListException De lijst van taken is leeg.
-     * @throws be.swop.groep11.main.ui.commands.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
-     */
-    Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
-
-    /**
-     * Toont de details van een project.
-     */
-    void showProjectDetails(Project project);
-
-    /**
-     * Toont de details van een taak.
-     */
-    void showTaskDetails(Task task);
-
-    void addControllerToStack(AbstractController abstractController);
-    void removeControllerFromStack(AbstractController abstractController);
     void showHelp(AbstractController controller);
 
-    /**
-     * Laat de gebruiker een element kiezen uit de gegeven lijst.
-     * @param tList             De lijst waaruit men kan kiezen
-     * @param listEntryPrinter  De manier waarop ieder element wordt voorgesteld
-     * @param <T>               Het type van het geslecteerde element
-     * @return                  Geeft het element dat de gebruiker selecteerde.
-     * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
-     */
+    void wantsToExit();
+
+    ActionBehaviourMapping getActionBehaviourMapping();
+
+    void setActionBehaviourMapping(ActionBehaviourMapping actionBehaviourMapping);
+
+        /**
+         * Laat de gebruiker een element kiezen uit de gegeven lijst.
+         * @param tList             De lijst waaruit men kan kiezen
+         * @param listEntryPrinter  De manier waarop ieder element wordt voorgesteld
+         * @param <T>               Het type van het geslecteerde element
+         * @return                  Geeft het element dat de gebruiker selecteerde.
+         * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
+         */
     <T> T selectFromList(List<T> tList, Function<T, String> listEntryPrinter)throws CancelException;
 
     <T> T requestUserInput(String request,userInput<T> userInput) throws CancelException;
 
-    /**
+ /*   *//**
      * Vraag een getal aan de user tussen een min en max waarde.
      *
      * @param userInput de functie waarmee de invoer aan de gebruiker gevraagd wordt.
@@ -131,7 +131,7 @@ public interface UserInterface {
      * @param <T>       Het Type van het gevraagde getal tussen min en max.
      * @return          Een getal van Type <T> dat uit [min,max] komt.
      * @throws CancelException  gooi indien de gebruiker het Command.CANCEL in geeft.
-     */
-    <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException;
+     *//*
+    <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException;*/
 
 }

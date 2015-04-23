@@ -6,10 +6,10 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-        TaskTest.class, TMSystemTest.class, TaskStatusTest.class,
-        TimeSpanTest.class, ResourceTypeTest.class, ResourceTypeBuilderTest.class,
+        TaskTest.class, SystemTimeTest.class, TaskStatusTest.class,
+        TimeSpanTest.class, ResourceTypeBuilderTest.class,
         ResourceTypeConstraintTest.class,
         ProjectTest.class, ProjectRepositoryTest.class, DependencyConstraintTest.class,
-        ResourceTest.class})
+        ResourceTest.class, DependencyGraphTest.class, DeveloperTest.class, DailyAvailabilityTest.class, ResourceManagerTest.class})
 public class UnitTests {
 }

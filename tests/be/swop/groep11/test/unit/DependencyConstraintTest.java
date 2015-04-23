@@ -8,7 +8,8 @@ import org.junit.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DependencyConstraintTest {
 
@@ -16,14 +17,12 @@ public class DependencyConstraintTest {
 
     @Before
     public void setUp() throws Exception {
-        ProjectRepository repository = new TMSystem().getProjectRepository();
-        Project project = new Project("Test project", "Test beschrijving",
-                LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015,3,4,16,0),
-                new User("Alfred J. Kwak"), );
-        task1 = new Task("Taak 1", Duration.ofHours(8), 0.1, project, , );
-        task2 = new Task("Taak 2", Duration.ofHours(6), 0.1, project, , );
-        task3 = new Task("Taak 3", Duration.ofHours(7), 0.5, project, , );
-        task4 = new Task("Taak 4", Duration.ofHours(2), 0.0, project, , );
+        SystemTime systemTime = new SystemTime(LocalDateTime.now());
+        DependencyGraph dependencyGraph = new DependencyGraph();
+        task1 = new Task("Taak 1", Duration.ofHours(8), 0.1, systemTime, dependencyGraph );
+        task2 = new Task("Taak 2", Duration.ofHours(6), 0.1, systemTime, dependencyGraph);
+        task3 = new Task("Taak 3", Duration.ofHours(7), 0.5, systemTime, dependencyGraph );
+        task4 = new Task("Taak 4", Duration.ofHours(2), 0.0, systemTime, dependencyGraph);
         task1.addNewDependencyConstraint(task2);
         task1.addNewDependencyConstraint(task3);
         task2.addNewDependencyConstraint(task3);

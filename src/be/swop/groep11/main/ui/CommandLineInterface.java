@@ -1,22 +1,19 @@
 package be.swop.groep11.main.ui;
 
+import be.swop.groep11.main.actions.*;
 import be.swop.groep11.main.controllers.AbstractController;
-import be.swop.groep11.main.controllers.MainController;
-import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.ui.commands.CancelException;
-import be.swop.groep11.main.ui.commands.Command;
-import be.swop.groep11.main.ui.commands.CommandStrategy;
-import be.swop.groep11.main.ui.commands.IllegalCommandException;
 import com.google.common.collect.ImmutableList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -25,115 +22,61 @@ import java.util.function.Function;
  */
 public class CommandLineInterface implements UserInterface {
 
-    private BufferedReader br;
-
-//TODO cleanup nodig, move main to new app class?
-    /**
-     * Run de CommandLineInterface
-     * Wanneer als argument "yaml" wordt opgegeven, wordt het programma met het bestand input/input.tman
-     * geïnitialiseerd.
-     * @param args De systeem argumenten
-     */
-    public static void main(String[] args) {
-        boolean readYamlFile = false;
-        if (args.length == 1 && args[0].equals("yaml"))
-            readYamlFile = true;
-
-        // maak een nieuwe CommandLineInterface aan
-        CommandLineInterface cli = new CommandLineInterface(readYamlFile);
-
-        //maak een nieuwe system aan
-        SystemTime systemTime =new SystemTime();
-        ProjectRepository projectRepository = new ProjectRepository(systemTime);
-        //Aanmaken main controller
-        MainController main = new MainController(cli,systemTime , projectRepository);
-        cli.addControllerToStack(main);
-        // lees commando's
-        cli.run();
-    }
-
-
     /**
      * Constructor om een nieuwe commandline gebruikersinterface te maken.
      * Maakt een nieuw TaskMan object aan en initialiseert de controllers.
-     * Leest indien nodig ook het yaml bestand in.
-     * @param readYamlFile True als het yaml bestand moet ingelezen worden.
      */
-    public CommandLineInterface(boolean readYamlFile) {
-        this.br = new BufferedReader(new InputStreamReader(java.lang.System.in));
+    public CommandLineInterface(BufferedReader bufferedReader) {
+        this.bufferedReader = bufferedReader;
         this.exit = false;
-
-        if (readYamlFile) {
-            // run inputreader
-            /*InputParser ir = new InputParser(projectRepository, );
-            try {
-                ir.parseInputFile();
-            } catch (FileNotFoundException e) {
-                printMessage("Yaml file niet gevonden");
-            }*/
-        }
     }
 
-    private void run(){
+    public void run(){
         try {
             while (! exit) {
                 try {
-                    String commandString = br.readLine();
-                    Command com = Command.getInput(commandString);
+                    String commandString = bufferedReader.readLine();
+                    Action com = Action.getAction(commandString);
                     executeCommand(com);
-
-                }catch (IllegalCommandException ec){
+                }catch (IllegalActionException ec){
                        printException(ec);
                 }
             }
-            br.close();
-
+            bufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     private boolean exit;
+    private BufferedReader bufferedReader;
+    private ActionBehaviourMapping actionBehaviourMapping;
 
-    private void executeCommand(Command command) {
-        CommandStrategy strategy = currentCommandStrategies.get(getCurrentController()).get(command);
-        if(strategy != null) {
-            strategy.execute();
+    @Override
+    public void wantsToExit() {
+        this.exit = true;
+    }
+
+    private boolean canHaveAsActionMapping(ActionBehaviourMapping actionBehaviourMapping) {
+        return actionBehaviourMapping != null && this.actionBehaviourMapping == null;
+    }
+
+    public void setActionBehaviourMapping(ActionBehaviourMapping actionBehaviourMapping){
+        if(!canHaveAsActionMapping(actionBehaviourMapping)){
+            throw new IllegalArgumentException("Gegegven actionMapping is geen geldige voor deze UI.");
         }
+        this.actionBehaviourMapping = actionBehaviourMapping;
     }
-
-    private AbstractController getCurrentController() {
-        return controllerStack.getLast();
-    }
-
     @Override
-    public void addControllerToStack(AbstractController abstractController){
-        controllerStack.addLast(abstractController);
-        currentCommandStrategies.put(getCurrentController(), getCurrentController().getCommandStrategies());
+    public ActionBehaviourMapping getActionBehaviourMapping() {
+        return actionBehaviourMapping;
     }
-
-    @Override
-    public void removeControllerFromStack(AbstractController abstractController){
-        controllerStack.remove(abstractController);
-        currentCommandStrategies.remove(abstractController);
+    private void executeCommand(Action action) {
+        actionBehaviourMapping.executeAction(action);
     }
-
-    /**
-     * Houdt lijst van Controllers bij die "actief zijn".
-     * De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit.
-     *
-     */
-    private LinkedList<AbstractController> controllerStack = new LinkedList<>();
-
-    /**
-     * Gegeven een controller verkrijg de corresponderende CommandStrategies voor de aanvaarde commands in die controller.
-     */
-    private HashMap<AbstractController,HashMap<Command,CommandStrategy>> currentCommandStrategies = new HashMap<>();
-
     @Override
     public void printMessage(String message) {
         System.out.printf(message + "\n");
     }
-
     @Override
     public void printException(Exception e) {
         System.out.printf(e.getMessage() + "\n");
@@ -145,16 +88,8 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showProjectList(ImmutableList<Project> projects) {
-/*        String format = "%4s %-35s %-20s %-20s %n";
-        System.out.printf(format, "nr.", "Naam", "Status", "");
-        for (int i=0; i<projects.size(); i++) {
-            Project project = projects.get(i);
-            String overTime = (project.isOverTime())? "over time" : "on time";
-            System.out.printf(format,i,project.getName(),project.getProjectStatus().name(),"("+overTime+")"); // TODO: hier is nog geen methode voor in Project!!!!!!!
-        }*/
+        printList(projects, showProjectEntry);
     }
-
-
 
     /**
      * Toont een tekstversie van een lijst van taken aan de gebruiker
@@ -162,29 +97,22 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showTaskList(ImmutableList<Task> tasks) {
-
-/*        String format = "%4s %-35s %-20s %-15s %-35s %n";
-        System.out.printf(format, "nr.", "Omschrijving", "Status", "On time?", "Project");
-        for (int i=0; i<tasks.size(); i++) {
-            Task task = tasks.get(i);
-
-            // add asterix?
-            String asterix = "";
-            if (task.isUnacceptablyOverTime()) {
-                asterix = " *";
-            }
-
-            // on time?
-            String onTime = "ja";
-            if (task.isOverTime()) {
-                long percentage = Math.round(task.getOverTimePercentage()*100);
-                onTime = "nee ("+percentage+"%)";
-            }
-
-            System.out.printf(format, i, task.getDescription() + asterix, task.getStatus(),
-                    onTime, task.getProject().getName());
-        }*/
+        printList(tasks, showTaskEntry);
     }
+
+    private String taskFormatStr = "%-35s %-20s %-15s %n";
+    Function<Task,String> showTaskEntry =  (task -> {
+        String asterix = (task.isUnacceptablyOverTime())? "*": "";
+        String onTime = task.isOverTime()?"nee ("+Math.round(task.getOverTimePercentage()*100)+"%)":"ja";
+        return String.format(taskFormatStr, task.getDescription() + asterix, task.getStatus(),onTime);
+    });
+
+    private String projectFormatStr = "%-35s %-20s %-20s %n";
+    Function<Project,String> showProjectEntry =  (project -> {
+        String overTime = (project.isOverTime()) ? "over time" : "on time";
+        // TODO: project overtime Method?
+        return String.format(projectFormatStr, project.getName(), project.getProjectStatus().name(), "(" + overTime + ")");
+    });
 
     /**
      * Laat de gebruiker een taak selecteren uit een lijst van taken
@@ -193,15 +121,8 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException {
-        String format = "%-35s %-20s %-15s %-35s %n";
-        System.out.println(String.format(format, "Omschrijving", "Status", "On time?"));
-
-        return selectFromList(tasks, (task -> {
-            String asterix = (task.isUnacceptablyOverTime())? "*": "";
-            String onTime = task.isOverTime()?"nee ("+Math.round(task.getOverTimePercentage()*100)+"%)":"ja";
-
-            return String.format(format, task.getDescription() + asterix, task.getStatus(),onTime);
-        }));
+        printMessage(String.format(taskFormatStr, "Omschrijving", "Status", "On time?"));
+        return selectFromList(tasks, showTaskEntry);
     }
 
     /**
@@ -211,26 +132,7 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException{
-        return selectFromList(projects, (project -> {
-            String overTime = (project.isOverTime()) ? "over time" : "on time";
-            return String.format("%-35s %-20s %-20s %n", project.getName(), project.getProjectStatus().name(), "(" + overTime + ")");
-        }));
-//
-//        if(projects.isEmpty()){
-//            throw new EmptyListException("Geen projecten aanwezig");
-//        }
-//
-//        java.lang.System.out.println("Kies een project:");
-//        showProjectList(projects);
-//
-//        try {
-//            int nr = getNumberBetween(0, projects.size()-1);
-//            Project proj = projects.get(nr);
-//            return proj;
-//        }
-//        catch (IllegalInputException e) {
-//            return selectProjectFromList(projects);
-//        }
+        return selectFromList(projects, showProjectEntry);
     }
 
     /**
@@ -315,6 +217,22 @@ public class CommandLineInterface implements UserInterface {
         }
     }
 
+    @Override
+    public <T> T requestUserInput(String request,userInput<T> userInput) throws CancelException {
+        return userInput.getUserInput(request);
+    }
+
+    private void resolveCancel(String str) throws CancelException{
+        if(Action.checkCancel(str)){
+            throw new CancelException("Canceled");
+        }
+    }
+    private void resolveEmpty(String string)throws CancelException{
+        if(string == null || string.isEmpty()){
+            throw new CancelException("Canceled omwille van lege response.");
+        }
+    }
+
     /**
      * Laat de gebruiker een geheel getal ingeven.
      * Implementeert requestNumber in UserInterface
@@ -351,22 +269,38 @@ public class CommandLineInterface implements UserInterface {
     public LocalDateTime requestDatum(String request) throws CancelException {
         return getDateFromUser.getUserInput(request);
     }
-    private void resolveCancel(String str) throws CancelException{
-        if(Command.checkCancel(str)){
-            throw new CancelException("Canceled");
-        }
-    }
-    private void resolveEmpty(String string)throws CancelException{
-        if(string == null || string.isEmpty()){
-            throw new CancelException("Canceled omwille van lege response.");
-        }
-    }
 
+    /**
+     * Vraag een getal aan de user tussen een min en max waarde.
+     *
+     * @param userInput de functie waarmee de invoer aan de gebruiker gevraagd wordt.
+     * @param min       De minimum toegelaten waarde (inclusief)
+     * @param max       De maximum toegelaten waarde (inclusief)
+     * @param <T>       Het Type van het gevraagde getal tussen min en max.
+     * @return          Een getal van Type <T> dat uit [min,max] komt.
+     * @throws CancelException  gooi indien de gebruiker het Command.CANCEL in geeft.
+     */
+    public <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException{
+        boolean correct = false;
+        T response = null;
+        do{
+            try {
+                response = userInput.apply("Gelieve een getal tussen " + min + " & " + max + " te geven.");
+                correct = ((response.compareTo(min) > 0 ||response.compareTo(min) == 0) && (response.compareTo(max) < 1 ||response.compareTo(max) == 0));
+            } catch (NumberFormatException e) {
+                correct = false;
+            }
+            if(!correct){
+                printMessage("Verkeerde input, probeer opnieuw.");
+            }
+        }while(!correct);
+        return response;
+    }
     userInput<String> getStringFromUser = request -> {
         System.out.println(request);
         String result = "";
         try {
-            result = br.readLine();
+            result = bufferedReader.readLine();
             resolveCancel(result);
             resolveEmpty(result);
         } catch (IOException e) {
@@ -408,7 +342,6 @@ public class CommandLineInterface implements UserInterface {
 
         return result;
     };
-
     userInput<LocalDateTime> getDateFromUser = request -> {
         LocalDateTime result = null;
         boolean correct = false;
@@ -426,35 +359,6 @@ public class CommandLineInterface implements UserInterface {
         return result;
     };
 
-    /**
-     * Vraag een getal aan de user tussen een min en max waarde.
-     *
-     * @param userInput de functie waarmee de invoer aan de gebruiker gevraagd wordt.
-     * @param min       De minimum toegelaten waarde (inclusief)
-     * @param max       De maximum toegelaten waarde (inclusief)
-     * @param <T>       Het Type van het gevraagde getal tussen min en max.
-     * @return          Een getal van Type <T> dat uit [min,max] komt.
-     * @throws CancelException  gooi indien de gebruiker het Command.CANCEL in geeft.
-     */
-    public <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException{
-        boolean correct = false;
-        T response = null;
-        do{
-            try {
-                response = userInput.apply("Gelieve een getal tussen " + min + " & " + max + " te geven.");
-                correct = ((response.compareTo(min) > 0 ||response.compareTo(min) == 0) && (response.compareTo(max) < 1 ||response.compareTo(max) == 0));
-            } catch (NumberFormatException e) {
-                correct = false;
-            }
-            if(!correct){
-                printMessage("Verkeerde input, probeer opnieuw.");
-            }
-        }while(!correct);
-        return response;
-    }
-
-
-
     //TODO selectMultipleFromList
     /**
      * Laat de gebruiker een element kiezen uit de gegeven lijst.
@@ -471,38 +375,33 @@ public class CommandLineInterface implements UserInterface {
             int max = list.size()-1;
             int min = 0;
             int selection = numberBetween(getIntFromUser,min,max);
-
             return list.get(selection);
         };
-        Consumer<List<T>> listPrint = list -> {
-            StringBuilder sb = new StringBuilder();
-            for(int i = 0; i< list.size(); i++){
-                sb.append(String.format("%3d. %s\n", i, listEntryPrinter.apply(list.get(i))));
-            }
-            System.out.println(sb.toString());
-        };
-
-        listPrint.accept(tList);
+        printList(tList, listEntryPrinter);
         T selection = listSelector.apply(tList);
         return selection;
     }
 
-    @Override
-    public <T> T requestUserInput(String request,userInput<T> userInput) throws CancelException {
-        return userInput.getUserInput(request);
+    private <T> void printList(List<T> list,Function<T,String> listEntryPrinter){
+        //TODO check if arguments are valid
+        Consumer<List<T>> listPrint = listTemp -> {
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i< listTemp.size(); i++){
+                sb.append(String.format("%3d. %s\n", i, listEntryPrinter.apply(listTemp.get(i))));
+            }
+            printMessage(sb.toString());
+        };
+        listPrint.accept(list);
     }
 
     public void showHelp(AbstractController abstractController) throws IllegalArgumentException{
-        ArrayList<Command> list = new ArrayList<>();
-
-        for(Map.Entry<Command,CommandStrategy> entry : abstractController.getCommandStrategies().entrySet()){
-            if(!entry.getValue().equals(abstractController.getInvalidStrategy())){
-                list.add(entry.getKey());
-            }
+        ArrayList<Action> list = new ArrayList<>();
+        for(Map.Entry<Action,ActionBehaviour> entry :  actionBehaviourMapping.getMappingFor(abstractController).entrySet()){
+            list.add(entry.getKey());
         }
         StringBuilder sb = new StringBuilder();
-        for(Command cmd : list){
-            sb.append(String.format("%-2s%s%1s", "|", cmd.getCommandStr()," "));
+        for(Action cmd : list){
+            sb.append(String.format("%-2s%s%1s", "|", cmd.getActionStr()," "));
         }
         sb.append("|");
         printMessage(sb.toString());

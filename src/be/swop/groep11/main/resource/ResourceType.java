@@ -4,12 +4,10 @@ import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequiresConstraint;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import com.google.common.collect.ImmutableList;
-import org.mockito.cglib.core.Local;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 class ResourceType implements  IResourceType{
@@ -23,34 +21,13 @@ class ResourceType implements  IResourceType{
      * @param typeName De naam van deze ResourceType
      */
     protected ResourceType(String typeName) throws IllegalArgumentException {
-        if (!isValidResourceTypeName(typeName)) {
-            throw new IllegalArgumentException("Ongeldige naam voor ResourceType");
-        }
         this.name = typeName;
         this.dailyAvailability = new DailyAvailability(LocalTime.MIN, LocalTime.MAX);
     }
 
-    protected void setDailyAvailability(DailyAvailability dailyAvailability) throws IllegalArgumentException {
-        if (!isValidDailyAvailability(dailyAvailability)) {
-            throw new IllegalArgumentException("Ongeldige DailyAvailability");
-        }
+    protected void setDailyAvailability(DailyAvailability dailyAvailability){
         this.dailyAvailability = dailyAvailability;
     }
-
-    private boolean isValidDailyAvailability(DailyAvailability availability) {
-        return availability != null;
-    }
-
-    /**
-     * Controleert of de gegeven naam wel correct is.
-     *
-     * @param name De naam die aan dit ResourceType gegeven wordt.
-     * @return True als de naam niet null en niet leeg is.
-     */
-    protected boolean isValidResourceTypeName(String name) {
-        return name != null && !name.isEmpty();
-    }
-
 
     //ConstrainingType,constraint
     private HashMap<IResourceType, ResourceTypeConstraint> constraintMap = new HashMap<>();
@@ -60,24 +37,14 @@ class ResourceType implements  IResourceType{
         return ImmutableList.copyOf(constraintMap.values());
     }
 
-    protected void addConflictConstraint(IResourceType constrainingType) throws IllegalArgumentException {
-        if (!isValidConstrainingType(constrainingType)) {
-            throw new IllegalArgumentException("constrainingType mag niet null zijn");
-        }
+    protected void addConflictConstraint(IResourceType constrainingType) {
         ResourceTypeConstraint constraint = new ConflictConstraint(this, constrainingType);
         constraintMap.put(constrainingType, constraint);
     }
 
-    protected void addRequirementConstraint(IResourceType constrainingType) throws IllegalArgumentException {
-        if (!isValidConstrainingType(constrainingType)) {
-            throw new IllegalArgumentException("constrainingType mag niet null zijn");
-        }
+    protected void addRequirementConstraint(IResourceType constrainingType){
         ResourceTypeConstraint constraint = new RequiresConstraint(this, constrainingType);
         constraintMap.put(constrainingType, constraint);
-    }
-
-    private boolean isValidConstrainingType(IResourceType type) {
-        return type != null;
     }
 
     @Override
@@ -118,7 +85,6 @@ class ResourceType implements  IResourceType{
      * @param name De naam van de ResourceInstance die moet worden toegevoegd.
      */
     protected void addResourceInstance(String name) {
-        //TODO controleren of het mogelijk is?
         Resource resource = new Resource(name, this);
         instances.add(resource);
     }

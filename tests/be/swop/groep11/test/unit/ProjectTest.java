@@ -2,14 +2,16 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.TMSystem;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.User;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ProjectTest {
 
@@ -20,6 +22,7 @@ public class ProjectTest {
     private String name;
     private String description;
     private Project project;
+    private SystemTime systemTime;
 
     @Before
     public void setUp() throws Exception {
@@ -29,10 +32,10 @@ public class ProjectTest {
         due = LocalDateTime.now().plusSeconds(3600);
         name = "name";
         description = "description";
+        this.systemTime = new SystemTime();
+        repository = new ProjectRepository(systemTime);
 
-        repository = new TMSystem(LocalDateTime.of(2015,3,8,16,2)).getProjectRepository();
-
-        project = new Project(name, description, create, due, user, );
+        project = new Project(name, description, create, due, user,systemTime );
     }
 
     //TODO change project status
@@ -59,21 +62,21 @@ public class ProjectTest {
 
     @Test
     public void isOverTime_OverTimeProject() {
-        Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0),user, );
+        Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0),user,systemTime );
         project1.addNewTask("Taak",0.1,Duration.ofHours(24));
-        project1.addNewTask("Afhankelijke taak",0,Duration.ofHours(16));
+        project1.addNewTask("Afhankelijke taak", 0, Duration.ofHours(16));
         project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
-        project1.getTasks().get(0).setStartTime(LocalDateTime.of(2015, 3, 8, 0, 0));
+//        project1.getTasks().get(0).setStartTime(LocalDateTime.of(2015, 3, 8, 0, 0));
         assertTrue(project1.isOverTime());
     }
 
     @Test
     public void isOverTime_NotOverTimeProject() {
-        Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0),user, );
+        Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0),user, systemTime);
         project1.addNewTask("Taak",0.1,Duration.ofHours(8));
-        project1.addNewTask("Afhankelijke taak",0,Duration.ofHours(16));
+        project1.addNewTask("Afhankelijke taak", 0, Duration.ofHours(16));
         project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
-        project1.getTasks().get(0).setStartTime(LocalDateTime.of(2015, 3, 8, 0, 0));
+//        project1.getTasks().get(0).setStartTime(LocalDateTime.of(2015, 3, 8, 0, 0));
         assertFalse(project1.isOverTime());
     }
 
@@ -81,61 +84,61 @@ public class ProjectTest {
 
     @Test
     public void NewProject_valid() throws Exception {
-        new Project(name, description, create,due,user, );
+        new Project(name, description, create,due,user, systemTime);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void NewProject_invalid_Name() throws Exception {
-        new Project("", description, create,due,user, );
+        new Project("", description, create,due,user,systemTime );
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_NameNull() throws Exception {
-        new Project(null,description, create,due,user, );
+        new Project(null,description, create,due,user,systemTime );
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_Description() throws Exception {
-        new Project(name, "", create, due, user, );
+        new Project(name, "", create, due, user,systemTime );
     }
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_DescriptionNull() throws Exception {
-        new Project(name, null, create,due,user, );
+        new Project(name, null, create,due,user, systemTime);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationTimeAfterDueTime() throws Exception {
-        new Project(name, description, LocalDateTime.now().plusSeconds(3600),LocalDateTime.now(),user, );
+        new Project(name, description, LocalDateTime.now().plusSeconds(3600),LocalDateTime.now(),user,systemTime );
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationEqualDue() throws Exception {
-        new Project(name, description, LocalDateTime.now(), LocalDateTime.now(), user, );
+        new Project(name, description, LocalDateTime.now(), LocalDateTime.now(), user,systemTime );
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_DueTimeBeforeCreationTime() throws Exception {
         //DueTime mag niet voor creation time zijn.
-        new Project(name, description, LocalDateTime.now(),LocalDateTime.now().minusSeconds(60),user, );
+        new Project(name, description, LocalDateTime.now(),LocalDateTime.now().minusSeconds(60),user, systemTime);
     }
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationAndDueNull() throws Exception {
-        new  Project(name, description, null,null,user, );
+        new  Project(name, description, null,null,user, systemTime);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationTimeNull() throws Exception {
-        new Project(name, description, null,due,user, );
+        new Project(name, description, null,due,user,systemTime );
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_DueTimeNull() throws Exception {
         //DueTime mag niet null zijn
-        new Project(name, description, create,null,user, );
+        new Project(name, description, create,null,user, systemTime);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_User() throws Exception {
-       new Project(name, description, create,due,null, );
+       new Project(name, description, create,due,null,systemTime );
     }
 }

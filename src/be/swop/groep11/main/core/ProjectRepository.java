@@ -24,8 +24,9 @@ public class ProjectRepository {
      * @param systemTime de systeemtijd
      */
     public ProjectRepository(SystemTime systemTime) {
-        projects = new ArrayList<>();
         this.systemTime = systemTime;
+        projects = new ArrayList<>();
+
     }
 
     /**

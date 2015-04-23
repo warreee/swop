@@ -1,13 +1,13 @@
 package be.swop.groep11.test.integration;
 
-import be.swop.groep11.main.core.TMSystem;
+import be.swop.groep11.main.actions.CancelException;
 import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.ui.EmptyListException;
-import be.swop.groep11.main.ui.commands.CancelException;
+import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,224 +15,92 @@ import org.junit.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
+
 public class UpdateTaskStatusScenarioTest {
     private ProjectRepository repository;
     private LocalDateTime now;
+    private SystemTime systemTime;
+    private TaskController taskController;
+    private UserInterface mockedUI;
+
+    private ImmutableList<Project> projects;
+    private ImmutableList<Task> tasks;
 
     @Before
     public void setUp() throws Exception {
-        repository = new TMSystem().getProjectRepository();
         now = LocalDateTime.now();
+        systemTime = new SystemTime(now);
+        repository = new ProjectRepository(systemTime);
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10),new User("TEST"));
+        repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
+
+        this.mockedUI = mock(UserInterface.class);
+        this.taskController = new TaskController(repository,systemTime,mockedUI);
+
+        projects = repository.getProjects();
+        tasks = projects.get(0).getTasks();
 
     }
 
     @Test
     public void updateTask_validTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
-            @Override
-            public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException{
-                Project project = repository.getProjects().get(0);
-                project.addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
+        //stubbing
+        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
+        when(mockedUI.requestString(anyString())).thenReturn("EXECUTE");
 
-                return project.getTasks().get(0);
-
-            }
-            private int i = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(i == 0){
-                    result = now;
-                } else if(i == 1){
-                    result = now.plusDays(1);
-                }
-                i++;
-                return result;
-            }
-
-            @Override
-            public String requestString(String request) throws CancelException {
-                return "FINISHED";
-            }
-
-            @Override
-            public void printMessage(String message) {
-                super.printMessage(message);
-            }
-        };
-        TaskController taskController = new TaskController(repository,ui);
+        taskController = new TaskController(repository,systemTime,mockedUI);
         taskController.updateTask();
     }
 
-    @Test
+    @Test (expected = StopTestException.class)
     public void updateTask_CancelTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
-            @Override
-            public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException{
-                Project project = repository.getProjects().get(0);
-                project.addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
+        //stubbing
+        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        when(mockedUI.requestDatum(anyString())).thenThrow(new CancelException("cancel in test")).thenReturn(now.plusDays(1));
+        when(mockedUI.requestString(anyString())).thenReturn("FINISHED");
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
-                return project.getTasks().get(0);
-
-            }
-            private int i = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(i == 0){
-                   throw new CancelException("Cancel");
-                } else if(i == 1){
-                    result = now.plusDays(1);
-                }
-                i++;
-
-                return result;
-            }
-
-            @Override
-            public String requestString(String request) throws CancelException {
-                return "FINISHED";
-            }
-
-            @Override
-            public void printMessage(String message) {
-                super.printMessage(message);
-            }
-        };
-        TaskController taskController = new TaskController(repository,ui);
         //Cancel exception wordt opgevangen in de controller.
+        taskController = new TaskController(repository,systemTime,mockedUI);
         taskController.updateTask();
     }
 
     @Test (expected = StopTestException.class)
     public void updateTask_invalidStartAndDueTimeTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
-            @Override
-            public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException{
-                Project project = repository.getProjects().get(0);
-                project.addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
+        //stubbing
+        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        when(mockedUI.requestDatum(anyString())).thenReturn(now.plusDays(1)).thenReturn(now);
+        when(mockedUI.requestString(anyString())).thenReturn("FINISHED");
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
-                return project.getTasks().get(0);
-            }
-
-            private int i = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(i == 0){
-                    result = now.plusDays(1);
-                } else if(i == 1){
-                    result = now;
-                }
-                i++;
-                return result;
-            }
-
-            @Override
-            public String requestString(String request) throws CancelException {
-                return "FINISHED";
-            }
-
-            @Override
-            public void printMessage(String message) {
-                super.printMessage(message);
-            }
-
-            @Override
-            public void printException(Exception e) {
-               throw new StopTestException("Cancel");
-            }
-        };
-        TaskController taskController = new TaskController(repository,ui);
+        taskController = new TaskController(repository,systemTime,mockedUI);
         taskController.updateTask();
     }
 
     @Test (expected = StopTestException.class)
     public void updateTask_invalidNewStatusUnavailableTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
-            @Override
-            public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException{
-                Project project = repository.getProjects().get(0);
-                project.addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
+        //stubbing
+        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
+        when(mockedUI.requestString(anyString())).thenReturn("UNAVAILABLE");
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
-                return project.getTasks().get(0);
-
-            }
-
-            private int i = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(i == 0){
-                    result = now;
-                } else if(i == 1){
-                    result = now.plusDays(1);
-                }
-                i++;
-                return result;
-            }
-
-            @Override
-            public String requestString(String request) throws CancelException {
-                return "UNAVAILABLE";
-            }
-
-            @Override
-            public void printMessage(String message) {
-                super.printMessage(message);
-            }
-
-            @Override
-            public void printException(Exception e) {
-                throw new StopTestException("Cancel");
-            }
-        };
-        TaskController taskController = new TaskController(repository,ui);
-        taskController.updateTask();
-    }
+        taskController = new TaskController(repository,systemTime,mockedUI);
+        taskController.updateTask();    }
 
     @Test (expected = StopTestException.class)
     public void updateTask_invalidNewStatusAvailableTest() throws Exception {
-        EmptyTestUI ui = new EmptyTestUI(now) {
-            @Override
-            public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException{
-                Project project = repository.getProjects().get(0);
-                project.addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
+        //stubbing
+        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
+        when(mockedUI.requestString(anyString())).thenReturn("AVAILABLE");
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
-                return project.getTasks().get(0);
-
-            }
-
-            private int i = 0;
-            @Override
-            public LocalDateTime requestDatum(String request) throws CancelException {
-                LocalDateTime result = null;
-                if(i == 0){
-                    result = now;
-                } else if(i == 1){
-                    result = now.plusDays(1);
-                }
-                i++;
-                return result;
-            }
-
-            @Override
-            public String requestString(String request) throws CancelException {
-                return "AVAILABLE";
-            }
-
-            @Override
-            public void printMessage(String message) {
-                super.printMessage(message);
-            }
-
-            @Override
-            public void printException(Exception e) {
-                throw new StopTestException("Cancel");
-            }
-        };
-        TaskController taskController = new TaskController(repository,ui);
+        taskController = new TaskController(repository,systemTime,mockedUI);
         taskController.updateTask();
     }
 
