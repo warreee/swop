@@ -2,7 +2,6 @@ package be.swop.groep11.main.core;
 
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.task.TaskStatus;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -65,78 +64,52 @@ public class InputParser {
             return; // Return omdat de inputfile niet gelezen kon worden.
         }
 
+        // De volgorde is van belang.
         handleDailyAvailability(values);
         handleSystemTime(values);
+        handleResourceTypes(values);
+        handleResources(values);
+        handleDevelopers(values);
         handleProjects(values);
         handleTasks(values);
-        handleResourceTypes(values);
+        handlePlannings(values);
+        handleReservations(values);
+    }
 
-
-        // Voegt eerst de projecten toe, daarna de taken.
-        for (String key : values.keySet()) {
-            ArrayList subList;
-
-//            if (key.equals("tasks")) {
-//                subList = (ArrayList) values.get(key);
-//                for (int i = 0; i < subList.size(); i++) {
-//                    Map<String, String> mapTask = (Map<String, String>) subList.get(i);
-//                    int projectIndex = Integer.valueOf(String.valueOf(mapTask.get("project")));
-//                    Project projectX = projectRepository.getProjects().get(projectIndex);
-//                    addTaskToProject(mapTask, projectX); //De taak wordt in project aangemaakt
-//                    addOtherDetails(mapTask, projectX.getTasks().get(projectX.getTasks().size() - 1)); //het laatst toegevoegde
-//                }
-//            }
-
-            if (key.equals("systemTime")) {
-                String sysTime = String.valueOf(values.get(key));
-                LocalDateTime sytemTime = parseTime(sysTime);
-            }
-
-            if (key.equals("dailyAvailability")) {
-                subList = (ArrayList) values.get(key);
-                for (int i = 0; i < subList.size(); i++) {
-                    Map<String, String> mapAvailability = (Map<String, String>) subList.get(i);
-                }
-            }
-
-            if (key.equals("resourceTypes")) {
-                subList = (ArrayList) values.get(key);
-                for (int i = 0; i < subList.size(); i++) {
-                    Map<String, String> mapResourceTypes = (Map<String, String>) subList.get(i);
-                }
-            }
-
-
-            if (key.equals("resources")) {
-                subList = (ArrayList) values.get(key);
-                for (int i = 0; i < subList.size(); i++) {
-                    Map<String, String> mapResources = (Map<String, String>) subList.get(i);
-                }
-            }
-
-            if (key.equals("developers")) {
-                subList = (ArrayList) values.get(key);
-                for (int i = 0; i < subList.size(); i++) {
-                    Map<String, String> mapDevelopers = (Map<String, String>) subList.get(i);
-                }
-            }
-
-            if (key.equals("plannings")) {
-                subList = (ArrayList) values.get(key);
-                for (int i = 0; i < subList.size(); i++) {
-                    Map<String, String> mapPlannings = (Map<String, String>) subList.get(i);
-                }
-            }
-
-            if (key.equals("reservations")) {
-                subList = (ArrayList) values.get(key);
-                for (int i = 0; i < subList.size(); i++) {
-                    Map<String, String> mapReservations = (Map<String, String>) subList.get(i);
-                }
-            }
-
+    /**
+     * Leest alle DailyAvailabilities in.
+     * Dit moet opgeroepen worden voor handleResourceTypes aangezien anders een benodigde lijst nog niet beschikbaar is.
+     * @param dailyAvailabilityMap
+     */
+    private void handleDailyAvailability(Map<String, Object> dailyAvailabilityMap){
+        ArrayList dailyAvailabilitys = (ArrayList) dailyAvailabilityMap.get("dailyAvailability");
+        for(Object dailyAvailability: dailyAvailabilitys){
+            addDailyAvailability((Map<String, String>) dailyAvailability);
         }
+    }
 
+    /**
+     * Leest alle developers in.
+     * @param developersMap
+     */
+    private void handleDevelopers(Map<String, Object> developersMap){
+        ArrayList developers = (ArrayList) developersMap.get("developers");
+        for(Object developer: developers){
+            addDeveloper((Map<String, String>) developer);
+        }
+    }
+
+    /**
+     * Leest alle plannings in.
+     * Dit moet opgeroepen worden na handleTasks (Anders is de lijst met wat aan welke taak moet worden gelinked niet
+     * beschikbaar).
+     * @param planningsMap
+     */
+    private void handlePlannings(Map<String, Object> planningsMap){
+        ArrayList plannings = (ArrayList) planningsMap.get("plannings");
+        for (int i = 0; i < plannings.size(); i++){
+            addPlanning(i, (Map<String, String>) plannings.get(i));
+        }
     }
 
     /**
@@ -145,9 +118,52 @@ public class InputParser {
      */
     private void handleProjects(Map<String, Object> projectsMap){
         ArrayList projects = (ArrayList) projectsMap.get("projects");
-        for(Object project: projects){
+        for (Object project : projects) {
             addProject((Map<String, String>) project);
         }
+    }
+
+    /**
+     * Leest alle reservaties in.
+     * @param reservationsMap
+     */
+    private void handleReservations(Map<String, Object> reservationsMap){
+        ArrayList reservations = (ArrayList) reservationsMap.get("reservations");
+        for(Object reservation: reservations){
+            addReservation((Map<String, String>) reservation);
+        }
+    }
+
+    /**
+     * Leest alle Resources in.
+     * @param resourceMap
+     */
+    private void handleResources(Map<String, Object> resourceMap){
+        ArrayList resources = (ArrayList) resourceMap.get("resources");
+        for (Object resource : resources) {
+            addResource((Map<String, String>) resource);
+        }
+    }
+
+    /**
+     * Leest alle ResourceTypes in.
+     * @param resourceTypeMap
+     */
+    private void handleResourceTypes(Map<String, Object> resourceTypeMap){
+        ArrayList resourceTypes = (ArrayList) resourceTypeMap.get("resourceTypes");
+        for(Object resourceType: resourceTypes){
+            addResourceType((Map<String, String>) resourceType);
+        }
+    }
+
+    /**
+     * Leest de SystemTime uit input.tman en returnt een correct SystemTime object indien het goed kon geparsed worden.
+     * @param systemTimeMap
+     * @return
+     */
+    private void handleSystemTime(Map<String, Object> systemTimeMap){
+        String time = (String) systemTimeMap.get("systemTime");
+        systemTime =  new SystemTime(parseTime(time));
     }
 
     /**
@@ -164,170 +180,31 @@ public class InputParser {
     }
 
     /**
-     * Leest alle ResourceTypes in.
-     * @param resourceTypeMap
+     * Maakt een nieuwe DailyAvailability aan. Deze wordt bijgehouden in een interne lijst om te gebruiken bij het
+     * toevoegen van nieuwe ResourceTypes aan ResourceTypeRepository.
+     * @param propertiesList
      */
-    private void handleResourceTypes(Map<String, Object> resourceTypeMap){
-        ArrayList resourceTypes = (ArrayList) resourceTypeMap.get("resourceTypes");
-        for(Object resourceType: resourceTypes){
-            addResourceType((Map<String, String>) resourceType);
-        }
+    private void addDailyAvailability(Map<String, String> propertiesList){
+        String startTime = propertiesList.get("startTime");
+        String endTime = propertiesList.get("endTime");
+        DailyAvailability dailyAvailability = new DailyAvailability(LocalTime.parse(startTime), LocalTime.parse(endTime));
+        dailyAvailabilityList.add(dailyAvailability);
     }
 
-    /**
-     * Leest alle DailyAvailabilities in.
-     * @param dailyAvailabilityMap
-     */
-    private void handleDailyAvailability(Map<String, Object> dailyAvailabilityMap){
-        ArrayList dailyAvailabilitys = (ArrayList) dailyAvailabilityMap.get("dailyAvailability");
-        for(Object dailyAvailability: dailyAvailabilitys){
-            addDailyAvailability((Map<String, String>) dailyAvailability);
-        }
+    private void addDeveloper(Map<String, String> propertiesList){
+        String name = propertiesList.get("name");
+        IResourceType resourceType = resourceManager.getResourceTypeByName("Developer");
+        resourceManager.addResourceInstance(resourceType, name);
+        developerList.add((Developer) resourceType.getResourceInstances().get(resourceType.getResourceInstances().size() - 1));
     }
 
-    /**
-     * Leest de SystemTime uit input.tman en returnt een correct SystemTime object indien het goed kon geparsed worden.
-     * @param systemTimeMap
-     * @return
-     */
-    private void handleSystemTime(Map<String, Object> systemTimeMap){
-        String time = (String) systemTimeMap.get("systemTime");
-        systemTime =  new SystemTime(parseTime(time));
-    }
+    private void addPlanning(int number, Map<String, String> propertiesList){
+        Task task = planningTaskMap.get(number);
+        task.plan(parseTime(propertiesList.get("plannedStartTime")));
+        List<Developer> developers = new ArrayList<>();
+        Arrays.stream(parseStringArray(propertiesList.get("developers"))).forEach(x -> developers.add(developerList.get(x)));
+        // TODO: afwerken en bij aan taak toevoegen
 
-    /**
-     * Geeft de SystemTime terug die uit input.tman werd gehaald. Dit kan null zijn indien er geen aanwezig was.
-     */
-    public SystemTime getSystemTime(){
-        return this.systemTime;
-    }
-
-    /**
-     * Init IResourceTypes a.d.h.v. hun namen.
-     */
-    private void withTypes(List<String> types) throws IllegalArgumentException {
-        if (types == null || types.isEmpty()) {
-            throw new IllegalArgumentException("Eerst types bepalen met");
-        }
-
-        for (String typeName : types) {
-            resourceManager.addNewResourceType(typeName);
-
-        }
-    }
-
-    private void defineResourceType(String typeName, DailyAvailability availability, List<String> requires, List<String> conflicts, List<String> instances) throws IllegalArgumentException {
-        if (typeName == null || typeName.isEmpty()) {
-            throw new IllegalArgumentException("Ongeldige naam voor type.");
-        }
-        IResourceType ownerType = resourceManager.getResourceTypeByName(typeName);
-
-        resourceManager.withDailyAvailability(ownerType, availability);
-
-        //add require constraints
-        for (String req : requires) {
-            IResourceType reqType = resourceManager.getResourceTypeByName(req);
-            resourceManager.withRequirementConstraint(ownerType, reqType);
-        }
-        //Add conflicting constraints
-        for (String con : conflicts) {
-            IResourceType conflictType = resourceManager.getResourceTypeByName(con);
-            resourceManager.withConflictConstraint(ownerType, conflictType);
-        }
-
-        //Add instances
-        for (String inst : instances) {
-            resourceManager.addResourceInstance(ownerType, inst);
-        }
-    }
-
-    /**
-     * addOtherDetails voegt details toe aan de taken die niet worden gezet bij de constructie van een taak in project.
-     *
-     * @param mapTask de ingelezen details die moeten worden toegevoegd.
-     * @param task    de taak waar de details aan worden toegevoegd.
-     */
-    private void addOtherDetails(Map<String, String> mapTask, Task task) {
-
-        /*
-        Zet de meegegeven taak als alternatieve taak.
-         */
-        if (mapTask.get("alternativeFor") != null) {
-            int alternativeTask = Integer.valueOf(String.valueOf(mapTask.get("alternativeFor")));
-            taskList.get(alternativeTask).setAlternativeTask(task);
-        }
-
-        /*
-        Voegt aan de meegegeven taak taken die toe die prerequisite zijn.
-         */
-        if (mapTask.get("prerequisiteTasks") != null) {
-            int[] ATArray = parseStringArray(String.valueOf(mapTask.get("prerequisiteTasks")));
-            if (ATArray.length > 0) {
-                for (int prt : ATArray) {
-                    task.addNewDependencyConstraint(taskList.get(prt));
-                }
-            }
-        }
-
-                /*
-                Status kan niet geupdated worden als de start en eindtijd nog niet gezet zijn.
-                Zet daarom eerst start en endtime.
-                 */
-
-        if (mapTask.get("startTime") != null) {
-            LocalDateTime startTime = parseTime(mapTask.get("startTime"));
-            //task.setStartTime(startTime);
-        }
-
-
-        if (mapTask.get("endTime") != null) {
-            LocalDateTime endTime = parseTime(mapTask.get("endTime"));
-            //task.setEndTime(endTime);
-        }
-
-
-    }
-
-    /**
-     * Zorgt voor de parsing van een string naar een TaskStatus
-     *
-     * @param strStatus de status in stringvorm
-     * @return de taskstatus
-     * @throws IllegalArgumentException indien er string wordt meegegeven waar geen status mee overeenkomt
-     *                                  (is niet hoofdlettergevoelgi)
-     */
-    private TaskStatus stringToStatus(String strStatus) throws IllegalArgumentException {
-
-        TaskStatus result = null;
-
-       /* try {
-            for (TaskStatus status : TaskStatus.values()){
-                if (strStatus.equalsIgnoreCase(status.toString())){
-                    result = status;
-                }
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-        }
-        */
-        return result;
-    }
-
-    /**
-     * Zet een string tijd om in een LocalDateTime object
-     *
-     * @param date, in stringvorm
-     * @return de LocalDateTime
-     */
-    private LocalDateTime parseTime(String date) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        try {
-            return LocalDateTime.parse(date, dateTimeFormatter);
-
-        } catch (DateTimeParseException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
     }
 
     /**
@@ -348,54 +225,24 @@ public class InputParser {
         projectList.add(projectRepository.getProjects().get(projectRepository.getProjects().size() - 1 ));
     }
 
-    private void addTask(Map<String, String> propertiesList) {
+    private void addReservation(Map<String, String> propertiesList){
+        ResourceInstance resourceInstance = resourceInstanceList.get(Integer.valueOf(propertiesList.get("resource")));
+        Task task = taskList.get(Integer.valueOf(propertiesList.get("task")));
+        LocalDateTime startTime = parseTime(propertiesList.get("startTime"));
+        LocalDateTime endTime = parseTime(propertiesList.get("endTime"));
+        resourceManager.makeReservation(task, resourceInstance, new TimeSpan(startTime, endTime), true);
+    }
 
-        // TODO: planning er in steken.
-
-        String description = propertiesList.get("description");
-        Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
-        Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation"))) / 100;
-        Project project = projectList.get(Integer.valueOf(propertiesList.get("project")));
-        project.addNewTask(description, acceptableDeviation, duration);
-        taskList.add(project.getTasks().get(project.getTasks().size() - 1));
-        Task task = taskList.get(taskList.size() - 1);
-
-        try{
-            Integer number = Integer.valueOf(propertiesList.get("planning"));
-            planningTaskMap.put(number, task);
-        } catch (NumberFormatException e){
-            // Doe niks, het nummer van planning kon niet omgevormd worden.
-        }
-
-        if(propertiesList.containsKey("startTime")){
-            task.execute(parseTime(propertiesList.get("startTime")));
-        }
-
-        if(propertiesList.containsKey("endTime")){
-            if(propertiesList.get("status").equals("finished")) {
-                task.finish(parseTime(propertiesList.get("endTime")));
-            } else if(propertiesList.get("status").equals("failed")){
-                task.fail(parseTime(propertiesList.get("endTime")));
-            } else {
-                throw new IllegalArgumentException("Onbekende status bij het zetten van een eindtijd.");
-            }
-
-        }
-
-        if(propertiesList.containsKey("alternativeFor")){
-            try {
-                taskList.get(Integer.valueOf(propertiesList.get("alternativeFor"))).setAlternativeTask(task);
-            } catch (NumberFormatException e){
-                // Doe niks, de sleutel alternativeFor was waarschijnlijk leeg.
-            }
-        }
-
-        if(propertiesList.containsKey("prerequisiteTasks")){
-            for(int i: parseStringArray(propertiesList.get("prerequisiteTasks"))){
-                taskList.get(i).addNewDependencyConstraint(task);
-            }
-        }
-
+    /**
+     * Voegt een nieuwe ResourceInstance toe aan een bestaand ResourceType.
+     * @param propertiesList
+     */
+    private void addResource(Map<String, String> propertiesList){
+        String name = propertiesList.get("name");
+        IResourceType resourceType = resourceTypeList.get(Integer.valueOf(propertiesList.get("type")));
+        resourceManager.addResourceInstance(resourceType, name);
+        int size = resourceType.getResourceInstances().size();
+        resourceInstanceList.add(resourceType.getResourceInstances().get(size - 1));
     }
 
     private void addResourceType(Map<String, String> propertiesList){
@@ -423,52 +270,75 @@ public class InputParser {
         resourceTypeList.add(resourceManager.getResourceTypeByName(name));
     }
 
-    /**
-     * Maakt een nieuwe DailyAvailability aan. Deze wordt bijgehouden in een interne lijst om te gebruiken bij het
-     * toevoegen van nieuwe ResourceTypes aan ResourceTypeRepository.
-     * @param propertiesList
-     */
-    private void addDailyAvailability(Map<String, String> propertiesList){
-        String startTime = propertiesList.get("startTime");
-        String endTime = propertiesList.get("endTime");
-        DailyAvailability dailyAvailability = new DailyAvailability(LocalTime.parse(startTime), LocalTime.parse(endTime));
-        dailyAvailabilityList.add(dailyAvailability);
+    private void addTask(Map<String, String> propertiesList) {
+        String description = propertiesList.get("description");
+        Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
+        Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation"))) / 100;
+        Project project = projectList.get(Integer.valueOf(propertiesList.get("project")));
+        project.addNewTask(description, acceptableDeviation, duration);
+        taskList.add(project.getTasks().get(project.getTasks().size() - 1));
+        Task task = taskList.get(taskList.size() - 1);
+
+        try{
+            Integer number = Integer.valueOf(propertiesList.get("planning"));
+            planningTaskMap.put(number, task);
+        } catch (NumberFormatException e){
+            // Doe niks, het nummer van planning kon niet omgevormd worden.
+        }
+
+        if(propertiesList.containsKey("startTime")){
+            task.execute(parseTime(propertiesList.get("startTime")));
+        }
+
+        if(propertiesList.containsKey("endTime")){
+            if (propertiesList.get("status").equals("finished")) {
+                task.finish(parseTime(propertiesList.get("endTime")));
+            } else if(propertiesList.get("status").equals("failed")) {
+                task.fail(parseTime(propertiesList.get("endTime")));
+            } else {
+                throw new IllegalArgumentException("Onbekende status bij het zetten van een eindtijd.");
+            }
+
+        }
+
+        if(propertiesList.containsKey("alternativeFor")){
+            try {
+                taskList.get(Integer.valueOf(propertiesList.get("alternativeFor"))).setAlternativeTask(task);
+            } catch (NumberFormatException e){
+                // Doe niks, de sleutel alternativeFor was waarschijnlijk leeg.
+            }
+        }
+
+        if(propertiesList.containsKey("prerequisiteTasks")){
+            for(int i: parseStringArray(propertiesList.get("prerequisiteTasks"))){
+                taskList.get(i).addNewDependencyConstraint(task);
+            }
+        }
+
     }
 
     /**
-     * Voegt een nieuwe ResourceInstance toe aan een bestaand ResourceType.
-     * @param propertiesList
+     * Geeft de SystemTime terug die uit input.tman werd gehaald. Dit kan null zijn indien er geen aanwezig was.
      */
-    private void addResource(Map<String, String> propertiesList){
-        String name = propertiesList.get("name");
-        IResourceType resourceType = resourceTypeList.get(Integer.valueOf(propertiesList.get("type")));
-        resourceManager.addResourceInstance(resourceType, name);
-        int size = resourceManager.getResourceTypeByName(name).getResourceInstances().size(); //TODO checken
-        resourceInstanceList.add(resourceManager.getResourceTypeByName(name).getResourceInstances().get(size - 1));
+    public SystemTime getSystemTime(){
+        return this.systemTime;
     }
 
-    private void addDeveloper(Map<String, String> propertiesList){
-        String name = propertiesList.get("name");
-        IResourceType resourceType = resourceManager.getResourceTypeByName("Developer");
-        resourceManager.addResourceInstance(resourceType, name);
-        developerList.add((Developer) resourceType.getResourceInstances().get(resourceType.getResourceInstances().size() - 1));
-    }
+    /**
+     * Zet een string tijd om in een LocalDateTime object
+     *
+     * @param date, in stringvorm
+     * @return de LocalDateTime
+     */
+    private LocalDateTime parseTime(String date) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        try {
+            return LocalDateTime.parse(date, dateTimeFormatter);
 
-    private void addPlanning(int number, Map<String, String> propertiesList){
-        Task task = planningTaskMap.get(number);
-        task.plan(parseTime(propertiesList.get("plannedStartTime")));
-        List<Developer> developers = new ArrayList<>();
-        Arrays.stream(parseStringArray(propertiesList.get("developers"))).forEach(x -> developers.add(developerList.get(x)));
-        // TODO: afwerken en bij aan taak toevoegen
-
-    }
-
-    private void addReservation(Map<String, String> propertiesList){
-        ResourceInstance resourceInstance = resourceInstanceList.get(Integer.valueOf(propertiesList.get("resource")));
-        Task task = taskList.get(Integer.valueOf(propertiesList.get("task")));
-        LocalDateTime startTime = parseTime(propertiesList.get("startTime"));
-        LocalDateTime endTime = parseTime(propertiesList.get("endTime"));
-        resourceManager.makeReservation(task, resourceInstance, new TimeSpan(startTime, endTime), true);
+        } catch (DateTimeParseException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     /**
