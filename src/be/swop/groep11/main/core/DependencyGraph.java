@@ -24,7 +24,7 @@ public class DependencyGraph {
      * @param dependent
      * @param dependingOn
      */
-                                // B                A
+
     public void addDependency(Task dependent, Task dependingOn) {
         // TODO: check: is valid...
         if (dependingOnMap.containsKey(dependent)){
@@ -78,6 +78,18 @@ public class DependencyGraph {
         dependentMap.remove(failedTask);
         dependingOnMap.entrySet().stream().filter(entry -> entry.getValue().contains(failedTask)).forEach(entry -> entry.getValue().remove(failedTask));
         dependingOnMap.remove(failedTask);
+    }
+
+    private boolean isValidDependency(Task dependent, Task dependingOn) {
+
+        if (dependent == dependingOn) {  // dependencies mogen niet gelijk zijn
+            return false;
+        }
+        if (dependent == null || dependingOn == null){
+            return false;
+        }
+
+        return true;
     }
 
 
