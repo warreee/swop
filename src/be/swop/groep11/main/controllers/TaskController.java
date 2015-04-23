@@ -15,7 +15,9 @@ import com.google.common.collect.ImmutableList;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Bevat de stappen om de use cases "Create Task" en "Update Task" uit te voeren.
@@ -53,14 +55,15 @@ public class TaskController extends AbstractController {
             Double acceptableDeviation =  getUserInterface().requestDouble("Aanvaardbare afwijking in procent:") / 100;
             Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf( getUserInterface().requestNumber("Geschatte duur in minuten:")).longValue());
 
+            Map<IResourceType, Integer> resourceTypes = new HashMap<>();
             String message = "Voeg resource types toe? (y/N)";
             while(getUserInterface().requestString(message).trim().equalsIgnoreCase("y")){
-                getUserInterface().selectFromList(resourceManager.getResourceTypes(), (x -> x.getName()));
-                getUserInterface().requestNumber("Hoeveel wil je er?");
-                message = "Wilt u nog resource types toevoegen? (y/N)";
+                IResourceType iResourceType = getUserInterface().selectFromList(resourceManager.getResourceTypes(), (x -> x.getName()));
+                Integer number = getUserInterface().requestNumber("Hoeveel wil je er?");
+                resourceTypes = addToResourceMap(iResourceType, number, resourceTypes);
+                printResourceMap(resourceTypes);
+                message = "\nWilt u nog resource types toevoegen? (y/N)";
             }
-
-
 
             List<Task> tasks = new ArrayList<>(project.getTasks());
             List<Task> selectedTasks = new ArrayList<>();
@@ -84,6 +87,7 @@ public class TaskController extends AbstractController {
             }
 
             project.addNewTask(description, acceptableDeviation, estimatedDuration);
+            // TODO: required resources toevoegen aan de taak.
             // opm.: het toevoegen van afhankelijke taken kan nog geen fouten veroorzaken,
             // dus het is geen probleem dat de taak al gecreëerd is
             Task task = project.getTasks().get(project.getTasks().size()-1);
@@ -116,6 +120,20 @@ public class TaskController extends AbstractController {
         catch (CancelException e) {
             getUserInterface().printException(e);
         }
+    }
+
+    private Map<IResourceType, Integer> addToResourceMap(IResourceType iResourceType, Integer number, Map<IResourceType, Integer> map){
+        if(map.containsKey(iResourceType)){
+            map.put(iResourceType, map.get(iResourceType) + number);
+        } else {
+            map.put(iResourceType, number);
+        }
+        return map;
+    }
+
+    private void printResourceMap(Map<IResourceType, Integer> map){
+        getUserInterface().printMessage("De volgende resource zijn al geselecteerd:\n");
+        map.forEach((x, y) -> getUserInterface().printMessage("\t" + x.getName() + ": " + y));
     }
 
     private void updateTask(Task task) throws CancelException{
