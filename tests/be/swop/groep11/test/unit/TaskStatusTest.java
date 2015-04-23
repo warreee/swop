@@ -3,7 +3,6 @@ package be.swop.groep11.test.unit;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.TMSystem;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.IllegalStateTransition;
 import be.swop.groep11.main.task.Task;
@@ -15,7 +14,6 @@ import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
@@ -81,90 +79,74 @@ public class TaskStatusTest {
     } */
 
 //////////////////////// AVAILABLE___TO____ //////////////////////
-    @Test(expected = IllegalStateTransition.class)
+    @Test
     public void availableToExecuting() throws Exception {
         assertTrue(task1.getStatusString().equals("AVAILABLE"));
-        task1.execute();
-        assertTrue(task1.getStatusString().equals("AVAILABLE"));
-        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
-        task1.execute();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         assertTrue(task1.getStatusString().equals("EXECUTING"));
     }
 
     @Test(expected = IllegalStateTransition.class)
     public void availableToFailedTest() throws Exception {
         assertTrue(task1.getStatusString().equals("AVAILABLE"));
-        task1.fail();
-        assertTrue(task1.getStatusString().equals("AVAILABLE"));
+        task1.fail(now);
     }
 
 
     @Test(expected = IllegalStateTransition.class)
     public void availableToFinishedTest() throws Exception {
         assertTrue(task1.getStatusString().equals("AVAILABLE"));
-        task1.finish();
-        assertTrue(task1.getStatusString().equals("AVAILABLE"));
+        task1.finish(now);
     }
 
     //////////////////////// EXECUTING___TO____ //////////////////////
 
-    @Test(expected = IllegalStateTransition.class)
+    @Test
     public void executingToFinishedTest() throws Exception {
-        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
-        task1.execute();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         assertTrue(task1.getStatusString().equals("EXECUTING"));
-        task1.finish();
-        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
-        task1.finish();
+        task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
         assertTrue(task1.getStatusString().equals("FINISHED"));
     }
 
-    @Test(expected = IllegalStateTransition.class)
+    @Test
     public void executingToFailed() throws Exception {
-        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
-        task1.execute();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         // TODO heeft een gefailde taak ook een eindtijd? zie ook githubissue
-        task1.fail();
+        task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
         assertTrue(task1.getStatusString().equals("FAILED"));
     }
 
     @Test(expected = IllegalStateTransition.class)
     public void executingToExecuting() throws Exception {
-        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
-        task1.execute();
-        task1.execute();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.execute(LocalDateTime.of(2015, 3, 12, 18, 0));
     }
 
     //////////////////////// FINISHED___TO____ //////////////////////
 
     @Test(expected = IllegalStateTransition.class)
     public void finishedToExecuting() throws Exception {
-        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
-        task1.execute();
-        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
-        task1.finish();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.finish(LocalDateTime.of(2015, 3, 12, 8, 0).plusHours(2));
         assertTrue(task1.getStatusString().equals("FINISHED"));
-        task1.execute();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0).plusHours(4));
     }
 
     @Test(expected = IllegalStateTransition.class)
     public void finishedToFailed() throws Exception {
-        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
-        task1.execute();
-        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
-        task1.finish();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
         assertTrue(task1.getStatusString().equals("FINISHED"));
-        task1.fail();
+        task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
     @Test(expected = IllegalStateTransition.class)
     public void finishedToFinished() throws Exception {
-        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
-        task1.execute();
-        task1.setEndTime(LocalDateTime.of(2015, 3, 12, 10, 0));
-        task1.finish();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
         assertTrue(task1.getStatusString().equals("FINISHED"));
-        task1.finish();
+        task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
     //////////////////////// FAILED___TO____ //////////////////////
@@ -173,29 +155,26 @@ public class TaskStatusTest {
 
     @Test(expected = IllegalStateTransition.class)
     public void failedToExecuting() throws Exception {
-        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
-        task1.execute();
-        task1.fail();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
         assertTrue(task1.getStatusString().equals("FAILED"));
-        task1.execute();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
     @Test(expected = IllegalStateTransition.class)
     public void failedToFinished() throws Exception {
-        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
-        task1.execute();
-        task1.fail();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
         assertTrue(task1.getStatusString().equals("FAILED"));
-        task1.finish();
+        task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
     @Test(expected = IllegalStateTransition.class)
     public void failedToFailed() throws Exception {
-        task1.setStartTime(LocalDateTime.of(2015, 3, 12, 8, 0));
-        task1.execute();
-        task1.fail();
+        task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
+        task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
         assertTrue(task1.getStatusString().equals("FAILED"));
-        task1.fail();
+        task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
 }
