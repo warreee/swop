@@ -9,7 +9,7 @@ public class SystemTime {
 
 
     public SystemTime() {
-        setCurrentSystemTime(LocalDateTime.now());
+        this.currentSystemTime = LocalDateTime.now();
     }
 
     public SystemTime(LocalDateTime systemTime){
