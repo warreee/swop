@@ -21,7 +21,7 @@ public class RequirementListBuilder {
         this.reqList = new RequirementList();
     }
 
-    public void addNewRequirement(ResourceType type, int amount) throws IllegalArgumentException,IllegalRequirementAmountException{
+    public void addNewRequirement(IResourceType type, int amount) throws IllegalArgumentException,IllegalRequirementAmountException{
         this.reqList.addRequirement(type,amount);
     }
 

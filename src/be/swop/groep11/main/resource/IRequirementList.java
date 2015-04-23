@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * Created by Ronald on 9/04/2015.
  */
-public interface IRequirementList {
+public interface IRequirementList{
 
     boolean containsRequirementFor(IResourceType ownerType);
 
