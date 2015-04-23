@@ -14,23 +14,21 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Klasse voor het inlezen van de de input file, deze moet staan in /input met de naam input.tman
  */
 public class InputParser {
-    // TODO: nieuwe implementatie ResourceTypeRepo afwachten. (Overschakelen naar ResourceManager?)
     User user = new User("InputParser");
     ProjectRepository projectRepository;
     ArrayList<Project> projectList = new ArrayList<>();
     ArrayList<Task> taskList = new ArrayList<>();
+    Map<Integer, Task> planningTaskMap = new HashMap<>();
     ArrayList<IResourceType> resourceTypeList = new ArrayList<>();
     ArrayList<ResourceInstance> resourceInstanceList = new ArrayList<>();
     ArrayList<DailyAvailability> dailyAvailabilityList = new ArrayList<>();
+    ArrayList<Developer> developerList = new ArrayList<>();
     private ResourceManager resourceManager;
     private SystemTime systemTime;
 
@@ -86,7 +84,6 @@ public class InputParser {
 //                    Project projectX = projectRepository.getProjects().get(projectIndex);
 //                    addTaskToProject(mapTask, projectX); //De taak wordt in project aangemaakt
 //                    addOtherDetails(mapTask, projectX.getTasks().get(projectX.getTasks().size() - 1)); //het laatst toegevoegde
-//
 //                }
 //            }
 
@@ -199,20 +196,11 @@ public class InputParser {
     }
 
     /**
-     * TODO
-     * @return
+     * Geeft de SystemTime terug die uit input.tman werd gehaald. Dit kan null zijn indien er geen aanwezig was.
      */
     public SystemTime getSystemTime(){
         return this.systemTime;
     }
-
-//    private void addType(Map<String, String> typeMap){
-//        typeMap.get("name");
-//        int[] ATArray = parseStringArray(String.valueOf(typeMap.get("requires")));
-//        typeMap.get("requires");
-//        typeMap.get("conflictsWith");
-//        typeMap.get("dailyAvailability");
-//    }
 
     /**
      * Init IResourceTypes a.d.h.v. hun namen.
@@ -288,13 +276,13 @@ public class InputParser {
 
         if (mapTask.get("startTime") != null) {
             LocalDateTime startTime = parseTime(mapTask.get("startTime"));
-//            task.setStartTime(startTime);
+            //task.setStartTime(startTime);
         }
 
 
         if (mapTask.get("endTime") != null) {
             LocalDateTime endTime = parseTime(mapTask.get("endTime"));
-//            task.setEndTime(endTime);
+            //task.setEndTime(endTime);
         }
 
 
@@ -363,7 +351,6 @@ public class InputParser {
     private void addTask(Map<String, String> propertiesList) {
 
         // TODO: planning er in steken.
-        // TODO: reservations er nog in steken.
 
         String description = propertiesList.get("description");
         Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
@@ -372,6 +359,13 @@ public class InputParser {
         project.addNewTask(description, acceptableDeviation, duration);
         taskList.add(project.getTasks().get(project.getTasks().size() - 1));
         Task task = taskList.get(taskList.size() - 1);
+
+        try{
+            Integer number = Integer.valueOf(propertiesList.get("planning"));
+            planningTaskMap.put(number, task);
+        } catch (NumberFormatException e){
+            // Doe niks, het nummer van planning kon niet omgevormd worden.
+        }
 
         if(propertiesList.containsKey("startTime")){
             task.execute(parseTime(propertiesList.get("startTime")));
@@ -449,7 +443,7 @@ public class InputParser {
         String name = propertiesList.get("name");
         IResourceType resourceType = resourceTypeList.get(Integer.valueOf(propertiesList.get("type")));
         resourceManager.addResourceInstance(resourceType, name);
-        int size = resourceManager.getResourceTypeByName(name).getResourceInstances().size();
+        int size = resourceManager.getResourceTypeByName(name).getResourceInstances().size(); //TODO checken
         resourceInstanceList.add(resourceManager.getResourceTypeByName(name).getResourceInstances().get(size - 1));
     }
 
@@ -457,10 +451,16 @@ public class InputParser {
         String name = propertiesList.get("name");
         IResourceType resourceType = resourceManager.getResourceTypeByName("Developer");
         resourceManager.addResourceInstance(resourceType, name);
+        developerList.add((Developer) resourceType.getResourceInstances().get(resourceType.getResourceInstances().size() - 1));
     }
 
-    private void addPlanning(Map<String, String> propertiesList){
-        //TODO: implementeren.
+    private void addPlanning(int number, Map<String, String> propertiesList){
+        Task task = planningTaskMap.get(number);
+        task.plan(parseTime(propertiesList.get("plannedStartTime")));
+        List<Developer> developers = new ArrayList<>();
+        Arrays.stream(parseStringArray(propertiesList.get("developers"))).forEach(x -> developers.add(developerList.get(x)));
+        // TODO: afwerken en bij aan taak toevoegen
+
     }
 
     private void addReservation(Map<String, String> propertiesList){
