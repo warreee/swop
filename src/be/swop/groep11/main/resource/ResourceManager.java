@@ -99,18 +99,12 @@ public class ResourceManager {
      * @return
      */
     public IResourceType getResourceTypeByName(String name)throws NoSuchElementException{
-        IResourceType result = null;
         for(IResourceType type : typeBuilders.keySet()){
             if(type.getName().equals(name)){
-                result = type;
-                break;
+                return type;
             }
         }
-
-        if(result == null){
-            throw new NoSuchElementException("Resource type met de gegeven naam kon niet gevonden worden.");
-        }
-        return result;
+        throw new NoSuchElementException("Resource type met de gegeven naam kon niet gevonden worden.");
     }
 
     public boolean containsType(String typeName){
