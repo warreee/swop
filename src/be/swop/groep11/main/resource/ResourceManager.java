@@ -1,10 +1,9 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import org.mockito.cglib.core.Local;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -391,57 +390,180 @@ public class ResourceManager {
      * @return Een lijst van lengte n van de eerstvolgende mogelijke plannen
      */
     public List<Plan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
-        // TODO
-        return null;
+        // TODO: dit is nog niet efficiënt genoeg!
+
+        List<Plan> plans = new LinkedList<>();
+
+        LocalDateTime startTime = getNextHour(dateTime);
+        while (plans.size() < n) {
+            Plan nextPlan = new Plan(task, startTime);
+            if (nextPlan.canMakeDefaultReservations()) {
+                plans.add(nextPlan);
+            }
+
+            startTime = startTime.plusHours(1);
+        }
+
+        return plans;
     }
 
-    /**
-     * Geeft de eerste n mogelijke starttijden na een gegeven tijdstip waarin er voor een lijst resource requirements
-     * reservaties kunnen gemaakt worden voor een bepaalde tijdsduur.
-     * De starttijden vallen steeds op een uur (dus zonder minuten).
-     * @param n               Het aantal gevraagde starttijden
-     * @param dateTime        Het gegeven tijdstip waarna de eerstvolgende starttijden moeten vallen
-     * @param requirementList De lijst resource requirements
-     * @param duration        De duur  die de reservaties minstens moeten hebben
-     * @return Een lijst van de eerste n mogelijke starttijden
-     */
-    /*
-    public List<LocalDateTime> getNextStartTimes(int n, LocalDateTime dateTime, IRequirementList requirementList, Duration duration) { // TODO: testen!
-        List<TimeSpan> timeSpans = new ArrayList<>();
+    private class Plan {
 
-        LocalDateTime nextStartTime = getNextHour(dateTime);
-        LocalDateTime nextEndTime   = nextStartTime.plus(duration); // wordt aangepast in de while lus
-        while (timeSpans.size() < n) {
+        /**
+         * Constructor om een nieuw plan aan te maken met default reservaties voor de resource requirements van de gegeven taak.
+         *
+         * @param task      De gegeven taak
+         * @param startTime De starttijd van het plan: moet op een uur vallen (zonder minuten)
+         */
+        public Plan(Task task, LocalDateTime startTime) {
+            if (task == null)
+                throw new IllegalArgumentException("Taak mag niet null zijn");
+            if (startTime == null)
+                throw new IllegalArgumentException("Starttijd mag niet null zijn");
+            if (startTime.getMinute() != 0)
+                throw new IllegalArgumentException("Ongeldige starttijd: moet op een uur vallen (zonder minuten)");
+            this.task = task;
+            this.startTime = startTime;
+        }
 
-            // lijst van "te alloceren resource instanties"
-            List<ResourceInstance> instances = new ArrayList<>();
-
-            // zijn er genoeg instanties beschikbaar van elke resource?
-            boolean enoughInstances = true;
-
-            Iterator<ResourceRequirement> it = requirementList.iterator();
-            while (it.hasNext()) {
-                ResourceRequirement requirement = it.next();
-
-                List<ResourceInstance> availableInstances = requirement.getType().getResourceInstances(); // TODO: available instances opvragen!!!
-
-                int nbRequiredInstances = requirement.getAmount();
-                if (availableInstances.size() < nbRequiredInstances) {
-                    enoughInstances = false; // niet genoeg instances beschikbaar!
-                    break;
+        /**
+         * Controleert of dit plan geldig is.
+         *
+         * @return True als de reservaties niet conflicteren met andere reservaties.
+         */
+        public boolean isValidPlan() {
+            for (ResourceReservation reservation : this.getReservations()) {
+                if (!isAvailable(reservation.getResourceInstance(), reservation.getTimeSpan())) {
+                    return false;
                 }
             }
+            return true;
+        }
 
-            if (enoughInstances) {
-                timeSpans.add(nextStartTime);
-            }
-            else {
-                nextStartTime = nextStartTime.plusHours(1); // TODO: moet beter...
+        /**
+         * Controleert of op de starttijd voor alle resource requirements de nodige resource instanties kunnen
+         * gereserveerd worden voor de taak.
+         */
+        public boolean canMakeDefaultReservations() {
+            try {
+                List<ResourceReservation> defaultReservations = this.calculateDefaultReservations(this.getTask(), this.getStartTime());
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
             }
         }
 
-        return timeSpans;
+        /**
+         * Maakt voor elk resource type in de requirement list van de taak de nodige reservaties.
+         */
+        public void makeDefaultReservations() {
+            this.reservations = calculateDefaultReservations(this.getTask(), this.getStartTime());
+        }
+
+        public Task getTask() {
+            return task;
+        }
+
+        private final Task task;
+
+        /**
+         * Geeft de starttijd van dit plan.
+         */
+        public LocalDateTime getStartTime() {
+            return startTime;
+        }
+
+        private final LocalDateTime startTime;
+
+        /**
+         * Geeft de eindtijd van dit plan.
+         *
+         * @return De laatste eindtijd van alle reservaties van het plan,
+         * of starttijd + de estimated duration van de taak indien er geen reservaties zijn.
+         */
+        public LocalDateTime getEndTime() {
+            if (this.getReservations().isEmpty()) {
+                return this.getStartTime().plus(this.getTask().getEstimatedDuration());
+            } else {
+                LocalDateTime endTime = this.getStartTime().plus(this.getTask().getEstimatedDuration());
+                for (ResourceReservation reservation : this.getReservations()) {
+                    if (reservation.getTimeSpan().getEndTime().isAfter(endTime)) {
+                        endTime = reservation.getTimeSpan().getEndTime();
+                    }
+                }
+                return endTime;
+            }
+        }
+
+        private List<ResourceReservation> reservations = new LinkedList<>();
+
+        /**
+         * Geeft de reservaties van dit plan.
+         *
+         * @return De reservaties van dit plan en die eindigen allemaal op hetzelfde moment.
+         */
+        public List<ResourceReservation> getReservations() {
+            List<ResourceReservation> reservations = new LinkedList<>();
+            // zorg wel dat alle reservaties op het zelfde moment eindigen!
+            for (ResourceReservation reservation : this.reservations) {
+                if (reservation.getTimeSpan().getEndTime().isBefore(this.getEndTime())) {
+                    reservations.add(new ResourceReservation(reservation.getTask(),
+                            reservation.getResourceInstance(),
+                            new TimeSpan(reservation.getTimeSpan().getStartTime(), this.getEndTime()),
+                            reservation.isSpecific()));
+                }
+            }
+            return reservations;
+        }
+
+        /**
+         * @throws IllegalArgumentException Er zijn niet genoeg resource instanties beschikbaar voor een plan van task op de gegeven starttijd
+         */
+        private List<ResourceReservation> calculateDefaultReservations(Task task, LocalDateTime startTime) throws IllegalArgumentException {
+            List<ResourceReservation> defaultReservations = new LinkedList<>();
+
+            LocalDateTime endTime = calculateEndTime(task, startTime);
+            TimeSpan timeSpanOfPlan = new TimeSpan(startTime, endTime);
+
+            Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
+            while (it.hasNext()) {
+                ResourceRequirement requirement = it.next();
+
+                List<ResourceInstance> availableInstances = getAvailableInstances(requirement.getType(), timeSpanOfPlan);
+
+                int nbRequiredInstances = requirement.getAmount();
+                if (availableInstances.size() < nbRequiredInstances) {
+                    throw new IllegalArgumentException("Er zijn niet genoeg resource instanties beschikbaar voor een plan van task op de gegeven starttijd");
+                } else {
+                    // voeg de nodige reservaties toe
+                    for (int i = 0; i < nbRequiredInstances - 1; i++) {
+                        defaultReservations.add(new ResourceReservation(task, availableInstances.get(i), timeSpanOfPlan, false));
+                    }
+                }
+            }
+
+            return defaultReservations;
+        }
+
+        private LocalDateTime calculateEndTime(Task task, LocalDateTime startTime) {
+            LocalDateTime endTime = startTime.plus(task.getEstimatedDuration());
+            Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
+            while (it.hasNext()) {
+                ResourceRequirement requirement = it.next();
+
+                // lijst van beschikbare resources voor het type, gesorteerd volgens toenemend eindtijd van de eerstvolgende mogelijke tijdsspanne voor een reservatie
+                List<ResourceInstance> availableInstances = getAvailableInstances(requirement.getType(), startTime, task.getEstimatedDuration());
+
+                int nbRequiredInstances = requirement.getAmount();
+
+                ResourceInstance instanceWithLongestReservation = availableInstances.get(Math.min(nbRequiredInstances, availableInstances.size() - 1));
+                LocalDateTime endTimeOfLongestReservation = getNextAvailableTimeSpan(instanceWithLongestReservation, startTime, task.getEstimatedDuration()).getEndTime();
+
+                if (endTimeOfLongestReservation.isAfter(endTime))
+                    endTime = endTimeOfLongestReservation;
+            }
+            return endTime;
+        }
     }
-    */
 
 }
