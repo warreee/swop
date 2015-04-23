@@ -40,6 +40,7 @@ public class RequirementListBuilder {
         public RequirementList() {
             this(null);
         }
+
         public RequirementList(HashMap<ResourceType, ResourceRequirement> reqs) {
             if(reqs != null && !reqs.isEmpty()){
                 requirements.putAll(reqs);
@@ -55,7 +56,7 @@ public class RequirementListBuilder {
         @Override
         public int countRequiredInstances(IResourceType constrainingType) {
             ResourceRequirement req = requirements.get(constrainingType);
-            return (req == null)?0:req.getAmount();
+            return (req == null) ? 0 : req.getAmount();
         }
 
         /**
