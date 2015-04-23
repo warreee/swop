@@ -28,7 +28,7 @@ public class SystemTime {
     }
 
     private boolean canHaveAsNewSystemTime(LocalDateTime currentSystemTime) {
-        return currentSystemTime.isAfter(getCurrentSystemTime());
+        return currentSystemTime != null && currentSystemTime.isAfter(getCurrentSystemTime());
     }
 
     private LocalDateTime currentSystemTime;
