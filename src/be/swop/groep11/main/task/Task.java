@@ -4,6 +4,7 @@ import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourceInstance;
+import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.resource.ResourceRequirement;
 
 import java.time.Duration;
@@ -429,48 +430,6 @@ public class Task {
         } else {
             return percent;
         }
-    }
-
-    /**
-     * Geeft de eerste n mogelijke starttijden na de huidige systeemtijd waarin deze taak kan uitgevoerd worden.
-     * De starttijden vallen steeds op een uur (dus zonder minuten).
-     * @param n Het aantal gevraagde starttijden
-     * @return Een lijst van de eerste n mogelijke starttijden
-     */
-    public List<LocalDateTime> getNextStartTimes(int n) { // TODO: testen!
-        List<LocalDateTime> timeSpans = new ArrayList<>();
-
-        LocalDateTime nextStartTime = this.getNextHour(this.systemTime.getCurrentSystemTime());
-        while (timeSpans.size() < n) {
-
-            // lijst van "te alloceren resource instanties"
-            List<ResourceInstance> instances = new ArrayList<>();
-
-            // zijn er genoeg instanties beschikbaar van elke resource?
-            boolean enoughInstances = true;
-
-            Iterator<ResourceRequirement> it = this.getRequirementList().iterator();
-            while (it.hasNext()) {
-                ResourceRequirement requirement = it.next();
-
-                List<ResourceInstance> availableInstances = requirement.getType().getResourceInstances();
-
-                int nbRequiredInstances = requirement.getAmount();
-                if (availableInstances.size() < nbRequiredInstances) {
-                    enoughInstances = false; // niet genoeg instances beschikbaar!
-                    break;
-                }
-            }
-
-            if (enoughInstances) {
-                timeSpans.add(nextStartTime);
-            }
-            else {
-                nextStartTime = nextStartTime.plusHours(1);
-            }
-        }
-
-        return timeSpans;
     }
 
     private LocalDateTime getNextHour(LocalDateTime dateTime) {

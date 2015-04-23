@@ -57,4 +57,17 @@ public class TimeSpan {
 
     private final LocalDateTime startTime, endTime;
 
+    /**
+     * @param other De andere tijdsspanne
+     * @return True als deze tijdsspanne dezelfde start- en eindtijd heeft als een andere tijdsspanne
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (other == null)
+            return false;
+        if (! (other instanceof TimeSpan))
+            return false;
+        return this.getStartTime().equals(((TimeSpan) other).getStartTime()) && this.getEndTime().equals(((TimeSpan) other).getEndTime());
+    }
+
 }

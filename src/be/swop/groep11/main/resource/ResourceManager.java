@@ -100,18 +100,12 @@ public class ResourceManager {
      * @return
      */
     public IResourceType getResourceTypeByName(String name)throws NoSuchElementException{
-        IResourceType result = null;
         for(IResourceType type : typeBuilders.keySet()){
             if(type.getName().equals(name)){
-                result = type;
-                break;
+                return type;
             }
         }
-
-        if(result == null){
-            throw new NoSuchElementException("Resource type met de gegeven naam kon niet gevonden worden.");
-        }
-        return result;
+        throw new NoSuchElementException("Resource type met de gegeven naam kon niet gevonden worden.");
     }
 
     public boolean containsType(String typeName){
@@ -365,5 +359,83 @@ public class ResourceManager {
             reservations.put(task,taskReservations);
         }
     }
+
+    /**
+     * Geeft een immutable list van de resource instanties van een gegeven resource type
+     * die beschikbaar zijn in een bepaalde tijdsspanne.
+     * @param resourceType Het gegeven resource type
+     * @param timeSpan     De gegeven tijdsspanne
+     */
+    public ImmutableList<ResourceInstance> getAvailableInstances(IResourceType resourceType, TimeSpan timeSpan) {
+        ImmutableList<ResourceInstance> instances = resourceType.getResourceInstances();
+        List<ResourceInstance> availableInstances = new LinkedList<>();
+        for (ResourceInstance resourceInstance : instances) {
+            if (this.isAvailable(resourceInstance, timeSpan)) {
+                availableInstances.add(resourceInstance);
+            }
+        }
+        return ImmutableList.copyOf(availableInstances);
+    }
+
+    /**
+     * Geeft een lijst van de eerste n mogelijke plannen voor een taak na een gegeven tijdstip.
+     * @param n        Het aantal mogelijke plannen
+     * @param task     De taak waarvoor mogelijke plannen moeten gemaakt worden
+     * @param dateTime Het gegeven tijdstip waarna de plannen moeten starten
+     * @return Een lijst van lengte n van de eerstvolgende mogelijke plannen
+     */
+    public List<Plan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
+        // TODO
+        return null;
+    }
+
+    /**
+     * Geeft de eerste n mogelijke starttijden na een gegeven tijdstip waarin er voor een lijst resource requirements
+     * reservaties kunnen gemaakt worden voor een bepaalde tijdsduur.
+     * De starttijden vallen steeds op een uur (dus zonder minuten).
+     * @param n               Het aantal gevraagde starttijden
+     * @param dateTime        Het gegeven tijdstip waarna de eerstvolgende starttijden moeten vallen
+     * @param requirementList De lijst resource requirements
+     * @param duration        De duur  die de reservaties minstens moeten hebben
+     * @return Een lijst van de eerste n mogelijke starttijden
+     */
+    /*
+    public List<LocalDateTime> getNextStartTimes(int n, LocalDateTime dateTime, IRequirementList requirementList, Duration duration) { // TODO: testen!
+        List<TimeSpan> timeSpans = new ArrayList<>();
+
+        LocalDateTime nextStartTime = getNextHour(dateTime);
+        LocalDateTime nextEndTime   = nextStartTime.plus(duration); // wordt aangepast in de while lus
+        while (timeSpans.size() < n) {
+
+            // lijst van "te alloceren resource instanties"
+            List<ResourceInstance> instances = new ArrayList<>();
+
+            // zijn er genoeg instanties beschikbaar van elke resource?
+            boolean enoughInstances = true;
+
+            Iterator<ResourceRequirement> it = requirementList.iterator();
+            while (it.hasNext()) {
+                ResourceRequirement requirement = it.next();
+
+                List<ResourceInstance> availableInstances = requirement.getType().getResourceInstances(); // TODO: available instances opvragen!!!
+
+                int nbRequiredInstances = requirement.getAmount();
+                if (availableInstances.size() < nbRequiredInstances) {
+                    enoughInstances = false; // niet genoeg instances beschikbaar!
+                    break;
+                }
+            }
+
+            if (enoughInstances) {
+                timeSpans.add(nextStartTime);
+            }
+            else {
+                nextStartTime = nextStartTime.plusHours(1); // TODO: moet beter...
+            }
+        }
+
+        return timeSpans;
+    }
+    */
 
 }
