@@ -98,7 +98,8 @@ public class DependencyGraphTest {
     @Test(expected = NullPointerException.class)
     public void removeDependencyTest() {
         dependencyGraph.addDependency(taskB, taskA);
-        dependencyGraph.addDependency(taskB, taskC);
+        dependencyGraph.addDependency(taskC, taskB);
+        dependencyGraph.addDependency(taskA, taskC);
         helpPrint();
         dependencyGraph.changeDepeningOnAlternativeTask(taskA, taskD);
         System.out.println("");
