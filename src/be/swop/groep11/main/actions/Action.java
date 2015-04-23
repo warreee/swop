@@ -19,45 +19,49 @@ public enum Action {
     PLANTASK("Plan Task"),
     STARTSIMULATION("Start Simulation"),
     REALIZESIMULATION("Realize simulation"),
-    ENDSIMULATION("End Simulation"),
-    INVALIDCOMMAND("");
+    INVALIDACTION("");
 
-    Action(String action){
-        this.action = action;
-        String regex = "((?i)(\\b"+ action +"\\b))"; //Niet hoofdletter gevoelig
+    /**
+     * Constructor voor een Action, met een stringRepresentatie die.
+     * @param actionString  De stringRepresentatie voor de nieuwe Action.
+     */
+    Action(String actionString){
+        this.action = actionString;
+        String regex = "((?i)(\\b"+ actionString +"\\b))"; //Niet hoofdletter gevoelig
         this.pattern = Pattern.compile(regex);
     }
     private final String action;
     private final Pattern pattern;
 
-    public String getCommandStr(){
+    /**
+     * @return  Geef de string representatie van een Action terug.
+     */
+    public String getActionStr(){
         return this.action;
     }
 
     /**
-     * Geeft een Command terug corresponderend met de gebruikers invoer.
-     * @effect  Indien action parameters verwacht worden deze opgeslagen in de hashmap.
-     * @param input
-     * @return
-     * @throws IllegalActionException
-     *         Indien er geen corresponderende Command is voor de gebruikers invoer.
-     *         Of indien er onvoldoende of verkeerde parameters gegeven zijn door de gebruiker.
-     *
+     * Geeft een Action terug corresponderend met de gebruikers invoer.
+     * @param input     De gebruikers invoer
+     * @return          De Action met een string Representatie die overeenkomt met de gebruikers invoer.
+     *                  Indien geen overeenkomst geeft men de INVALIDACTION terug.
      */
-    public static Action getInput(String input)throws IllegalActionException {
-        Action result = null;
+    public static Action getAction(String input){
+        Action result = INVALIDACTION;
         for (Action action : Action.values()) {
             Matcher matcher = action.pattern.matcher(input);
             if(matcher.matches()){
                 result = action;
             }
         }
-        if(result == null){
-            return INVALIDCOMMAND;
-        }
         return result;
     }
 
+    /**
+     * Controleer of de gebruikersInput overeenkomt met Cancel.
+     * @param input De gebruikersInput
+     * @return      Waar indien de gebruikersInput overeenkomt met de CANCEL string representatie.
+     */
     public static boolean checkCancel(String input){
         Matcher matcher = CANCEL.pattern.matcher(input);
         return matcher.matches();

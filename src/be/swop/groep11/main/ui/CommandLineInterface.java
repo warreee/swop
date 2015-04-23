@@ -36,7 +36,7 @@ public class CommandLineInterface implements UserInterface {
             while (! exit) {
                 try {
                     String commandString = bufferedReader.readLine();
-                    Action com = Action.getInput(commandString);
+                    Action com = Action.getAction(commandString);
                     executeCommand(com);
                 }catch (IllegalActionException ec){
                        printException(ec);
@@ -401,7 +401,7 @@ public class CommandLineInterface implements UserInterface {
         }
         StringBuilder sb = new StringBuilder();
         for(Action cmd : list){
-            sb.append(String.format("%-2s%s%1s", "|", cmd.getCommandStr()," "));
+            sb.append(String.format("%-2s%s%1s", "|", cmd.getActionStr()," "));
         }
         sb.append("|");
         printMessage(sb.toString());
