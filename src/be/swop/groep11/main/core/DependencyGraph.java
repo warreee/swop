@@ -24,23 +24,34 @@ public class DependencyGraph {
      * @param dependent
      * @param dependingOn
      */
-
+                                // B                A
     public void addDependency(Task dependent, Task dependingOn) {
         // TODO: check: is valid...
         if (dependingOnMap.containsKey(dependent)){
             dependingOnMap.get(dependent).add(dependingOn);
+            addToMap(dependingOn, dependingOnMap);
         } else {
             ArrayList<Task> dependingOnList = new ArrayList<>();
             dependingOnList.add(dependingOn);
             dependingOnMap.put(dependent, dependingOnList);
+            addToMap(dependingOn, dependingOnMap);
         }
 
-        if (dependentMap.containsKey(dependent)){
-            dependentMap.get(dependent).add(dependingOn);
+        if (dependentMap.containsKey(dependingOn)){
+            dependentMap.get(dependingOn).add(dependent);
+            addToMap(dependent, dependentMap);
         } else {
             ArrayList<Task> dependentList = new ArrayList<>();
-            dependentList.add(dependingOn);
-            dependentMap.put(dependent, dependentList);
+            dependentList.add(dependent);
+            dependentMap.put(dependingOn, dependentList);
+            addToMap(dependent, dependentMap);
+        }
+    }
+
+    private void addToMap(Task toBeAdded, HashMap map) {
+        if (!map.containsKey(toBeAdded)){
+            ArrayList<Task> emptyList = new ArrayList<>();
+            map.put(toBeAdded, emptyList);
         }
     }
 

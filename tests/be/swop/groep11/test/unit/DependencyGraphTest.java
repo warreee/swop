@@ -32,31 +32,39 @@ public class DependencyGraphTest {
     Task taskC;
     Task taskD;
     Task taskE;
+    ArrayList<Task> allTasks = new ArrayList<>();
+
 
     @Before
     public void setUp() throws Exception {
-        taskA = new Task(description, duration, deviation, systemTime, dependencyGraph);
-        taskB = new Task(description, duration, deviation, systemTime, dependencyGraph);
-        taskC = new Task(description, duration, deviation, systemTime, dependencyGraph);
-        taskD = new Task(description, duration, deviation, systemTime, dependencyGraph);
-        taskE = new Task(description, duration, deviation, systemTime, dependencyGraph);
+        taskA = new Task("Taak A", duration, deviation, systemTime, dependencyGraph);
+        taskB = new Task("Taak B", duration, deviation, systemTime, dependencyGraph);
+        taskC = new Task("Taak C", duration, deviation, systemTime, dependencyGraph);
+        taskD = new Task("Taak D", duration, deviation, systemTime, dependencyGraph);
+        taskE = new Task("Taak E", duration, deviation, systemTime, dependencyGraph);
+
+        allTasks.add(taskA);
+        allTasks.add(taskB);
+        allTasks.add(taskC);
+        allTasks.add(taskD);
+        allTasks.add(taskE);
 
     }
 
     @Test
     public void addDependencyTest(){
-        dependencyGraph.addDependency(taskA, taskB);
-        assertTrue(taskA.getDependingOnTasks().contains(taskB));
-        assertFalse(taskB.getDependingOnTasks().contains(taskA));
-        assertFalse(taskB.getDependingOnTasks().contains(taskB));
-        assertFalse(taskA.getDependingOnTasks().contains(taskA));
+        dependencyGraph.addDependency(taskB, taskA);
+        dependencyGraph.addDependency(taskB, taskC);
+        dependencyGraph.addDependency(taskB, taskD);
+        assertTrue(taskA.getDependentTasks().contains(taskB));
 
-        assertFalse(taskA.getDependentTasks().contains(taskB));
-        assertTrue(taskB.getDependentTasks().contains(taskA));
-        Set<Task> te = dependencyGraph.getDependentTasks(taskA);
-        System.out.println("test");
-        dependencyGraph.getDependentTasks(taskA).stream().map((t) -> t.getDescription() + "\n").forEach(System.out::println);
-        dependencyGraph.getDependentTasks(taskB).stream().map((t) -> t.getDescription() + "\n").forEach(System.out::println);
+        try {
+            allTasks.forEach((Task task) -> dependencyGraph.getDependingOnTasks(task).stream().map((t) -> task.getDescription()
+                    + " hangt af van: " + t.getDescription()).forEach(System.out::println));
+        } catch (NullPointerException e){
+
+        }
+
     }
 
 
