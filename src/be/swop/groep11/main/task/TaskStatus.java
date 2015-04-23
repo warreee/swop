@@ -11,20 +11,13 @@ public abstract class TaskStatus implements Cloneable {
 
 
 
-    protected enum TaskStatusString {
-        FINISHED,
-        EXECUTING,
-        AVAILABLE,
-        UNAVAILABLE,
-        FAILED
+    protected TaskStatus(TaskStatusEnum statusEnum) {
+        this.statusEnum = statusEnum;
     }
+    private final TaskStatusEnum statusEnum;
 
-    protected TaskStatus() {
 
-    }
-
-    protected abstract TaskStatusString getStatusString();
-
+    protected abstract TaskStatusEnum getStatus();
     protected abstract TaskStatus getTaskStatus();
 
     @Override

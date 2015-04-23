@@ -1,9 +1,6 @@
 package be.swop.groep11.main.task;
 
-import org.mockito.cglib.core.Local;
-
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -11,9 +8,13 @@ import java.time.LocalDateTime;
  */
 public class TaskAvailable extends TaskStatus {
 
+    protected TaskAvailable() {
+        super(TaskStatusEnum.AVAILABLE);
+    }
+
     @Override
-    public TaskStatusString getStatusString() {
-        return TaskStatusString.AVAILABLE;
+    public TaskStatusEnum getStatus() {
+        return TaskStatusEnum.AVAILABLE;
     }
 
     @Override

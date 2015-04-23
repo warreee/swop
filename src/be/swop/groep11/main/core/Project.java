@@ -17,7 +17,15 @@ import java.util.Set;
  */
 public class Project {
 
-
+    private String name;
+    private String description;
+    private SystemTime systemTime;
+    private LocalDateTime creationTime;
+    private LocalDateTime dueTime;
+    /**
+     * Interne ArrayList die alle taken bijhoud.
+     */
+    private ArrayList<Task> tasks = new ArrayList<>();
 
     /**
      * Standaard constructor voor een nieuw project.
@@ -25,7 +33,6 @@ public class Project {
      * @param description   Omschrijving van het project
      * @param creationTime  Creation time voor het project
      * @param dueTime       Due time voor het project
-     * @param creator       Wie het project heeft aangemaakt
      * @param systemTime
      * @throws IllegalArgumentException
      *                      | !isValidDescription(description)
@@ -34,20 +41,13 @@ public class Project {
      *                      | !isValidUser(creator)
      *                      | !isValidProjectID(projectID)
      */
-    public Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, User creator, SystemTime systemTime) throws IllegalArgumentException{
+    public Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, SystemTime systemTime) throws IllegalArgumentException{
         setProjectName(name);
-        setCreationAndDueTime(creationTime, dueTime);
-        setCreator(creator);
-        setDescription(description);
+        setCreationAndDueTime(creationTime, dueTime);setDescription(description);
         this.systemTime = systemTime;
     }
 
-    /**
-     * Geeft naam van het project terug.
-     */
-    public String getName() {
-        return this.name;
-    }
+
 
     /**
      * @param name  De naam die dit project moet dragen.
@@ -59,15 +59,6 @@ public class Project {
             throw new IllegalArgumentException("Projectnaam kan niet 'null' zijn.");
         }
         this.name = name;
-    }
-
-    private String name;
-
-    /**
-     * Geeft de beschrijving terug van dit project.
-     */
-    public String getDescription() {
-        return this.description;
     }
 
     /**
@@ -82,7 +73,18 @@ public class Project {
         this.description = description;
     }
 
-    private String description;
+    /**
+     * Geeft naam van het project terug.
+     */
+    public String getName() {
+        return this.name;
+    }
+    /**
+     * Geeft de beschrijving terug van dit project.
+     */
+    public String getDescription() {
+        return this.description;
+    }
 
     /**
      * Geeft de datum van aanmaken terug.
@@ -114,8 +116,6 @@ public class Project {
         this.dueTime = dueTime;
     }
 
-    private LocalDateTime creationTime;
-    private LocalDateTime dueTime;
 
     /**
      * Geeft de status van dit project: ONGOING of FINISHED.
@@ -135,46 +135,12 @@ public class Project {
         return ProjectStatus.FINISHED;
     }
 
-
-    private SystemTime systemTime;
-
-
-
     /**
      * @return Een ImmutableList die alle taken bevat.
      */
     public ImmutableList<Task> getTasks() {
         return ImmutableList.copyOf(tasks.iterator());
     }
-
-    /**
-     * Geeft de User terug die dit project heeft aangemaakt.
-     */
-    public User getCreator() {
-        return this.creator;
-    }
-
-    /**
-     * Zet een User als creator van dit project.
-     * @param creator   De nieuwe gebruiker.
-     * @throws IllegalArgumentException
-     *                  Gooi indien !isValidUser(creator)
-     */
-    public void setCreator(User creator) throws IllegalArgumentException{
-        if(!isValidUser(creator)){
-            throw new IllegalArgumentException("Geen geldige user.");
-        }
-        this.creator = creator;
-    }
-
-
-
-    private User creator;
-
-    /**
-     * Interne ArrayList die alle taken bijhoud.
-     */
-    private ArrayList<Task> tasks = new ArrayList<>();
 
     /**
      * Controleer of de gegeven projectNaam een geldige projectNaam is.
@@ -194,16 +160,6 @@ public class Project {
     }
 
     /**
-     * Controleer of de gegeven User een geldige User kan zijn.
-     * @param user  De te controleren User.
-     * @return      Waar indien user geïnitialiseerd.
-     */
-    public static boolean isValidUser(User user) {
-        return user != null;
-    }
-
-
-    /**
      * @param startTime De starttijd die gecontroleerd moet worden.
      * @param endTime   De eindtijd die gecontroleerd moet worden.
      * @return          Waar indien startTime, endTime niet null zijn. En bovendien startTime.isBefore(endTime)
@@ -211,7 +167,6 @@ public class Project {
     public static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime){
         return startTime !=null && endTime != null && startTime.isBefore(endTime);
     }
-
 
     /**
      * Voegt een taak toe aan dit project.
@@ -310,13 +265,14 @@ public class Project {
      * Geeft een lijst van alle gefaalde taken van dit project.
      */
     public ImmutableList<Task> getFailedTasks(){
-        List<Task> tasks = new ArrayList<Task>();
-        for (Task task : this.getTasks()) {
+        List<Task> tasks = new ArrayList<>();
+        for (Task task : getTasks()) {
             if (task.getStatus() instanceof TaskFailed) {
                 tasks.add(task);
             }
         }
         return ImmutableList.copyOf(tasks);
     }
+
 
 }

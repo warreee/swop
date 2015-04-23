@@ -44,11 +44,10 @@ public class ProjectRepository {
      * @param description   De beschrijving van het project
      * @param creationTime  De aanmaaktijd van het project
      * @param duetime       De eindtijd van het project
-     * @param user          De gebruiker die het project aanmaakt (de creator van het project)*
      * @throws IllegalArgumentException De opgegeven parameters voor het project zijn ongeldig.
      */
-    public void addNewProject(String name, String description,LocalDateTime creationTime, LocalDateTime duetime, User user) throws IllegalArgumentException{
-        Project proj = new Project(name, description, creationTime, duetime, user, systemTime);
+    public void addNewProject(String name, String description, LocalDateTime creationTime, LocalDateTime duetime) throws IllegalArgumentException{
+        Project proj = new Project(name, description, creationTime, duetime, systemTime);
         projects.add(proj);
     }
 

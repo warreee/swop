@@ -7,10 +7,13 @@ import java.time.LocalDateTime;
  * Created by warreee on 4/7/15.
  */
 public class TaskFailed extends TaskStatus {
+    protected TaskFailed() {
+        super(TaskStatusEnum.FAILED);
+    }
 
     @Override
-    public TaskStatusString getStatusString() {
-        return TaskStatusString.FAILED;
+    public TaskStatusEnum getStatus() {
+        return TaskStatusEnum.FAILED;
     }
 
     @Override

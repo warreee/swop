@@ -3,7 +3,6 @@ package be.swop.groep11.test.unit;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +26,7 @@ public class TaskTest {
         this.systemTime = new SystemTime(now);
         project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
-                new User("Alfred J. Kwak"),systemTime );
+                systemTime );
 
         project.addNewTask("Test taak 1", 0.1, Duration.ofHours(8));
         project.addNewTask("Test taak 2", 0, Duration.ofMinutes(120));

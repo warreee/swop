@@ -8,10 +8,13 @@ import java.time.LocalDateTime;
  * Created by warreee on 4/7/15.
  */
 public class TaskExecuting extends TaskStatus {
+    protected TaskExecuting() {
+        super(TaskStatusEnum.EXECUTING);
+    }
 
     @Override
-    public TaskStatusString getStatusString() {
-        return TaskStatusString.EXECUTING;
+    public TaskStatusEnum getStatus() {
+        return TaskStatusEnum.EXECUTING;
     }
 
     @Override

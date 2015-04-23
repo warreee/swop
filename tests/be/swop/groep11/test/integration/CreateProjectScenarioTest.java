@@ -33,7 +33,7 @@ public class CreateProjectScenarioTest {
         projectRepository = new ProjectRepository(systemTime);
         user = new User("Test");
 
-        projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10), new User("TEST"));
+        projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
         projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8));
         mockedUI = mock(UserInterface.class);
 

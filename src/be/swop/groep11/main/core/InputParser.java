@@ -232,7 +232,7 @@ public class InputParser {
         LocalDateTime creationTime = parseTime(propertiesList.get("creationTime"));
         LocalDateTime dueTime = parseTime(propertiesList.get("dueTime"));
 
-        projectRepository.addNewProject(name, description, creationTime, dueTime, user);
+        projectRepository.addNewProject(name, description, creationTime, dueTime);
 
         // Haalt het laatst toegevoegde project op.
         projectList.add(projectRepository.getProjects().get(projectRepository.getProjects().size() - 1 ));

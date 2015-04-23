@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-class ResourceType implements  IResourceType{
+class ResourceType implements IResourceType{
 
     private final String name;
     private DailyAvailability dailyAvailability;
@@ -29,7 +29,6 @@ class ResourceType implements  IResourceType{
         this.dailyAvailability = dailyAvailability;
     }
 
-    //ConstrainingType,constraint
     private HashMap<IResourceType, ResourceTypeConstraint> constraintMap = new HashMap<>();
 
     @Override

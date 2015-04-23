@@ -4,7 +4,6 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.ui.EmptyListException;
 import be.swop.groep11.main.actions.CancelException;
 import be.swop.groep11.main.ui.UserInterface;
@@ -64,7 +63,7 @@ public class ProjectController extends AbstractController {
             LocalDateTime creationTime =  getUserInterface().requestDatum("Creation time");
             LocalDateTime dueTime =  getUserInterface().requestDatum("Due time");
 
-            projectRepository.addNewProject(projectName, description ,creationTime, dueTime, user);
+            projectRepository.addNewProject(projectName, description ,creationTime, dueTime);
             getUserInterface().printMessage("Project toegevoegd");
         } catch (IllegalArgumentException e) {
             getUserInterface().printException(e);

@@ -8,9 +8,13 @@ import java.time.LocalDateTime;
  */
 public class TaskUnavailable extends TaskStatus {
 
+    protected TaskUnavailable() {
+        super(TaskStatusEnum.UNAVAILABLE);
+    }
+
     @Override
-    public TaskStatusString getStatusString() {
-        return TaskStatusString.UNAVAILABLE;
+    public TaskStatusEnum getStatus() {
+        return TaskStatusEnum.UNAVAILABLE;
     }
 
     @Override

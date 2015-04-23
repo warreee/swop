@@ -8,10 +8,12 @@ import java.time.LocalDateTime;
  */
 public class TaskFinished extends TaskStatus {
 
-
+    protected TaskFinished() {
+        super(TaskStatusEnum.FINISHED);
+    }
     @Override
-    public TaskStatusString getStatusString() {
-        return TaskStatusString.FINISHED;
+    public TaskStatusEnum getStatus() {
+        return TaskStatusEnum.FINISHED;
     }
 
     @Override

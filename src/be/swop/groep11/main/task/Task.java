@@ -232,7 +232,7 @@ public class Task {
     }
 
     public String getStatusString() {
-        return this.getStatus().getStatusString().toString();
+        return this.getStatus().getStatus().toString();
     }
 
     public void execute(LocalDateTime startTime) {

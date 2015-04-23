@@ -2,7 +2,6 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.IllegalStateTransition;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
@@ -28,7 +27,7 @@ public class TaskStatusTest {
     public void setUp() throws NoSuchMethodException {
         now = LocalDateTime.of(2015, 3, 12, 8, 0);
         systemTime = new SystemTime(now);
-        project = new Project("Test project", "Mijn eerste project", now, now.plusHours(6), new User("ROOT"), systemTime);
+        project = new Project("Test project", "Mijn eerste project", now, now.plusHours(6), systemTime);
 
         project.addNewTask("Taak1", 0.1, Duration.ofHours(1));
         project.addNewTask("Taak2", 0.1, Duration.ofHours(1));

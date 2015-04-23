@@ -5,7 +5,6 @@ import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -39,7 +38,7 @@ public class CreateTaskScenarioTest {
         systemTime = new SystemTime(now);
         projectRepository = new ProjectRepository(systemTime);
 
-        projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10), new User("TEST"));
+        projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
         this.taskController = new TaskController(projectRepository,systemTime,mockedUI);
 
         this.projects = projectRepository.getProjects();
