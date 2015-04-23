@@ -152,6 +152,16 @@ public class ResourceManagerTest {
         resourceManager.makeReservation(mockedTask, type1.getResourceInstances().get(0), new TimeSpan(start2, end2), false);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void makeNullReservationTest() throws Exception {
+        addResourceTypeNameOnly("Test Resource 1");
+        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        LocalDateTime start = LocalDateTime.of(2015, 3, 10, 12, 0);
+        LocalDateTime end = LocalDateTime.of(2015, 3, 10, 16, 0);
+        resourceManager.addResourceInstance(type1, "Instance 1");
+        resourceManager.makeReservation(null, type1.getResourceInstances().get(0), new TimeSpan(start, end), false);
+    }
+
     /**
      * Test de methode getNextAvailableTimeSpan.
      * @throws Exception
