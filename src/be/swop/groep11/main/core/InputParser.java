@@ -31,11 +31,15 @@ public class InputParser {
     private ResourceManager resourceManager;
     private SystemTime systemTime;
 
+    /**
+     * Initialiseerd deze inputparser.
+     * @param projectRepository De ProjectRepository waaraan alle projecten moeten worden toegevoegd.
+     * @param resourceManager De ResourceManager waaraan alle Resources en reservaties moeten worden toegevoegd.
+     */
     public InputParser(ProjectRepository projectRepository, ResourceManager resourceManager) {
         this.projectRepository = projectRepository;
         this.resourceManager = resourceManager;
     }
-
 
     public static void main(String[] args) throws FileNotFoundException {
         ProjectRepository projectRepository = new ProjectRepository(new SystemTime(LocalDateTime.now()));
@@ -43,7 +47,6 @@ public class InputParser {
         InputParser parser = new InputParser(projectRepository, typeRepo);
         parser.parseInputFile();
     }
-
 
     /**
      * Leest input.tman in, parset de file en maakt de objecten aan in de meegegeven projectRepository
@@ -168,7 +171,7 @@ public class InputParser {
 
     /**
      * Leest alle taken in.
-     * OPGEPAST, lees eerst alle projecten in.
+     * Voor deze methode wordt opgeroepen moeten alle projecten al ingelezen zijn.
      * @param tasksMap
      */
     private void handleTasks(Map<String, Object> tasksMap){
@@ -191,6 +194,10 @@ public class InputParser {
         dailyAvailabilityList.add(dailyAvailability);
     }
 
+    /**
+     * Voegt een nieuwe Developer toe aan de gegeven ResourceManager.
+     * @param propertiesList
+     */
     private void addDeveloper(Map<String, String> propertiesList){
         String name = propertiesList.get("name");
         IResourceType resourceType = resourceManager.getResourceTypeByName("Developer");
@@ -198,6 +205,11 @@ public class InputParser {
         developerList.add((Developer) resourceType.getResourceInstances().get(resourceType.getResourceInstances().size() - 1));
     }
 
+    /**
+     * TODO: Documentatie schrijven als methode af is.
+     * @param number
+     * @param propertiesList
+     */
     private void addPlanning(int number, Map<String, String> propertiesList){
         Task task = planningTaskMap.get(number);
         task.plan(parseTime(propertiesList.get("plannedStartTime")));
@@ -225,6 +237,10 @@ public class InputParser {
         projectList.add(projectRepository.getProjects().get(projectRepository.getProjects().size() - 1 ));
     }
 
+    /**
+     * Maakt een nieuwe reservatie in de ResourceManager.
+     * @param propertiesList
+     */
     private void addReservation(Map<String, String> propertiesList){
         ResourceInstance resourceInstance = resourceInstanceList.get(Integer.valueOf(propertiesList.get("resource")));
         Task task = taskList.get(Integer.valueOf(propertiesList.get("task")));
@@ -245,6 +261,10 @@ public class InputParser {
         resourceInstanceList.add(resourceType.getResourceInstances().get(size - 1));
     }
 
+    /**
+     * Voegt een nieuw ResourceType toe.
+     * @param propertiesList
+     */
     private void addResourceType(Map<String, String> propertiesList){
         // Lees alle info uit de map.
         String name = propertiesList.get("name");
@@ -270,6 +290,10 @@ public class InputParser {
         resourceTypeList.add(resourceManager.getResourceTypeByName(name));
     }
 
+    /**
+     * Voegt een nieuwe taak toe.
+     * @param propertiesList
+     */
     private void addTask(Map<String, String> propertiesList) {
         String description = propertiesList.get("description");
         Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
@@ -348,14 +372,13 @@ public class InputParser {
      * @return een array van ints
      */
     private int[] parseStringArray(String array) {
-
         String[] stringArray = array.replace("[", "").replace("]", "").replace(" ", "").trim().split(",");
-
         int[] intArray = new int[stringArray.length];
 
         for (int i = 0; i < stringArray.length; i++) {
             intArray[i] = Integer.valueOf(stringArray[i]);
         }
+
         return intArray;
     }
 }
