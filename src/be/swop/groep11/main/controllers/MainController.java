@@ -48,6 +48,13 @@ public class MainController extends AbstractController {
     }
 
     @Override
+    public void planTask() throws IllegalArgumentException {
+        activate(taskController);
+        planningController.planTask();
+        deActivate(taskController);
+    }
+
+    @Override
     public void showProjects() throws IllegalArgumentException {
         activate(projectController);
         projectController.showProjects();

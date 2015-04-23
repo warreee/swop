@@ -75,7 +75,7 @@ public class App {
         projectController = new ProjectController(projectRepository, new User("ROOT"), cli );
         advanceTimeController = new AdvanceTimeController( systemTime, cli);
         simulationController = new SimulationController(actionBehaviourMapping, projectRepository, cli);
-        planningController = new PlanningController(projectRepository,resourceManager, cli);
+        planningController = new PlanningController(projectRepository,resourceManager, systemTime, cli);
         main = new MainController(actionBehaviourMapping, advanceTimeController,simulationController,projectController,taskController,planningController,cli );
 
     }

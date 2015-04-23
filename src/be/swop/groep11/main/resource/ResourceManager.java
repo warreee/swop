@@ -387,10 +387,10 @@ public class ResourceManager {
      * @param dateTime Het gegeven tijdstip waarna de plannen moeten starten
      * @return Een lijst van lengte n van de eerstvolgende mogelijke plannen
      */
-    public List<Plan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
+    public List<IPlan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
         // TODO: dit is nog niet efficiënt genoeg!
 
-        List<Plan> plans = new LinkedList<>();
+        List<IPlan> plans = new LinkedList<>();
 
         LocalDateTime startTime = getNextHour(dateTime);
         while (plans.size() < n) {
@@ -405,7 +405,7 @@ public class ResourceManager {
         return plans;
     }
 
-    private class Plan {
+    private class Plan implements IPlan {
 
         /**
          * Constructor om een nieuw plan aan te maken met default reservaties voor de resource requirements van de gegeven taak.
@@ -430,6 +430,7 @@ public class ResourceManager {
          * @return True als de reservaties niet conflicteren met andere reservaties
          *         en alle nodige reservaties gemaakt zijn.
          */
+        @Override
         public boolean isValidPlan() {
 
             // geen conflicten?
@@ -480,6 +481,7 @@ public class ResourceManager {
         /**
          * Geeft de taak van dit plan.
          */
+        @Override
         public Task getTask() {
             return task;
         }
@@ -489,6 +491,7 @@ public class ResourceManager {
         /**
          * Geeft de starttijd van dit plan.
          */
+        @Override
         public LocalDateTime getStartTime() {
             return startTime;
         }
@@ -501,6 +504,7 @@ public class ResourceManager {
          * @return De laatste eindtijd van alle reservaties van het plan,
          * of starttijd + de estimated duration van de taak indien er geen reservaties zijn.
          */
+        @Override
         public LocalDateTime getEndTime() {
             if (this.getReservations().isEmpty()) {
                 return this.getStartTime().plus(this.getTask().getEstimatedDuration());
@@ -522,6 +526,7 @@ public class ResourceManager {
          *
          * @return De reservaties van dit plan en die eindigen allemaal op hetzelfde moment.
          */
+        @Override
         public ImmutableList<ResourceReservation> getReservations() {
             List<ResourceReservation> reservations = new LinkedList<>();
             // zorg wel dat alle reservaties op het zelfde moment eindigen!
@@ -542,6 +547,7 @@ public class ResourceManager {
          * @param resourceType Het resource type
          * @return De reservaties van dit plan en die eindigen allemaal op hetzelfde moment.
          */
+        @Override
         public ImmutableList<ResourceReservation> getReservations(IResourceType resourceType) {
             List<ResourceReservation> reservations = new LinkedList<>();
             for (ResourceReservation reservation : this.getReservations()) {
@@ -558,6 +564,7 @@ public class ResourceManager {
          * @param resourceInstance De te reserveren resource instantie
          * @throws IllegalArgumentException Er is in dit plan al een reservatie voor de gegeven resource instantie gemaakt.
          */
+        @Override
         public void addReservation(ResourceInstance resourceInstance) {
             if (this.hasReservationFor(resourceInstance)) {
                 throw new IllegalArgumentException("Er is in dit plan al een reservatie voor de gegeven resource instantie gemaakt.");
@@ -572,6 +579,7 @@ public class ResourceManager {
         /**
          * Verwijdert de reservatie voor een resource instantie uit dit plan.
          */
+        @Override
         public void removeReservation(ResourceInstance resourceInstance) {
             for (ResourceReservation reservation : this.reservations) {
                 if (reservation.getResourceInstance() == resourceInstance) {
@@ -584,6 +592,7 @@ public class ResourceManager {
         /**
          * Controleert of dit plan een reservatie voor een resource instantie bevat.
          */
+        @Override
         public boolean hasReservationFor(ResourceInstance resourceInstance) {
             for (ResourceReservation reservation : this.reservations) {
                 if (reservation.getResourceInstance() == resourceInstance) {
