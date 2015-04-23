@@ -5,6 +5,7 @@ import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -24,6 +25,7 @@ public class UpdateTaskStatusScenarioTest {
     private SystemTime systemTime;
     private TaskController taskController;
     private UserInterface mockedUI;
+    private ResourceManager resourceManager;
 
     private ImmutableList<Project> projects;
     private ImmutableList<Task> tasks;
@@ -32,12 +34,13 @@ public class UpdateTaskStatusScenarioTest {
     public void setUp() throws Exception {
         now = LocalDateTime.now();
         systemTime = new SystemTime(now);
+        resourceManager = new ResourceManager();
         repository = new ProjectRepository(systemTime);
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10));
         repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
 
         this.mockedUI = mock(UserInterface.class);
-        this.taskController = new TaskController(repository,systemTime,mockedUI);
+        this.taskController = new TaskController(repository,systemTime,mockedUI, resourceManager);
 
         projects = repository.getProjects();
         tasks = projects.get(0).getTasks();
@@ -50,7 +53,7 @@ public class UpdateTaskStatusScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         when(mockedUI.requestString(anyString())).thenReturn("EXECUTE");
 
-        taskController = new TaskController(repository,systemTime,mockedUI);
+        taskController = new TaskController(repository,systemTime,mockedUI, resourceManager);
         taskController.updateTask();
     }
 
@@ -63,7 +66,7 @@ public class UpdateTaskStatusScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         //Cancel exception wordt opgevangen in de controller.
-        taskController = new TaskController(repository,systemTime,mockedUI);
+        taskController = new TaskController(repository,systemTime,mockedUI, resourceManager);
         taskController.updateTask();
     }
 
@@ -75,7 +78,7 @@ public class UpdateTaskStatusScenarioTest {
         when(mockedUI.requestString(anyString())).thenReturn("FINISHED");
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
-        taskController = new TaskController(repository,systemTime,mockedUI);
+        taskController = new TaskController(repository,systemTime,mockedUI, resourceManager);
         taskController.updateTask();
     }
 
@@ -87,7 +90,7 @@ public class UpdateTaskStatusScenarioTest {
         when(mockedUI.requestString(anyString())).thenReturn("UNAVAILABLE");
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
-        taskController = new TaskController(repository,systemTime,mockedUI);
+        taskController = new TaskController(repository,systemTime,mockedUI, resourceManager);
         taskController.updateTask();    }
 
     @Test (expected = StopTestException.class)
@@ -98,7 +101,7 @@ public class UpdateTaskStatusScenarioTest {
         when(mockedUI.requestString(anyString())).thenReturn("AVAILABLE");
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
-        taskController = new TaskController(repository,systemTime,mockedUI);
+        taskController = new TaskController(repository,systemTime,mockedUI, resourceManager);
         taskController.updateTask();
     }
 

@@ -182,6 +182,8 @@ public class Project {
         tasks.add(task);
     }
 
+
+
     /**
      * Controleer of de gegeven taak bij dit project hoort.
      * @param task  De taak die gecontroleerd moet worden.

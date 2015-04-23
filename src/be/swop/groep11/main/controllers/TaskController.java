@@ -3,6 +3,8 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.resource.IResourceType;
+import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.ui.EmptyListException;
@@ -11,6 +13,7 @@ import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +24,19 @@ public class TaskController extends AbstractController {
 
     private ProjectRepository projectRepository;
     private SystemTime systemTime;
+    private  ResourceManager resourceManager;
 
     /**
      * Constructor om een nieuwe task controller te maken.
-     * @param ui Gebruikersinterface
+     * @param
+     * ui Gebruikersinterface
      * @param userInterface
      */
-    public TaskController( ProjectRepository projectRepository, SystemTime systemTime, UserInterface userInterface) {
+    public TaskController( ProjectRepository projectRepository, SystemTime systemTime, UserInterface userInterface, ResourceManager resourceManager) {
         super(userInterface);
         this.projectRepository = projectRepository;
         this.systemTime = systemTime;
+        this.resourceManager = resourceManager;
     }
 
     private SystemTime getSystemTime() {
@@ -47,9 +53,18 @@ public class TaskController extends AbstractController {
             Double acceptableDeviation =  getUserInterface().requestDouble("Aanvaardbare afwijking in procent:") / 100;
             Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf( getUserInterface().requestNumber("Geschatte duur in minuten:")).longValue());
 
+            String message = "Voeg resource types toe? (y/N)";
+            while(getUserInterface().requestString(message).trim().equalsIgnoreCase("y")){
+                getUserInterface().selectFromList(resourceManager.getResourceTypes(), (x -> x.getName()));
+                getUserInterface().requestNumber("Hoeveel wil je er?");
+                message = "Wilt u nog resource types toevoegen? (y/N)";
+            }
+
+
+
             List<Task> tasks = new ArrayList<>(project.getTasks());
             List<Task> selectedTasks = new ArrayList<>();
-            while ( getUserInterface().requestString("Voeg een afhankelijkheid toe? (y/N)").equalsIgnoreCase("y")) {
+            while ( getUserInterface().requestString("Voeg een afhankelijkheid toe? (y/N)").trim().equalsIgnoreCase("y")) {
                 if (tasks.isEmpty()) {
                     getUserInterface().printMessage("Geen taken om toe te voegen...");
                     break;
@@ -63,7 +78,7 @@ public class TaskController extends AbstractController {
             }
 
             Task alternativeTaskFor = null;
-            if ( (! project.getFailedTasks().isEmpty()) &&  getUserInterface().requestString("Is deze taak een alternatieve taak? (y/N)").equalsIgnoreCase("y")) {
+            if ( (! project.getFailedTasks().isEmpty()) &&  getUserInterface().requestString("Is deze taak een alternatieve taak? (y/N)").trim().equalsIgnoreCase("y")) {
                 getUserInterface().printMessage("Deze taak zal een zal een alternatieve taak zijn voor de geselecteerde taak.");
                 alternativeTaskFor =  getUserInterface().selectTaskFromList(project.getFailedTasks());
             }
