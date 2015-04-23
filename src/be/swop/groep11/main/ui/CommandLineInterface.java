@@ -62,7 +62,7 @@ public class CommandLineInterface implements UserInterface {
 
     public void setActionBehaviourMapping(ActionBehaviourMapping actionBehaviourMapping){
         if(!canHaveAsActionMapping(actionBehaviourMapping)){
-            throw new IllegalArgumentException("Gegegven actionMapping is geen geldige voor deze UI.");
+            throw new IllegalArgumentException("Gegeven actionMapping is geen geldige voor deze UI.");
         }
         this.actionBehaviourMapping = actionBehaviourMapping;
     }
@@ -280,7 +280,7 @@ public class CommandLineInterface implements UserInterface {
 
     @Override
     public boolean requestBoolean(String request) throws CancelException {
-        return false;
+        return getBooleanFromUser.apply(request);
     }
 
     /**
@@ -369,6 +369,24 @@ public class CommandLineInterface implements UserInterface {
                 correct = false;
             }
         }while(!correct);
+        return result;
+    };
+    userInput<Boolean> getBooleanFromUser = request -> {
+        boolean result = false;
+        boolean quit = false;
+        do{
+            String response = getStringFromUser.apply(request);
+           if(response.equalsIgnoreCase("y")){
+               result = true;
+               quit = true;
+           }else if(response.equalsIgnoreCase("n")){
+               result = false;
+               quit = true;
+           }else {
+               quit = false;
+               printMessage("Verkeerde input, probeer opnieuw.");
+           }
+        }while(!quit);
         return result;
     };
 

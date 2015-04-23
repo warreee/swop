@@ -115,5 +115,7 @@ public class App {
         actionBehaviourMapping.activateController(main);
         // lees commando's
         cli.run();
+
+
     }
 }
