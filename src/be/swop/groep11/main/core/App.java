@@ -49,11 +49,11 @@ public class App {
         MainController main = new MainController(actionBehaviourMapping, advanceTimeController,simulationController,projectController,taskController,planningController);
         actionBehaviourMapping.activateController(main);
         //Default strategies
-        actionBehaviourMapping.addDefaultStrategy(Action.EXIT, () -> {
+        actionBehaviourMapping.addDefaultBehaviour(Action.EXIT, () -> {
             cli.printMessage("wants to exit");
             cli.wantsToExit();
         });
-        actionBehaviourMapping.addDefaultStrategy(Action.HELP, () -> cli.showHelp(actionBehaviourMapping.getActiveController()));
+        actionBehaviourMapping.addDefaultBehaviour(Action.HELP, () -> cli.showHelp(actionBehaviourMapping.getActiveController()));
         //MainController
         actionBehaviourMapping.addActionBehaviour(main, Action.CREATETASK, main::createTask);
         actionBehaviourMapping.addActionBehaviour(main, Action.UPDATETASK, main::updateTask);

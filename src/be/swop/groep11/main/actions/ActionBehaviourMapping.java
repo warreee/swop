@@ -10,7 +10,6 @@ import java.util.LinkedList;
  * Created by Ronald on 22/04/2015.
  */
 public class ActionBehaviourMapping {
-    //TODO betere naam voor de klasse ActionMapping zoeken. (ActionBehaviour?)
     /**
      *  Constructor voor aanmaken van een ActionBehaviourMapping
      * @param userInterface     De userInterface waarmee deze ActionBehaviourMapping gebruikt wordt.
@@ -91,24 +90,28 @@ public class ActionBehaviourMapping {
     }
 
     /**
-     *
-     * @param abstractController
+     * Voeg de gegeven AbstractController toe aan de executionStack.
+     * De laatste AbstractController op de stack is de actieve AbstractController.
+     * @param abstractController    De toe te voegen AbstractController, dewelke dus ook de actieve wordt.
      */
     public void activateController(AbstractController abstractController){
         controllerStack.addLast(abstractController);
     }
 
     /**
-     *
-     * @param abstractController
+     * Verwijder de gegeven AbstractController van de executionStack.
+     * @param abstractController    De te verwijderen AbstractController
      */
     public void deActivateController(AbstractController abstractController){
         controllerStack.remove(abstractController);
     }
 
     /**
-     *
-     * @param action
+     * Voor de gepaste ActionBehaviour uit voor de gegeven Action.
+     * Verkrijg de Map<Action,ActionBehaviour> voor de huidige Actieve Controller.
+     * Verkrijg ui die map de gepaste ActionBehaviour en voer deze uit.
+     * Indien er geen ActionBehaviour bestaat voor de gegeven Action, voor de InvalidBehaviour uit.
+     * @param action    De Action waarvoor men het gepaste ActionBehaviour wil uitvoeren.
      */
     public void executeAction(Action action){
         HashMap<Action,ActionBehaviour> map = getMappingFor(getActiveController());
@@ -122,6 +125,14 @@ public class ActionBehaviourMapping {
         }
     }
 
+    /**
+     * Geeft een Map<Action,ActionBehaviour> voor de gegeven AbstractController.
+     * Dewelke de associaties tussen Action en ActionBehaviour bevat.
+     * @param controller    De AbstractController waarvoor men de Map wilt opvragen.
+     * @return              HashMap<Action,ActionBehaviour>
+     * @throws IllegalArgumentException
+     *                      Gooi exception indien er geen mapping bestaat voor de gegeven AbstractController
+     */
     public HashMap<Action,ActionBehaviour> getMappingFor(AbstractController controller)throws IllegalArgumentException{
         HashMap<Action,ActionBehaviour> map = controllerActionBehavioursMap.get(controller);
         if(map == null){//Niets te vinden
@@ -130,29 +141,56 @@ public class ActionBehaviourMapping {
         return map;
     }
 
-    public void addDefaultStrategy(Action action, ActionBehaviour strategy) {
-        if(!isValidActionStrategy(action, strategy)) {
-            throw new IllegalArgumentException("Invalid command & commandStrategy");
+    /**
+     * Toevoegen van een standaard behaviour die voor alle aanwezig AbstractController's aanwezig zal zijn.
+     * @param action        De Action waarvoor men het standaard gedrag wil bepalen.
+     * @param behaviour     Het nieuwe standaard gedrag voor de gegeven Action.
+     * @throws IllegalArgumentException
+     *                      Gooi exception indien de gegeven Action en ActionBehaviour niet geldig zijn.
+     *                      Deze zijn niet geldig indien ze niet geinitialiseerd zijn.
+     */
+    public void addDefaultBehaviour(Action action, ActionBehaviour behaviour) throws IllegalArgumentException{
+        if(!isValidActionStrategy(action, behaviour)) {
+            throw new IllegalArgumentException("Invalid action & ActionBehaviour");
         }
-        getDefaultMap().put(action, strategy);
+        getDefaultMap().put(action, behaviour);
     }
 
-    private boolean isValidActionStrategy(Action action, ActionBehaviour strategy) {
-        return action != null & strategy != null;
+    /**
+     * Controleer of de gegeven Action & ActionBehaviour geldig zijn.
+     * @param action        De te controleren Action.
+     * @param behaviour      De te controleren ActionBehaviour
+     * @return      Waar indien action & behaviour geinitialiseerd zijn.
+     */
+    private boolean isValidActionStrategy(Action action, ActionBehaviour behaviour) {
+        return action != null & behaviour != null;
     }
 
+    /**
+     * @return  De HashMap<Action,ActionBehaviour> met de standaard ActionBehaviour's.
+     */
     private HashMap<Action,ActionBehaviour> getDefaultMap(){
         return defaultActionBehavioursMap;
     }
 
+    /**
+     * @return  De laatste toegevoegde AbstractController aan de ExecutionStack
+     */
     public AbstractController getActiveController(){
         return controllerStack.getLast();
     }
+
+    /**
+     * @return De UserInterface geassocieerd met deze ActionBehaviourMapping
+     */
     public UserInterface getUserInterface() {
         return userInterface;
     }
 
-    public ActionBehaviour getInvalidBehaviour() {
+    /**
+     * @return Standaard ActionBehavior indien een Action niet ondersteund is.
+     */
+    private ActionBehaviour getInvalidBehaviour() {
         return this.invalidBehaviour;
     }
 }
