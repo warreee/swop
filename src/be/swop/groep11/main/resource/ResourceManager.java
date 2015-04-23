@@ -1,10 +1,8 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -50,18 +48,15 @@ public class ResourceManager {
         typeBuilders.put(newTypeBuilder.getResourceType(),newTypeBuilder);
         newTypeBuilder.withDailyAvailability(availability);
         //Add require constraints
-        // TODO: vraag Robin: Waarom deze check juist?
-        if(!requireTypes.isEmpty()){
-            for (IResourceType reqType : requireTypes) {
-                newTypeBuilder.withRequirementConstraint(reqType);
-            }
+        for (IResourceType reqType : requireTypes) {
+            newTypeBuilder.withRequirementConstraint(reqType);
         }
+
         //Add conflicting constraints
-        if(!conflictingTypes.isEmpty()){
-            for (IResourceType conflictType : conflictingTypes) {
-                newTypeBuilder.withConflictConstraint(conflictType);
-            }
+        for (IResourceType conflictType : conflictingTypes) {
+            newTypeBuilder.withConflictConstraint(conflictType);
         }
+
         resourceTypes.add(newTypeBuilder.getResourceType());
     }
 

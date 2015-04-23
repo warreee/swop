@@ -1,7 +1,6 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.task.IllegalStateTransition;
@@ -29,7 +28,6 @@ public class TaskStatusTest {
     public void setUp() throws NoSuchMethodException {
         now = LocalDateTime.of(2015, 3, 12, 8, 0);
         systemTime = new SystemTime(now);
-        ProjectRepository projectRepository = new ProjectRepository(systemTime);
         project = new Project("Test project", "Mijn eerste project", now, now.plusHours(6), new User("ROOT"), systemTime);
 
         project.addNewTask("Taak1", 0.1, Duration.ofHours(1));
@@ -42,6 +40,7 @@ public class TaskStatusTest {
         methodMakeAvailable.setAccessible(true);
         methodMakeUnAvailable.setAccessible(true);
     }
+    //TODO review testen, wordt alles getest dat getest moet worden?
 
 
 /*    *//**
@@ -151,8 +150,6 @@ public class TaskStatusTest {
 
     //////////////////////// FAILED___TO____ //////////////////////
 
-    // TODO: nog nakijken of er nu een starttijd vereist is voor de fAILed status
-
     @Test(expected = IllegalStateTransition.class)
     public void failedToExecuting() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
@@ -176,5 +173,4 @@ public class TaskStatusTest {
         assertTrue(task1.getStatusString().equals("FAILED"));
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
-
 }

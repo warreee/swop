@@ -1,49 +1,44 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.core.TMSystem;
+import be.swop.groep11.main.core.SystemTime;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.*;
+import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TMSystemTest {
 
-    private TMSystem TMSystem;
+    private SystemTime systemTime;
     private LocalDateTime newTime;
 
     @Before
     public void setUp() throws Exception {
-        TMSystem = new TMSystem();
-        newTime = LocalDateTime.now().plusSeconds(10);
-
-    }
-
-    @Test
-    public void GetProjectRepository_check() throws Exception {
-        assertNotNull(TMSystem.getProjectRepository());
+        systemTime = new SystemTime();
+        newTime = LocalDateTime.now().plusHours(10);
     }
 
     @Test
     public void UpdateSystemTime_valid() throws Exception {
-        TMSystem.updateSystemTime(newTime);
-        assertEquals(newTime, TMSystem.getCurrentSystemTime());
+        systemTime.updateSystemTime(newTime);
+        assertEquals(newTime, systemTime.getCurrentSystemTime());
     }
 
     @Test (expected = IllegalArgumentException.class)
      public void UpdateSystemTime_invalid_earlierTime() throws Exception {
-        LocalDateTime newTime = TMSystem.getCurrentSystemTime().minusSeconds(10);
-        TMSystem.updateSystemTime(newTime);
+        LocalDateTime newTime = systemTime.getCurrentSystemTime().minusHours(1);
+        systemTime.updateSystemTime(newTime);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void UpdateSystemTime_invalid_null() throws Exception {
-        TMSystem.updateSystemTime(null);
+        systemTime.updateSystemTime(null);
     }
 
     @Test
     public void GetCurrentSystemTime_check() throws Exception {
-        assertTrue(TMSystem.getCurrentSystemTime().isBefore(newTime));
+        assertTrue(systemTime.getCurrentSystemTime().isBefore(newTime));
     }
 }

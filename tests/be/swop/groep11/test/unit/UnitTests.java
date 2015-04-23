@@ -7,7 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
         TaskTest.class, TMSystemTest.class, TaskStatusTest.class,
-        TimeSpanTest.class, ResourceTypeTest.class, ResourceTypeBuilderTest.class,
+        TimeSpanTest.class, ResourceTypeBuilderTest.class,
         ResourceTypeConstraintTest.class,
         ProjectTest.class, ProjectRepositoryTest.class, DependencyConstraintTest.class,
         ResourceTest.class})

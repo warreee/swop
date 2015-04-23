@@ -3,7 +3,6 @@ package be.swop.groep11.test.unit;
 import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.IResourceType;
 import be.swop.groep11.main.resource.ResourceManager;
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -78,5 +76,5 @@ public class ResourceManagerTest {
         con.stream().forEach(x -> conflicting.add(resourceManager.getResourceTypes().get(x)));
         resourceManager.addNewResourceType(name, required, conflicting);
     }
-    }
+
 }

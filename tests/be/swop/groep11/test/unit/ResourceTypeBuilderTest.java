@@ -1,13 +1,24 @@
 package be.swop.groep11.test.unit;
 
+import be.swop.groep11.main.resource.DailyAvailability;
+import be.swop.groep11.main.resource.IResourceType;
+import be.swop.groep11.main.resource.ResourceInstance;
+import be.swop.groep11.main.resource.ResourceTypeBuilder;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.time.LocalTime;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by Ronald on 13/04/2015.
  */
 public class ResourceTypeBuilderTest {
-
+    //TODO test ResourceTypeBuilder, ResourceType,
     private ResourceTypeBuilder builderA;
     private ResourceTypeBuilder builderB;
-
 
     @Before
     public void setUp() throws Exception {
