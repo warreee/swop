@@ -3,6 +3,7 @@ package be.swop.groep11.main.ui;
 import be.swop.groep11.main.actions.*;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.resource.ResourceInstance;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 
@@ -24,23 +25,6 @@ import java.util.function.Function;
  * Commandline gebruikersinterface die UserInterface implementeert.
  */
 public class CommandLineInterface implements UserInterface {
-
-    public static void main(String[] args) {
-        //Voorbeeldje select multiple from list
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(java.lang.System.in));
-        CommandLineInterface cli = new CommandLineInterface(bufferedReader);
-        List<String> total = Arrays.asList("A","B","C","D","E","F");
-        List<String> selected = Arrays.asList("A","E", "F");
-        Function<String, String> entryPrinter = s -> "LETTER: " + s;
-
-        List<String> ss = cli.selectMultipleFromList("Het selecteren van letters",total,selected,4,true,entryPrinter);
-        System.out.println(ss);
-        try {
-            bufferedReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Constructor om een nieuwe commandline gebruikersinterface te maken.
