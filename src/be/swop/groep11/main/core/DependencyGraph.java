@@ -1,8 +1,6 @@
 package be.swop.groep11.main.core;
 
 import be.swop.groep11.main.task.Task;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import java.util.*;
 
@@ -19,38 +17,46 @@ public class DependencyGraph {
         dependentMap = new HashMap<>();
     }
 
+
+
     /**
      * Dependent hangt af van de dependingOn. Dus dependingOn moet eerst worden uitgevoerd.
      * @param dependent
      * @param dependingOn
      */
 
-    public void addDependency(Task dependent, Task dependingOn) {
+    public void addNewDependency(Task dependent, Task dependingOn) {
         if (isValidDependency(dependent, dependingOn)) {
-            if (dependingOnMap.containsKey(dependent)) {
-                dependingOnMap.get(dependent).add(dependingOn);
-                addToMap(dependingOn, dependingOnMap);
-            } else {
-                ArrayList<Task> dependingOnList = new ArrayList<>();
-                dependingOnList.add(dependingOn);
-                dependingOnMap.put(dependent, dependingOnList);
-                addToMap(dependingOn, dependingOnMap);
-            }
-
-            if (dependentMap.containsKey(dependingOn)) {
-                dependentMap.get(dependingOn).add(dependent);
-                addToMap(dependent, dependentMap);
-            } else {
-                ArrayList<Task> dependentList = new ArrayList<>();
-                dependentList.add(dependent);
-                dependentMap.put(dependingOn, dependentList);
-                addToMap(dependent, dependentMap);
-            }
+            addDependency(dependent, dependingOn);
         } else {
             throw new IllegalArgumentException("ongeldige dependency");
         }
 
     }
+
+    private void addDependency(Task dependent, Task dependingOn) {
+        if (dependingOnMap.containsKey(dependent)) {
+            dependingOnMap.get(dependent).add(dependingOn);
+            addToMap(dependingOn, dependingOnMap);
+        } else {
+            ArrayList<Task> dependingOnList = new ArrayList<>();
+            dependingOnList.add(dependingOn);
+            dependingOnMap.put(dependent, dependingOnList);
+            addToMap(dependingOn, dependingOnMap);
+        }
+
+        if (dependentMap.containsKey(dependingOn)) {
+            dependentMap.get(dependingOn).add(dependent);
+            addToMap(dependent, dependentMap);
+        } else {
+            ArrayList<Task> dependentList = new ArrayList<>();
+            dependentList.add(dependent);
+            dependentMap.put(dependingOn, dependentList);
+            addToMap(dependent, dependentMap);
+        }
+    }
+
+
 
     /**
      * Verwijdert de laatst toegevoegde dependency
@@ -103,7 +109,7 @@ public class DependencyGraph {
     public void changeDependingOnAlternativeTask(Task failedTask, Task alternativeTask) {
         ArrayList<Task> dependentTasksFailedTask = dependentMap.get(failedTask);
         for (Task dtft : dependentTasksFailedTask) {
-            addDependency(dtft, alternativeTask);
+            addNewDependency(dtft, alternativeTask);
         }
         removeDependency(failedTask);
 
@@ -138,13 +144,18 @@ public class DependencyGraph {
 
 
     private boolean containsLoop(Task dependent, Task dependingOn) {
-        ArrayList<Task> tempMarked = allTasks();
+        if (allTasks().size() == 0) { // er zitten nog geen depencies in
+            return false;
+        }
+        ArrayList<Task> tempMarked = new ArrayList<>();
+        ArrayList<Task> unMarked = allTasks();
         ArrayList<Task> finalMarked = new ArrayList<>();
         ArrayList<Task> result = new ArrayList<>();
         addDependency(dependent, dependingOn);
         try {
-            while (!finalMarked.isEmpty()) {
-                visit(finalMarked.get(0), tempMarked, finalMarked, result);
+            while (unMarked.stream().filter(entry -> !tempMarked.contains(entry) || !finalMarked.contains(entry)).count() != 0) {
+                // de vorige lamda expressie gaat na of unmarked niet leeg is
+                visit(unMarked.get(0), unMarked, tempMarked, finalMarked, result);
             }
         } catch (IllegalArgumentException e) {
                 undoAddDependency(dependent, dependingOn);
@@ -153,13 +164,13 @@ public class DependencyGraph {
         return true;
     }
 
-    private void visit(Task t, ArrayList<Task> tempMarked, ArrayList<Task> finalMarked, ArrayList<Task> result){
+    private void visit(Task t, ArrayList<Task> unMarked, ArrayList<Task> tempMarked, ArrayList<Task> finalMarked, ArrayList<Task> result){
         if (tempMarked.contains(t)){
             throw new IllegalArgumentException();
         }
         if (!finalMarked.contains(t)){
             tempMarked.add(t);
-            this.dependingOnMap.get(t).forEach((Task x) -> visit(x, tempMarked, finalMarked, result));
+            this.dependingOnMap.get(t).forEach((Task x) -> visit(x, unMarked, tempMarked, finalMarked, result));
             finalMarked.add(t);
             tempMarked.remove(t);
             result.add(t);

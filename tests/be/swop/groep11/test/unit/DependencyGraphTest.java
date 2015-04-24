@@ -68,11 +68,11 @@ public class DependencyGraphTest {
 
     @Test
     public void addDependencyTest(){
-        dependencyGraph.addDependency(taskB, taskA);
-        dependencyGraph.addDependency(taskB, taskC);
-        dependencyGraph.addDependency(taskB, taskD);
-        dependencyGraph.addDependency(taskB, taskE);
-        dependencyGraph.addDependency(taskC, taskE);
+        dependencyGraph.addNewDependency(taskB, taskA);
+        dependencyGraph.addNewDependency(taskB, taskC);
+        dependencyGraph.addNewDependency(taskB, taskD);
+        dependencyGraph.addNewDependency(taskB, taskE);
+        dependencyGraph.addNewDependency(taskC, taskE);
 
         assertTrue(taskA.getDependentTasks().contains(taskB));
         assertTrue(taskC.getDependentTasks().contains(taskB));
@@ -89,11 +89,11 @@ public class DependencyGraphTest {
 
 
 
-    @Test
+
     public void removeDependencyTest() {
-        dependencyGraph.addDependency(taskB, taskA);
-        dependencyGraph.addDependency(taskC, taskB);
-        dependencyGraph.addDependency(taskA, taskC);
+        dependencyGraph.addNewDependency(taskB, taskA);
+        dependencyGraph.addNewDependency(taskC, taskB);
+        //dependencyGraph.addNewDependency(taskA, taskC);
         helpPrint();
         dependencyGraph.changeDependingOnAlternativeTask(taskA, taskD);
         System.out.println("");

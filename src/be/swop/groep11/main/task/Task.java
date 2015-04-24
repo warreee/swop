@@ -214,7 +214,7 @@ public class Task {
      * @param dependingOn De taak waarvan deze taak moet afhangen
      */
     public void addNewDependencyConstraint(Task dependingOn) {
-        dependencyGraph.addDependency(this, dependingOn);
+        dependencyGraph.addNewDependency(this, dependingOn);
         makeUnAvailable();
     }
 
