@@ -66,10 +66,11 @@ public class TaskTest {
         Tests voor alternatieve taken
      */
     @Test
-    public void SetAlternativeTask_valid() throws Exception {
+    public void SetAlternativeTask_valid() {
         task1.execute(now);
         task1.fail(now.plusDays(1));
         task1.setAlternativeTask(task2);
+        assertTrue(task1.getAlternativeTask() == task2);
     }
 
     @Test(expected = IllegalArgumentException.class)

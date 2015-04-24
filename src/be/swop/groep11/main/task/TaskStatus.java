@@ -104,19 +104,4 @@ public abstract class TaskStatus implements Cloneable {
         return true;
     }
 
-    protected boolean isValidDependingOn(Task task, Task dependingOn){
-        if (task == dependingOn) // TODO: werkt dit wel?
-            return false;
-
-        Set<Task> dependingOnTasks = dependingOn.getDependingOnTasks();
-        if (dependingOnTasks.contains(task))
-            // dan hangt dependingOn af van task,
-            // dus nu zeggen dat task afhankelijk is van dependingOn zou een lus veroorzaken
-            return false;
-        /*if(! task.getProject().equals(dependingOn.getProject())){
-            // De 2 taken moeten aan hetzelfde project toebehoren.
-            return false;
-        }*/
-        return true;
-    }
 }

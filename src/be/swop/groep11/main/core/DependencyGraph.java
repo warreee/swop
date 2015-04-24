@@ -26,12 +26,9 @@ public class DependencyGraph {
      * @param dependingOn
      */
 
-    public void addNewDependency(Task dependent, Task dependingOn) {
-        if (isValidDependency(dependent, dependingOn)) {
-            addDependency(dependent, dependingOn);
-        } else {
-            throw new IllegalArgumentException("ongeldige dependency");
-        }
+    public void addNewDependency(Task dependent, Task dependingOn) throws IllegalDependencyException {
+        isValidDependency(dependent, dependingOn);
+        addDependency(dependent, dependingOn);
 
     }
 
@@ -75,8 +72,6 @@ public class DependencyGraph {
         if (dependentMap.get(dependingOn).size() == 0){
             dependentMap.remove(dependingOn);
         }
-
-
     }
 
     private void addToMap(Task toBeAdded, HashMap map) {
@@ -109,10 +104,12 @@ public class DependencyGraph {
      */
     public void changeDependingOnAlternativeTask(Task failedTask, Task alternativeTask) {
         ArrayList<Task> dependentTasksFailedTask = dependentMap.get(failedTask);
-        for (Task dtft : dependentTasksFailedTask) {
-            addNewDependency(dtft, alternativeTask);
+        if (dependentTasksFailedTask != null) {
+            for (Task dtft : dependentTasksFailedTask) {
+                addNewDependency(dtft, alternativeTask);
+            }
+            removeDependency(failedTask);
         }
-        removeDependency(failedTask);
 
     }
 
@@ -128,19 +125,26 @@ public class DependencyGraph {
 
     }
 
-    private boolean isValidDependency(Task dependent, Task dependingOn) {
+    private void isValidDependency(Task dependent, Task dependingOn) {
 
         if (dependent == dependingOn) {  // dependencies mogen niet gelijk zijn
-            return false;
+            throw new IllegalDependencyException("Een taak kan niet afhankelijk zijn van zichzelf");
         }
-        if (dependent == null || dependingOn == null){
-            return false;
-        }
-        if (containsLoop(dependent, dependingOn)) {
-            return false;
+        if (dependingOnMap.containsKey(dependent) && dependingOnMap.get(dependent).contains(dependingOn)){ // dezelfde constraint werd toegevoegd
+            throw new IllegalDependencyException("Deze dependency bestond al");
         }
 
-        return true;
+        if (dependentMap.containsKey(dependingOn) && dependentMap.get(dependingOn).contains(dependent)){ // dezelfde constraint werd toegevoegd
+            throw new IllegalDependencyException("Deze dependency bestond al");
+        }
+
+        if (dependent == null || dependingOn == null){
+            throw new IllegalDependencyException("De dependency mag geen null bevatten");
+        }
+        if (containsLoop(dependent, dependingOn)) {
+            throw new IllegalDependencyException("Deze dependency zorgt voor een loop!");
+        }
+
     }
 
 
