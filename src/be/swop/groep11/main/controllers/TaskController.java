@@ -52,7 +52,7 @@ public class TaskController extends AbstractController {
 
             // Lees alle resource types in.
             Map<IResourceType, Integer> selectedTypes = new HashMap<>();
-            List<IResourceType> resourceTypes = resourceManager.getResourceTypes();
+            List<IResourceType> resourceTypes = new ArrayList<>(resourceManager.getResourceTypes());
             resourceTypes.remove(resourceManager.getDeveloperType());
 
             // Laat gebruiker een aantal developers kiezen
@@ -62,12 +62,17 @@ public class TaskController extends AbstractController {
             // Laat gebruiker resource types selecteren.
             String message = "Voeg resource types toe? (y/N)";
             while (getUserInterface().requestBoolean(message)){
-                IResourceType iResourceType = getUserInterface().selectFromList(resourceTypes, (x -> x.getName()));
-                Integer number = getUserInterface().requestNumber("Hoeveel wil je er?");
-                selectedTypes = addToResourceMap(iResourceType, number, selectedTypes);
-                resourceTypes.remove(iResourceType);
-                printResourceMap(selectedTypes);
-                message = "\nWilt u nog resource types toevoegen? (y/N)";
+                try {
+                    IResourceType iResourceType = getUserInterface().selectFromList(resourceTypes, (x -> x.getName()));
+                    Integer number = getUserInterface().requestNumber("Hoeveel wil je er?");
+                    selectedTypes = addToResourceMap(iResourceType, number, selectedTypes);
+                    resourceTypes.remove(iResourceType);
+                    printResourceMap(selectedTypes);
+                    message = "\nWilt u nog resource types toevoegen? (y/N)";
+                }
+                catch (EmptyListException e) {
+                    getUserInterface().printMessage("Geen resource types om toe te voegen");
+                }
             }
 
             // Lees de afhankelijkheden in.

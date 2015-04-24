@@ -249,6 +249,21 @@ public class ResourceManager {
     }
 
     /**
+     * Maakt de reservaties van een plan.
+     * @param plan Het gegeven plan
+     * @throws IllegalArgumentException Het plan is niet geldig.
+     */
+    public void makeReservationsForPlan(IPlan plan) throws IllegalArgumentException {
+        if (! plan.isValidPlan()) {
+            throw new IllegalArgumentException("Ongeldig plan");
+        }
+
+        for (ResourceReservation reservation : plan.getReservations()) {
+            this.addReservation(plan.getTask(), reservation);
+        }
+    }
+
+    /**
      * Geeft een lijst van alle resource instanties van een resource type, die beschikbaar zijn vanaf een gegeven starttijd
      * voor een gegeven duur. De lijst is gesorteerd volgens toenemende eindtijd van de eerstvolgende beschikbare tijdsspanne
      * van elke resource instantie.
@@ -610,6 +625,17 @@ public class ResourceManager {
         @Override
         public void changeReservations(List<ResourceInstance> resourceInstances) {
             this.reservations = new LinkedList<>();
+            for (ResourceInstance resourceInstance : resourceInstances) {
+                this.addReservation(resourceInstance);
+            }
+        }
+
+        /**
+         * Voegt reservaties voor de gegeven resource instanties toe.
+         * @param resourceInstances De gegeven resource instanties
+         */
+        @Override
+        public void addReservations(List<ResourceInstance> resourceInstances) {
             for (ResourceInstance resourceInstance : resourceInstances) {
                 this.addReservation(resourceInstance);
             }

@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Created by Ronald on 22/04/2015.
@@ -102,25 +103,29 @@ public class PlanningController extends AbstractController {
                 // doe niets en behoud de reservaties van het plan
             } else {
 
-                // kies resource instanties
+                // laat gebruiker resource instanties selecteren
                 List<ResourceInstance> selectedInstances = new ArrayList<>();
                 Iterator<ResourceRequirement> it2 = task.getRequirementList().iterator();
                 while (it2.hasNext()) {
                     ResourceRequirement requirement = it2.next();
                     IResourceType type = requirement.getType();
-                    String msgSelectResourceInstances = "Kies instanties voor type " + type.getName() + " (" + requirement.getAmount() + " instanties nodig)";
+                    if (type != resourceManager.getDeveloperType()) {
+                        String msgSelectResourceInstances = "Selecteer instanties voor type " + type.getName() + " (" + requirement.getAmount() + " instanties nodig)";
 
-                    List<ResourceInstance> allInstances = type.getResourceInstances();
-                    List<ResourceInstance> defaultSelectedInstances = new ArrayList<>();
-                    int maxInstances = requirement.getAmount();
+                        List<ResourceInstance> allInstances = type.getResourceInstances();
+                        List<ResourceInstance> defaultSelectedInstances = new ArrayList<>();
+                        int nbInstances = requirement.getAmount();
 
-                    for (ResourceInstance resourceInstance : type.getResourceInstances()) {
-                        if (plan.hasReservationFor(resourceInstance)) {
-                            defaultSelectedInstances.add(resourceInstance);
+                        for (ResourceInstance resourceInstance : type.getResourceInstances()) {
+                            if (plan.hasReservationFor(resourceInstance)) {
+                                defaultSelectedInstances.add(resourceInstance);
+                            }
                         }
-                    }
 
-                    // TODO: selectedInstances.addAll(ui.selectMultipleInstancesFromList(msgSelectResourceInstances, allInstances, defaultSelectedInstances, maxInstances))
+                        Function<ResourceInstance, String> entryPrinter = s -> s.getName();
+                        List<ResourceInstance> instances = ui.selectMultipleFromList(msgSelectResourceInstances, allInstances, defaultSelectedInstances, nbInstances, true, entryPrinter);
+                        selectedInstances.addAll(instances);
+                    }
                 }
 
                 // verander de reservaties van het plan:
@@ -133,24 +138,51 @@ public class PlanningController extends AbstractController {
                 resolveConflict(task, plan);
             }
 
-        /* 8. The system shows a list of developers */
+        /* 8. The system shows a list of developers
+           9. The user selects the developers to perform the task. */
 
-        /* 9. The user selects the developers to perform the task. */
-
+            String msgSelectDevelopers = "Selecteer developers";
             IResourceType developerType = resourceManager.getDeveloperType();
+            int nbDevelopers = getNbRequiredDevelopers(task.getRequirementList());
+            ImmutableList<ResourceInstance> allDevelopers = developerType.getResourceInstances();
             ImmutableList<ResourceInstance> availableDevelopers = resourceManager.getAvailableInstances(developerType, new TimeSpan(plan.getStartTime(), plan.getEndTime()));
-            // TODO: select multiple developers from list
+            Function<ResourceInstance, String> entryPrinter = s -> {
+                if (availableDevelopers.contains(s)){
+                    return s.getName() + " (beschikbaar)";
+                }
+                else {
+                    return s.getName() + " (niet beschikbaar)";
+                }
+            };
+            List<ResourceInstance> selectedDevelopers = ui.selectMultipleFromList(msgSelectDevelopers,allDevelopers,new ArrayList<>(),nbDevelopers,true,entryPrinter);
+            plan.addReservations(selectedDevelopers);
+
+            // zijn de reservaties geldig?
+            if (! plan.isValidPlan()) {
+                resolveConflict(task, plan);
+            }
 
         /* 10. The system makes the required reservations and assigns the selected
                 developers. */
 
-            // TODO: hiervoor moet nog een methode in resource manager komen (om alle reservaties van een plan aan de resource manager toe te voegen)
-
+            resourceManager.makeReservationsForPlan(plan);
         }
 
         catch (EmptyListException|CancelException e) {
             getUserInterface().printException(e);
         }
+    }
+
+    private int getNbRequiredDevelopers(IRequirementList requirementList) {
+        Iterator<ResourceRequirement> it = requirementList.iterator();
+        while (it.hasNext()) {
+            ResourceRequirement requirement = it.next();
+            IResourceType resourceType = requirement.getType();
+            if (resourceType == resourceManager.getDeveloperType()) {
+                return requirement.getAmount();
+            }
+        }
+        return 0;
     }
 
     private ImmutableList<Task> requestUnplannedTasks() {
