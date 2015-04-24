@@ -16,6 +16,8 @@ import java.util.*;
  */
 public class ResourceManager {
 
+    // TODO: ResourceTypeRepository hier uit halen!
+
     /**
      * Constructor om een nieuwe resource manager aan te maken.
      */
@@ -249,6 +251,21 @@ public class ResourceManager {
     }
 
     /**
+     * Maakt de reservaties van een plan.
+     * @param plan Het gegeven plan
+     * @throws IllegalArgumentException Het plan is niet geldig.
+     */
+    public void makeReservationsForPlan(IPlan plan) throws IllegalArgumentException {
+        if (! plan.isValidPlan()) {
+            throw new IllegalArgumentException("Ongeldig plan");
+        }
+
+        for (ResourceReservation reservation : plan.getReservations()) {
+            this.addReservation(plan.getTask(), reservation);
+        }
+    }
+
+    /**
      * Geeft een lijst van alle resource instanties van een resource type, die beschikbaar zijn vanaf een gegeven starttijd
      * voor een gegeven duur. De lijst is gesorteerd volgens toenemende eindtijd van de eerstvolgende beschikbare tijdsspanne
      * van elke resource instantie.
@@ -303,8 +320,7 @@ public class ResourceManager {
             return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour()+1,0));
     }
 
-    // TODO: reservaties verwijderen
-
+    // TODO: modifiers removeReservation
     /**
      * Verwijderd alle reservaties van een taak.
      * @param task De Task waarvan alle reservaties moeten verwijderd worden.
@@ -616,6 +632,17 @@ public class ResourceManager {
         }
 
         /**
+         * Voegt reservaties voor de gegeven resource instanties toe.
+         * @param resourceInstances De gegeven resource instanties
+         */
+        @Override
+        public void addReservations(List<ResourceInstance> resourceInstances) {
+            for (ResourceInstance resourceInstance : resourceInstances) {
+                this.addReservation(resourceInstance);
+            }
+        }
+
+        /**
          * Voegt een reservatie voor een resource instantie toe aan dit plan.
          * De toegevoegde reservatie zal een specifieke reservatie zijn.
          * @param resourceInstance De te reserveren resource instantie
@@ -643,6 +670,11 @@ public class ResourceManager {
                 }
             }
             return false;
+        }
+
+        @Override
+        public List<Task> getConflictingTasks() {
+            return null;
         }
 
         private List<ResourceReservation> calculateDefaultReservations(Task task, LocalDateTime startTime) throws IllegalArgumentException {

@@ -8,12 +8,6 @@ import org.junit.Test;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -74,11 +68,11 @@ public class DependencyGraphTest {
 
     @Test
     public void addDependencyTest(){
-        dependencyGraph.addDependency(taskB, taskA);
-        dependencyGraph.addDependency(taskB, taskC);
-        dependencyGraph.addDependency(taskB, taskD);
-        dependencyGraph.addDependency(taskB, taskE);
-        dependencyGraph.addDependency(taskC, taskE);
+        dependencyGraph.addNewDependency(taskB, taskA);
+        dependencyGraph.addNewDependency(taskB, taskC);
+        dependencyGraph.addNewDependency(taskB, taskD);
+        dependencyGraph.addNewDependency(taskB, taskE);
+        dependencyGraph.addNewDependency(taskC, taskE);
 
         assertTrue(taskA.getDependentTasks().contains(taskB));
         assertTrue(taskC.getDependentTasks().contains(taskB));
@@ -95,13 +89,13 @@ public class DependencyGraphTest {
 
 
 
-    @Test(expected = NullPointerException.class)
+
     public void removeDependencyTest() {
-        dependencyGraph.addDependency(taskB, taskA);
-        dependencyGraph.addDependency(taskC, taskB);
-        dependencyGraph.addDependency(taskA, taskC);
+        dependencyGraph.addNewDependency(taskB, taskA);
+        dependencyGraph.addNewDependency(taskC, taskB);
+        //dependencyGraph.addNewDependency(taskA, taskC);
         helpPrint();
-        dependencyGraph.changeDepeningOnAlternativeTask(taskA, taskD);
+        dependencyGraph.changeDependingOnAlternativeTask(taskA, taskD);
         System.out.println("");
         helpPrint();
         dependencyGraph.getDependentTasks(taskA);

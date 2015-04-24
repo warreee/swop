@@ -24,5 +24,9 @@ public interface IPlan {
 
         void changeReservations(List<ResourceInstance> resourceInstances);
 
+        void addReservations(List<ResourceInstance> resourceInstances);
+
         boolean hasReservationFor(ResourceInstance resourceInstance);
+
+        List<Task> getConflictingTasks();
 }

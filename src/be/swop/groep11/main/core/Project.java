@@ -45,6 +45,7 @@ public class Project {
         setProjectName(name);
         setCreationAndDueTime(creationTime, dueTime);setDescription(description);
         this.systemTime = systemTime;
+        this.dependencyGraph = new DependencyGraph();
     }
 
 
@@ -177,10 +178,11 @@ public class Project {
      *                              Gooi indien één of meerdere van de parameters niet geldig zijn.
      */
     public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) throws IllegalArgumentException {
-        DependencyGraph dependencyGraph = new DependencyGraph();
-        Task task = new Task(description, estimatedDuration, acceptableDeviation, systemTime, dependencyGraph);
+        Task task = new Task(description, estimatedDuration, acceptableDeviation, systemTime, this.dependencyGraph);
         tasks.add(task);
     }
+
+    private DependencyGraph dependencyGraph;
 
 
 

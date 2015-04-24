@@ -51,14 +51,28 @@ public class TaskController extends AbstractController {
             Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf( getUserInterface().requestNumber("Geschatte duur in minuten:")).longValue());
 
             // Lees alle resource types in.
-            Map<IResourceType, Integer> resourceTypes = new HashMap<>();
+            Map<IResourceType, Integer> selectedTypes = new HashMap<>();
+            List<IResourceType> resourceTypes = new ArrayList<>(resourceManager.getResourceTypes());
+            resourceTypes.remove(resourceManager.getDeveloperType());
+
+            // Laat gebruiker een aantal developers kiezen
+            int nbDevelopers = getUserInterface().requestNumber("Hoeveel developers zijn er nodig?");
+            selectedTypes = addToResourceMap(resourceManager.getDeveloperType(), nbDevelopers, selectedTypes);
+
+            // Laat gebruiker resource types selecteren.
             String message = "Voeg resource types toe? (y/N)";
-            while(getUserInterface().requestString(message).trim().equalsIgnoreCase("y")){
-                IResourceType iResourceType = getUserInterface().selectFromList(resourceManager.getResourceTypes(), (x -> x.getName()));
-                Integer number = getUserInterface().requestNumber("Hoeveel wil je er?");
-                resourceTypes = addToResourceMap(iResourceType, number, resourceTypes);
-                printResourceMap(resourceTypes);
-                message = "\nWilt u nog resource types toevoegen? (y/N)";
+            while (getUserInterface().requestBoolean(message)){
+                try {
+                    IResourceType iResourceType = getUserInterface().selectFromList(resourceTypes, (x -> x.getName()));
+                    Integer number = getUserInterface().requestNumber("Hoeveel wil je er?");
+                    selectedTypes = addToResourceMap(iResourceType, number, selectedTypes);
+                    resourceTypes.remove(iResourceType);
+                    printResourceMap(selectedTypes);
+                    message = "\nWilt u nog resource types toevoegen? (y/N)";
+                }
+                catch (EmptyListException e) {
+                    getUserInterface().printMessage("Geen resource types om toe te voegen");
+                }
             }
 
             // Lees de afhankelijkheden in.
@@ -90,7 +104,7 @@ public class TaskController extends AbstractController {
             Task task = project.getTasks().get(project.getTasks().size()-1);
 
             // Bouw de IRequirementList en voeg hem toe aan de taak.
-            task.setRequirementList(buildIRequirementList(resourceTypes));
+            task.setRequirementList(buildIRequirementList(selectedTypes));
 
             for (Task dependingOn : selectedTasks) {
                 task.addNewDependencyConstraint(dependingOn);
