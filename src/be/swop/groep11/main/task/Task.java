@@ -198,10 +198,18 @@ public class Task {
 
     private DependencyGraph dependencyGraph;
 
+    /**
+     * Geeft alle taken waarvan deze taak afhankelijk is terug.
+     * @return
+     */
     public Set<Task> getDependentTasks() {
         return dependencyGraph.getDependentTasks(this);
     }
 
+    /**
+     * Geeft alle taken die op deze taak dependen terug.
+     * @return
+     */
     public Set<Task> getDependingOnTasks() {
         return dependencyGraph.getDependingOnTasks(this);
     }
@@ -230,10 +238,18 @@ public class Task {
         return status.getTaskStatus();
     }
 
+    /**
+     * Geeft de naam van de huidige status van deze Task terug.
+     * @return
+     */
     public String getStatusString() {
         return this.getStatus().getStatus().toString();
     }
 
+    /**
+     * Voert deze Task uit vanaf de gegeven starttijd.
+     * @param startTime
+     */
     public void execute(LocalDateTime startTime) {
         status.execute(this, startTime);
     }
@@ -246,6 +262,10 @@ public class Task {
 
     }
 
+    /**
+     *
+     * @param endTime
+     */
     public void finish(LocalDateTime endTime) {
         status.finish(this, endTime);
         makeDependentTasksAvailable();
@@ -419,6 +439,11 @@ public class Task {
         }
     }
 
+    /**
+     * Voor de gegeven LocalDateTime, geef een LocalDateTime terug die het volgende volledige uur bevat.
+     * @param dateTime
+     * @return
+     */
     private LocalDateTime getNextHour(LocalDateTime dateTime) {
         if (dateTime.getMinute() == 0)
             return dateTime;

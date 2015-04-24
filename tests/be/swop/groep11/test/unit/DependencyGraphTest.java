@@ -89,17 +89,21 @@ public class DependencyGraphTest {
 
 
 
-
+    @Test
     public void removeDependencyTest() {
         dependencyGraph.addNewDependency(taskB, taskA);
         dependencyGraph.addNewDependency(taskC, taskB);
-        //dependencyGraph.addNewDependency(taskA, taskC);
         helpPrint();
         dependencyGraph.changeDependingOnAlternativeTask(taskA, taskD);
         System.out.println("");
         helpPrint();
         dependencyGraph.getDependentTasks(taskA);
         assertFalse(dependencyGraph.getDependentTasks(taskB).contains(taskA));
+    }
+
+    @Test
+    public void circularDependencyTest() {
+
     }
 
 
