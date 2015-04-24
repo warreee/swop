@@ -25,33 +25,57 @@ public class PlanningController extends AbstractController {
     private ResourceManager resourceManager;
     private SystemTime systemTime;
 
+    private UserInterface ui;
+
     public PlanningController(ProjectRepository projectRepository, ResourceManager resourceManager, SystemTime systemTime, UserInterface userInterface) {
         super(userInterface);
         this.projectRepository = projectRepository;
         this.resourceManager = resourceManager;
         this.systemTime = systemTime;
+        this.ui = getUserInterface();
     }
-
-    //TODO implement resolve & plan
 
     public void planTask(){
 
         try {
 
-            UserInterface ui = getUserInterface();
-
-        /* 2. The system shows a list of all currently unplanned tasks and the project
+            /* 2. The system shows a list of all currently unplanned tasks and the project
                 they belong to
-           3. The user selects the task he wants to plan. */
+               3. The user selects the task he wants to plan. */
 
             Task task = ui.selectTaskFromList(this.requestUnplannedTasks());
 
-        /* 4. The system shows the first three possible starting times (only consid-
-                ering exact hours, e.g. 09:00, and counting from the current system
-                time) that a task can be planned (i.e. enough resource instances and
-                developers are available) */
+            List<IPlan> plans = planTask(task);
 
-            Map<LocalDateTime, IPlan> plansMap = requestNextStartTimes(3, task);
+            /* 10. The system makes the required reservations and assigns the selected
+                developers. */
+
+            // op dit moment zouden er geen conflicten in de plannen mogen zitten
+            // hopelijk is dit ook zo... TODO: testen
+
+            for (IPlan plan : plans) {
+                resourceManager.makeReservationsForPlan(plan);
+                // TODO: + taken inplannen (starttijden zetten + EINTIJD)
+            }
+
+        }
+
+        catch (EmptyListException|CancelException e) {
+            getUserInterface().printException(e);
+        }
+    }
+
+    private List<IPlan> planTask(Task task) {
+        List<IPlan> plans = new ArrayList<>();
+
+        ui.printMessage("Maak een plan voor de taak: " + task.getDescription());
+
+    /* 4. The system shows the first three possible starting times (only consid-
+            ering exact hours, e.g. 09:00, and counting from the current system
+            time) that a task can be planned (i.e. enough resource instances and
+            developers are available) */
+
+        Map<LocalDateTime, IPlan> plansMap = requestNextStartTimes(3, task);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             String msgTimes = "De eerste 3 mogelijke starttijden zijn:\n";
@@ -62,22 +86,24 @@ public class PlanningController extends AbstractController {
 
             LocalDateTime startTime = null;
             if (ui.requestBoolean("Een starttijd hieruit selecteren?")) {
-            /* 5. The user selects a proposed time. */
+        /* 5. The user selects a proposed time. */
                 startTime = ui.selectLocalDateTimeFromList(new LinkedList<LocalDateTime>(plansMap.keySet()));
             } else {
-            /* 5a. The user indicates he wants to select another time */
+        /* 5a. The user indicates he wants to select another time */
                 while (startTime == null || startTime.getMinute() == 0 || startTime.isBefore(systemTime.getCurrentSystemTime())) {
                     startTime = ui.requestDatum("Kies een starttijd (moet op een uur vallen en mag niet voor de huidige systeemtijd (" + systemTime.getCurrentSystemTime().format(formatter) + ") vallen:");
                 }
             }
 
-        /* 6. The system confirms the selected planned timespan and shows the re-
-                quired resource types and their necessary quantity as assigned by the
-                project manager when creating the task. For each required resource
-                type instance to perform the task, the system proposes a resource instance
-                to make a reservation for. */
+    /* 6. The system confirms the selected planned timespan and shows the re-
+            quired resource types and their necessary quantity as assigned by the
+            project manager when creating the task. For each required resource
+            type instance to perform the task, the system proposes a resource instance
+            to make a reservation for. */
 
             IPlan plan = resourceManager.getNextPlans(1, task, startTime).get(0);
+
+        try {
 
             ui.printMessage("Gekozen starttijd: " + plan.getStartTime().format(formatter));
 
@@ -87,17 +113,17 @@ public class PlanningController extends AbstractController {
             while (it1.hasNext()) {
                 ResourceRequirement requirement = it1.next();
                 IResourceType type = requirement.getType();
-                msgDefaultResourceInstances += " - Voor type " + type.getName() + ": (" + requirement.getAmount() + " instanties nodig)\n";
+                msgDefaultResourceInstances += "\n - Voor type " + type.getName() + ": (" + requirement.getAmount() + " instanties nodig)";
 
                 for (ResourceInstance resourceInstance : type.getResourceInstances()) {
                     if (plan.hasReservationFor(resourceInstance)) {
-                        msgDefaultResourceInstances += "    - "+resourceInstance.getName() + "\n";
+                        msgDefaultResourceInstances += "\n    - " + resourceInstance.getName();
                     }
                 }
             }
             ui.printMessage(msgDefaultResourceInstances);
 
-        /* 7. The user allows the system to select the required resources. */
+    /* 7. The user allows the system to select the required resources. */
 
             if (ui.requestBoolean("Deze resource instanties reserveren?")) {
                 // doe niets en behoud de reservaties van het plan
@@ -134,12 +160,12 @@ public class PlanningController extends AbstractController {
             }
 
             // zijn de reservaties geldig?
-            if (! plan.isValidPlan()) {
-                resolveConflict(task, plan);
+            if (!plan.isValidPlan()) {
+                throw new ConflictException("Conflict!");
             }
 
-        /* 8. The system shows a list of developers
-           9. The user selects the developers to perform the task. */
+    /* 8. The system shows a list of developers
+       9. The user selects the developers to perform the task. */
 
             String msgSelectDevelopers = "Selecteer developers";
             IResourceType developerType = resourceManager.getDeveloperType();
@@ -147,30 +173,27 @@ public class PlanningController extends AbstractController {
             ImmutableList<ResourceInstance> allDevelopers = developerType.getResourceInstances();
             ImmutableList<ResourceInstance> availableDevelopers = resourceManager.getAvailableInstances(developerType, new TimeSpan(plan.getStartTime(), plan.getEndTime()));
             Function<ResourceInstance, String> entryPrinter = s -> {
-                if (availableDevelopers.contains(s)){
+                if (availableDevelopers.contains(s)) {
                     return s.getName() + " (beschikbaar)";
-                }
-                else {
+                } else {
                     return s.getName() + " (niet beschikbaar)";
                 }
             };
-            List<ResourceInstance> selectedDevelopers = ui.selectMultipleFromList(msgSelectDevelopers,allDevelopers,new ArrayList<>(),nbDevelopers,true,entryPrinter);
+            List<ResourceInstance> selectedDevelopers = ui.selectMultipleFromList(msgSelectDevelopers, allDevelopers, new ArrayList<>(), nbDevelopers, true, entryPrinter);
             plan.addReservations(selectedDevelopers);
 
             // zijn de reservaties geldig?
-            if (! plan.isValidPlan()) {
-                resolveConflict(task, plan);
+            if (!plan.isValidPlan()) {
+                throw new ConflictException("Conflict!");
             }
-
-        /* 10. The system makes the required reservations and assigns the selected
-                developers. */
-
-            resourceManager.makeReservationsForPlan(plan);
         }
 
-        catch (EmptyListException|CancelException e) {
-            getUserInterface().printException(e);
+        catch (ConflictException e) {
+            return resolveConflict(task, plan);
         }
+
+        plans.add(plan);
+        return plans;
     }
 
     private int getNbRequiredDevelopers(IRequirementList requirementList) {
@@ -206,8 +229,34 @@ public class PlanningController extends AbstractController {
         return map;
     }
 
-    private void resolveConflict(Task task, IPlan plan) {
-        // TODO
+    private List<IPlan> resolveConflict(Task task, IPlan plan) {
+        List<IPlan> plans = new ArrayList<>();
+
+        String msgConflictingTasks = "De planning voor de taak "+task.getDescription()+" conflicteert met de volgende taken:";
+        for (Task conflictingTask : plan.getConflictingTasks()) {
+            msgConflictingTasks += "\n - "+conflictingTask.getDescription();
+        }
+        ui.printMessage(msgConflictingTasks);
+
+        if (ui.requestBoolean("Verplaats de conflicterende taken?")) {
+            int i=1;
+            for (Task conflictingTask : plan.getConflictingTasks()) {
+                try {
+                    ui.printMessage("Verplaats conflicterende taak " + i);
+                    plans.addAll(planTask(conflictingTask));
+                }
+                catch(CancelException e) {
+                    getUserInterface().printException(e);
+                }
+                i++;
+            }
+        }
+
+        List<IPlan> newPlansForTask = planTask(task);
+        plans.addAll(newPlansForTask);
+
+        return plans;
+
     }
 
 }
