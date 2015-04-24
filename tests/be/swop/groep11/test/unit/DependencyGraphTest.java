@@ -8,12 +8,6 @@ import org.junit.Test;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -95,13 +89,13 @@ public class DependencyGraphTest {
 
 
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void removeDependencyTest() {
         dependencyGraph.addDependency(taskB, taskA);
         dependencyGraph.addDependency(taskC, taskB);
         dependencyGraph.addDependency(taskA, taskC);
         helpPrint();
-        dependencyGraph.changeDepeningOnAlternativeTask(taskA, taskD);
+        dependencyGraph.changeDependingOnAlternativeTask(taskA, taskD);
         System.out.println("");
         helpPrint();
         dependencyGraph.getDependentTasks(taskA);
