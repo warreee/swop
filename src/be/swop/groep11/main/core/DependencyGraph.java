@@ -104,10 +104,12 @@ public class DependencyGraph {
      */
     public void changeDependingOnAlternativeTask(Task failedTask, Task alternativeTask) {
         ArrayList<Task> dependentTasksFailedTask = dependentMap.get(failedTask);
-        for (Task dtft : dependentTasksFailedTask) {
-            addNewDependency(dtft, alternativeTask);
+        if (dependentTasksFailedTask != null) {
+            for (Task dtft : dependentTasksFailedTask) {
+                addNewDependency(dtft, alternativeTask);
+            }
+            removeDependency(failedTask);
         }
-        removeDependency(failedTask);
 
     }
 
