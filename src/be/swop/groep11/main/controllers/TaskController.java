@@ -24,7 +24,6 @@ public class TaskController extends AbstractController {
 
     /**
      * Constructor om een nieuwe task controller te maken.
-     * @param ui Gebruikersinterface
      * @param userInterface
      */
     public TaskController( ProjectRepository projectRepository, SystemTime systemTime, UserInterface userInterface) {
