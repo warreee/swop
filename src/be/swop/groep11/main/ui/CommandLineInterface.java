@@ -288,7 +288,7 @@ public class CommandLineInterface implements UserInterface {
 
     @Override
     public boolean requestBoolean(String request) throws CancelException {
-        return getBooleanFromUser.apply(request);
+        return getBooleanFromUser.apply(request + " (y/n)");
     }
 
     /**
