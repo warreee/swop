@@ -31,6 +31,7 @@ public class CommandLineInterface implements UserInterface {
         CommandLineInterface cli = new CommandLineInterface(bufferedReader);
         List<String> total = Arrays.asList("A","B","C","D","E","F");
         List<String> selected = Arrays.asList("A","E", "F");
+        
         Function<String, String> entryPrinter = s -> "LETTER: " + s;
 
         List<String> ss = cli.selectMultipleFromList("Het selecteren van letters",total,selected,4,true,entryPrinter);
@@ -271,7 +272,7 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public int requestNumber(String request) throws CancelException {
-        return getIntFromUser.getUserInput(request);
+        return getIntFromUser().getUserInput(request);
     }
 
     /**
@@ -280,7 +281,7 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public double requestDouble(String request) throws CancelException {
-        return getDoubleFromUser.getUserInput(request);
+        return getDoubleFromUser().getUserInput(request);
     }
 
     /**
@@ -289,7 +290,7 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public String requestString(String request) throws CancelException {
-        return getStringFromUser.getUserInput(request);
+        return getStringFromUser().getUserInput(request);
     }
 
     /**
@@ -299,12 +300,12 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public LocalDateTime requestDatum(String request) throws CancelException {
-        return getDateFromUser.getUserInput(request);
+        return getDateFromUser().getUserInput(request);
     }
 
     @Override
     public boolean requestBoolean(String request) throws CancelException {
-        return getBooleanFromUser.apply(request);
+        return getBooleanFromUser().apply(request);
     }
 
     /**
@@ -318,6 +319,8 @@ public class CommandLineInterface implements UserInterface {
      * @throws CancelException gooi indien de gebruiker het Command.CANCEL in geeft.
      */
     public <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput, T min, T max) throws CancelException {
+//        getMultipleNumberBetween(request,userInput,min,max,1,true)
+
         boolean correct = false;
         T response = null;
         do {
@@ -368,112 +371,152 @@ public class CommandLineInterface implements UserInterface {
         return result;
     }
 
-
-
-    userInput<String> getStringFromUser = request -> {
-        printMessage(request);
-        String result = "";
-        try {
-            result = bufferedReader.readLine();
-            resolveCancel(result);
-            resolveEmpty(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    };
-    //Throws NumberFormatException
-    userInput<Double> getDoubleFromUser = request -> {
-        String response = getStringFromUser.apply(request);
-        boolean correct = false;
-        Double result = null;
-        do {
+    private userInput<String> getStringFromUser(){
+        userInput<String> getStringFromUser = request -> {
+            printMessage(request);
+            String result = "";
             try {
-                result = new Double(response);
-                correct = true;
-            } catch (NumberFormatException e) {
-                printMessage("Verkeerde input, probeer opnieuw.");
-                correct = false;
+                result = bufferedReader.readLine();
+                resolveCancel(result);
+                resolveEmpty(result);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } while (!correct);
+            return result;
+        };
+        return getStringFromUser;
+    }
 
-        return result;
-    };
-    //Throws NumberFormatException
-    userInput<Integer> getIntFromUser = request -> {
-        String response = getStringFromUser.apply(request);
-        boolean correct = false;
-        Integer result = null;
-        do {
-            try {
-                result = new Integer(response);
-                correct = true;
-            } catch (NumberFormatException e) {
-                printMessage("Verkeerde input, probeer opnieuw.");
-                correct = false;
-            }
-        } while (!correct);
+/*    private userInput<List<String>> getMultipleString(String seperator){
+        userInput<List<String>> foo = request ->{
+            boolean correct = false;
+            ArrayList<Integer> result = new ArrayList<>();
+            do {
+                try {
+                    String response = getStringFromUser().apply(request);
+                    List<String> numbers = Arrays.asList(response.split(","));
+                    final ArrayList<Integer> finalResult = result;
+                    numbers.stream().forEach(num -> finalResult.add(new Integer(num)));
+                    correct = true;
+                } catch (NumberFormatException e) {
+                    printMessage("Verkeerde input, probeer opnieuw.");
+                    correct = false;
+                }
+            } while (!correct);
 
-        return result;
-    };
+            return result;
+        };
+
+
+        return null;
+    }*/
+
+    private userInput<Double> getDoubleFromUser(){
+        userInput<Double> getDoubleFromUser = request -> {
+            String response = getStringFromUser().apply(request);
+            boolean correct = false;
+            Double result = null;
+            do {
+                try {
+                    result = new Double(response);
+                    correct = true;
+                } catch (NumberFormatException e) {
+                    printMessage("Verkeerde input, probeer opnieuw.");
+                    correct = false;
+                }
+            } while (!correct);
+
+            return result;
+        };
+        return getDoubleFromUser;
+    }
+
+    private userInput<Integer> getIntFromUser(){
+        userInput<Integer> getIntFromUser = request -> {
+            String response = getStringFromUser().apply(request);
+            boolean correct = false;
+            Integer result = null;
+            do {
+                try {
+                    result = new Integer(response);
+                    correct = true;
+                } catch (NumberFormatException e) {
+                    printMessage("Verkeerde input, probeer opnieuw.");
+                    correct = false;
+                }
+            } while (!correct);
+
+            return result;
+        };
+        return getIntFromUser;
+    }
+
     /**
+     * @return userInput<List<Integer>> die meerdere int inputs vraag aan de gebruiker
      * Input gescheiden door een komma
-     * @throws CancelException
      */
-    userInput<List<Integer>> getMultipleIntFromUser = request ->{
-        boolean correct = false;
-        ArrayList<Integer> result = new ArrayList<>();
-        do {
-            try {
-                String response = getStringFromUser.apply(request);
-                List<String> numbers = Arrays.asList(response.split(","));
-                final ArrayList<Integer> finalResult = result;
-                numbers.stream().forEach(num -> finalResult.add(new Integer(num)));
-                correct = true;
-            } catch (NumberFormatException e) {
-                printMessage("Verkeerde input, probeer opnieuw.");
-                correct = false;
-            }
-        } while (!correct);
+    private userInput<List<Integer>> getMultipleIntFromUser(){
+         userInput<List<Integer>> getMultipleIntFromUser = request ->{
+            boolean correct = false;
+            ArrayList<Integer> result = new ArrayList<>();
+            do {
+                try {
+                    String response = getStringFromUser().apply(request);
+                    List<String> numbers = Arrays.asList(response.split(","));
+                    final ArrayList<Integer> finalResult = result;
+                    numbers.stream().forEach(num -> finalResult.add(new Integer(num)));
+                    correct = true;
+                } catch (NumberFormatException e) {
+                    printMessage("Verkeerde input, probeer opnieuw.");
+                    correct = false;
+                }
+            } while (!correct);
 
-        return result;
-    };
+            return result;
+        };
+        return getMultipleIntFromUser;
+    }
+    private userInput<LocalDateTime> getDateFromUser() {
+        userInput<LocalDateTime> getDateFromUser = request -> {
+            LocalDateTime result = null;
+            boolean correct = false;
+            do {
+                String response = getStringFromUser().apply(request + " formaat: yyyy-mm-dd hh:mm");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                try {
+                    result = LocalDateTime.parse(response, formatter);
+                    correct = true;
+                } catch (Exception e) {
+                    printMessage("Verkeerde input, komt niet overeen met het formaat. Probeer opnieuw");
+                    correct = false;
+                }
+            } while (!correct);
+            return result;
+        };
+        return getDateFromUser;
+    }
 
-    userInput<LocalDateTime> getDateFromUser = request -> {
-        LocalDateTime result = null;
-        boolean correct = false;
-        do {
-            String response = getStringFromUser.apply(request + " formaat: yyyy-mm-dd hh:mm");
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            try {
-                result = LocalDateTime.parse(response, formatter);
-                correct = true;
-            } catch (Exception e) {
-                printMessage("Verkeerde input, komt niet overeen met het formaat. Probeer opnieuw");
-                correct = false;
-            }
-        } while (!correct);
-        return result;
-    };
-    userInput<Boolean> getBooleanFromUser = request -> {
-        boolean result = false;
-        boolean quit = false;
-        do {
-            String response = getStringFromUser.apply(request);
-            if (response.equalsIgnoreCase("y")) {
-                result = true;
-                quit = true;
-            } else if (response.equalsIgnoreCase("n")) {
-                result = false;
-                quit = true;
-            } else {
-                quit = false;
-                printMessage("Verkeerde input, probeer opnieuw.");
-            }
-        } while (!quit);
-        return result;
-    };
-
+    private userInput<Boolean> getBooleanFromUser(){
+        userInput<Boolean> getBooleanFromUser = request -> {
+            boolean result = false;
+            boolean quit = false;
+            do {
+                String response = getStringFromUser().apply(request);
+                if (response.equalsIgnoreCase("y")) {
+                    result = true;
+                    quit = true;
+                } else if (response.equalsIgnoreCase("n")) {
+                    result = false;
+                    quit = true;
+                } else {
+                    quit = false;
+                    printMessage("Verkeerde input, probeer opnieuw.");
+                }
+            } while (!quit);
+            return result;
+        };
+        return getBooleanFromUser;
+    }
 
     @Override
     public <T> List<T> selectMultipleFromList(String request, List<T> list, List<T> preselectedList, int maxSelected,boolean exactAmount, Function<T, String> listEntryPrinter) {
@@ -483,7 +526,7 @@ public class CommandLineInterface implements UserInterface {
             //Indien preselectedList niet in list zit, gooi cancelexception
             throw new CancelException("De voor geselecteerde lijst, komt niet helemaal voor in de totale lijst");
         }
-        //BiConsumr printen van de lijst, met geselecteerde items
+        //BiConsumer printen van de lijst, met geselecteerde items
         BiConsumer<List<T>, List<T>> printListAndSelection = (totalList, selectedList) -> {
             ArrayList<Integer> selectedIndexes = new ArrayList<>();
             selectedList.forEach(element -> selectedIndexes.add(list.indexOf(element)));
@@ -501,7 +544,7 @@ public class CommandLineInterface implements UserInterface {
             int min = 0;
             String req = "Gelieve "+ (!exactAmount?"(tot)":"") + maxSelected + " getallen tussen " + min + " & " + max + " te geven. (gescheiden met een komma)";
 
-            List<Integer> indexSelected = getMultipleNumberBetween(req,getMultipleIntFromUser, min, max, maxSelected,exactAmount);
+            List<Integer> indexSelected = getMultipleNumberBetween(req,getMultipleIntFromUser(), min, max, maxSelected,exactAmount);
             ArrayList<T> newSelection = new ArrayList<>();
             indexSelected.stream().forEach(i -> newSelection.add(totalList.get(i)));
             return newSelection;
@@ -520,9 +563,6 @@ public class CommandLineInterface implements UserInterface {
         } while (!done);
         return selection;
     }
-
-
-
 
     //TODO refactor selectFromList zodat het werkt met selectMultipleFromList
 
@@ -544,7 +584,7 @@ public class CommandLineInterface implements UserInterface {
             }
             int max = list.size() - 1;
             int min = 0;
-            int selection = numberBetween(getIntFromUser, min, max);
+            int selection = numberBetween(getIntFromUser(), min, max);
             return list.get(selection);
         };
         if (!tList.isEmpty()) {
