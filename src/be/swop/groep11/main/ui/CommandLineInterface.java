@@ -8,12 +8,15 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -21,6 +24,23 @@ import java.util.function.Function;
  * Commandline gebruikersinterface die UserInterface implementeert.
  */
 public class CommandLineInterface implements UserInterface {
+
+    public static void main(String[] args) {
+        //Voorbeeldje select multiple from list
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(java.lang.System.in));
+        CommandLineInterface cli = new CommandLineInterface(bufferedReader);
+        List<String> total = Arrays.asList("A","B","C","D","E","F");
+        List<String> selected = Arrays.asList("A","E", "F");
+        Function<String, String> entryPrinter = s -> "LETTER: " + s;
+
+        List<String> ss = cli.selectMultipleFromList("Het selecteren van letters",total,selected,4,true,entryPrinter);
+        System.out.println(ss);
+        try {
+            bufferedReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Constructor om een nieuwe commandline gebruikersinterface te maken.
@@ -31,15 +51,15 @@ public class CommandLineInterface implements UserInterface {
         this.exit = false;
     }
 
-    public void run(){
+    public void run() {
         try {
-            while (! exit) {
+            while (!exit) {
                 try {
                     String commandString = bufferedReader.readLine();
                     Action com = Action.getAction(commandString);
                     executeCommand(com);
-                }catch (IllegalActionException ec){
-                       printException(ec);
+                } catch (IllegalActionException ec) {
+                    printException(ec);
                 }
             }
             bufferedReader.close();
@@ -47,6 +67,7 @@ public class CommandLineInterface implements UserInterface {
             e.printStackTrace();
         }
     }
+
     private boolean exit;
     private BufferedReader bufferedReader;
     private ActionBehaviourMapping actionBehaviourMapping;
@@ -60,23 +81,27 @@ public class CommandLineInterface implements UserInterface {
         return actionBehaviourMapping != null && this.actionBehaviourMapping == null;
     }
 
-    public void setActionBehaviourMapping(ActionBehaviourMapping actionBehaviourMapping){
-        if(!canHaveAsActionMapping(actionBehaviourMapping)){
+    public void setActionBehaviourMapping(ActionBehaviourMapping actionBehaviourMapping) {
+        if (!canHaveAsActionMapping(actionBehaviourMapping)) {
             throw new IllegalArgumentException("Gegeven actionMapping is geen geldige voor deze UI.");
         }
         this.actionBehaviourMapping = actionBehaviourMapping;
     }
+
     @Override
     public ActionBehaviourMapping getActionBehaviourMapping() {
         return actionBehaviourMapping;
     }
+
     private void executeCommand(Action action) {
         actionBehaviourMapping.executeAction(action);
     }
+
     @Override
     public void printMessage(String message) {
         System.out.printf(message + "\n");
     }
+
     @Override
     public void printException(Exception e) {
         System.out.printf(e.getMessage() + "\n");
@@ -93,6 +118,7 @@ public class CommandLineInterface implements UserInterface {
 
     /**
      * Toont een tekstversie van een lijst van taken aan de gebruiker
+     *
      * @param tasks Lijst van taken
      */
     @Override
@@ -101,19 +127,19 @@ public class CommandLineInterface implements UserInterface {
     }
 
     private String taskFormatStr = "%-35s %-20s %-15s %n";
-    Function<Task,String> showTaskEntry =  (task -> {
-        String asterix = (task.isUnacceptablyOverTime())? "*": "";
-        String onTime = task.isOverTime()?"nee ("+Math.round(task.getOverTimePercentage()*100)+"%)":"ja";
-        return String.format(taskFormatStr, task.getDescription() + asterix, task.getStatus(),onTime);
+    Function<Task, String> showTaskEntry = (task -> {
+        String asterix = (task.isUnacceptablyOverTime()) ? "*" : "";
+        String onTime = task.isOverTime() ? "nee (" + Math.round(task.getOverTimePercentage() * 100) + "%)" : "ja";
+        return String.format(taskFormatStr, task.getDescription() + asterix, task.getStatus(), onTime);
     });
 
     private String projectFormatStr = "%-35s %-20s %-20s %n";
-    Function<Project,String> showProjectEntry =  (project -> {
+    Function<Project, String> showProjectEntry = (project -> {
         String overTime = (project.isOverTime()) ? "over time" : "on time";
         // TODO: project overtime Method?
         return String.format(projectFormatStr, project.getName(), project.getProjectStatus().name(), "(" + overTime + ")");
     });
-    Function<LocalDateTime,String> showLocalDateTimeEntry =  (dateTime -> {
+    Function<LocalDateTime, String> showLocalDateTimeEntry = (dateTime -> {
         return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     });
 
@@ -134,13 +160,13 @@ public class CommandLineInterface implements UserInterface {
      * Implementeert selectProjectFromList in UserInterface
      */
     @Override
-    public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException{
+    public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException {
         return selectFromList(projects, showProjectEntry);
     }
 
     @Override
     public LocalDateTime selectLocalDateTimeFromList(List<LocalDateTime> dateTimes) throws EmptyListException, CancelException {
-        return selectFromList(dateTimes,showLocalDateTimeEntry);
+        return selectFromList(dateTimes, showLocalDateTimeEntry);
     }
 
     /**
@@ -179,11 +205,9 @@ public class CommandLineInterface implements UserInterface {
         String finishedStatus = "";
         if (task.getFinishedStatus() == Task.FinishedStatus.EARLY) {
             finishedStatus = "early";
-        }
-        else if (task.getFinishedStatus() == Task.FinishedStatus.ONTIME) {
+        } else if (task.getFinishedStatus() == Task.FinishedStatus.ONTIME) {
             finishedStatus = "on time";
-        }
-        else if (task.getFinishedStatus() == Task.FinishedStatus.OVERDUE) {
+        } else if (task.getFinishedStatus() == Task.FinishedStatus.OVERDUE) {
             finishedStatus = "late";
         }
         System.out.printf(format, "Status: ", task.getStatusString() + " " + finishedStatus); // TODO: hier stond getStatus.name(), we hadden toch nooit een functie .name() ?
@@ -191,21 +215,21 @@ public class CommandLineInterface implements UserInterface {
         // on time?
         String onTime = "ja";
         if (task.isOverTime()) {
-            long percentage = Math.round(task.getOverTimePercentage()*100);
-            onTime = "nee ("+percentage+"%)";
+            long percentage = Math.round(task.getOverTimePercentage() * 100);
+            onTime = "nee (" + percentage + "%)";
         }
         java.lang.System.out.printf(format, "Momenteel on time: ", onTime);
 
         Duration estimatedDuration = task.getEstimatedDuration();
-        long estimatedDurationHours = estimatedDuration.getSeconds() / (60*60);
-        long estimatedDurationMinutes = (estimatedDuration.getSeconds() % (60*60)) / 60;
+        long estimatedDurationHours = estimatedDuration.getSeconds() / (60 * 60);
+        long estimatedDurationMinutes = (estimatedDuration.getSeconds() % (60 * 60)) / 60;
         System.out.printf(format, "Geschatte duur: ", estimatedDurationHours + "u" + estimatedDurationMinutes + "min");
 
-        double acceptDevPercent = task.getAcceptableDeviation()*100;
-       System.out.printf(format, "Aanvaardbare afwijking: ", acceptDevPercent+"%");
+        double acceptDevPercent = task.getAcceptableDeviation() * 100;
+        System.out.printf(format, "Aanvaardbare afwijking: ", acceptDevPercent + "%");
 
         if (task.getStartTime() != null) {
-           System.out.printf(format, "Starttijd: ", task.getStartTime().format(formatter));
+            System.out.printf(format, "Starttijd: ", task.getStartTime().format(formatter));
         }
 
         if (task.getEndTime() != null) {
@@ -213,10 +237,9 @@ public class CommandLineInterface implements UserInterface {
         }
 
         java.lang.System.out.println("Afhankelijk van:");
-        if (! task.getDependingOnTasks().isEmpty()) {
+        if (!task.getDependingOnTasks().isEmpty()) {
             showTaskList(ImmutableList.copyOf(task.getDependingOnTasks()));
-        }
-        else {
+        } else {
             java.lang.System.out.println("Deze taak hangt niet van andere taken af");
         }
 
@@ -225,18 +248,19 @@ public class CommandLineInterface implements UserInterface {
         }
     }
 
-//    @Override
-    public <T> T requestUserInput(String request,userInput<T> userInput) throws CancelException {
+    //    @Override
+    public <T> T requestUserInput(String request, userInput<T> userInput) throws CancelException {
         return userInput.getUserInput(request);
     }
 
-    private void resolveCancel(String str) throws CancelException{
-        if(Action.checkCancel(str)){
+    private void resolveCancel(String str) throws CancelException {
+        if (Action.checkCancel(str)) {
             throw new CancelException("Canceled");
         }
     }
-    private void resolveEmpty(String string)throws CancelException{
-        if(string == null || string.isEmpty()){
+
+    private void resolveEmpty(String string) throws CancelException {
+        if (string == null || string.isEmpty()) {
             throw new CancelException("Canceled omwille van lege response.");
         }
     }
@@ -290,27 +314,64 @@ public class CommandLineInterface implements UserInterface {
      * @param min       De minimum toegelaten waarde (inclusief)
      * @param max       De maximum toegelaten waarde (inclusief)
      * @param <T>       Het Type van het gevraagde getal tussen min en max.
-     * @return          Een getal van Type <T> dat uit [min,max] komt.
-     * @throws CancelException  gooi indien de gebruiker het Command.CANCEL in geeft.
+     * @return Een getal van Type <T> dat uit [min,max] komt.
+     * @throws CancelException gooi indien de gebruiker het Command.CANCEL in geeft.
      */
-    public <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException{
+    public <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput, T min, T max) throws CancelException {
         boolean correct = false;
         T response = null;
-        do{
+        do {
             try {
                 response = userInput.apply("Gelieve een getal tussen " + min + " & " + max + " te geven.");
-                correct = ((response.compareTo(min) > 0 ||response.compareTo(min) == 0) && (response.compareTo(max) < 1 ||response.compareTo(max) == 0));
+                correct = ((response.compareTo(min) > 0 || response.compareTo(min) == 0) && (response.compareTo(max) < 1 || response.compareTo(max) == 0));
             } catch (NumberFormatException e) {
                 correct = false;
             }
-            if(!correct){
+            if (!correct) {
                 printMessage("Verkeerde input, probeer opnieuw.");
             }
-        }while(!correct);
+        } while (!correct);
         return response;
     }
+    /**
+     * Vraag meerdere getallen aan de user tussen een min en max waarde.
+     *
+     * @param <T>       Het Type van het gevraagde getal tussen min en max.
+     * @param userInput de functie waarmee de invoer aan de gebruiker gevraagd wordt.
+     * @param min       De minimum toegelaten waarde (inclusief)
+     * @param max       De maximum toegelaten waarde (inclusief)
+     * @param amount    Hoeveel getallen er gevraagd worden aan de gebruiker.
+     * @param exactAmount Moet er minstens "amount" nummers gegeven worden. (ja of nee)
+     * @return          Een lijst getallen van Type <T> die uit [min,max] komen.
+     *                  Indien exactAmount == true, is de grootte van de lijst gelijk aan amount.
+     *                  Anders bezit de lijst maximum "amount" nummers.
+     * @throws CancelException gooi indien de gebruiker het Command.CANCEL in geeft.
+     */
+    public <T extends Number & Comparable<T>> List<T> getMultipleNumberBetween(String request,userInput<List<T>> userInput, T min, T max,int amount,boolean exactAmount) throws CancelException {
+        final boolean[] correct = {true};
+        List<T> result = new ArrayList<>();
+
+        do {
+            try {
+                correct[0] = true;
+                result = userInput.apply(request);
+
+                result.forEach(t -> correct[0] &= (t.compareTo(min) > 0 || t.compareTo(min) == 0) && (t.compareTo(max) < 1 || t.compareTo(max) == 0));
+                correct[0] &= (exactAmount)?result.size() == amount:result.size() <= amount;
+            } catch (NumberFormatException e) {
+                correct[0] = false;
+            }
+            if (!correct[0]) {
+                printMessage("Verkeerde input, probeer opnieuw.");
+            }
+        } while (!correct[0]);
+        return result;
+    }
+
+
+
     userInput<String> getStringFromUser = request -> {
-        System.out.println(request);
+        printMessage(request);
         String result = "";
         try {
             result = bufferedReader.readLine();
@@ -326,7 +387,7 @@ public class CommandLineInterface implements UserInterface {
         String response = getStringFromUser.apply(request);
         boolean correct = false;
         Double result = null;
-        do{
+        do {
             try {
                 result = new Double(response);
                 correct = true;
@@ -334,7 +395,7 @@ public class CommandLineInterface implements UserInterface {
                 printMessage("Verkeerde input, probeer opnieuw.");
                 correct = false;
             }
-        }while(!correct);
+        } while (!correct);
 
         return result;
     };
@@ -343,7 +404,7 @@ public class CommandLineInterface implements UserInterface {
         String response = getStringFromUser.apply(request);
         boolean correct = false;
         Integer result = null;
-        do{
+        do {
             try {
                 result = new Integer(response);
                 correct = true;
@@ -351,14 +412,37 @@ public class CommandLineInterface implements UserInterface {
                 printMessage("Verkeerde input, probeer opnieuw.");
                 correct = false;
             }
-        }while(!correct);
+        } while (!correct);
 
         return result;
     };
+    /**
+     * Input gescheiden door een komma
+     * @throws CancelException
+     */
+    userInput<List<Integer>> getMultipleIntFromUser = request ->{
+        boolean correct = false;
+        ArrayList<Integer> result = new ArrayList<>();
+        do {
+            try {
+                String response = getStringFromUser.apply(request);
+                List<String> numbers = Arrays.asList(response.split(","));
+                final ArrayList<Integer> finalResult = result;
+                numbers.stream().forEach(num -> finalResult.add(new Integer(num)));
+                correct = true;
+            } catch (NumberFormatException e) {
+                printMessage("Verkeerde input, probeer opnieuw.");
+                correct = false;
+            }
+        } while (!correct);
+
+        return result;
+    };
+
     userInput<LocalDateTime> getDateFromUser = request -> {
         LocalDateTime result = null;
         boolean correct = false;
-        do{
+        do {
             String response = getStringFromUser.apply(request + " formaat: yyyy-mm-dd hh:mm");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             try {
@@ -368,68 +452,123 @@ public class CommandLineInterface implements UserInterface {
                 printMessage("Verkeerde input, komt niet overeen met het formaat. Probeer opnieuw");
                 correct = false;
             }
-        }while(!correct);
+        } while (!correct);
         return result;
     };
     userInput<Boolean> getBooleanFromUser = request -> {
         boolean result = false;
         boolean quit = false;
-        do{
+        do {
             String response = getStringFromUser.apply(request);
-           if(response.equalsIgnoreCase("y")){
-               result = true;
-               quit = true;
-           }else if(response.equalsIgnoreCase("n")){
-               result = false;
-               quit = true;
-           }else {
-               quit = false;
-               printMessage("Verkeerde input, probeer opnieuw.");
-           }
-        }while(!quit);
+            if (response.equalsIgnoreCase("y")) {
+                result = true;
+                quit = true;
+            } else if (response.equalsIgnoreCase("n")) {
+                result = false;
+                quit = true;
+            } else {
+                quit = false;
+                printMessage("Verkeerde input, probeer opnieuw.");
+            }
+        } while (!quit);
         return result;
     };
 
-    //TODO selectMultipleFromList
-
 
     @Override
-    public <T> List<T> selectMultipleFromList(String request, List<T> list, List<T> preselectedList, int maxSelected, Function<T, String> listEntryPrinter) {
-        return null;
+    public <T> List<T> selectMultipleFromList(String request, List<T> list, List<T> preselectedList, int maxSelected,boolean exactAmount, Function<T, String> listEntryPrinter) {
+        if(list.isEmpty()){//Lijst is leeg, kan niet selecteren.
+            throw new EmptyListException("Lege lijst");
+        }else if (!list.containsAll(preselectedList)) {
+            //Indien preselectedList niet in list zit, gooi cancelexception
+            throw new CancelException("De voor geselecteerde lijst, komt niet helemaal voor in de totale lijst");
+        }
+        //BiConsumr printen van de lijst, met geselecteerde items
+        BiConsumer<List<T>, List<T>> printListAndSelection = (totalList, selectedList) -> {
+            ArrayList<Integer> selectedIndexes = new ArrayList<>();
+            selectedList.forEach(element -> selectedIndexes.add(list.indexOf(element)));
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < totalList.size(); i++) {
+                String isSelected = "[" + (selectedIndexes.contains(i) ? "x" : ".") + "]";
+                sb.append(String.format("%3d. %s %s\n", i, isSelected, listEntryPrinter.apply(totalList.get(i))));
+            }
+            printMessage(sb.toString());
+        };
+        //Functie om de selectie te maken
+        Function<List<T>,List<T>> listSelector = (totalList) -> {
+            int max = list.size() - 1;
+            int min = 0;
+            String req = "Gelieve "+ (!exactAmount?"(tot)":"") + maxSelected + " getallen tussen " + min + " & " + max + " te geven. (gescheiden met een komma)";
+
+            List<Integer> indexSelected = getMultipleNumberBetween(req,getMultipleIntFromUser, min, max, maxSelected,exactAmount);
+            ArrayList<T> newSelection = new ArrayList<>();
+            indexSelected.stream().forEach(i -> newSelection.add(totalList.get(i)));
+            return newSelection;
+        };
+
+        boolean done;
+        List<T> selection;
+        printListAndSelection.accept(list, preselectedList);
+        //Print request
+        printMessage(request);
+        do {
+            //Printen van lijst met zijn geselecteerde items.
+            selection = listSelector.apply(list);
+            printListAndSelection.accept(list, selection);
+            done = requestBoolean("gedaan met selecteren?");
+        } while (!done);
+        return selection;
     }
+
+
+
+
+    //TODO refactor selectFromList zodat het werkt met selectMultipleFromList
 
     /**
      * Laat de gebruiker een element kiezen uit de gegeven lijst.
-     * @param tList             De lijst waaruit men kan kiezen
-     * @param listEntryPrinter  De manier waarop ieder element wordt voorgesteld
-     * @param <T>               Het type van het geselecteerde element
-     * @return                  Geeft het element dat de gebruiker selecteerde.
-     * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer.
-     * @throws EmptyListException  gooi indien de gegeven lijst leeg is.
+     *
+     * @param tList            De lijst waaruit men kan kiezen
+     * @param listEntryPrinter De manier waarop ieder element wordt voorgesteld
+     * @param <T>              Het type van het geselecteerde element
+     * @return Geeft het element dat de gebruiker selecteerde.
+     * @throws CancelException    indien gebruiker Command.CANCEL ingeeft als invoer.
+     * @throws EmptyListException gooi indien de gegeven lijst leeg is.
      */
     @Override
-    public <T> T selectFromList(List<T> tList,Function<T,String> listEntryPrinter)throws CancelException,EmptyListException{
-        Function<List<T>,T> listSelector = list -> {
-            if(list == null || list.isEmpty()){ throw new CancelException("Lege lijst.");}
-            int max = list.size()-1;
+    public <T> T selectFromList(List<T> tList, Function<T, String> listEntryPrinter) throws CancelException, EmptyListException {
+        Function<List<T>, T> listSelector = list -> {
+            if (list == null || list.isEmpty()) {
+                throw new CancelException("Lege lijst.");
+            }
+            int max = list.size() - 1;
             int min = 0;
-            int selection = numberBetween(getIntFromUser,min,max);
+            int selection = numberBetween(getIntFromUser, min, max);
             return list.get(selection);
         };
-        if(!tList.isEmpty()){
+        if (!tList.isEmpty()) {
             printList(tList, listEntryPrinter);
             T selection = listSelector.apply(tList);
             return selection;
-        }else {
+        } else {
             throw new EmptyListException("Lege lijst");
         }
     }
 
-    private <T> void printList(List<T> list,Function<T,String> listEntryPrinter){
+    /**
+     * Gegeven een lijst, geef een grafische voorstelling.
+     * Plaatst een cijfer voor ieder element van de lijst!!
+     *
+     * @param list             De weer te geven lijst.
+     * @param listEntryPrinter De manier waarop ieder element van de lijst wordt voorgesteld.
+     * @param <T>              Het type van de elementen
+     */
+    private <T> void printList(List<T> list, Function<T, String> listEntryPrinter) {
         //TODO check if arguments are valid
         Consumer<List<T>> listPrint = listTemp -> {
             StringBuilder sb = new StringBuilder();
-            for(int i = 0; i< listTemp.size(); i++){
+            for (int i = 0; i < listTemp.size(); i++) {
                 sb.append(String.format("%3d. %s\n", i, listEntryPrinter.apply(listTemp.get(i))));
             }
             printMessage(sb.toString());
@@ -437,14 +576,14 @@ public class CommandLineInterface implements UserInterface {
         listPrint.accept(list);
     }
 
-    public void showHelp(AbstractController abstractController) throws IllegalArgumentException{
+    public void showHelp(AbstractController abstractController) throws IllegalArgumentException {
         ArrayList<Action> list = new ArrayList<>();
-        for(Map.Entry<Action,ActionBehaviour> entry :  actionBehaviourMapping.getMappingFor(abstractController).entrySet()){
+        for (Map.Entry<Action, ActionBehaviour> entry : actionBehaviourMapping.getMappingFor(abstractController).entrySet()) {
             list.add(entry.getKey());
         }
         StringBuilder sb = new StringBuilder();
-        for(Action cmd : list){
-            sb.append(String.format("%-2s%s%1s", "|", cmd.getActionStr()," "));
+        for (Action cmd : list) {
+            sb.append(String.format("%-2s%s%1s", "|", cmd.getActionStr(), " "));
         }
         sb.append("|");
         printMessage(sb.toString());

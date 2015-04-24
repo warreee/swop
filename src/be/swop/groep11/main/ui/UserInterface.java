@@ -131,10 +131,10 @@ public interface UserInterface {
          */
     <T> T selectFromList(List<T> tList, Function<T, String> listEntryPrinter)throws CancelException;
 
-    <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,int maxSelected,Function<T,String> listEntryPrinter);
+    <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,int maxSelected,boolean exactAmount,Function<T,String> listEntryPrinter);
 
     default <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,Function<T,String> listEntryPrinter) {
-        return selectMultipleFromList(request,list, preselectedList, list.size(),listEntryPrinter);
+        return selectMultipleFromList(request,list, preselectedList, list.size(),false,listEntryPrinter);
     }
 
 
