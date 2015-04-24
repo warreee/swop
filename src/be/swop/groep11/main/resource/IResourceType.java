@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableList;
  */
 public interface IResourceType {
 
+    //TODO implementatie voor DeveloperType
+
     public boolean hasConstraintFor(IResourceType typeA);
 
     public ResourceTypeConstraint getConstraintFor(IResourceType typeA);

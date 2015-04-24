@@ -24,7 +24,7 @@ public class DependencyGraph {
      * @param dependent
      * @param dependingOn
      */
-                                // B                A
+
     public void addDependency(Task dependent, Task dependingOn) {
         // TODO: check: is valid...
         if (dependingOnMap.containsKey(dependent)){
@@ -70,14 +70,59 @@ public class DependencyGraph {
         for (Task dtft : dependentTasksFailedTask) {
             addDependency(dtft, alternativeTask);
         }
-        removeDependency(failedTask);
+        removeFailedDependency(failedTask);
 
     }
 
-    private void removeDependency(Task failedTask) {
+    private void removeFailedDependency(Task failedTask) {
         dependentMap.remove(failedTask);
         dependingOnMap.entrySet().stream().filter(entry -> entry.getValue().contains(failedTask)).forEach(entry -> entry.getValue().remove(failedTask));
+        dependingOnMap.remove(failedTask);
     }
 
+    private boolean isValidDependency(Task dependent, Task dependingOn) {
 
+        if (dependent == dependingOn) {  // dependencies mogen niet gelijk zijn
+            return false;
+        }
+        if (dependent == null || dependingOn == null){
+            return false;
+        }
+
+        return true;
+    }
+
+    private HashSet<Task> Unmarked = allTasks();
+    ArrayList<Task> tempMarked;
+    ArrayList<Task> finalMarked;
+    ArrayList<Task> result;
+    private boolean containsLoop(Task dependent, Task dependingOn) {
+        
+        addDependency(dependent, dependingOn);
+        try {
+            while (!finalMarked.isEmpty()) {
+                visit(finalMarked.get(0));
+            }
+        } catch (IllegalArgumentException e) {
+            // remove degelijk vorige dependency
+        }
+        return true;
+    }
+
+    private void visit(Task t){
+        if (tempMarked.contains(t)){
+            throw new IllegalArgumentException();
+        }
+        if (!finalMarked.contains(t)){
+            tempMarked.add(t);
+            this.dependingOnMap.get(t).forEach(this::visit);
+            finalMarked.add(t);
+            tempMarked.remove(t);
+            result.add(t);
+        }
+    }
+
+    private HashSet<Task> allTasks(){
+       return (HashSet<Task>) this.dependentMap.keySet();
+    }
 }

@@ -305,7 +305,39 @@ public class ResourceManager {
 
     // TODO: reservaties verwijderen
 
-    // TODO: reservaties vroeger laten eindigien
+    /**
+     * Verwijderd alle reservaties van een taak.
+     * @param task De Task waarvan alle reservaties moeten verwijderd worden.
+     */
+    private void removeReservationsFromTask(Task task){
+        this.reservations.put(task, new ArrayList<>());
+    }
+
+    /**
+     * Verwijderd een specifieke reservatie van een taak.
+     * @param task De Task waarvan de reservatie moet verwijderd worden.
+     * @param reservation De te verwijderen reservatie.
+     */
+    private void removeSpecificReservationFromTask(Task task, ResourceReservation reservation){
+        this.reservations.get(task).remove(reservation);
+    }
+
+    /**
+     * Beeindigd alle reservaties van de gegeven taak op de gegeven eindtijd.
+     * @param task De Task waarvan we de Reservaties willen beeindigen.
+     * @param endTime De tijd waarop de reservaties moeten eindigen.
+     * @throws IllegalArgumentException Wanneer de eindtijd voor een starttijd van een reservatie ligt.
+     */
+    // TODO: modifier juist zetten.
+    private void endReservationsFromTask(Task task, LocalDateTime endTime){
+        List<ResourceReservation> reservations = new ArrayList<>(this.reservations.get(task));
+        for(ResourceReservation reservation: reservations){
+            TimeSpan newTimeSpan = new TimeSpan(reservation.getTimeSpan().getStartTime(), endTime);
+            ResourceReservation resourceReservation = new ResourceReservation(task, reservation.getResourceInstance(), newTimeSpan, reservation.isSpecific());
+            this.reservations.get(task).remove(reservation);
+            this.reservations.get(task).add(resourceReservation);
+        }
+    }
 
     /**
      * Geeft een immutable list van alle reservaties.

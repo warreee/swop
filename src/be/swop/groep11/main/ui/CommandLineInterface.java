@@ -225,7 +225,7 @@ public class CommandLineInterface implements UserInterface {
         }
     }
 
-    @Override
+//    @Override
     public <T> T requestUserInput(String request,userInput<T> userInput) throws CancelException {
         return userInput.getUserInput(request);
     }
@@ -391,6 +391,13 @@ public class CommandLineInterface implements UserInterface {
     };
 
     //TODO selectMultipleFromList
+
+
+    @Override
+    public <T> List<T> selectMultipleFromList(String request, List<T> list, List<T> preselectedList, int maxSelected, Function<T, String> listEntryPrinter) {
+        return null;
+    }
+
     /**
      * Laat de gebruiker een element kiezen uit de gegeven lijst.
      * @param tList             De lijst waaruit men kan kiezen

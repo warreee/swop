@@ -104,6 +104,12 @@ public class ResourceManagerTest {
         resourceManager.addResourceInstance(type1, null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void doubleNameInstanceTest() throws Exception {
+        addResourceTypeNameOnly("Test Resource 1");
+        addResourceTypeNameOnly("Test Resource 1");
+    }
+
     @Test
     public void containsTypeTest() throws Exception {
         assertFalse(resourceManager.containsType("Car"));
@@ -144,6 +150,16 @@ public class ResourceManagerTest {
         resourceManager.addResourceInstance(type1, "Instance 1");
         resourceManager.makeReservation(mockedTask, type1.getResourceInstances().get(0), new TimeSpan(start1, end1), false);
         resourceManager.makeReservation(mockedTask, type1.getResourceInstances().get(0), new TimeSpan(start2, end2), false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void makeNullReservationTest() throws Exception {
+        addResourceTypeNameOnly("Test Resource 1");
+        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        LocalDateTime start = LocalDateTime.of(2015, 3, 10, 12, 0);
+        LocalDateTime end = LocalDateTime.of(2015, 3, 10, 16, 0);
+        resourceManager.addResourceInstance(type1, "Instance 1");
+        resourceManager.makeReservation(null, type1.getResourceInstances().get(0), new TimeSpan(start, end), false);
     }
 
     /**

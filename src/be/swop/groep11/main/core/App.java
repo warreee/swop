@@ -71,7 +71,7 @@ public class App {
 
     private void initControllers(){
         //Aanmaken van controllers
-        taskController = new TaskController(projectRepository, systemTime,cli );
+        taskController = new TaskController(projectRepository, systemTime,cli, resourceManager );
         projectController = new ProjectController(projectRepository, new User("ROOT"), cli );
         advanceTimeController = new AdvanceTimeController( systemTime, cli);
         simulationController = new SimulationController(actionBehaviourMapping, projectRepository, cli);

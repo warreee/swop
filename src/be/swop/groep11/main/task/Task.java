@@ -16,7 +16,6 @@ import java.util.Set;
  */
 public class Task {
 
-    //TODO: methodes isOverTime en getOverTimePercentage en isUnacceptablyOverTime
     /**
      * Constructor om een nieuwe taak te maken.
      *
