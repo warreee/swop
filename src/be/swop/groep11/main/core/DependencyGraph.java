@@ -3,6 +3,7 @@ package be.swop.groep11.main.core;
 import be.swop.groep11.main.task.Task;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by warreee on 4/20/15.
@@ -148,14 +149,15 @@ public class DependencyGraph {
             return false;
         }
         ArrayList<Task> tempMarked = new ArrayList<>();
-        ArrayList<Task> unMarked = allTasks();
+        ArrayList<Task> allTasks = allTasks();
         ArrayList<Task> finalMarked = new ArrayList<>();
         ArrayList<Task> result = new ArrayList<>();
         addDependency(dependent, dependingOn);
         try {
-            while (unMarked.stream().filter(entry -> !tempMarked.contains(entry) || !finalMarked.contains(entry)).count() != 0) {
+            while (allTasks.stream().filter(entry -> !tempMarked.contains(entry)).filter(entry -> !finalMarked.contains(entry)).count() != 0) {
                 // de vorige lamda expressie gaat na of unmarked niet leeg is
-                visit(unMarked.get(0), unMarked, tempMarked, finalMarked, result);
+                ArrayList<Task> unMarked = (ArrayList<Task>) allTasks.stream().filter(entry -> !tempMarked.contains(entry)).filter(entry -> !finalMarked.contains(entry)).collect(Collectors.toList());
+                visit(unMarked.get(0), tempMarked, finalMarked, result);
             }
         } catch (IllegalArgumentException e) {
                 undoAddDependency(dependent, dependingOn);
@@ -164,13 +166,15 @@ public class DependencyGraph {
         return true;
     }
 
-    private void visit(Task t, ArrayList<Task> unMarked, ArrayList<Task> tempMarked, ArrayList<Task> finalMarked, ArrayList<Task> result){
+    private void visit(Task t, ArrayList<Task> tempMarked, ArrayList<Task> finalMarked, ArrayList<Task> result){
         if (tempMarked.contains(t)){
             throw new IllegalArgumentException();
         }
         if (!finalMarked.contains(t)){
             tempMarked.add(t);
-            this.dependingOnMap.get(t).forEach((Task x) -> visit(x, unMarked, tempMarked, finalMarked, result));
+            for (Task x : this.dependentMap.get(t)){
+                visit(x, tempMarked, finalMarked, result);
+            }
             finalMarked.add(t);
             tempMarked.remove(t);
             result.add(t);
