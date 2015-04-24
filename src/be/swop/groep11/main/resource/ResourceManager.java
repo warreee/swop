@@ -16,6 +16,8 @@ import java.util.*;
  */
 public class ResourceManager {
 
+    // TODO: ResourceTypeRepository hier uit halen!
+
     /**
      * Constructor om een nieuwe resource manager aan te maken.
      */
@@ -668,6 +670,11 @@ public class ResourceManager {
                 }
             }
             return false;
+        }
+
+        @Override
+        public List<Task> getConflictingTasks() {
+            return null;
         }
 
         private List<ResourceReservation> calculateDefaultReservations(Task task, LocalDateTime startTime) throws IllegalArgumentException {
