@@ -1,6 +1,7 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.DependencyGraph;
+import be.swop.groep11.main.core.IllegalDependencyException;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
@@ -60,7 +61,7 @@ public class DependencyGraphTest {
                 try {
                     dependencyGraph.getDependentTasks(task).stream().map((t) -> task.getDescription()
                             + " heeft als afhankelijke taak: " + t.getDescription()).forEach(System.out::println);
-                } catch (NullPointerException e){
+                } catch (NullPointerException e) {
                 }
             });
 
@@ -68,7 +69,7 @@ public class DependencyGraphTest {
 
     @Test
     public void addDependencyTest(){
-        dependencyGraph.addNewDependency(taskB, taskA);
+        taskB.addNewDependencyConstraint(taskA);
         dependencyGraph.addNewDependency(taskB, taskC);
         dependencyGraph.addNewDependency(taskB, taskD);
         dependencyGraph.addNewDependency(taskB, taskE);
@@ -87,7 +88,11 @@ public class DependencyGraphTest {
 
     }
 
-
+    @Test (expected = IllegalDependencyException.class)
+    public void addDuplicateDependencyTest() {
+        taskA.addNewDependencyConstraint(taskB);
+        taskA.addNewDependencyConstraint(taskB);
+    }
 
     @Test
     public void removeDependencyTest() {
@@ -101,8 +106,18 @@ public class DependencyGraphTest {
         assertFalse(dependencyGraph.getDependentTasks(taskB).contains(taskA));
     }
 
-    @Test
+    /**
+     * A --> B --> C --> D --> E --> A
+     */
+    @Test (expected = IllegalDependencyException.class)
     public void circularDependencyTest() {
+
+        dependencyGraph.addNewDependency(taskC, taskB);
+        dependencyGraph.addNewDependency(taskD, taskC);
+        dependencyGraph.addNewDependency(taskE, taskD);
+        dependencyGraph.addNewDependency(taskA, taskE);
+        dependencyGraph.addNewDependency(taskB, taskA);
+
 
     }
 
