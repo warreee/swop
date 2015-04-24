@@ -94,6 +94,13 @@ public interface UserInterface {
      */
     LocalDateTime requestDatum(String request) throws CancelException;
 
+    /**
+     * Stelt een ja/nee vraag/dialog invoer van de gebruiker.
+     * @param request       De vraag waarop de gebruiker ja of neen moet antwoorden
+     * @return              Waar indien de gebruiker "y" (niet hoofdletter gevoelig) ingaf
+     *                      Niet waar indien de gebruiker "n" (niet hoofdletter gevoelig) ingaf
+     * @throws CancelException  Indien de gebruiker cancel ingaf i.p.v. "y/n"
+     */
     boolean requestBoolean(String request)throws CancelException;
 
     /**
@@ -124,7 +131,14 @@ public interface UserInterface {
          */
     <T> T selectFromList(List<T> tList, Function<T, String> listEntryPrinter)throws CancelException;
 
-    <T> T requestUserInput(String request,userInput<T> userInput) throws CancelException;
+    <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,int maxSelected,boolean exactAmount,Function<T,String> listEntryPrinter);
+
+    default <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,Function<T,String> listEntryPrinter) {
+        return selectMultipleFromList(request,list, preselectedList, list.size(),false,listEntryPrinter);
+    }
+
+
+   /* <T> T requestUserInput(String request,userInput<T> userInput) throws CancelException;*/
 
  /*   *//**
      * Vraag een getal aan de user tussen een min en max waarde.
@@ -138,6 +152,5 @@ public interface UserInterface {
      *//*
     <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException;*/
 
-    //TODO Yes/No Dialog return boolean
 
 }

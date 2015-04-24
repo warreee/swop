@@ -193,8 +193,6 @@ public class ResourceManager {
         this.addReservation(task, new ResourceReservation(task, resourceInstance, timeSpan, isSpecific));
     }
 
-
-
     /**
      * Controleert of een resource instantie beschikbaar is gedurende een gegeven tijdsspanne.
      * @param resourceInstance De te controleren resource instantie
@@ -248,6 +246,21 @@ public class ResourceManager {
         }
 
         return timeSpan;
+    }
+
+    /**
+     * Maakt de reservaties van een plan.
+     * @param plan Het gegeven plan
+     * @throws IllegalArgumentException Het plan is niet geldig.
+     */
+    public void makeReservationsForPlan(IPlan plan) throws IllegalArgumentException {
+        if (! plan.isValidPlan()) {
+            throw new IllegalArgumentException("Ongeldig plan");
+        }
+
+        for (ResourceReservation reservation : plan.getReservations()) {
+            this.addReservation(plan.getTask(), reservation);
+        }
     }
 
     /**
@@ -305,14 +318,38 @@ public class ResourceManager {
             return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour()+1,0));
     }
 
-    // TODO: reservaties verwijderen
+    // TODO: modifiers removeReservation
+    /**
+     * Verwijderd alle reservaties van een taak.
+     * @param task De Task waarvan alle reservaties moeten verwijderd worden.
+     */
+    private void removeReservationsFromTask(Task task){
+        this.reservations.put(task, new ArrayList<>());
+    }
 
-    // TODO: reservaties vroeger laten eindigien
+    /**
+     * Verwijderd een specifieke reservatie van een taak.
+     * @param task De Task waarvan de reservatie moet verwijderd worden.
+     * @param reservation De te verwijderen reservatie.
+     */
+    private void removeSpecificReservationFromTask(Task task, ResourceReservation reservation){
+        this.reservations.get(task).remove(reservation);
+    }
 
-    private void endReservationFromTask(Task task){
-        List<ResourceReservation> reservations = this.reservations.get(task);
+    /**
+     * Beeindigd alle reservaties van de gegeven taak op de gegeven eindtijd.
+     * @param task De Task waarvan we de Reservaties willen beeindigen.
+     * @param endTime De tijd waarop de reservaties moeten eindigen.
+     * @throws IllegalArgumentException Wanneer de eindtijd voor een starttijd van een reservatie ligt.
+     */
+    // TODO: modifier juist zetten.
+    private void endReservationsFromTask(Task task, LocalDateTime endTime){
+        List<ResourceReservation> reservations = new ArrayList<>(this.reservations.get(task));
         for(ResourceReservation reservation: reservations){
-            // TODO: hoe de reservatie wijzigen?
+            TimeSpan newTimeSpan = new TimeSpan(reservation.getTimeSpan().getStartTime(), endTime);
+            ResourceReservation resourceReservation = new ResourceReservation(task, reservation.getResourceInstance(), newTimeSpan, reservation.isSpecific());
+            this.reservations.get(task).remove(reservation);
+            this.reservations.get(task).add(resourceReservation);
         }
     }
 
@@ -397,7 +434,7 @@ public class ResourceManager {
      * @return Een lijst van lengte n van de eerstvolgende mogelijke plannen
      */
     public List<IPlan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
-        // TODO: dit is nog niet effici?nt genoeg!
+        // TODO: dit is misschien nog niet efficiënt genoeg?
 
         List<IPlan> plans = new LinkedList<>();
 
@@ -418,6 +455,7 @@ public class ResourceManager {
 
         /**
          * Constructor om een nieuw plan aan te maken met default reservaties voor de resource requirements van de gegeven taak.
+         * Hierbij worden ook de default reservaties voor het plan toegevoegd.
          *
          * @param task      De gegeven taak
          * @param startTime De starttijd van het plan: moet op een uur vallen (zonder minuten)
@@ -431,6 +469,7 @@ public class ResourceManager {
                 throw new IllegalArgumentException("Ongeldige starttijd: moet op een uur vallen (zonder minuten)");
             this.task = task;
             this.startTime = startTime;
+            this.makeDefaultReservations();
         }
 
         /**
@@ -472,12 +511,23 @@ public class ResourceManager {
          * gereserveerd worden voor de taak.
          */
         public boolean canMakeDefaultReservations() {
-            try {
-                List<ResourceReservation> defaultReservations = this.calculateDefaultReservations(this.getTask(), this.getStartTime());
-                return true;
-            } catch (IllegalArgumentException e) {
-                return false;
+            LocalDateTime endTime = calculateEndTime(task, startTime);
+            TimeSpan timeSpanOfPlan = new TimeSpan(startTime, endTime);
+
+            Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
+            while (it.hasNext()) {
+                ResourceRequirement requirement = it.next();
+
+                if (requirement.getType() != getDeveloperType()) {
+                    List<ResourceInstance> availableInstances = getAvailableInstances(requirement.getType(), timeSpanOfPlan);
+
+                    int nbRequiredInstances = requirement.getAmount();
+                    if (availableInstances.size() < nbRequiredInstances) {
+                        return false;
+                    }
+                }
             }
+            return true;
         }
 
         /**
@@ -568,12 +618,34 @@ public class ResourceManager {
         }
 
         /**
+         * Gooit de huidige reservaties weg en voegt reservaties voor de gegeven resource instanties toe.
+         * @param resourceInstances De gegeven resource instanties
+         */
+        @Override
+        public void changeReservations(List<ResourceInstance> resourceInstances) {
+            this.reservations = new LinkedList<>();
+            for (ResourceInstance resourceInstance : resourceInstances) {
+                this.addReservation(resourceInstance);
+            }
+        }
+
+        /**
+         * Voegt reservaties voor de gegeven resource instanties toe.
+         * @param resourceInstances De gegeven resource instanties
+         */
+        @Override
+        public void addReservations(List<ResourceInstance> resourceInstances) {
+            for (ResourceInstance resourceInstance : resourceInstances) {
+                this.addReservation(resourceInstance);
+            }
+        }
+
+        /**
          * Voegt een reservatie voor een resource instantie toe aan dit plan.
          * De toegevoegde reservatie zal een specifieke reservatie zijn.
          * @param resourceInstance De te reserveren resource instantie
          * @throws IllegalArgumentException Er is in dit plan al een reservatie voor de gegeven resource instantie gemaakt.
          */
-        @Override
         public void addReservation(ResourceInstance resourceInstance) {
             if (this.hasReservationFor(resourceInstance)) {
                 throw new IllegalArgumentException("Er is in dit plan al een reservatie voor de gegeven resource instantie gemaakt.");
@@ -583,19 +655,6 @@ public class ResourceManager {
                     resourceInstance,
                     new TimeSpan(this.getStartTime(), getNextAvailableTimeSpan(resourceInstance,this.getStartTime(),this.getTask().getEstimatedDuration()).getEndTime()),
                     true));
-        }
-
-        /**
-         * Verwijdert de reservatie voor een resource instantie uit dit plan.
-         */
-        @Override
-        public void removeReservation(ResourceInstance resourceInstance) {
-            for (ResourceReservation reservation : this.reservations) {
-                if (reservation.getResourceInstance() == resourceInstance) {
-                    this.reservations.remove(reservation);
-                    break;
-                }
-            }
         }
 
         /**
@@ -611,9 +670,6 @@ public class ResourceManager {
             return false;
         }
 
-        /**
-         * @throws IllegalArgumentException Er zijn niet genoeg resource instanties beschikbaar voor een plan van task op de gegeven starttijd
-         */
         private List<ResourceReservation> calculateDefaultReservations(Task task, LocalDateTime startTime) throws IllegalArgumentException {
             List<ResourceReservation> defaultReservations = new LinkedList<>();
 
@@ -628,8 +684,25 @@ public class ResourceManager {
                     List<ResourceInstance> availableInstances = getAvailableInstances(requirement.getType(), timeSpanOfPlan);
 
                     int nbRequiredInstances = requirement.getAmount();
+                    int nbAvailableInstances = availableInstances.size();
                     if (availableInstances.size() < nbRequiredInstances) {
-                        throw new IllegalArgumentException("Er zijn niet genoeg resource instanties beschikbaar voor een plan van task op de gegeven starttijd");
+                        // niet genoeg resource instanties beschikbaar
+                        // maar probeer wel reservaties te maken, ook al zijn die niet geldig
+                        // dit zal wel resulteren in conflicten
+
+                        List<ResourceInstance> resourceInstancesOfType = new LinkedList<>(requirement.getType().getResourceInstances());
+
+                        // maak eerst reservaties voor beschikbare instances
+                        for (int i = 0; i < nbAvailableInstances - 1; i++) {
+                            defaultReservations.add(new ResourceReservation(task, availableInstances.get(i), timeSpanOfPlan, false));
+                            resourceInstancesOfType.remove(availableInstances.get(i));
+                        }
+
+                        // maak daarna ook nog voor niet-beschikbare instances reservaties
+                        for (int i=0; i<nbRequiredInstances-nbAvailableInstances && i<resourceInstancesOfType.size()-1; i++) {
+                            defaultReservations.add(new ResourceReservation(task, resourceInstancesOfType.get(i), timeSpanOfPlan, false));
+                        }
+
                     } else {
                         // voeg de nodige reservaties toe
                         for (int i = 0; i < nbRequiredInstances - 1; i++) {

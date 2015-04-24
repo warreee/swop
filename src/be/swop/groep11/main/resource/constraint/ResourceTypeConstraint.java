@@ -141,7 +141,7 @@ public abstract class ResourceTypeConstraint {
      * @return              Waar indien resourceType == getConstrainingType() && amount >= getMin() && amount <= getMax()
      */
     public boolean isAcceptableAmount(IResourceType resourceType,int amount) {
-        return resourceType == getConstrainingType() && amount >= getMin() && amount <= getMax();
+        return resourceType != getConstrainingType() || (amount >= getMin() && amount <= getMax());
     }
 
 }

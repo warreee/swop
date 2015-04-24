@@ -145,7 +145,7 @@ public class InputParser {
     private void handleResources(Map<String, Object> resourceMap){
         ArrayList resources = (ArrayList) resourceMap.get("resources");
         for (Object resource : resources) {
-            addResource((Map<String, String>) resource);
+            addResource((Map<String, Object>) resource);
         }
     }
 
@@ -155,8 +155,8 @@ public class InputParser {
      */
     private void handleResourceTypes(Map<String, Object> resourceTypeMap){
         ArrayList resourceTypes = (ArrayList) resourceTypeMap.get("resourceTypes");
-        for(Object resourceType: resourceTypes){
-            addResourceType((Map<String, String>) resourceType);
+        for(int i = 0; i < resourceTypes.size(); i++){
+            addResourceType(i, (Map<String, Object>) resourceTypes.get(i));
         }
     }
 
@@ -203,7 +203,7 @@ public class InputParser {
         String name = propertiesList.get("name");
         IResourceType resourceType = resourceManager.getResourceTypeByName("Developer");
         resourceManager.addResourceInstance(resourceType, name);
-        developerList.add((Developer) resourceType.getResourceInstances().get(resourceType.getResourceInstances().size() - 1));
+        developerList.add((Developer) resourceManager.getDeveloperType().getResourceInstances().get(resourceManager.getDeveloperType().getResourceInstances().size() - 1));
     }
 
     /**
@@ -235,7 +235,7 @@ public class InputParser {
         projectRepository.addNewProject(name, description, creationTime, dueTime);
 
         // Haalt het laatst toegevoegde project op.
-        projectList.add(projectRepository.getProjects().get(projectRepository.getProjects().size() - 1 ));
+        projectList.add(projectRepository.getProjects().get(projectRepository.getProjects().size() - 1));
     }
 
     /**
@@ -254,9 +254,9 @@ public class InputParser {
      * Voegt een nieuwe ResourceInstance toe aan een bestaand ResourceType.
      * @param propertiesList
      */
-    private void addResource(Map<String, String> propertiesList){
-        String name = propertiesList.get("name");
-        IResourceType resourceType = resourceTypeList.get(Integer.valueOf(propertiesList.get("type")));
+    private void addResource(Map<String, Object> propertiesList){
+        String name = (String) propertiesList.get("name");
+        IResourceType resourceType = resourceTypeList.get((Integer) propertiesList.get("type"));
         resourceManager.addResourceInstance(resourceType, name);
         int size = resourceType.getResourceInstances().size();
         resourceInstanceList.add(resourceType.getResourceInstances().get(size - 1));
@@ -266,21 +266,25 @@ public class InputParser {
      * Voegt een nieuw ResourceType toe.
      * @param propertiesList
      */
-    private void addResourceType(Map<String, String> propertiesList){
+    private void addResourceType(int number, Map<String, Object> propertiesList){
         // Lees alle info uit de map.
-        String name = propertiesList.get("name");
-        String requires = propertiesList.get("requires");
-        String conflictsWith = propertiesList.get("conflictsWith");
-        String dailyAvailability = propertiesList.get("dailyAvailability");
+        String name = (String) propertiesList.get("name");
+        ArrayList requires = (ArrayList) propertiesList.get("requires");
+        ArrayList conflictsWith = (ArrayList) propertiesList.get("conflictsWith");
+        Integer dailyAvailability = (Integer) propertiesList.get("dailyAvailability");
 
         // Haal de correcte IResourceTypes op die al bekend zijn. (Dit faalt indien er fouten staan in de inputfile.)
         ArrayList<IResourceType> req = new ArrayList<>();
         ArrayList<IResourceType> con = new ArrayList<>();
-        Arrays.stream(parseStringArray(requires)).forEach(x -> req.add(resourceTypeList.get(x)));
-        Arrays.stream(parseStringArray(conflictsWith)).forEach(x -> con.add(resourceTypeList.get(x)));
+        requires.forEach(x -> req.add(resourceTypeList.get((Integer) x)));
+        conflictsWith.forEach(x -> {
+            if ((Integer) x != number) {
+                con.add(resourceTypeList.get((Integer) x));
+            }
+        });
 
         // Voeg de IResourceType eindelijk toe.
-        if(dailyAvailability.isEmpty()){
+        if(dailyAvailability == null){
             // Er is geen dailyAvailability.
             resourceManager.addNewResourceType(name, req, con);
         } else {
@@ -288,6 +292,13 @@ public class InputParser {
             DailyAvailability da = dailyAvailabilityList.get(Integer.valueOf(dailyAvailability));
             resourceManager.addNewResourceType(name, da, req, con);
         }
+
+        // Indien het IResourceType conflicteerd met zichzelf, voeg dit dan toe.
+        IResourceType type = resourceManager.getResourceTypeByName(name);
+        if(conflictsWith.contains(number)){
+            resourceManager.withConflictConstraint(type, type);
+        }
+
         resourceTypeList.add(resourceManager.getResourceTypeByName(name));
     }
 
@@ -381,5 +392,14 @@ public class InputParser {
         }
 
         return intArray;
+    }
+
+    private boolean intArrayContains(int[] arr, int number){
+        for(int i: arr){
+            if(i == number){
+                return true;
+            }
+        }
+        return false;
     }
 }

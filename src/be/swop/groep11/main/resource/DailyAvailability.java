@@ -88,8 +88,19 @@ public class DailyAvailability {
                 && Duration.between(startTime, endTime).compareTo(Duration.ofHours(1)) >= 0;
     }
 
+    /**
+     * Controleert of de doorgegeven tijd binnen de tijden van deze DaillyAvailability ligt.
+     * @param time
+     * @return
+     */
     private boolean containsTime(LocalTime time) {
-        return time != null && time.isAfter(this.getStartTime()) && time.isBefore(this.getEndTime());
+        if(time == null){
+            return false;
+        }
+        if(time.equals(getStartTime()) || time.equals(getEndTime())){
+            return true;
+        }
+        return time.isAfter(this.getStartTime()) && time.isBefore(this.getEndTime());
     }
 
     /**
