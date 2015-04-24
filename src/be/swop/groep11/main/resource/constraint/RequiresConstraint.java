@@ -15,12 +15,14 @@ public class RequiresConstraint extends ResourceTypeConstraint {
     }
 
     /**
-     * Minstens 1 hoogstens MAX
-     *
-     * @param ownerType
-     * @param constrainingType
+     * Constructor voor een nieuwe RequiresConstraint.
+     * @param ownerType         Het IResourceType waarop deze constraint van toepassing is.
+     * @param constrainingType  Het IResourceTYpe die de beperkende rol vervult inde constraint.
+     * @throws IllegalArgumentException
+     *                          Gooi indien constrainingType of ownerType niet geinitialiseerd zijn.
+     *                          Gooi indien constrainingType == ownerType
      */
-    public RequiresConstraint(IResourceType ownerType, IResourceType constrainingType) {
+    public RequiresConstraint(IResourceType ownerType, IResourceType constrainingType)throws IllegalArgumentException{
         this(ownerType, constrainingType, 1, Integer.MAX_VALUE);
     }
 }
