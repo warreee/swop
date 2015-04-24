@@ -318,8 +318,7 @@ public class ResourceManager {
             return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour()+1,0));
     }
 
-    // TODO: reservaties verwijderen
-
+    // TODO: modifiers removeReservation
     /**
      * Verwijderd alle reservaties van een taak.
      * @param task De Task waarvan alle reservaties moeten verwijderd worden.

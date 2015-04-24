@@ -105,6 +105,7 @@ public class RequirementListBuilder {
                 availabilities.add(type.getDailyAvailability());
             }
             if(availabilities.isEmpty()){
+                // Er zijn geen requirements, dus het requestedType is het enige dat beschikbaar moet zijn.
                 return true;
             }else{
                 return requestedType.getDailyAvailability().overlapsWith(availabilities);
