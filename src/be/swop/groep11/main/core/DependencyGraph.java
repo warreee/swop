@@ -161,9 +161,9 @@ public class DependencyGraph {
             }
         } catch (IllegalArgumentException e) {
                 undoAddDependency(dependent, dependingOn);
-                return false;
+                return true;
         }
-        return true;
+        return false;
     }
 
     private void visit(Task t, ArrayList<Task> tempMarked, ArrayList<Task> finalMarked, ArrayList<Task> result){

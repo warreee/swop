@@ -11,14 +11,19 @@ public class ConflictConstraint extends ResourceTypeConstraint {
         super(ownerType, constrainingType, min, max);
     }
 
-    public ConflictConstraint(IResourceType ownerType, IResourceType constrainingType) {
-        this(ownerType, constrainingType, 0, (ownerType!=null && ownerType.equals(constrainingType)) ? 1 : 0);
+    /**
+     * Constructor voor een nieuwe ConflictConstraint.
+     * @param ownerType         Het IResourceType waarop deze constraint van topeassing is.
+     * @param constrainingType  Het IResourceTYpe die de beperkende rol vervult inde constraint.
+     * @throws IllegalArgumentException
+     *                          Gooi indien constrainingType of ownerType niet geinitialiseerd zijn.
+     */
+    public ConflictConstraint(IResourceType ownerType, IResourceType constrainingType)throws IllegalArgumentException{
+        this(ownerType, constrainingType, 0, (ownerType != null && ownerType.equals(constrainingType)) ? 1 : 0);
         /**
          * (ownerType.equals(constrainingType))?1:0
          * indien ownerType conflictConstraint op zichzelf wilt toevoegen
          * mag er hoogstens 1 instance van required worden.
          */
     }
-
-
 }

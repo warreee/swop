@@ -7,11 +7,14 @@ import be.swop.groep11.main.resource.IRequirementList;
  * Created by Ronald on 9/04/2015.
  */
 public abstract class ResourceTypeConstraint {
-
+    //Het type waarop de constraint van toepassing is.
     private final IResourceType ownerType;
+    //Het type die de beperkende rol vervult.
     private final IResourceType constrainingType;
 
+    //Het minimum toegelaten ResourceInstances om deze constraint te laten slagen.
     private final int min;
+    //Het maximum toegelaten ResourceInstances om deze constraint te laten slagen.
     private final int max;
 
     /**
@@ -20,8 +23,10 @@ public abstract class ResourceTypeConstraint {
      * @param constrainingType  Het IResourceType dewelke de beperkende rol vervult.
      * @param min               Het minimum aantal toegelaten instances van IResourceType
      * @param max               Het maximum aantal toegelaten instances van IResourceType
+     * @throws IllegalArgumentException
+     *                          Gooi indien de gegeven ownerType || constrainingType niet ge?nitialiseerd zijn.
      */
-    protected ResourceTypeConstraint(IResourceType ownerType, IResourceType constrainingType, int min, int max) {
+    protected ResourceTypeConstraint(IResourceType ownerType, IResourceType constrainingType, int min, int max) throws IllegalArgumentException{
         if(!areValidTypes(ownerType, constrainingType)){
             throw new IllegalArgumentException("Ongeldig ResourceType's");
         }
@@ -73,7 +78,12 @@ public abstract class ResourceTypeConstraint {
      * @param typeB Het beperkende IResourceType voor deze constraint
      * @param bMin  Het minimum verwacht aantal resource instances
      * @param bMax  Het maximum toegelaten aantal resource instances
-     * @return      //TODO document return
+     * @return      Waar indien typeB geen constraint heeft voor TypeA,
+     *              Anders
+     *                      Waar indien de gegeven bMin en bMax grenzen,
+     *                      de minimum en maximum grenzen van de constraint in typeB voor typeA
+     *                      niet overschrijden.
+     *                      Anders niet waar.
      */
     private boolean areValidBounds(IResourceType typeA,IResourceType typeB,int bMin, int bMax) {
         if(!typeB.hasConstraintFor(typeA)){
@@ -114,6 +124,7 @@ public abstract class ResourceTypeConstraint {
         return result;
     }
 
+    //TODO fix contradictsWith, is niet juist.
     /**
      * Controleer of deze ResourceTypeConstraint tegenstrijdig is met de gegeven ResourceTypeConstraint en een gevraagde hoeveelheid
      * @param otherConstraint   De gegeven ResourceTypeConstraint dewelke eventueel tegenstrijdig is met deze.

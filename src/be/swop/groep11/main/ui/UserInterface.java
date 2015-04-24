@@ -16,6 +16,8 @@ import java.util.function.Function;
  */
 public interface UserInterface {
 
+    //TODO create method setPrompt(String prompt)
+
     /**
      * Toont een lijst van projecten.
      * @param projects Lijst van projecten
