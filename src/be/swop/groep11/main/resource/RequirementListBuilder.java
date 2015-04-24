@@ -17,15 +17,27 @@ public class RequirementListBuilder {
 
     private RequirementList reqList;
 
+    /**
+     * Constructor voor nieuwe RequirementListBuilder
+     */
     public RequirementListBuilder() {
         this.reqList = new RequirementList();
     }
 
+    /**
+     * Voeg een nieuwe Requirement toe voor het gegeven type en de gevraagde amount
+     * @param type      Het IResourceType voor de Requirement
+     * @param amount    De hoeveelheid voor de Requirement
+     * @throws IllegalArgumentException
+     *
+     * @throws IllegalRequirementAmountException
+     *
+     */
     public void addNewRequirement(IResourceType type, int amount) throws IllegalArgumentException,IllegalRequirementAmountException{
         this.reqList.addRequirement(type,amount);
     }
 
-    public void removeRequirementFor(ResourceType type) throws NoSuchElementException{
+    private void removeRequirementFor(ResourceType type) throws NoSuchElementException{
         this.reqList.removeRequirementFor(type);
     }
 
@@ -37,25 +49,24 @@ public class RequirementListBuilder {
 
     private class RequirementList implements IRequirementList {
 
-        public RequirementList() {
-            this(null);
+        RequirementList() {
         }
 
-        public RequirementList(HashMap<ResourceType, ResourceRequirement> reqs) {
+        RequirementList(HashMap<ResourceType, ResourceRequirement> reqs) {
             if(reqs != null && !reqs.isEmpty()){
                 requirements.putAll(reqs);
             }
         }
-        private final HashMap<IResourceType,ResourceRequirement> requirements = new HashMap<>();;
+        private final HashMap<IResourceType,ResourceRequirement> requirements = new HashMap<>();
 
         @Override
-        public boolean containsRequirementFor(IResourceType ownerType) {
-            return requirements.containsKey(ownerType);
+        public boolean containsRequirementFor(IResourceType type) {
+            return requirements.containsKey(type);
         }
 
         @Override
-        public int countRequiredInstances(IResourceType constrainingType) {
-            ResourceRequirement req = requirements.get(constrainingType);
+        public int countRequiredInstances(IResourceType type) {
+            ResourceRequirement req = requirements.get(type);
             return (req == null) ? 0 : req.getAmount();
         }
 
@@ -120,6 +131,11 @@ public class RequirementListBuilder {
                 // Plus de gevraagde hoeveelheid is geen probleem
                 ResourceRequirement requirement = new ResourceRequirement(requiredType, amount);
                 requirements.put(requiredType,requirement);
+                requiredType.getTypeConstraints().forEach(constraint -> {
+                    if (constraint.getMin() > 0 && constraint.getMax() >= constraint.getMin()) {
+                        requirements.put(constraint.getConstrainingType(), new ResourceRequirement(constraint.getConstrainingType(), constraint.getMin()));
+                    }
+                });
             }
         }
 

@@ -10,19 +10,50 @@ public interface IResourceType {
 
     //TODO implementatie voor DeveloperType
 
-    public boolean hasConstraintFor(IResourceType typeA);
+    /**
+     * Geeft de constraint terug voor het gegeven een IResourceType
+     * @param typeA De constraining type van het terug te geven ResourceTypeConstraint.
+     * @return      De corresponderende ResourceTypeConstraint, of null indien er geen is.
+     */
+    ResourceTypeConstraint getConstraintFor(IResourceType typeA);
 
-    public ResourceTypeConstraint getConstraintFor(IResourceType typeA);
+    /**
+     * @return een immutable lijst van deze constraints.
+     */
+    ImmutableList<ResourceTypeConstraint> getTypeConstraints();
 
-    public ImmutableList<ResourceTypeConstraint> getTypeConstraints();
+    /**
+     * @return geeft de naam voor het type terug.
+     */
+    String getName();
 
-    public int amountOfConstraints();
+    /**
+     * @return dailyAvailability voor dit type.
+     */
+    DailyAvailability getDailyAvailability();
 
-    public String getName();
+    /**
+     * @return een immutable lijst van alle ResourceInstances voor dit type.
+     */
+    ImmutableList<ResourceInstance> getResourceInstances();
 
-    public DailyAvailability getDailyAvailability();
+    /**
+     * @return geef terug hoeveel ResourceInstances er zijn voor dit type.
+     */
+    int amountOfInstances();
 
-    public ImmutableList<ResourceInstance> getResourceInstances();
+    /**
+     * @return geeft terug hoeveel constraints er van toepassing zijn op dit type.
+     */
+    int amountOfConstraints();
 
-    public int amountOfInstances();
+    /**
+     * Controleer of er een constraint van toepassing is op dit type
+     * met het gegeven type als het constraining type.
+     * @param typeA Het te controleren constrainingType
+     * @return      Waar indien dit type een constraint heeft met typA als constrainingType
+     */
+    boolean hasConstraintFor(IResourceType typeA);
+
+
 }
