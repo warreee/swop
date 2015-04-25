@@ -77,14 +77,4 @@ public class TaskFinished extends TaskStatus {
         return false;
     }
 
-    /**
-     * Aan een taak die al gefinisht is kan niet ineens dependency worden toegevoegd.
-     * @param task
-     * @param dependingOn
-     * @return
-     */
-    @Override
-    protected boolean isValidDependingOn(Task task, Task dependingOn) {
-        return false;
-    }
 }
