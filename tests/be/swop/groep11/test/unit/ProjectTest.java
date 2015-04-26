@@ -32,7 +32,7 @@ public class ProjectTest {
         due = LocalDateTime.now().plusSeconds(3600);
         name = "name";
         description = "description";
-        this.systemTime = new SystemTime();
+        systemTime = new SystemTime(LocalDateTime.of(2015,1,1,0,0));
         repository = new ProjectRepository(systemTime);
 
         project = new Project(name, description, create, due, systemTime );
@@ -66,17 +66,18 @@ public class ProjectTest {
         project1.addNewTask("Taak",0.1,Duration.ofHours(24));
         project1.addNewTask("Afhankelijke taak", 0, Duration.ofHours(16));
         project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
-//        project1.getTasks().get(0).setStartTime(LocalDateTime.of(2015, 3, 8, 0, 0));
+        project1.getTasks().get(0).execute(LocalDateTime.of(2015, 3, 14, 18, 0));
         assertTrue(project1.isOverTime());
     }
 
     @Test
     public void isOverTime_NotOverTimeProject() {
+
         Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0), systemTime);
         project1.addNewTask("Taak",0.1,Duration.ofHours(8));
         project1.addNewTask("Afhankelijke taak", 0, Duration.ofHours(16));
         project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
-//        project1.getTasks().get(0).setStartTime(LocalDateTime.of(2015, 3, 8, 0, 0));
+        project1.getTasks().get(0).execute(LocalDateTime.of(2015, 3, 8, 0, 0));
         assertFalse(project1.isOverTime());
     }
 

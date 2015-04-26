@@ -208,7 +208,7 @@ public class Project {
      * @return  De geschatte eind datum van het project, door het aantal nodige werkdagen te berekenen.
      *          Tel het aantal werkdagen (plus nodige weekends) bij de begindatum van het project op.
      */
-    public LocalDateTime getEstimatedEndTime(){
+    public LocalDateTime getEstimatedEndTime(){ // TODO: wordt hier niet dubbel geteld? overleg met ward...
         int HOURS_PER_DAY = 8;
         Duration max = Duration.ofDays(0);
         for(Task task :getTasks()){
@@ -257,12 +257,11 @@ public class Project {
      */
     private Duration calculateTotalDuration(Set<Task> tasks){
         LocalDateTime currentSystemTime = systemTime.getCurrentSystemTime();
-        Duration total = Duration.ofHours(0);
+        long total = 0;
         for(Task task :tasks){
-
-            total.plus(task.getDuration(currentSystemTime));
+            total += task.getDuration(currentSystemTime).toHours();
         }
-        return total;
+        return Duration.ofHours(total);
     }
 
     /**
