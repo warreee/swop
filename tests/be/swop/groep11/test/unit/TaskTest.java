@@ -165,33 +165,33 @@ public class TaskTest {
 
     @Test
     public void getOverTimePercentageTest() throws Exception {
-        task1.execute(LocalDateTime.of(2015, 3, 8, 8, 0));
+        task1.execute(LocalDateTime.of(2015, 7, 8, 8, 0));
         assertEquals(task1.getOverTimePercentage(), 0.0, 1E-14);
 
-        systemTime.updateSystemTime(LocalDateTime.of(2015, 3, 8, 13, 0));
+        systemTime.updateSystemTime(LocalDateTime.of(2015, 7, 8, 13, 0));
         assertEquals(task1.getOverTimePercentage(), 0.0, 1E-14);
 
-        systemTime.updateSystemTime(LocalDateTime.of(2015, 3, 8, 17, 0));
+        systemTime.updateSystemTime(LocalDateTime.of(2015, 7, 8, 17, 0));
         assertEquals(task1.getOverTimePercentage(), 0.125, 1E-14);
     }
 
     @Test
     public void isOverTimeTest() throws Exception {
-        task1.execute(LocalDateTime.of(2015, 3, 8, 8, 0));
+        task1.execute(LocalDateTime.of(2015, 7, 8, 8, 0));
         assertFalse(task1.isOverTime());
-        systemTime.updateSystemTime(LocalDateTime.of(2015, 3, 8, 16, 0));
+        systemTime.updateSystemTime(LocalDateTime.of(2015, 7, 8, 16, 0));
         assertFalse(task1.isOverTime());
-        systemTime.updateSystemTime(LocalDateTime.of(2015, 3, 8, 18, 0));
+        systemTime.updateSystemTime(LocalDateTime.of(2015, 7, 8, 18, 0));
         assertTrue(task1.isOverTime());
     }
 
     @Test
     public void isUnacceptablyOverTime() {
-        task1.execute(LocalDateTime.of(2015, 3, 8, 8, 0));
+        task1.execute(LocalDateTime.of(2015, 7, 8, 8, 0));
         assertFalse(task1.isUnacceptablyOverTime());
-        systemTime.updateSystemTime(LocalDateTime.of(2015, 3, 8, 16, 0));
+        systemTime.updateSystemTime(LocalDateTime.of(2015, 7, 8, 16, 0));
         assertFalse(task1.isUnacceptablyOverTime());
-        systemTime.updateSystemTime(LocalDateTime.of(2015, 3, 8, 19, 0));
+        systemTime.updateSystemTime(LocalDateTime.of(2015, 7, 8, 19, 0));
         assertTrue(task1.isUnacceptablyOverTime());
     }
 

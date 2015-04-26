@@ -54,7 +54,7 @@ public class TaskFinished extends TaskStatus {
      */
     @Override
     protected Duration getDuration(Task task, LocalDateTime currentSystemTime) {
-        return task.getDuration();
+        return Duration.between(task.getStartTime(), task.getEndTime());
     }
 
     /**
