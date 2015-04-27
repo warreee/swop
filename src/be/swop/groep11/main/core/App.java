@@ -48,11 +48,11 @@ public class App {
         // maak een nieuwe CommandLineInterface aan
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(java.lang.System.in));
         cli = new CommandLineInterface(bufferedReader);
-        actionBehaviourMapping = new ActionBehaviourMapping(() -> cli.printMessage("Ongeldige action"));
+        actionBehaviourMapping = new ActionBehaviourMapping(() -> cli.printMessage("Ongeldige action")); //TODO WARD: vragen Ronald
         cli.setActionBehaviourMapping(actionBehaviourMapping);
 
         //maak een nieuwe system aan
-        systemTime = new SystemTime();
+        systemTime = new SystemTime(); //TODO WARD: hier gaat een bug zijn indien de yaml file een tijd heeft voor die van de huidige tijd?!
         resourceManager = new ResourceManager();
         projectRepository = new ProjectRepository(systemTime);
     }
@@ -60,7 +60,7 @@ public class App {
     private void initInputParser(boolean readYamlFile){
         if (readYamlFile) {
             // run inputreader
-            InputParser inputParser = new InputParser(projectRepository,resourceManager );
+            InputParser inputParser = new InputParser(projectRepository, resourceManager);
             try {
                 inputParser.parseInputFile();
             } catch (FileNotFoundException e) {
