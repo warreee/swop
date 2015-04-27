@@ -29,7 +29,7 @@ public class TaskFailed extends TaskStatus {
      */
     @Override
     protected Duration getDuration(Task task, LocalDateTime currentSystemTime) {
-        return task.getDuration();
+        return Duration.between(task.getStartTime(), task.getEndTime());
     }
 
     /**
@@ -52,14 +52,5 @@ public class TaskFailed extends TaskStatus {
         return false;
     }
 
-    /**
-     * Aan een taak die al gefaald is kan niet ineens dependency worden toegevoegd.
-     * @param task
-     * @param dependingOn
-     * @return
-     */
-    @Override
-    protected boolean isValidDependingOn(Task task, Task dependingOn) {
-        return false;
-    }
+
 }

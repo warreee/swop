@@ -215,6 +215,7 @@ public class ResourceManager {
      * @param duration         De gegeven duur
      */
     public TimeSpan getNextAvailableTimeSpan(ResourceInstance resourceInstance, LocalDateTime startTime, Duration duration) {
+        // TODO: deze methode werkt nog niet zoals verwacht: testen schrijven!!
         IResourceType resourceType = resourceInstance.getResourceType();
 
         // bereken de "echte starttijd": hangt af van de dagelijkse beschikbaarheid en moet op een uur (zonder minuten) vallen
@@ -261,6 +262,7 @@ public class ResourceManager {
         }
 
         for (ResourceReservation reservation : plan.getReservations()) {
+            removeReservationsFromTask(plan.getTask());
             this.addReservation(plan.getTask(), reservation);
         }
     }
@@ -672,9 +674,19 @@ public class ResourceManager {
             return false;
         }
 
+        /**
+         * Geeft de taken die reservaties hebben die conflicteren met de reservaties van dit plan.
+         */
         @Override
         public List<Task> getConflictingTasks() {
-            return null;
+            Set<Task> conflictingTasks = new HashSet<>();
+            for (ResourceReservation reservation : this.getReservations()) {
+                List<ResourceReservation> conflictingReservations = getConflictingReservations(reservation.getResourceInstance(),reservation.getTimeSpan());
+                if (conflictingReservations.isEmpty()) {
+                    conflictingTasks.add(conflictingReservations.get(0).getTask());
+                }
+            }
+            return new LinkedList<>(conflictingTasks);
         }
 
         private List<ResourceReservation> calculateDefaultReservations(Task task, LocalDateTime startTime) throws IllegalArgumentException {
@@ -731,13 +743,15 @@ public class ResourceManager {
                 // lijst van beschikbare resources voor het type, gesorteerd volgens toenemend eindtijd van de eerstvolgende mogelijke tijdsspanne voor een reservatie
                 List<ResourceInstance> availableInstances = getAvailableInstances(requirement.getType(), startTime, task.getEstimatedDuration());
 
-                int nbRequiredInstances = requirement.getAmount();
+                if (! availableInstances.isEmpty()) {
+                    int nbRequiredInstances = requirement.getAmount();
 
-                ResourceInstance instanceWithLongestReservation = availableInstances.get(Math.min(nbRequiredInstances, availableInstances.size() - 1));
-                LocalDateTime endTimeOfLongestReservation = getNextAvailableTimeSpan(instanceWithLongestReservation, startTime, task.getEstimatedDuration()).getEndTime();
+                    ResourceInstance instanceWithLongestReservation = availableInstances.get(Math.min(nbRequiredInstances, availableInstances.size() - 1));
+                    LocalDateTime endTimeOfLongestReservation = getNextAvailableTimeSpan(instanceWithLongestReservation, startTime, task.getEstimatedDuration()).getEndTime();
 
-                if (endTimeOfLongestReservation.isAfter(endTime))
-                    endTime = endTimeOfLongestReservation;
+                    if (endTimeOfLongestReservation.isAfter(endTime))
+                        endTime = endTimeOfLongestReservation;
+                }
             }
             return endTime;
         }

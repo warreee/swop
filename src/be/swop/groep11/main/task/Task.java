@@ -352,10 +352,11 @@ public class Task {
      *     <br>FinishedStatus.OVERDUE als de taak te laat geëindigd is.
      */
     public FinishedStatus getFinishedStatus() {
-        if (getStatus() instanceof TaskFinished)
+        if (getStatus() instanceof TaskExecuting || getStatus() instanceof TaskAvailable || getStatus() instanceof TaskUnavailable)
             return FinishedStatus.NOTFINISHED;
 
         long durationInSeconds = getDuration().getSeconds();
+
         long estimatedDurationInSeconds = this.getEstimatedDuration().getSeconds();
 
         if (durationInSeconds < (1-acceptableDeviation)*estimatedDurationInSeconds)
@@ -387,13 +388,9 @@ public class Task {
      * @return De duur van deze taak,
      *         of null als de starttijd of eindtijd van deze taak null is.
      */
-    public Duration getDuration() { // TODO: status.getDuration() !!
+    public Duration getDuration() {
         // We nemen als duration de echte tijd die gepasseerd is.
-        if (getStartTime() == null || getEndTime() == null)
-            return null;
-
-
-        return Duration.between(getStartTime(),getEndTime());
+        return this.getStatus().getDuration(this, systemTime.getCurrentSystemTime());
     }
 
     /**

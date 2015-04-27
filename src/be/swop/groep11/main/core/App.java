@@ -3,12 +3,14 @@ package be.swop.groep11.main.core;
 import be.swop.groep11.main.actions.Action;
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.controllers.*;
+import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.ui.CommandLineInterface;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.time.LocalTime;
 
 /**
  * Created by Ronald on 22/04/2015.
@@ -30,6 +32,9 @@ public class App {
         initInputParser(readYamlFile);
         initControllers();
         initBehaviourMapping();
+
+        // TODO: geen temp domain objects toevoegen bij uiteindelijke versie van het programma!!!!!!!
+        addTempDomainObjects();
     }
     private SystemTime systemTime;
     private CommandLineInterface cli;
@@ -116,10 +121,24 @@ public class App {
         // lees commando's
         cli.run();
 
-
     }
 
     private void addTempDomainObjects() {
-        // TODO: voeg wat developers toe
+
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter SWOP");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ward");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ronald");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Robin");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Arne");
+
+        resourceManager.addNewResourceType("Auto");
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Aston Martin Rapide");
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Toyota Auris");
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Rolls Royce Phantom");
+
+        resourceManager.addNewResourceType("Koets", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(14, 0)));
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Koets"), "Koets 1");
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Koets"), "Koets 2");
+
     }
 }
