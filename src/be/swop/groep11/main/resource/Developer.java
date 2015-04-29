@@ -68,18 +68,18 @@ public class Developer extends User implements ResourceInstance {
 
             if (addBreak) {
                 // voeg een middagpauze toe
-                currentDuration = currentDuration.plus(breakDuration);
+                newDuration = newDuration.plus(breakDuration);
                 durationUntilNextEndTime = this.getResourceType().getDailyAvailability().getDurationUntilNextEndTime(currentEndTime);
-                if (currentDuration.compareTo(durationUntilNextEndTime) <= 0) {
+                if (newDuration.compareTo(durationUntilNextEndTime) <= 0) {
                     /* voeg een middagpauze toe op dezelfde dag als dat kan*/
                     currentEndTime = currentEndTime.plus(breakDuration);
-                    currentDuration = Duration.ZERO;
+                    newDuration = Duration.ZERO;
                 }
                 else {
                     /* voeg een middagpauze toe, (deels) op een andere dag */
                     currentEndTime = currentStartTime.plus(durationUntilNextEndTime);
-                    currentDuration = currentDuration.minus(durationUntilNextEndTime);
-                    currentStartTime = this.getResourceType().getDailyAvailability().getNextStartTime(currentEndTime);
+                    newDuration = newDuration.minus(durationUntilNextEndTime);
+                    newStartTime = this.getResourceType().getDailyAvailability().getNextStartTime(currentEndTime);
                 }
             }
 

@@ -49,34 +49,18 @@ public class DeveloperTest {
     }
 
     @Test
-    public void isAvailable_UnAvailableTest() {
-        fail("Not implemented");
-//        assertFalse(developer.isAvailable(new TimeSpan(LocalDateTime.of(2015,4,9,8,0), LocalDateTime.of(2015,4,9,16,0))));
-    }
-
-    @Test
-    public void isAvailable_AvailableTest() {
-        fail("Not implemented");
-//        assertTrue(developer.isAvailable(new TimeSpan(LocalDateTime.of(2015,4,6,8,0), LocalDateTime.of(2015,4,7,16,0))));
-    }
-
-    @Test
-    public void getNextAvailableTimeSpan_EndsOnOtherDayTest() {
-        fail("Not implemented");
-
-/*        LocalDateTime startTime = LocalDateTime.of(2015,4,9,10,0);
-        Duration duration = Duration.ofHours(5);
-        TimeSpan expectedTimeSpan = new TimeSpan(LocalDateTime.of(2015,4,13,13,00), LocalDateTime.of(2015,4,14,9,0));
-        TimeSpan timeSpan = developer.getNextAvailableTimeSpan(startTime, duration);
-        assertEquals(expectedTimeSpan.getStartTime(), timeSpan.getStartTime());
-        assertEquals(expectedTimeSpan.getEndTime(), timeSpan.getEndTime());*/
-    }
-
-    @Test
-    public void calculateEndTime_EndsOnSameDayTest() {
+     public void calculateEndTime_EndsOnSameDayTest() {
         LocalDateTime startTime = LocalDateTime.of(2015,4,14,10,30);
         Duration duration = Duration.ofMinutes(90);
-        LocalDateTime expectedEndTime = LocalDateTime.of(2015,4,14,15,30);
+        LocalDateTime expectedEndTime = LocalDateTime.of(2015,4,14,13,30);
+        assertEquals(expectedEndTime, developer.calculateEndTime(startTime, duration));
+    }
+
+    @Test
+    public void calculateEndTime_EndsOnDifferentDay_AddBreakTest() {
+        LocalDateTime startTime = LocalDateTime.of(2015,4,14,12,0);
+        Duration duration = Duration.ofHours(6);
+        LocalDateTime expectedEndTime = LocalDateTime.of(2015,4,15,10,0);
         assertEquals(expectedEndTime, developer.calculateEndTime(startTime, duration));
     }
 
