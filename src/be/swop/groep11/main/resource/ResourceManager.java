@@ -259,8 +259,8 @@ public class ResourceManager {
             throw new IllegalArgumentException("Ongeldig plan");
         }
 
+        removeReservationsFromTask(plan.getTask());
         for (ResourceReservation reservation : plan.getReservations()) {
-            removeReservationsFromTask(plan.getTask());
             this.addReservation(plan.getTask(), reservation);
         }
     }

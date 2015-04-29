@@ -351,6 +351,81 @@ public class ResourceManagerTest {
         assertEquals( t4.plus(task.getEstimatedDuration().plusDays(1)), plans_t4.get(3).getEndTime());
     }
 
+    @Test (expected = IllegalArgumentException.class)
+    public void makeReservationsForPlan_InvalidPlanTest() {
+        LocalDateTime t1 = LocalDateTime.of(2015,4,20, 8,0);
+        LocalDateTime t2 = LocalDateTime.of(2015,4,22,17,0);
+        LocalDateTime t3 = LocalDateTime.of(2015,4,23,8,0);
+        LocalDateTime t4 = LocalDateTime.of(2015, 4, 23, 11, 0);
+
+        // resource manager
+        addResourceTypeNameOnly("Test Resource 1");
+        IResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
+        addResourceTypeNameDailyAvailability("Test Resource 2", t4.toLocalTime(), t4.toLocalTime().plusHours(3));
+        IResourceType type2 = resourceManager.getResourceTypeByName("Test Resource 2");
+        resourceManager.addResourceInstance(type1, "Instance 1");
+        resourceManager.addResourceInstance(type1, "Instance 2");
+        resourceManager.makeReservation(mock(Task.class), type1.getResourceInstances().get(0),
+                new TimeSpan(t1, t2), false);
+        resourceManager.addResourceInstance(type2, "Instance 3");
+        resourceManager.makeReservation(mock(Task.class), type2.getResourceInstances().get(0),
+                new TimeSpan(t1, t2), false);
+
+        // task die gepland moet worden
+        RequirementListBuilder requirementListBuilder = new RequirementListBuilder();
+        requirementListBuilder.addNewRequirement(type1, 2);
+        requirementListBuilder.addNewRequirement(type2, 1);
+        IRequirementList requirementList = requirementListBuilder.getRequirements();
+        Task task = new Task("description",Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList);
+
+        // plan maken vanaf t1
+        IPlan plan = resourceManager.getNextPlans(1, task, t1).get(0);
+
+        List<ResourceInstance> newReservations = new ArrayList<>();
+        newReservations.add(type2.getResourceInstances().get(0));
+        plan.changeReservations(newReservations);
+
+        resourceManager.makeReservationsForPlan(plan);
+    }
+
+    @Test
+    public void makeReservationsForPlan_ValidPlanTest() throws Exception {
+
+        LocalDateTime t1 = LocalDateTime.of(2015, 4, 20, 8, 0);
+        LocalDateTime t2 = LocalDateTime.of(2015, 4, 22, 17, 0);
+        LocalDateTime t3 = LocalDateTime.of(2015, 4, 23, 8, 0);
+        LocalDateTime t4 = LocalDateTime.of(2015, 4, 23, 11, 0);
+
+        // resource manager
+        addResourceTypeNameOnly("Test Resource 1");
+        IResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
+        addResourceTypeNameDailyAvailability("Test Resource 2", t4.toLocalTime(), t4.toLocalTime().plusHours(3));
+        IResourceType type2 = resourceManager.getResourceTypeByName("Test Resource 2");
+        resourceManager.addResourceInstance(type1, "Instance 1");
+        resourceManager.addResourceInstance(type1, "Instance 2");
+        resourceManager.makeReservation(mock(Task.class), type1.getResourceInstances().get(0),
+                new TimeSpan(t1, t2), false);
+        resourceManager.addResourceInstance(type2, "Instance 3");
+        resourceManager.makeReservation(mock(Task.class), type2.getResourceInstances().get(0),
+                new TimeSpan(t1, t2), false);
+
+        // task die gepland moet worden
+        RequirementListBuilder requirementListBuilder = new RequirementListBuilder();
+        requirementListBuilder.addNewRequirement(type1, 2);
+        requirementListBuilder.addNewRequirement(type2, 1);
+        IRequirementList requirementList = requirementListBuilder.getRequirements();
+        Task task = new Task("description", Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList);
+
+        // plan maken vanaf t4
+        IPlan plan_t4 = resourceManager.getNextPlans(4, task, t4).get(0);
+
+        resourceManager.makeReservationsForPlan(plan_t4);
+
+        assertTrue(reservationForResourceInstanceExists(task, type1.getResourceInstances().get(0)));
+        assertTrue(reservationForResourceInstanceExists(task, type1.getResourceInstances().get(1)));
+        assertTrue(reservationForResourceInstanceExists(task, type2.getResourceInstances().get(0)));
+    }
+
     private void addResourceTypeNameOnly(String name){
         resourceManager.addNewResourceType(name);
     }
@@ -373,5 +448,14 @@ public class ResourceManagerTest {
         req.stream().forEach(x -> required.add(resourceManager.getResourceTypes().get(x)));
         con.stream().forEach(x -> conflicting.add(resourceManager.getResourceTypes().get(x)));
         resourceManager.addNewResourceType(name, required, conflicting);
+    }
+
+    private boolean reservationForResourceInstanceExists(Task task, ResourceInstance resourceInstance) {
+        for (ResourceReservation reservation : resourceManager.getReservations(task)) {
+            if (reservation.getResourceInstance() == resourceInstance) {
+                return true;
+            }
+        }
+        return false;
     }
 }
