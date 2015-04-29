@@ -160,7 +160,7 @@ public class PlanningController extends AbstractController {
             }
 
             // zijn de reservaties geldig?
-            if (!plan.isValidPlan()) {
+            if (!plan.isValid()) {
                 throw new ConflictException("Conflict!");
             }
 
@@ -183,7 +183,7 @@ public class PlanningController extends AbstractController {
             plan.addReservations(selectedDevelopers);
 
             // zijn de reservaties geldig?
-            if (!plan.isValidPlan()) {
+            if (!plan.isValid()) {
                 throw new ConflictException("Conflict!");
             }
         }

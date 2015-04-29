@@ -1,22 +1,19 @@
 package be.swop.groep11.test.unit;
 
+import be.swop.groep11.main.core.DependencyGraph;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
-import be.swop.groep11.main.resource.DailyAvailability;
-import be.swop.groep11.main.resource.IResourceType;
-import be.swop.groep11.main.resource.ResourceInstance;
-import be.swop.groep11.main.resource.ResourceManager;
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -167,7 +164,7 @@ public class ResourceManagerTest {
      * @throws Exception
      */
     @Test
-    public void nextAvailableTimeSpanTest() throws Exception {
+    public void nextAvailableTimeSpan_ReservationsTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
         IResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, "Instance 1");
@@ -183,6 +180,20 @@ public class ResourceManagerTest {
         timeSpan = resourceManager.getNextAvailableTimeSpan(type1.getResourceInstances().get(0), time1, Duration.ofHours(1));
         assertEquals(time1.plusHours(1), timeSpan.getStartTime());
         assertEquals(time2.plusHours(1), timeSpan.getEndTime());
+    }
+
+    @Test
+    public void nextAvailableTimeSpan_DailyAvailabilitiesTest() throws Exception {
+        addResourceTypeNameDailyAvailability("Test Resource 1", LocalTime.of(12, 0), LocalTime.of(13, 0));
+        IResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
+        resourceManager.addResourceInstance(type1, "Instance 1");
+        Task mockedTask = mock(Task.class);
+        LocalDateTime time1 = LocalDateTime.of(2015, 3, 10, 11, 0);
+        LocalDateTime time2 = LocalDateTime.of(2015, 3, 10, 13, 0);
+
+        TimeSpan timeSpan = resourceManager.getNextAvailableTimeSpan(type1.getResourceInstances().get(0), time1, Duration.ofHours(1));
+        assertEquals(time1, timeSpan.getStartTime());
+        assertEquals(time2, timeSpan.getEndTime());
     }
 
     @Test
@@ -292,18 +303,52 @@ public class ResourceManagerTest {
     }
 
     @Test
-    public void getNextPlansTest() throws Exception {
+    public void getNextPlans_NoConflictingReservationsTest() throws Exception {
+
+        LocalDateTime t1 = LocalDateTime.of(2015,4,20, 8,0);
+        LocalDateTime t2 = LocalDateTime.of(2015,4,22,17,0);
+        LocalDateTime t3 = LocalDateTime.of(2015,4,23,8,0);
+        LocalDateTime t4 = LocalDateTime.of(2015,4,23,11,0);
+
+        // resource manager
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        IResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
+        addResourceTypeNameDailyAvailability("Test Resource 2", t4.toLocalTime(), t4.toLocalTime().plusHours(3));
+        IResourceType type2 = resourceManager.getResourceTypeByName("Test Resource 2");
         resourceManager.addResourceInstance(type1, "Instance 1");
         resourceManager.addResourceInstance(type1, "Instance 2");
-        Task mockedTask1 = mock(Task.class);
-        when(mockedTask1.getEstimatedDuration()).thenReturn(Duration.ofHours(1));
-        LocalDateTime time1 = LocalDateTime.of(2015, 3, 10, 12, 0);
-        LocalDateTime time2 = LocalDateTime.of(2015, 3, 10, 13, 0);
-        // TODO: Wachten tot Task.getRequirementsList Compleet is
-        fail("Nog niet klaar jongeuh!!");
+        resourceManager.makeReservation(mock(Task.class), type1.getResourceInstances().get(0),
+                new TimeSpan(t1, t2), false);
+        resourceManager.addResourceInstance(type2, "Instance 3");
+        resourceManager.makeReservation(mock(Task.class), type2.getResourceInstances().get(0),
+                new TimeSpan(t1, t2), false);
 
+        // task die gepland moet worden
+        RequirementListBuilder requirementListBuilder = new RequirementListBuilder();
+        requirementListBuilder.addNewRequirement(type1, 2);
+        requirementListBuilder.addNewRequirement(type2, 1);
+        IRequirementList requirementList = requirementListBuilder.getRequirements();
+        Task task = new Task("description",Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList);
+
+        // plannen maken vanaf t3
+        List<IPlan> plans_t3 = resourceManager.getNextPlans(3, task, t3);
+        assertEquals(plans_t3.get(0).getStartTime(), t3);
+        assertEquals(plans_t3.get(0).getEndTime(), t4.plus(task.getEstimatedDuration()));
+        assertEquals(plans_t3.get(1).getStartTime(), t3.plusHours(1));
+        assertEquals(plans_t3.get(1).getEndTime(), t4.plus(task.getEstimatedDuration()));
+        assertEquals(plans_t3.get(2).getStartTime(), t3.plusHours(2));
+        assertEquals(plans_t3.get(2).getEndTime(), t4.plus(task.getEstimatedDuration()));
+
+        // plannen maken vanaf t4
+        List<IPlan> plans_t4 = resourceManager.getNextPlans(4, task, t4);
+        assertEquals(plans_t4.get(0).getStartTime(), t4);
+        assertEquals(plans_t4.get(0).getEndTime(), t4.plus(task.getEstimatedDuration()));
+        assertEquals(plans_t4.get(1).getStartTime(), t4.plusHours(1));
+        assertEquals(plans_t4.get(1).getEndTime(), t4.plus(task.getEstimatedDuration().plusHours(1)));
+        assertEquals(plans_t4.get(2).getStartTime(), t4.plusHours(2));
+        assertEquals(plans_t4.get(2).getEndTime(), t4.plus(task.getEstimatedDuration().plusHours(2)));
+        assertEquals(plans_t4.get(3).getStartTime(), t4.plusHours(3));
+        assertEquals(plans_t4.get(3).getEndTime(), t4.plus(task.getEstimatedDuration().plusDays(1)));
     }
 
     private void addResourceTypeNameOnly(String name){
