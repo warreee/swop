@@ -114,7 +114,7 @@ public class CommandLineInterface implements UserInterface {
     Function<Task, String> showTaskEntry = (task -> {
         String asterix = (task.isUnacceptablyOverTime()) ? "*" : "";
         String onTime = task.isOverTime() ? "nee (" + Math.round(task.getOverTimePercentage() * 100) + "%)" : "ja";
-        return String.format(taskFormatStr, task.getDescription() + asterix, task.getStatus(), onTime);
+        return String.format(taskFormatStr, task.getDescription() + asterix, task.getStatusString(), onTime);
     });
 
     private String projectFormatStr = "%-35s %-20s %-20s %n";

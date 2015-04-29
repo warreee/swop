@@ -11,10 +11,7 @@ import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Bevat de stappen om de use cases "Create Task" en "Update Task" uit te voeren.
@@ -132,7 +129,7 @@ public class TaskController extends AbstractController {
             Task task =  getUserInterface().selectTaskFromList(projectRepository.getAllAvailableTasks());
             updateTask(task);
         }
-        catch (CancelException e) {
+        catch (CancelException|EmptyListException e) {
             getUserInterface().printException(e);
         }
     }
@@ -160,8 +157,12 @@ public class TaskController extends AbstractController {
     private void updateTask(Task task) throws CancelException{
         try {
             String status =  getUserInterface().requestString("Status: FAILED of FINISHED (of laat leeg om status niet te wijzigen):");
+            ArrayList<String> options = new ArrayList<>(Arrays.asList("FAIL", "FINISH", "EXECUTE", "Niks doen"));
+            status = getUserInterface().selectFromList(options, (x -> x));
             //TODO implement dit als een selectie uit een lijst. zodat de gebruiker geen verkeerde input kan geven. (ook makkeljker om te testen)
-            doTransition(status, task);
+            if(!status.equals("Niks doen")) {
+                doTransition(status, task);
+            }
         }
         catch (IllegalArgumentException e) {
             getUserInterface().printException(e);
