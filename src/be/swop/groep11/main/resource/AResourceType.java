@@ -57,8 +57,8 @@ public abstract class AResourceType {
     /**
      * @return een immutable lijst van deze constraints.
      */
-    public ImmutableList<ResourceTypeConstraint> getTypeConstraints() {
-        return ImmutableList.copyOf(constraintMap.values());
+    public ArrayList<ResourceTypeConstraint> getTypeConstraints() {
+        return new ArrayList<>(constraintMap.values());
     }
 
     protected void addConflictConstraint(AResourceType constrainingType) {
@@ -144,6 +144,10 @@ public abstract class AResourceType {
         return instances.size();
     }
 
-
-
+    @Override
+    public String toString() {
+        return "AResourceType{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

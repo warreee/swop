@@ -80,6 +80,14 @@ public class ResourceRequirement {
         return amount > 0 && amount <= type.amountOfInstances();
     }
 
+    @Override
+    public String toString() {
+        return "ResourceRequirement{" +
+                "amount=" + amount +
+                ", type=" + type +
+                '}';
+    }
+
     //TODO override equals?
 
 }

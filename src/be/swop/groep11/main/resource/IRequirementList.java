@@ -15,6 +15,8 @@ public interface IRequirementList{
      */
     boolean containsRequirementFor(AResourceType type);
 
+    ResourceRequirement getRequirementFor(AResourceType type);
+
     /**
      * @param type  Het te controleren type.
      * @return      Geeft aan hoeveel ResourcesInstances er required zijn voor het gegeven type.

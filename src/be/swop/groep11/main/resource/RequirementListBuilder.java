@@ -37,13 +37,7 @@ public class RequirementListBuilder {
         this.reqList.addRequirement(type,amount);
     }
 
-    private void removeRequirementFor(ResourceType type) throws NoSuchElementException{
-        this.reqList.removeRequirementFor(type);
-    }
-
-
     public IRequirementList getRequirements(){
-        // copy?
         return this.reqList;
     }
 
@@ -52,11 +46,6 @@ public class RequirementListBuilder {
         RequirementList() {
         }
 
-        RequirementList(HashMap<ResourceType, ResourceRequirement> reqs) {
-            if(reqs != null && !reqs.isEmpty()){
-                requirements.putAll(reqs);
-            }
-        }
         private final HashMap<AResourceType,ResourceRequirement> requirements = new HashMap<>();
 
         @Override
@@ -91,7 +80,26 @@ public class RequirementListBuilder {
                 return false;
             }
 
-            //Niet waar indien aangevraagde hoeveelheid niet aanvaard kan worden door de aanwezige ResourceTypes geassocieerd met de requirements
+
+            ArrayList<ResourceTypeConstraint> cons = new ArrayList<>();
+            for (AResourceType type : requirements.keySet()) {
+                cons.addAll(type.getTypeConstraints());
+            }
+
+            for (ResourceTypeConstraint constraint : cons) {
+                if (!constraint.isAcceptableAmount(requestedType, amount)) {
+                    return false;
+                }
+
+                for (ResourceTypeConstraint requestedCon : requestedType.getTypeConstraints()) {
+                    if (constraint.contradictsWith(requestedCon, amount)) {
+                        return false;
+                    }
+                }
+            }
+
+
+         /*   //Niet waar indien aangevraagde hoeveelheid niet aanvaard kan worden door de aanwezige ResourceTypes geassocieerd met de requirements
             for (AResourceType type : requirements.keySet()) {
                 for (ResourceTypeConstraint conInList : type.getTypeConstraints()) {
                     for (ResourceTypeConstraint requestedCon : requestedType.getTypeConstraints()) {
@@ -100,9 +108,12 @@ public class RequirementListBuilder {
                         }
                     }
                 }
-            }
+            }*/
             return true;
         }
+
+
+
 
         @Override
         public Iterator<ResourceRequirement> iterator() {
@@ -138,17 +149,8 @@ public class RequirementListBuilder {
             }
         }
 
-        private ResourceRequirement getRequirementFor(AResourceType type) {
+        public ResourceRequirement getRequirementFor(AResourceType type) {
             return requirements.get(type);
         }
-
-        private void removeRequirementFor(AResourceType type)throws NoSuchElementException{
-            if(containsRequirementFor(type)){
-                requirements.remove(type);
-            }else{
-                throw new NoSuchElementException("Geen requirement voor dit type aanwezig.");
-            }
-        }
-
     }
 }
