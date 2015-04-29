@@ -59,7 +59,7 @@ public interface IPlan {
          * @param resourceInstances De gegeven resource instanties
          */
         void changeReservations(List<ResourceInstance> resourceInstances);
-
+        // TODO: mutators weg!
         /**
          * Voegt reservaties voor de gegeven resource instanties toe aan het plan.
          * @param resourceInstances De gegeven resource instanties
@@ -70,6 +70,12 @@ public interface IPlan {
          * Controleert of het plan een reservatie voor een resource instantie bevat.
          */
         boolean hasReservationFor(ResourceInstance resourceInstance);
+
+        /**
+         * Geeft de gereserveerde resources van de taak weer vrij.
+         * @param endTime De tijd waarop de reservaties van de taak moeten eindigen.
+         */
+        void releaseResources(LocalDateTime endTime);
 
         List<Task> getConflictingTasks();
 }

@@ -2,6 +2,7 @@ package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.resource.IPlan;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.RequirementListBuilder;
 import be.swop.groep11.main.resource.ResourceReservation;
@@ -509,7 +510,6 @@ public class Task {
     /**
      * Geeft de duration terug van de taak.
      * @param currentSystemTime
-     * @return
      */
     public Duration getDuration(LocalDateTime currentSystemTime){
         return this.status.getDuration(this, currentSystemTime);
@@ -517,26 +517,35 @@ public class Task {
 
     /**
      * Plant deze taak.
-     * @param plannedStartTime De geplande starttijd voor deze taak
+     * @param plan Het plan voor deze taak
+     * @throws IllegalStateException De taak kan niet gepland worden.
      */
-    public void plan(LocalDateTime plannedStartTime) {
-        this.plannedStartTime = plannedStartTime;
+    public void plan(IPlan plan) {
+        this.getStatus().plan(this, plan);
     }
 
     /**
      * Controleert of deze taak gepland is.
      */
     public boolean isPlanned() {
-        return this.plannedStartTime != null;
+        return this.plan != null;
     }
 
     /**
      * Geeft de geplande starttijd van deze taak.
      */
     public LocalDateTime getPlannedStartTime() {
-        return plannedStartTime;
+        return plan.getStartTime();
     }
 
-    private LocalDateTime plannedStartTime;
+    private IPlan plan;
+
+    public IPlan getPlan() {
+        return this.plan;
+    }
+
+    protected void setPlan(IPlan plan) {
+        this.plan = plan;
+    }
 
 }

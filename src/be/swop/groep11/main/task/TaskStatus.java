@@ -1,5 +1,7 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.resource.IPlan;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -104,4 +106,12 @@ public abstract class TaskStatus implements Cloneable {
         return true;
     }
 
+    /**
+     * Plant de taak
+     * @param task De te plannen taak
+     * @throws IllegalStateException De taak kan niet gepland worden.
+     */
+    public void plan(Task task, IPlan plan) throws IllegalArgumentException {
+        throw new IllegalStateException("De taak kan niet gepland worden.");
+    }
 }

@@ -1,5 +1,7 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.resource.IPlan;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -53,5 +55,14 @@ public class TaskUnavailable extends TaskStatus {
     @Override
     protected boolean canHaveAsEndTime(Task task, LocalDateTime endTime) {
         return false;
+    }
+
+    /**
+     * Plant de taak
+     * @param task De te plannen taak
+     */
+    @Override
+    public void plan(Task task, IPlan plan) {
+        task.setPlan(plan);
     }
 }

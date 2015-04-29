@@ -224,10 +224,14 @@ public class InputParser {
      */
     private void addPlanning(int number, Map<String, Object> propertiesList){
         Task task = planningTaskMap.get(number);
-        task.plan(parseTime((String) propertiesList.get("plannedStartTime")));
+        IPlan plan = resourceManager.getNextPlans(1, task, parseTime((String) propertiesList.get("plannedStartTime"))).get(0);
+        task.plan(plan);
         List<Developer> developers = new ArrayList<>();
         //((ArrayList) propertiesList.get("developers")).forEach(x -> developers.add((Developer) developerList.get((Integer) x)));
         // TODO: afwerken en bij aan taak toevoegen
+        plan.addReservations(developerList);
+
+        // TODO: requirement list toevoegen
     }
 
     /**
@@ -258,6 +262,7 @@ public class InputParser {
         LocalDateTime startTime = parseTime((String) propertiesList.get("startTime"));
         LocalDateTime endTime = parseTime((String) propertiesList.get("endTime"));
         resourceManager.makeReservation(task, resourceInstance, new TimeSpan(startTime, endTime), true);
+        // TODO add reservations to plan
     }
 
     /**

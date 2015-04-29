@@ -750,6 +750,15 @@ public class ResourceManager {
             return defaultReservations;
         }
 
+        /**
+         * Geeft de gereserveerde resources van de taak weer vrij.
+         * @param endTime De tijd waarop de reservaties van de taak moeten eindigen.
+         */
+        @Override
+        public void releaseResources(LocalDateTime endTime) {
+            endReservationsFromTask(this.getTask(), endTime);
+        }
+
         /*private LocalDateTime calculateEndTime(Task task, LocalDateTime startTime) {
             LocalDateTime endTime = startTime.plus(task.getEstimatedDuration());
             Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
