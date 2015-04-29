@@ -538,6 +538,15 @@ public class ResourceManagerTest {
         assertTrue(reservationForResourceInstanceExists(task, type2.getResourceInstances().get(0)));
     }
 
+    @Test (expected = IllegalArgumentException.class)
+    public void endReservationsFromTask_InvalidEndTimeTest() {
+        //setUpResourceManager();
+        AResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
+
+        // TODO
+
+    }
+
     private void addResourceTypeNameOnly(String name){
         resourceManager.addNewResourceType(name);
     }

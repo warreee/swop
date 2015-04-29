@@ -326,13 +326,13 @@ public class ResourceManager {
     }
 
     /**
-     * Beeindigd alle reservaties van de gegeven taak op de gegeven eindtijd.
+     * Beeindigt alle reservaties van de gegeven taak op de gegeven eindtijd.
      * @param task De Task waarvan we de Reservaties willen beeindigen.
      * @param endTime De tijd waarop de reservaties moeten eindigen.
      * @throws IllegalArgumentException Wanneer de eindtijd voor een starttijd van een reservatie ligt.
      */
-    // TODO: modifier juist zetten.
-    private void endReservationsFromTask(Task task, LocalDateTime endTime){
+    // TODO: wanneer een taak beeindigd wordt moet dit opgeroepen worden
+    public void endReservationsFromTask(Task task, LocalDateTime endTime){
         List<ResourceReservation> reservations = new ArrayList<>(this.reservations.get(task));
         for(ResourceReservation reservation: reservations){
             TimeSpan newTimeSpan = new TimeSpan(reservation.getTimeSpan().getStartTime(), endTime);
