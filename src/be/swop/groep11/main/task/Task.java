@@ -516,17 +516,32 @@ public class Task {
      * Plant deze taak.
      * @param plannedStartTime De geplande starttijd voor deze taak
      */
-    public void plan(LocalDateTime plannedStartTime) {
+    public void plan(LocalDateTime plannedStartTime, LocalDateTime plannedEndTime) {
         this.plannedStartTime = plannedStartTime;
+        this.plannedEndTime = plannedEndTime;
     }
 
     /**
      * Controleert of deze taak gepland is.
      */
     public boolean isPlanned() {
-        return this.plannedStartTime != null;
+        return this.plannedStartTime != null && this.plannedEndTime != null;
     }
 
-    private LocalDateTime plannedStartTime;
+    /**
+     * Geeft de geplande starttijd van deze taak.
+     */
+    public LocalDateTime getPlannedStartTime() {
+        return plannedStartTime;
+    }
+
+    /**
+     * Geeft de geplande eindtijd van deze taak.
+     */
+    public LocalDateTime getPlannedEndTime() {
+        return plannedEndTime;
+    }
+
+    private LocalDateTime plannedStartTime, plannedEndTime;
 
 }
