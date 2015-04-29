@@ -13,7 +13,7 @@ public class ResourceRequirement {
     /**
      * Het type voor required ResourceInstances.
      */
-    private final IResourceType type;
+    private final AResourceType type;
 
     /**
      * Constructor voor een nieuwe ResourceRequirement met een IResourceType en een hoeveelheid
@@ -27,7 +27,7 @@ public class ResourceRequirement {
      * @throws IllegalArgumentException
      *                  Gooi indien type == null
      */
-    public ResourceRequirement(IResourceType type, int amount) throws IllegalRequirementAmountException,IllegalArgumentException {
+    public ResourceRequirement(AResourceType type, int amount) throws IllegalRequirementAmountException,IllegalArgumentException {
         if(!isValidType(type)){
             throw new IllegalArgumentException("Type mag niet null zijn.");
         }
@@ -44,7 +44,7 @@ public class ResourceRequirement {
      * @return      Waar indien type != null
      *              Anders niet waar.
      */
-    private boolean isValidType(IResourceType type) {
+    private boolean isValidType(AResourceType type) {
         return type != null;
     }
 
@@ -58,7 +58,7 @@ public class ResourceRequirement {
     /**
      * @return Het IResourceType van de required ResourceInstances.
      */
-    public IResourceType getType() {
+    public AResourceType getType() {
         return type;
     }
 
@@ -72,7 +72,7 @@ public class ResourceRequirement {
      *                  amount <= de hoeveelheid ResourceInstances een type bevat.
      *                  Anders niet waar.
      */
-    private boolean isValidAmountFor(IResourceType type, int amount) {
+    private boolean isValidAmountFor(AResourceType type, int amount) {
         if( type.hasConstraintFor(type)){//constraint op zichzelf
             ResourceTypeConstraint constraintB = type.getConstraintFor(type);
             return constraintB.isAcceptableAmount(type,amount) && amount <= type.amountOfInstances() ;

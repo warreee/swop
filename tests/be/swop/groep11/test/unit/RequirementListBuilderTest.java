@@ -1,28 +1,30 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.resource.IResourceType;
+import be.swop.groep11.main.resource.AResourceType;
 import be.swop.groep11.main.resource.RequirementListBuilder;
+import be.swop.groep11.main.resource.ResourceType;
 import be.swop.groep11.main.resource.ResourceTypeBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Ronald on 24/04/2015.
  */
 public class RequirementListBuilderTest {
 
-    private IResourceType typeA;
-    private IResourceType typeB;
-    private IResourceType typeC;
-    private  RequirementListBuilder rlb;
+    private AResourceType typeA;
+    private AResourceType typeB;
+    private AResourceType typeC;
+    private RequirementListBuilder rlb;
 
     @Before
     public void setUp() throws Exception {
-        ResourceTypeBuilder bA = new ResourceTypeBuilder("A");
-        ResourceTypeBuilder bB = new ResourceTypeBuilder("B");
-        ResourceTypeBuilder bC = new ResourceTypeBuilder("C");
+        AResourceType bA = new ResourceType("A");
+        AResourceType bB = new ResourceType("B");
+        AResourceType bC = new ResourceType("C");
 
         //A requires B
         bA.withRequirementConstraint(bB.getResourceType());

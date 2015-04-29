@@ -1,13 +1,13 @@
 package be.swop.groep11.main.resource.constraint;
 
-import be.swop.groep11.main.resource.IResourceType;
+import be.swop.groep11.main.resource.AResourceType;
 
 /**
  * Created by Ronald on 9/04/2015.
  */
 public class RequiresConstraint extends ResourceTypeConstraint {
 
-    private RequiresConstraint(IResourceType ownerType, IResourceType constrainingType, int min, int max) throws IllegalArgumentException{
+    private RequiresConstraint(AResourceType ownerType, AResourceType constrainingType, int min, int max) throws IllegalArgumentException{
         super(ownerType, constrainingType, min, max);
         if(ownerType.equals(constrainingType)){
             throw new IllegalArgumentException("mag zichzelf niet requiren.");
@@ -22,7 +22,7 @@ public class RequiresConstraint extends ResourceTypeConstraint {
      *                          Gooi indien constrainingType of ownerType niet geinitialiseerd zijn.
      *                          Gooi indien constrainingType == ownerType
      */
-    public RequiresConstraint(IResourceType ownerType, IResourceType constrainingType)throws IllegalArgumentException{
+    public RequiresConstraint(AResourceType ownerType, AResourceType constrainingType)throws IllegalArgumentException{
         this(ownerType, constrainingType, 1, Integer.MAX_VALUE);
     }
 }

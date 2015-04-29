@@ -1,9 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.resource.DailyAvailability;
-import be.swop.groep11.main.resource.IResourceType;
-import be.swop.groep11.main.resource.ResourceInstance;
-import be.swop.groep11.main.resource.ResourceTypeBuilder;
+import be.swop.groep11.main.resource.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,33 +14,32 @@ import static org.junit.Assert.assertTrue;
  */
 public class ResourceTypeBuilderTest {
     //TODO test ResourceTypeBuilder, ResourceType,
-    private ResourceTypeBuilder builderA;
-    private ResourceTypeBuilder builderB;
+    private AResourceType typeA;
+    private AResourceType typeB;
 
     @Before
     public void setUp() throws Exception {
-        this.builderA = new ResourceTypeBuilder("A");
-        this.builderB = new ResourceTypeBuilder("B");
+        this.typeA = new ResourceType("A");
+        this.typeB = new ResourceType("B");
     }
 
     @Test
     public void testBasicResourceType() throws Exception {
-        IResourceType typeA = builderA.getResourceType();
-
-        assertEquals("A",typeA.getName());
-        assertEquals(0, typeA.amountOfInstances());
-        assertEquals(0, typeA.amountOfConstraints());
+        ResourceType type = new ResourceType("A");
+        assertEquals("A", type.getName());
+        assertEquals(0, type.amountOfInstances());
+        assertEquals(0, type.amountOfConstraints());
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testName_Invalid() throws Exception {
-        new ResourceTypeBuilder("");
+        new ResourceType("");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testWithDailyAvailability_invalid() throws Exception {
-        builderA.withDailyAvailability(null);
+        typeA.withDailyAvailability(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -64,8 +60,8 @@ public class ResourceTypeBuilderTest {
         builderA.withDailyAvailability(start, end);
         builderB.withDailyAvailability(d);
 
-        IResourceType typeA = builderA.getResourceType();
-        IResourceType typeB = builderB.getResourceType();
+        AResourceType typeA = builderA.getResourceType();
+        AResourceType typeB = builderB.getResourceType();
 
         assertEquals(end,typeA.getDailyAvailability().getEndTime());
         assertEquals(start,typeA.getDailyAvailability().getStartTime());
@@ -76,8 +72,8 @@ public class ResourceTypeBuilderTest {
 
     @Test
     public void testWithRequirementConstraints_valid() throws Exception {
-        IResourceType typeA = builderA.getResourceType();
-        IResourceType typeB = builderB.getResourceType();
+        AResourceType typeA = builderA.getResourceType();
+        AResourceType typeB = builderB.getResourceType();
 
         builderA.withRequirementConstraint(typeB);
         assertTrue(typeA.hasConstraintFor(typeB));
@@ -85,8 +81,8 @@ public class ResourceTypeBuilderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testWithConstraints_invalid() throws Exception {
-        IResourceType typeA = builderA.getResourceType();
-        IResourceType typeB = builderB.getResourceType();
+        AResourceType typeA = builderA.getResourceType();
+        AResourceType typeB = builderB.getResourceType();
 
         builderA.withRequirementConstraint(typeB);
         builderB.withConflictConstraint(typeA);
@@ -96,20 +92,20 @@ public class ResourceTypeBuilderTest {
     public void testSelfConflictingConstraint() throws Exception {
         builderA.setConflictWithSelf(true);
 
-        IResourceType typeA = builderA.getResourceType();
+        AResourceType typeA = builderA.getResourceType();
         assertTrue(typeA.hasConstraintFor(typeA));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSelfRequireConstraint_invalid() throws Exception {
-        IResourceType typeA = builderA.getResourceType();
+        AResourceType typeA = builderA.getResourceType();
         builderA.withRequirementConstraint(typeA);
     }
 
     @Test
     public void testAddInstance() throws Exception {
         builderA.addResourceInstance("in1");
-        IResourceType typeA = builderA.getResourceType();
+        AResourceType typeA = builderA.getResourceType();
         assertEquals(1, typeA.getResourceInstances().size());
         ResourceInstance instance = typeA.getResourceInstances().get(0);
         assertEquals(typeA, instance.getResourceType());

@@ -53,8 +53,9 @@ public class App {
         // maak een nieuwe CommandLineInterface aan
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(java.lang.System.in));
         cli = new CommandLineInterface(bufferedReader);
-        actionBehaviourMapping = new ActionBehaviourMapping(() -> cli.printMessage("Ongeldige action")); //TODO WARD: vragen Ronald
+        actionBehaviourMapping = new ActionBehaviourMapping(() -> cli.printMessage("Ongeldige action"));
         cli.setActionBehaviourMapping(actionBehaviourMapping);
+
 
         //maak een nieuwe system aan
         systemTime = new SystemTime(); //TODO WARD: hier gaat een bug zijn indien de yaml file een tijd heeft voor die van de huidige tijd?!

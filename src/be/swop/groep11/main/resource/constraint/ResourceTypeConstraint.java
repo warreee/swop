@@ -1,16 +1,16 @@
 package be.swop.groep11.main.resource.constraint;
 
-import be.swop.groep11.main.resource.IResourceType;
 import be.swop.groep11.main.resource.IRequirementList;
+import be.swop.groep11.main.resource.AResourceType;
 
 /**
  * Created by Ronald on 9/04/2015.
  */
 public abstract class ResourceTypeConstraint {
     //Het type waarop de constraint van toepassing is.
-    private final IResourceType ownerType;
+    private final AResourceType ownerType;
     //Het type die de beperkende rol vervult.
-    private final IResourceType constrainingType;
+    private final AResourceType constrainingType;
 
     //Het minimum toegelaten ResourceInstances om deze constraint te laten slagen.
     private final int min;
@@ -26,7 +26,7 @@ public abstract class ResourceTypeConstraint {
      * @throws IllegalArgumentException
      *                          Gooi indien de gegeven ownerType || constrainingType niet ge?nitialiseerd zijn.
      */
-    protected ResourceTypeConstraint(IResourceType ownerType, IResourceType constrainingType, int min, int max) throws IllegalArgumentException{
+    protected ResourceTypeConstraint(AResourceType ownerType, AResourceType constrainingType, int min, int max) throws IllegalArgumentException{
         if(!areValidTypes(ownerType, constrainingType)){
             throw new IllegalArgumentException("Ongeldig ResourceType's");
         }
@@ -42,20 +42,20 @@ public abstract class ResourceTypeConstraint {
     /**
      * @return Waar indien ownerType & constrainingType niet null zijn.
      */
-    private boolean areValidTypes(IResourceType ownerType,IResourceType constrainingType) {
+    private boolean areValidTypes(AResourceType ownerType,AResourceType constrainingType) {
         return ownerType != null && constrainingType != null;
     }
 
     /**
      * @return Het IResourceType dewelke eigenaar is van deze constraint.
      */
-    public IResourceType getOwnerType() {
+    public AResourceType getOwnerType() {
         return ownerType;
     }
     /**
      * @return Het IResourceType dewelke de beperkende rol vervult.
      */
-    public IResourceType getConstrainingType() {
+    public AResourceType getConstrainingType() {
         return constrainingType;
     }
 
@@ -85,7 +85,7 @@ public abstract class ResourceTypeConstraint {
      *                      niet overschrijden.
      *                      Anders niet waar.
      */
-    private boolean areValidBounds(IResourceType typeA,IResourceType typeB,int bMin, int bMax) {
+    private boolean areValidBounds(AResourceType typeA,AResourceType typeB,int bMin, int bMax) {
         if(!typeB.hasConstraintFor(typeA)){
             return true;
         }else{
@@ -151,7 +151,7 @@ public abstract class ResourceTypeConstraint {
      * @param resourceType  De IResourceType die "amount" keer aangevraagd is.
      * @return              Waar indien resourceType == getConstrainingType() && amount >= getMin() && amount <= getMax()
      */
-    public boolean isAcceptableAmount(IResourceType resourceType,int amount) {
+    public boolean isAcceptableAmount(AResourceType resourceType,int amount) {
         return resourceType != getConstrainingType() || (amount >= getMin() && amount <= getMax());
     }
 

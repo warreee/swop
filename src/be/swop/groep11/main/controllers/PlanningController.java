@@ -112,7 +112,7 @@ public class PlanningController extends AbstractController {
             Iterator<ResourceRequirement> it1 = task.getRequirementList().iterator();
             while (it1.hasNext()) {
                 ResourceRequirement requirement = it1.next();
-                IResourceType type = requirement.getType();
+                AResourceType type = requirement.getType();
                 msgDefaultResourceInstances += "\n - Voor type " + type.getName() + ": (" + requirement.getAmount() + " instanties nodig)";
 
                 for (ResourceInstance resourceInstance : type.getResourceInstances()) {
@@ -134,7 +134,7 @@ public class PlanningController extends AbstractController {
                 Iterator<ResourceRequirement> it2 = task.getRequirementList().iterator();
                 while (it2.hasNext()) {
                     ResourceRequirement requirement = it2.next();
-                    IResourceType type = requirement.getType();
+                    AResourceType type = requirement.getType();
                     if (type != resourceManager.getDeveloperType()) {
                         String msgSelectResourceInstances = "Selecteer instanties voor type " + type.getName() + " (" + requirement.getAmount() + " instanties nodig)";
 
@@ -168,7 +168,7 @@ public class PlanningController extends AbstractController {
        9. The user selects the developers to perform the task. */
 
             String msgSelectDevelopers = "Selecteer developers";
-            IResourceType developerType = resourceManager.getDeveloperType();
+            AResourceType developerType = resourceManager.getDeveloperType();
             int nbDevelopers = getNbRequiredDevelopers(task.getRequirementList());
             ImmutableList<ResourceInstance> allDevelopers = developerType.getResourceInstances();
             ImmutableList<ResourceInstance> availableDevelopers = resourceManager.getAvailableInstances(developerType, new TimeSpan(plan.getStartTime(), plan.getEndTime()));
@@ -200,7 +200,7 @@ public class PlanningController extends AbstractController {
         Iterator<ResourceRequirement> it = requirementList.iterator();
         while (it.hasNext()) {
             ResourceRequirement requirement = it.next();
-            IResourceType resourceType = requirement.getType();
+            AResourceType resourceType = requirement.getType();
             if (resourceType == resourceManager.getDeveloperType()) {
                 return requirement.getAmount();
             }

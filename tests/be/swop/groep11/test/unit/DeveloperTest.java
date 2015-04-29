@@ -30,7 +30,7 @@ public class DeveloperTest {
     public void setUp() throws Exception {
         ResourceManager repo = new ResourceManager();
         repo.addNewResourceType("dev",new DailyAvailability(LocalTime.of(8,0),LocalTime.of(17,0)));
-        IResourceType developerType = repo.getResourceTypeByName("dev");
+        AResourceType developerType = repo.getResourceTypeByName("dev");
         developer = new Developer("Jos", developerType);
 
         String description = "description";

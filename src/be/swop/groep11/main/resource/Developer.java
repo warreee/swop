@@ -1,14 +1,10 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.core.User;
-import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Stelt een developer voor met een naam en resource type.
@@ -21,7 +17,7 @@ public class Developer extends User implements ResourceInstance {
      * @param resourceType Resource type van de developer
      * @throws java.lang.IllegalArgumentException Ongeldige resource type
      */
-    public Developer(String name, IResourceType resourceType) throws IllegalArgumentException {
+    public Developer(String name, AResourceType resourceType) throws IllegalArgumentException {
         super(name);
         if (resourceType == null)
             throw new IllegalArgumentException("Resource type mag niet null zijn");
@@ -99,10 +95,10 @@ public class Developer extends User implements ResourceInstance {
     private static Duration  breakDuration = Duration.ofHours(1);
 
     @Override
-    public IResourceType getResourceType() {
+    public AResourceType getResourceType() {
         return resourceType;
     }
 
-    private final IResourceType resourceType;
+    private final AResourceType resourceType;
 
 }

@@ -3,12 +3,15 @@ package be.swop.groep11.test.unit;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.resource.DailyAvailability;
+import be.swop.groep11.main.resource.AResourceType;
+import be.swop.groep11.main.resource.ResourceInstance;
+import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -73,7 +76,7 @@ public class ResourceManagerTest {
     @Test
     public void addResourceInstanceTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, "Instance 1");
         assertTrue(type1.getResourceInstances().get(0).getName().equals("Instance 1"));
         assertEquals(1, type1.getResourceInstances().size());
@@ -86,7 +89,7 @@ public class ResourceManagerTest {
     @Test(expected = IllegalArgumentException.class)
     public void addEmptyNameInstanceTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, "");
     }
 
@@ -97,7 +100,7 @@ public class ResourceManagerTest {
     @Test(expected = IllegalArgumentException.class)
     public void addNullNameInstanceTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, null);
     }
 
@@ -121,7 +124,7 @@ public class ResourceManagerTest {
     @Test
     public void makeReservationTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         Task mockedTask = mock(Task.class);
         LocalDateTime start = LocalDateTime.of(2015, 3, 10, 12, 0);
         LocalDateTime end = LocalDateTime.of(2015, 3, 10, 16, 0);
@@ -138,7 +141,7 @@ public class ResourceManagerTest {
     @Test(expected = IllegalArgumentException.class)
     public void makeDoubleReservationTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         Task mockedTask = mock(Task.class);
         LocalDateTime start1 = LocalDateTime.of(2015, 3, 10, 12, 0);
         LocalDateTime start2 = LocalDateTime.of(2015, 3, 10, 13, 0);
@@ -152,7 +155,7 @@ public class ResourceManagerTest {
     @Test(expected = IllegalArgumentException.class)
     public void makeNullReservationTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         LocalDateTime start = LocalDateTime.of(2015, 3, 10, 12, 0);
         LocalDateTime end = LocalDateTime.of(2015, 3, 10, 16, 0);
         resourceManager.addResourceInstance(type1, "Instance 1");
@@ -166,7 +169,7 @@ public class ResourceManagerTest {
     @Test
     public void nextAvailableTimeSpan_ReservationsTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, "Instance 1");
         Task mockedTask = mock(Task.class);
         LocalDateTime time1 = LocalDateTime.of(2015, 3, 10, 12, 0);
@@ -199,7 +202,7 @@ public class ResourceManagerTest {
     @Test
     public void getAvailableInstancesTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, "Instance 1");
         Task mockedTask = mock(Task.class);
         LocalDateTime time1 = LocalDateTime.of(2015, 3, 10, 12, 0);
@@ -225,7 +228,7 @@ public class ResourceManagerTest {
     @Test
     public void getAvailableInstancesResourceTypeTimeSpanTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, "Instance 1");
         Task mockedTask = mock(Task.class);
         LocalDateTime time1 = LocalDateTime.of(2015, 3, 10, 12, 0);
@@ -249,7 +252,7 @@ public class ResourceManagerTest {
     @Test
     public void getReservationsTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, "Instance 1");
         resourceManager.addResourceInstance(type1, "Instance 2");
         Task mockedTask1 = mock(Task.class);
@@ -265,7 +268,7 @@ public class ResourceManagerTest {
     @Test
     public void getTaskReservationsTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, "Instance 1");
         resourceManager.addResourceInstance(type1, "Instance 2");
         Task mockedTask1 = mock(Task.class);
@@ -288,7 +291,7 @@ public class ResourceManagerTest {
     @Test
     public void getResourceInstanceReservationsTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, "Instance 1");
         resourceManager.addResourceInstance(type1, "Instance 2");
         Task mockedTask1 = mock(Task.class);
@@ -315,6 +318,7 @@ public class ResourceManagerTest {
         IResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
         addResourceTypeNameDailyAvailability("Test Resource 2", t4.toLocalTime(), t4.toLocalTime().plusHours(3));
         IResourceType type2 = resourceManager.getResourceTypeByName("Test Resource 2");
+        AResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, "Instance 1");
         resourceManager.addResourceInstance(type1, "Instance 2");
         resourceManager.makeReservation(mock(Task.class), type1.getResourceInstances().get(0),
@@ -435,16 +439,16 @@ public class ResourceManagerTest {
     }
 
     private void addResourceTypeNameDailyAvailabilityConflictRequires(String name, LocalTime start, LocalTime end, List<Integer> req, List<Integer> con){
-        ArrayList<IResourceType> required = new ArrayList<>();
-        ArrayList<IResourceType> conflicting = new ArrayList<>();
+        ArrayList<AResourceType> required = new ArrayList<>();
+        ArrayList<AResourceType> conflicting = new ArrayList<>();
         req.stream().forEach(x -> required.add(resourceManager.getResourceTypes().get(x)));
         con.stream().forEach(x -> conflicting.add(resourceManager.getResourceTypes().get(x)));
         resourceManager.addNewResourceType(name, new DailyAvailability(start, end), required, conflicting);
     }
 
     private void addResourceTypeNameConflictRequires(String name, List<Integer> req, List<Integer> con){
-        ArrayList<IResourceType> required = new ArrayList<>();
-        ArrayList<IResourceType> conflicting = new ArrayList<>();
+        ArrayList<AResourceType> required = new ArrayList<>();
+        ArrayList<AResourceType> conflicting = new ArrayList<>();
         req.stream().forEach(x -> required.add(resourceManager.getResourceTypes().get(x)));
         con.stream().forEach(x -> conflicting.add(resourceManager.getResourceTypes().get(x)));
         resourceManager.addNewResourceType(name, required, conflicting);

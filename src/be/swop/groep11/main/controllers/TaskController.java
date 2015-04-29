@@ -51,8 +51,8 @@ public class TaskController extends AbstractController {
             Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf( getUserInterface().requestNumber("Geschatte duur in minuten:")).longValue());
 
             // Lees alle resource types in.
-            Map<IResourceType, Integer> selectedTypes = new HashMap<>();
-            List<IResourceType> resourceTypes = new ArrayList<>(resourceManager.getResourceTypes());
+            Map<AResourceType, Integer> selectedTypes = new HashMap<>();
+            List<AResourceType> resourceTypes = new ArrayList<>(resourceManager.getResourceTypes());
             resourceTypes.remove(resourceManager.getDeveloperType());
 
             // Laat gebruiker een aantal developers kiezen
@@ -63,7 +63,7 @@ public class TaskController extends AbstractController {
             String message = "Voeg resource types toe? (y/N)";
             while (getUserInterface().requestBoolean(message)){
                 try {
-                    IResourceType iResourceType = getUserInterface().selectFromList(resourceTypes, (x -> x.getName()));
+                    AResourceType iResourceType = getUserInterface().selectFromList(resourceTypes, (x -> x.getName()));
                     Integer number = getUserInterface().requestNumber("Hoeveel wil je er?");
                     selectedTypes = addToResourceMap(iResourceType, number, selectedTypes);
                     resourceTypes.remove(iResourceType);
@@ -137,7 +137,7 @@ public class TaskController extends AbstractController {
         }
     }
 
-    private Map<IResourceType, Integer> addToResourceMap(IResourceType iResourceType, Integer number, Map<IResourceType, Integer> map){
+    private Map<AResourceType, Integer> addToResourceMap(AResourceType iResourceType, Integer number, Map<AResourceType, Integer> map){
         if(map.containsKey(iResourceType)){
             map.put(iResourceType, map.get(iResourceType) + number);
         } else {
@@ -146,12 +146,12 @@ public class TaskController extends AbstractController {
         return map;
     }
 
-    private void printResourceMap(Map<IResourceType, Integer> map){
+    private void printResourceMap(Map<AResourceType, Integer> map){
         getUserInterface().printMessage("De volgende resource zijn al geselecteerd:\n");
         map.forEach((x, y) -> getUserInterface().printMessage("\t" + x.getName() + ": " + y));
     }
 
-    private IRequirementList buildIRequirementList(Map<IResourceType, Integer> map){
+    private IRequirementList buildIRequirementList(Map<AResourceType, Integer> map){
         RequirementListBuilder builder = new RequirementListBuilder();
         map.forEach(builder::addNewRequirement);
         return builder.getRequirements();

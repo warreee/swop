@@ -1,9 +1,5 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.core.TimeSpan;
-import com.google.common.collect.ImmutableList;
-import org.mockito.cglib.core.Local;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -20,7 +16,7 @@ public interface ResourceInstance {
     /**
      * Geeft het resource type van de resource instantie.
      */
-    IResourceType getResourceType();
+    AResourceType getResourceType();
 
     /**
      * Berekent de eindtijd als de resource instantie vanaf een bepaalde starttijd voor een bepaalde duur zou

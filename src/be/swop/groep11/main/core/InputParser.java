@@ -24,7 +24,7 @@ public class InputParser {
     ArrayList<Project> projectList = new ArrayList<>();
     ArrayList<Task> taskList = new ArrayList<>();
     Map<Integer, Task> planningTaskMap = new HashMap<>();
-    ArrayList<IResourceType> resourceTypeList = new ArrayList<>();
+    ArrayList<AResourceType> resourceTypeList = new ArrayList<>();
     ArrayList<ResourceInstance> resourceInstanceList = new ArrayList<>();
     ArrayList<DailyAvailability> dailyAvailabilityList = new ArrayList<>();
     ArrayList<ResourceInstance> developerList = new ArrayList<>();
@@ -41,6 +41,7 @@ public class InputParser {
         this.resourceManager = resourceManager;
     }
 
+
     public static void main(String[] args) throws FileNotFoundException {
         ResourceManager typeRepo = new ResourceManager();
         ProjectRepository projectRepository = new ProjectRepository(new SystemTime(LocalDateTime.now()));
@@ -48,6 +49,14 @@ public class InputParser {
         InputParser parser = new InputParser(projectRepository, typeRepo);
         parser.parseInputFile();
         System.out.println("Finished :)");
+    }
+
+    public ProjectRepository getProjectRepository(){
+        return this.projectRepository;
+    }
+
+    public ResourceManager getResourceManager(){
+        return this.getResourceManager();
     }
 
     /**
@@ -202,7 +211,7 @@ public class InputParser {
      */
     private void addDeveloper(Map<String, String> propertiesList){
         String name = propertiesList.get("name");
-        IResourceType resourceType = resourceManager.getResourceTypeByName("Developer");
+        AResourceType resourceType = resourceManager.getDeveloperType();
         resourceManager.addResourceInstance(resourceType, name);
         developerList.add(resourceManager.getDeveloperType().getResourceInstances().get(resourceManager.getDeveloperType().getResourceInstances().size() - 1));
     }
@@ -256,7 +265,7 @@ public class InputParser {
      */
     private void addResource(Map<String, Object> propertiesList){
         String name = (String) propertiesList.get("name");
-        IResourceType resourceType = resourceTypeList.get((Integer) propertiesList.get("type"));
+        AResourceType resourceType = resourceTypeList.get((Integer) propertiesList.get("type"));
         resourceManager.addResourceInstance(resourceType, name);
         int size = resourceType.getResourceInstances().size();
         resourceInstanceList.add(resourceType.getResourceInstances().get(size - 1));
@@ -274,8 +283,8 @@ public class InputParser {
         Integer dailyAvailability = (Integer) propertiesList.get("dailyAvailability");
 
         // Haal de correcte IResourceTypes op die al bekend zijn. (Dit faalt indien er fouten staan in de inputfile.)
-        ArrayList<IResourceType> req = new ArrayList<>();
-        ArrayList<IResourceType> con = new ArrayList<>();
+        ArrayList<AResourceType> req = new ArrayList<>();
+        ArrayList<AResourceType> con = new ArrayList<>();
         requires.forEach(x -> req.add(resourceTypeList.get((Integer) x)));
         conflictsWith.forEach(x -> {
             if ((Integer) x != number) {
@@ -294,7 +303,7 @@ public class InputParser {
         }
 
         // Indien het IResourceType conflicteerd met zichzelf, voeg dit dan toe.
-        IResourceType type = resourceManager.getResourceTypeByName(name);
+        AResourceType type = resourceManager.getResourceTypeByName(name);
         if(conflictsWith.contains(number)){
             resourceManager.withConflictConstraint(type, type);
         }

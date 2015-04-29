@@ -1,7 +1,7 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.resource.DailyAvailability;
-import be.swop.groep11.main.resource.IResourceType;
+import be.swop.groep11.main.resource.AResourceType;
 import be.swop.groep11.main.resource.Resource;
 import be.swop.groep11.main.resource.ResourceManager;
 import org.junit.Before;
@@ -24,8 +24,8 @@ public class ResourceTest {
         this.typeRepository.addNewResourceType("24/7");
         this.typeRepository.addNewResourceType("10u - 16u",new DailyAvailability(LocalTime.of(10,00), LocalTime.of(16,00)));
 
-        IResourceType type_24_7 = this.typeRepository.getResourceTypeByName("24/7");
-        IResourceType type_10_16 = this.typeRepository.getResourceTypeByName("10u - 16u");
+        AResourceType type_24_7 = this.typeRepository.getResourceTypeByName("24/7");
+        AResourceType type_10_16 = this.typeRepository.getResourceTypeByName("10u - 16u");
 
         resource_24_7 = new Resource("Resource 24/7",type_24_7);
         resource_10_16 = new Resource("Resource 10u - 16u", type_10_16);
