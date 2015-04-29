@@ -63,9 +63,8 @@ public class DailyAvailability {
      *          beschikbaar zijn.
      */
     public boolean overlapsWith(List<DailyAvailability> availabilityList){
-        //TODO controleer overlapsWith(List<DailyAvailability>)
         for (DailyAvailability availability : availabilityList) {
-            if(!overlapsWith(availability)){
+            if(! overlapsWith(availability)){
                 return false;
             }
         }
@@ -73,8 +72,14 @@ public class DailyAvailability {
     }
 
     private boolean overlapsWith(DailyAvailability other) {
-        //TODO controleer overlapsWith berekening
-        return containsTime(other.getStartTime()) && Duration.between(other.getStartTime(),getEndTime()).compareTo(Duration.ofHours(1)) >= 0;
+        if (other == null)
+            return false;
+        LocalTime startTime1 = this.getStartTime();
+        LocalTime endTime1   = this.getEndTime();
+        LocalTime startTime2 = other.getStartTime();
+        LocalTime endTime2   = other.getEndTime();
+
+        return ! (startTime1.isAfter(endTime2.minusHours(1)) || startTime1.equals(endTime2.minusHours(1)) || startTime2.isAfter(endTime1.minusHours(1)) || startTime2.equals(endTime1.minusHours(1)));
     }
 
     /**
@@ -83,7 +88,7 @@ public class DailyAvailability {
      * @param endTime   De eindtijd die gecontroleerd moet worden
      * @return          True als de starttijd en eindtijd niet null zijn, en de starttijd voor de eindtijd ligt, en er minstens 1 uur tussen zit.
      */
-    public boolean isValidStartTimeEndTime(LocalTime startTime, LocalTime endTime){
+    public static boolean isValidStartTimeEndTime(LocalTime startTime, LocalTime endTime){
         return startTime != null && endTime != null && startTime.isBefore(endTime)
                 && Duration.between(startTime, endTime).compareTo(Duration.ofHours(1)) >= 0;
     }
