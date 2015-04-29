@@ -2,8 +2,7 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.resource.AResourceType;
 import be.swop.groep11.main.resource.RequirementListBuilder;
-import be.swop.groep11.main.resource.ResourceType;
-import be.swop.groep11.main.resource.ResourceTypeBuilder;
+import be.swop.groep11.main.resource.ResourceManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,33 +17,36 @@ public class RequirementListBuilderTest {
     private AResourceType typeA;
     private AResourceType typeB;
     private AResourceType typeC;
+    private ResourceManager resourceManager;
+
     private RequirementListBuilder rlb;
 
     @Before
     public void setUp() throws Exception {
-        AResourceType bA = new ResourceType("A");
-        AResourceType bB = new ResourceType("B");
-        AResourceType bC = new ResourceType("C");
+        this.resourceManager = new ResourceManager();
+        resourceManager.addNewResourceType("A");
+        resourceManager.addNewResourceType("B");
+        resourceManager.addNewResourceType("C");
+        typeA = resourceManager.getResourceTypeByName("A");
+        typeB = resourceManager.getResourceTypeByName("B");
+        typeC = resourceManager.getResourceTypeByName("C");
 
         //A requires B
-        bA.withRequirementConstraint(bB.getResourceType());
+        resourceManager.withRequirementConstraint(typeA, typeB);
 
         //B conflicts C
-        bB.withConflictConstraint(bC.getResourceType());
+        resourceManager.withConflictConstraint(typeB, typeC);
 
         //C conflicts C
-        bC.withConflictConstraint(bC.getResourceType());
+        resourceManager.withConflictConstraint(typeC, typeC);
 
-        bA.addResourceInstance("a1");
-        bA.addResourceInstance("a2");
-        bB.addResourceInstance("b1");
-        bC.addResourceInstance("c1");
+
+        resourceManager.addResourceInstance(typeA,"a1");
+        resourceManager.addResourceInstance(typeA,"a2");
+        resourceManager.addResourceInstance(typeB,"b1");
+        resourceManager.addResourceInstance(typeC,"c1");
 
         rlb = new RequirementListBuilder();
-
-        typeA = bA.getResourceType();
-        typeB = bB.getResourceType();
-        typeC = bC.getResourceType();
     }
 
     @Test
@@ -52,7 +54,7 @@ public class RequirementListBuilderTest {
         rlb.addNewRequirement(typeA,2);
         assertTrue(rlb.getRequirements().containsRequirementFor(typeB));
     }
-
+//TODO implement testen
 
     @Test
     public void testName() throws Exception {

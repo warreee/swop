@@ -3,43 +3,114 @@ package be.swop.groep11.test.unit;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
-import be.swop.groep11.main.resource.DailyAvailability;
-import be.swop.groep11.main.resource.AResourceType;
-import be.swop.groep11.main.resource.ResourceInstance;
-import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by robin on 23/04/15.
  */
 public class ResourceManagerTest {
 
+    private AResourceType typeA;
+    private AResourceType typeB;
+
     private ResourceManager resourceManager;
 
     @Before
     public void setUp() throws Exception{
         resourceManager = new ResourceManager();
+        resourceManager.addNewResourceType("A");
+        resourceManager.addNewResourceType("B");
+        typeA = resourceManager.getResourceTypeByName("A");
+        typeB = resourceManager.getResourceTypeByName("B");
     }
 
     @Test (expected = NoSuchElementException.class)
     public void emptyResourceManagerTest() throws Exception {
         // Een lege ResourceManager zou geen types mogen bevatten. Ook niet het Developer type.
+        ResourceManager resourceManager = new ResourceManager();
+
         assertTrue(resourceManager.getResourceTypes().isEmpty());
         assertFalse(resourceManager.containsType("Developer"));
         resourceManager.getResourceTypeByName("Developer");
     }
+
+    @Test
+    public void testBasicResourceType() throws Exception {
+        ResourceType type = new ResourceType("A");
+        assertEquals("A", type.getName());
+        assertEquals(0, type.amountOfInstances());
+        assertEquals(0, type.amountOfConstraints());
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testName_Invalid() throws Exception {
+        new ResourceType("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testWithDailyAvailability_invalid() throws Exception {
+        resourceManager.withDailyAvailability(typeA,null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testWithRequirementConstraint_invaid() throws Exception {
+        resourceManager.withRequirementConstraint(typeA, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testWithConflictConstraint_invalid() throws Exception {
+        resourceManager.withConflictConstraint(typeA, null);
+    }
+
+    @Test
+    public void testWithDailyAvailability() throws Exception {
+        LocalTime start = LocalTime.of(10, 10), end = LocalTime.of(15, 10);
+        DailyAvailability availability = new DailyAvailability(start,end);
+
+        resourceManager.withDailyAvailability(typeA, availability);
+
+        assertEquals(end,typeA.getDailyAvailability().getEndTime());
+        assertEquals(start, typeA.getDailyAvailability().getStartTime());
+    }
+
+    @Test
+    public void testWithRequirementConstraints_valid() throws Exception {
+        resourceManager.withRequirementConstraint(typeA, typeB);
+        assertTrue(typeA.hasConstraintFor(typeB));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testWithConstraints_invalid() throws Exception {
+        resourceManager.withRequirementConstraint(typeA, typeB);
+        resourceManager.withConflictConstraint(typeB, typeA);
+    }
+
+    @Test
+    public void testSelfConflictingConstraint() throws Exception {
+        resourceManager.withConflictConstraint(typeA, typeA);
+        assertTrue(typeA.hasConstraintFor(typeA));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSelfRequireConstraint_invalid() throws Exception {
+        resourceManager.withRequirementConstraint(typeA, typeA);
+    }
+
 
     /**
      * Test of alle methodes om een ResourceType toe te voegen.
@@ -48,6 +119,7 @@ public class ResourceManagerTest {
     @Test
     public void addResourceTypeToResourceManagerTest() throws Exception {
         // TODO: conflict met zichzelf
+        this.resourceManager = new ResourceManager();
         addResourceTypeNameOnly("Test Resource 1");
         assertEquals(1, resourceManager.getResourceTypes().size());
         resourceManager.getResourceTypeByName("Test Resource 1"); // Mag geen exception gooien
@@ -188,7 +260,7 @@ public class ResourceManagerTest {
     @Test
     public void nextAvailableTimeSpan_DailyAvailabilitiesTest() throws Exception {
         addResourceTypeNameDailyAvailability("Test Resource 1", LocalTime.of(12, 0), LocalTime.of(13, 0));
-        IResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
+        AResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
         resourceManager.addResourceInstance(type1, "Instance 1");
         Task mockedTask = mock(Task.class);
         LocalDateTime time1 = LocalDateTime.of(2015, 3, 10, 11, 0);
@@ -315,10 +387,9 @@ public class ResourceManagerTest {
 
         // resource manager
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
+        AResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
         addResourceTypeNameDailyAvailability("Test Resource 2", t4.toLocalTime(), t4.toLocalTime().plusHours(3));
-        IResourceType type2 = resourceManager.getResourceTypeByName("Test Resource 2");
-        AResourceType type1 = resourceManager.getResourceTypes().get(0);
+        AResourceType type2 = resourceManager.getResourceTypeByName("Test Resource 2");
         resourceManager.addResourceInstance(type1, "Instance 1");
         resourceManager.addResourceInstance(type1, "Instance 2");
         resourceManager.makeReservation(mock(Task.class), type1.getResourceInstances().get(0),
@@ -364,9 +435,9 @@ public class ResourceManagerTest {
 
         // resource manager
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
+        AResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
         addResourceTypeNameDailyAvailability("Test Resource 2", t4.toLocalTime(), t4.toLocalTime().plusHours(3));
-        IResourceType type2 = resourceManager.getResourceTypeByName("Test Resource 2");
+        AResourceType type2 = resourceManager.getResourceTypeByName("Test Resource 2");
         resourceManager.addResourceInstance(type1, "Instance 1");
         resourceManager.addResourceInstance(type1, "Instance 2");
         resourceManager.makeReservation(mock(Task.class), type1.getResourceInstances().get(0),
@@ -402,9 +473,9 @@ public class ResourceManagerTest {
 
         // resource manager
         addResourceTypeNameOnly("Test Resource 1");
-        IResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
+        AResourceType type1 = resourceManager.getResourceTypeByName("Test Resource 1");
         addResourceTypeNameDailyAvailability("Test Resource 2", t4.toLocalTime(), t4.toLocalTime().plusHours(3));
-        IResourceType type2 = resourceManager.getResourceTypeByName("Test Resource 2");
+        AResourceType type2 = resourceManager.getResourceTypeByName("Test Resource 2");
         resourceManager.addResourceInstance(type1, "Instance 1");
         resourceManager.addResourceInstance(type1, "Instance 2");
         resourceManager.makeReservation(mock(Task.class), type1.getResourceInstances().get(0),
