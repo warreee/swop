@@ -1,11 +1,13 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.TimeSpan;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TimeSpanTest {
 
@@ -41,4 +43,13 @@ public class TimeSpanTest {
         assertTrue(timeSpan4.overlapsWith(timeSpan2));
     }
 
+    @Test
+    public void equalsTest_() throws Exception {
+
+        TimeSpan ts1 = new TimeSpan(LocalDateTime.of(2015,4,9,9,0), LocalDateTime.of(2015,4,9,12,0));
+        TimeSpan ts2 = new TimeSpan(LocalDateTime.of(2015,4,9,9,0), LocalDateTime.of(2015,4,9,12,0));
+
+        assertTrue(ts1.equals(ts2));
+        assertFalse(ts1.equals(timeSpan3));
+    }
 }

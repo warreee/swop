@@ -12,7 +12,7 @@ public class DeveloperType extends AResourceType{
     }
 
     @Override
-    public void addResourceInstance(String name) throws IllegalArgumentException {
+    protected void addResourceInstance(String name) throws IllegalArgumentException {
         Developer dev = new Developer(name,this);
         addResourceInstance(dev);
     }
