@@ -136,7 +136,6 @@ public abstract class ResourceTypeConstraint {
     public boolean contradictsWith(ResourceTypeConstraint otherConstraint,int requestedAmount){
         //Moet een beperking zijn op dezelfde ResourceType, en de minimum hoeveelheid van de otherConstraint
         //moet aanvaardbaar zijn voor deze constraint. alsook de aangevraagde hoeveelheid
-        boolean result = false;
         if(getMin() > requestedAmount || otherConstraint.getMin() > requestedAmount || requestedAmount > getMax() || requestedAmount > otherConstraint.getMax()){
             // De requested amount ligt niet binnen de grenzen van beide ResourceTypeConstraints.
             return true;

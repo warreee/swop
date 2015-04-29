@@ -1,8 +1,12 @@
-package be.swop.groep11.main.core;
+package be.swop.groep11.main;
 
 import be.swop.groep11.main.actions.Action;
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.controllers.*;
+import be.swop.groep11.main.util.InputParser;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.ui.CommandLineInterface;

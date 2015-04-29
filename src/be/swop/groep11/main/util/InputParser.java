@@ -1,5 +1,6 @@
-package be.swop.groep11.main.core;
+package be.swop.groep11.main.util;
 
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import org.yaml.snakeyaml.Yaml;
