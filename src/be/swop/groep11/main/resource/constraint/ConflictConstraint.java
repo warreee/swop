@@ -11,6 +11,7 @@ public class ConflictConstraint extends ResourceTypeConstraint {
         super(ownerType, constrainingType, min, max);
     }
 
+
     /**
      * Constructor voor een nieuwe ConflictConstraint.
      * @param ownerType         Het IResourceType waarop deze constraint van topeassing is.
@@ -26,4 +27,5 @@ public class ConflictConstraint extends ResourceTypeConstraint {
          * mag er hoogstens 1 instance van required worden.
          */
     }
+
 }
