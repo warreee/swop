@@ -4,11 +4,13 @@ import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.RequirementListBuilder;
+import be.swop.groep11.main.resource.ResourceReservation;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -516,16 +518,15 @@ public class Task {
      * Plant deze taak.
      * @param plannedStartTime De geplande starttijd voor deze taak
      */
-    public void plan(LocalDateTime plannedStartTime, LocalDateTime plannedEndTime) {
+    public void plan(LocalDateTime plannedStartTime) {
         this.plannedStartTime = plannedStartTime;
-        this.plannedEndTime = plannedEndTime;
     }
 
     /**
      * Controleert of deze taak gepland is.
      */
     public boolean isPlanned() {
-        return this.plannedStartTime != null && this.plannedEndTime != null;
+        return this.plannedStartTime != null;
     }
 
     /**
@@ -535,13 +536,6 @@ public class Task {
         return plannedStartTime;
     }
 
-    /**
-     * Geeft de geplande eindtijd van deze taak.
-     */
-    public LocalDateTime getPlannedEndTime() {
-        return plannedEndTime;
-    }
-
-    private LocalDateTime plannedStartTime, plannedEndTime;
+    private LocalDateTime plannedStartTime;
 
 }
