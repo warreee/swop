@@ -139,28 +139,31 @@ public abstract class ResourceTypeConstraint {
         boolean result = false;
         if(getMin() > requestedAmount || otherConstraint.getMin() > requestedAmount || requestedAmount > getMax() || requestedAmount > otherConstraint.getMax()){
             // De requested amount ligt niet binnen de grenzen van beide ResourceTypeConstraints.
-            return false;
+            return true;
         }
         if(otherConstraint.getOwnerType().equals(getOwnerType())){
             if(otherConstraint.getConstrainingType().equals(getConstrainingType())){
                 // Ownertype zelfde, ConstrainingType zelfde
                 // Grenzen moeten hetzelfde zijn om niet te conflicteren en requestedAmount moet er binnen liggen.
-                return getMax() == otherConstraint.getMax() && getMin() == otherConstraint.getMin();
-            } else {
-                // OwnerType zelfde, ConstrainingType verschillend.
-                // requestedAmount moet binnen beide grenzen liggen.
-                return true;
-            }
-        } else {
-            if(otherConstraint.getConstrainingType().equals(getConstrainingType())){
-                // OwnerType verschillend, ConstrainingType zelfde.
-                return getMax() == otherConstraint.getMax() && getMin() == otherConstraint.getMin();
-            } else {
-                // OwnerType Verschillend, ConstrainingType verschillend.
-                // requestedAmount moet binnen beide grenzen liggen.
-                return false;
+                return getMax() != otherConstraint.getMax() || getMin() != otherConstraint.getMin();
             }
         }
+        return false;
+//            else {
+//                // OwnerType zelfde, ConstrainingType verschillend.
+//                // requestedAmount moet binnen beide grenzen liggen.
+//                return false;
+//            }
+//        } else {
+//            if(otherConstraint.getConstrainingType().equals(getConstrainingType())){
+//                // OwnerType verschillend, ConstrainingType zelfde.
+//                return false;
+//            } else {
+//                // OwnerType Verschillend, ConstrainingType verschillend.
+//                // requestedAmount moet binnen beide grenzen liggen.
+//                return false;
+//            }
+//        }
     }
 
     /**
