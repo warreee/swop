@@ -35,7 +35,7 @@ public class Developer extends User implements ResourceInstance {
      * @return TODO: uitleggen hoe dit voor Developer gedaan wordt
      */
     public LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration) {
-        LocalDateTime currentStartTime = startTime;
+        LocalDateTime currentStartTime = this.getResourceType().getDailyAvailability().getNextTime(startTime);;
         LocalDateTime currentEndTime   = null;
         Duration      currentDuration  = duration;
 

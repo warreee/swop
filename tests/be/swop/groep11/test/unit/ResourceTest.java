@@ -48,9 +48,9 @@ public class ResourceTest {
         LocalDateTime expectedEnd1 = LocalDateTime.of(2015, 4, 10, 11, 0);
         LocalDateTime expectedEnd2 = expectedEnd1;
         LocalDateTime expectedEnd3 = LocalDateTime.of(2015, 4, 17, 11, 0);
-        assertTrue(expectedEnd1.equals(resource_10_16.calculateEndTime(start1, duration)));
-        assertTrue(expectedEnd2.equals(resource_10_16.calculateEndTime(start2, duration)));
-        assertTrue(expectedEnd3.equals(resource_10_16.calculateEndTime(start3, duration)));
+        assertEquals(expectedEnd1,resource_10_16.calculateEndTime(start1, duration));
+        assertEquals(expectedEnd2,resource_10_16.calculateEndTime(start2, duration));
+        assertEquals(expectedEnd3,resource_10_16.calculateEndTime(start3, duration));
     }
 
 }

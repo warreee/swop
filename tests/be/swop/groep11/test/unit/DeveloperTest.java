@@ -12,7 +12,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class DeveloperTest {
 
@@ -73,66 +73,20 @@ public class DeveloperTest {
     }
 
     @Test
-    public void getNextAvailableTimeSpan_EndsOnSameDayTest() {
-        fail("Not implemented");
-
-/*        LocalDateTime startTime = LocalDateTime.of(2015,4,14,10,30);
+    public void calculateEndTime_EndsOnSameDayTest() {
+        LocalDateTime startTime = LocalDateTime.of(2015,4,14,10,30);
         Duration duration = Duration.ofMinutes(90);
-        TimeSpan expectedTimeSpan = new TimeSpan(LocalDateTime.of(2015,4,14,14,0), LocalDateTime.of(2015,4,14,15,30));
-        TimeSpan timeSpan = developer.getNextAvailableTimeSpan(startTime, duration);
-        assertEquals(expectedTimeSpan.getStartTime(), timeSpan.getStartTime());
-        assertEquals(expectedTimeSpan.getEndTime(), timeSpan.getEndTime());*/
+        LocalDateTime expectedEndTime = LocalDateTime.of(2015,4,14,15,30);
+        assertEquals(expectedEndTime, developer.calculateEndTime(startTime, duration));
     }
 
     @Test
-    public void getNextAvailableTimeSpan_AddBreakTest() {
-        fail("Not implemented");
-
-/*        LocalDateTime startTime = LocalDateTime.of(2015,4,14,11,0);
+    public void calculateEndTime_addBreakTest() {
+        LocalDateTime startTime = LocalDateTime.of(2015,4, 14, 11, 0);
         Duration duration = Duration.ofMinutes(60);
-        TimeSpan expectedTimeSpan = new TimeSpan(LocalDateTime.of(2015,4,14,11,00), LocalDateTime.of(2015,4,14,13,0));
-        TimeSpan timeSpan = developer.getNextAvailableTimeSpan(startTime, duration);
-        assertEquals(expectedTimeSpan.getStartTime(), timeSpan.getStartTime());
-        assertEquals(expectedTimeSpan.getEndTime(), timeSpan.getEndTime());*/
+        LocalDateTime expectedEndTime = LocalDateTime.of(2015,4,14,13,0);
+        assertEquals(expectedEndTime, developer.calculateEndTime(startTime, duration));
     }
 
-    @Test
-    public void addAllocation_ValidTest() {
-        fail("Not implemented");
-        /*
-        ResourceReservation allocationA = mock(ResourceReservation.class);
-        when(allocationA.getResourceInstance()).thenReturn(developer);
-        when(allocationA.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015,4,1,8,0), LocalDateTime.of(2015,4,2,20,0)));
-
-        ResourceReservation allocationB = mock(ResourceReservation.class);
-        when(allocationB.getResourceInstance()).thenReturn(developer);
-        when(allocationB.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015, 4, 3, 8, 0), LocalDateTime.of(2015, 4, 8, 8, 0)));
-        developer.addUtilization(allocationA);
-        developer.addUtilization(allocationB);*/
-
-    }
-
-    @Test (expected=IllegalArgumentException.class)
-    public void addAllocation_InValidTest1() {
-        fail("Not implemented");
-
-   /*     ResourceReservation allocationA = mock(ResourceReservation.class);
-        when(allocationA.getResourceInstance()).thenReturn(developer);
-        when(allocationA.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015,4,1,8,0), LocalDateTime.of(2015,4,28,20,0)));
-
-        developer.addUtilization(allocationA);*/
-    }
-
-    @Test (expected=IllegalArgumentException.class)
-    public void addAllocation_InValidTest2() {
-        fail("Not implemented");
-        /*
-        ResourceReservation allocationB = mock(ResourceReservation.class);
-        when(allocationB.getResourceInstance()).thenReturn(developer);
-        when(allocationB.getTimeSpan()).thenReturn(new TimeSpan(LocalDateTime.of(2015,4,1,8,0), LocalDateTime.of(2015,4,8,9,0)));
-
-        developer.addUtilization(allocationB);
-        */
-    }
 
 }

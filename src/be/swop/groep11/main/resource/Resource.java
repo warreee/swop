@@ -40,7 +40,7 @@ public class Resource implements ResourceInstance {
 
         else {
 
-            LocalDateTime currentStartTime = startTime;
+            LocalDateTime currentStartTime = this.getResourceType().getDailyAvailability().getNextTime(startTime);
             LocalDateTime currentEndTime   = null;
             Duration      currentDuration  = duration;
 
