@@ -20,7 +20,6 @@ public abstract class AbstractController {
         throw new IllegalArgumentException("Niet ondersteund");
     }
 
-    //TODO implement planTask in juiste controller
     public void planTask() throws IllegalArgumentException {
         throw new IllegalArgumentException("Niet ondersteund");
     }
