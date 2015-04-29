@@ -332,23 +332,23 @@ public class ResourceManagerTest {
 
         // plannen maken vanaf t3
         List<IPlan> plans_t3 = resourceManager.getNextPlans(3, task, t3);
-        assertEquals(plans_t3.get(0).getStartTime(), t3);
-        assertEquals(plans_t3.get(0).getEndTime(), t4.plus(task.getEstimatedDuration()));
-        assertEquals(plans_t3.get(1).getStartTime(), t3.plusHours(1));
-        assertEquals(plans_t3.get(1).getEndTime(), t4.plus(task.getEstimatedDuration()));
-        assertEquals(plans_t3.get(2).getStartTime(), t3.plusHours(2));
-        assertEquals(plans_t3.get(2).getEndTime(), t4.plus(task.getEstimatedDuration()));
+        assertEquals(t3, plans_t3.get(0).getStartTime());
+        assertEquals(t4.plus(task.getEstimatedDuration()), plans_t3.get(0).getEndTime());
+        assertEquals(t3.plusHours(1), plans_t3.get(1).getStartTime());
+        assertEquals(t4.plus(task.getEstimatedDuration()), plans_t3.get(1).getEndTime());
+        assertEquals(t3.plusHours(2), plans_t3.get(2).getStartTime());
+        assertEquals(t4.plus(task.getEstimatedDuration()), plans_t3.get(2).getEndTime());
 
         // plannen maken vanaf t4
         List<IPlan> plans_t4 = resourceManager.getNextPlans(4, task, t4);
-        assertEquals(plans_t4.get(0).getStartTime(), t4);
-        assertEquals(plans_t4.get(0).getEndTime(), t4.plus(task.getEstimatedDuration()));
-        assertEquals(plans_t4.get(1).getStartTime(), t4.plusHours(1));
-        assertEquals(plans_t4.get(1).getEndTime(), t4.plus(task.getEstimatedDuration().plusHours(1)));
-        assertEquals(plans_t4.get(2).getStartTime(), t4.plusHours(2));
-        assertEquals(plans_t4.get(2).getEndTime(), t4.plus(task.getEstimatedDuration().plusHours(2)));
-        assertEquals(plans_t4.get(3).getStartTime(), t4.plusHours(3));
-        assertEquals(plans_t4.get(3).getEndTime(), t4.plus(task.getEstimatedDuration().plusDays(1)));
+        assertEquals(t4, plans_t4.get(0).getStartTime());
+        assertEquals(t4.plus(task.getEstimatedDuration()), plans_t4.get(0).getEndTime());
+        assertEquals(t4.plusHours(1), plans_t4.get(1).getStartTime());
+        assertEquals(t4.plus(task.getEstimatedDuration().plusHours(1)), plans_t4.get(1).getEndTime());
+        assertEquals(t4.plusHours(2), plans_t4.get(2).getStartTime());
+        assertEquals(t4.plus(task.getEstimatedDuration().plusHours(2)), plans_t4.get(2).getEndTime());
+        assertEquals(t4.plusHours(3), plans_t4.get(3).getStartTime());
+        assertEquals( t4.plus(task.getEstimatedDuration().plusDays(1)), plans_t4.get(3).getEndTime());
     }
 
     private void addResourceTypeNameOnly(String name){
