@@ -243,7 +243,9 @@ public class Task {
      */
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyGraph.addNewDependency(this, dependingOn);
-        makeUnAvailable();
+        if(!dependingOn.getStatus().getClass().equals(TaskFinished.class)) {
+            makeUnAvailable();
+        }
     }
 
     /**
@@ -279,7 +281,6 @@ public class Task {
      */
     public void fail(LocalDateTime endTime) {
         status.fail(this, endTime);
-
     }
 
     /**

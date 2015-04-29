@@ -123,17 +123,19 @@ tasks:
     alternativeFor     :
     prerequisiteTasks  :
     planning           :
-    status             :
+    status             : finished
+    startTime          : "2014-01-01 10:00"
+    endTime            : "2014-01-02 10:00"
 
   - project            : 1
     description        : "description"
     estimatedDuration  : 5000
     acceptableDeviation: 0
     alternativeFor     :
-    prerequisiteTasks  : [ 1, 2 ]
+    prerequisiteTasks  : [ 2 ]
     planning           : 1
     status             : failed
-    startTime          : "2014-01-02 09:00"
+    startTime          : "2014-01-02 10:00"
     endTime            : "2014-03-25 18:00"
 
   - project            : 1
@@ -141,7 +143,7 @@ tasks:
     estimatedDuration  : 50000
     acceptableDeviation: 0
     alternativeFor     : 3
-    prerequisiteTasks  : [ 1, 2 ]
+    prerequisiteTasks  : [ 2 ]
     planning           : 2
     status             : executing
     startTime          : "2014-03-26 09:00"
