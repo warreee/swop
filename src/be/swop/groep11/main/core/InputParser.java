@@ -377,30 +377,4 @@ public class InputParser {
             return null;
         }
     }
-
-    /**
-     * Maakt van een array in stringformaat een int[]
-     *
-     * @param array in stringformaat
-     * @return een array van ints
-     */
-    private int[] parseStringArray(String array) {
-        String[] stringArray = array.replace("[", "").replace("]", "").replace(" ", "").trim().split(",");
-        int[] intArray = new int[stringArray.length];
-
-        for (int i = 0; i < stringArray.length; i++) {
-            intArray[i] = Integer.valueOf(stringArray[i]);
-        }
-
-        return intArray;
-    }
-
-    private boolean intArrayContains(int[] arr, int number){
-        for(int i: arr){
-            if(i == number){
-                return true;
-            }
-        }
-        return false;
-    }
 }
