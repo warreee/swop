@@ -100,7 +100,7 @@ public class ProjectRepositoryTest {
         assertTrue(repositoryContainsProject(projRep2, "project 1"));
         assertTrue(repositoryContainsProject(projRep2, "project 2"));
         assertTrue(repositoryContainsTask(projRep2, "project 1", "taak 1"));
-        assertTrue(repositoryContainsTask(projRep2, "project 1", "taak 2"));
+        assertTrue(repositoryContainsTask(projRep2, "project 2", "taak 2"));
         assertTrue(repositoryContainsTask(projRep2, "project 2", "taak 3"));
     }
 
@@ -114,7 +114,7 @@ public class ProjectRepositoryTest {
     }
 
     private boolean repositoryContainsTask(ProjectRepository projectRepository, String projectName, String taskDescription) {
-        if (repositoryContainsProject(projectRepository, projectName)) {
+        if (! repositoryContainsProject(projectRepository, projectName)) {
             return false;
         }
         for (Project project : projectRepository.getProjects()) {

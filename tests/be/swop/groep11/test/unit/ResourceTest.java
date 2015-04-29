@@ -33,7 +33,7 @@ public class ResourceTest {
 
     @Test
     public void calculateEndTime_WithoutDailyAvailabilityTest() throws Exception {
-        LocalDateTime start = LocalDateTime.of(2015,4,6,10,24);
+        LocalDateTime start = LocalDateTime.of(2015,4,6,10,0);
         Duration duration = Duration.ofMinutes(350);
         LocalDateTime end = resource_24_7.calculateEndTime(start,duration);
         assertTrue(end.equals(start.plus(duration)));
