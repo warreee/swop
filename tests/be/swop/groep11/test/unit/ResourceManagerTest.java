@@ -24,18 +24,12 @@ import static org.mockito.Mockito.mock;
  */
 public class ResourceManagerTest {
 
-    private AResourceType typeA;
-    private AResourceType typeB;
-
-    private ResourceManager resourceManager;
+     private ResourceManager resourceManager;
 
     @Before
     public void setUp() throws Exception{
         resourceManager = new ResourceManager();
-        resourceManager.addNewResourceType("A");
-        resourceManager.addNewResourceType("B");
-        typeA = resourceManager.getResourceTypeByName("A");
-        typeB = resourceManager.getResourceTypeByName("B");
+
     }
 
     @Test (expected = NoSuchElementException.class)
@@ -64,24 +58,51 @@ public class ResourceManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testWithDailyAvailability_invalid() throws Exception {
+        resourceManager.addNewResourceType("A");
+        AResourceType typeA = resourceManager.getResourceTypeByName("A");
         resourceManager.withDailyAvailability(typeA,null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testWithRequirementConstraint_invaid() throws Exception {
+        resourceManager.addNewResourceType("A");
+        AResourceType typeA = resourceManager.getResourceTypeByName("A");
         resourceManager.withRequirementConstraint(typeA, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testWithConflictConstraint_invalid() throws Exception {
+        resourceManager.addNewResourceType("A");
+        AResourceType typeA = resourceManager.getResourceTypeByName("A");
         resourceManager.withConflictConstraint(typeA, null);
+    }
+
+    @Test
+    public void getDeveloperType_valid() throws Exception {
+        assertEquals(0,resourceManager.getDeveloperType().amountOfConstraints());
+        assertEquals(0,resourceManager.getDeveloperType().amountOfInstances());
+
+        DailyAvailability availability = resourceManager.getDeveloperType().getDailyAvailability();
+
+        assertEquals(LocalTime.of(8,0),availability.getStartTime());
+        assertEquals(LocalTime.of(17,0),availability.getEndTime());
+
+    }
+
+    @Test
+    public void addDeveloperInstances() throws Exception {
+        AResourceType developerType = resourceManager.getDeveloperType();
+        resourceManager.addResourceInstance(developerType,"devA");
+        assertEquals(1, developerType.amountOfInstances());
+        assertEquals("devA",developerType.getResourceInstances().get(0).getName());
     }
 
     @Test
     public void testWithDailyAvailability() throws Exception {
         LocalTime start = LocalTime.of(10, 10), end = LocalTime.of(15, 10);
         DailyAvailability availability = new DailyAvailability(start,end);
-
+        resourceManager.addNewResourceType("A");
+        AResourceType typeA = resourceManager.getResourceTypeByName("A");
         resourceManager.withDailyAvailability(typeA, availability);
 
         assertEquals(end,typeA.getDailyAvailability().getEndTime());
@@ -90,24 +111,40 @@ public class ResourceManagerTest {
 
     @Test
     public void testWithRequirementConstraints_valid() throws Exception {
+        resourceManager.addNewResourceType("A");
+        resourceManager.addNewResourceType("B");
+        AResourceType typeA = resourceManager.getResourceTypeByName("A");
+        AResourceType typeB = resourceManager.getResourceTypeByName("B");
         resourceManager.withRequirementConstraint(typeA, typeB);
         assertTrue(typeA.hasConstraintFor(typeB));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testWithConstraints_invalid() throws Exception {
+        resourceManager.addNewResourceType("A");
+        resourceManager.addNewResourceType("B");
+        AResourceType typeA = resourceManager.getResourceTypeByName("A");
+        AResourceType typeB = resourceManager.getResourceTypeByName("B");
         resourceManager.withRequirementConstraint(typeA, typeB);
         resourceManager.withConflictConstraint(typeB, typeA);
     }
 
     @Test
     public void testSelfConflictingConstraint() throws Exception {
+        resourceManager.addNewResourceType("A");
+        resourceManager.addNewResourceType("B");
+        AResourceType typeA = resourceManager.getResourceTypeByName("A");
+        AResourceType typeB = resourceManager.getResourceTypeByName("B");
         resourceManager.withConflictConstraint(typeA, typeA);
         assertTrue(typeA.hasConstraintFor(typeA));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSelfRequireConstraint_invalid() throws Exception {
+        resourceManager.addNewResourceType("A");
+        resourceManager.addNewResourceType("B");
+        AResourceType typeA = resourceManager.getResourceTypeByName("A");
+        AResourceType typeB = resourceManager.getResourceTypeByName("B");
         resourceManager.withRequirementConstraint(typeA, typeA);
     }
 
