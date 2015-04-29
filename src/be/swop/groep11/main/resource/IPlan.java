@@ -52,7 +52,7 @@ public interface IPlan {
         /**
          * Geeft de reservaties van een bepaald resource type van het plan.
          */
-        ImmutableList<ResourceReservation> getReservations(IResourceType resourceType);
+        ImmutableList<ResourceReservation> getReservations(AResourceType resourceType);
 
         /**
          * Gooit de huidige reservaties van het plan weg en voegt reservaties voor de gegeven resource instanties toe.

@@ -1,11 +1,14 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.TimeSpan;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TimeSpanTest {
 
@@ -24,12 +27,18 @@ public class TimeSpanTest {
         timeSpan8 = new TimeSpan(LocalDateTime.of(2015,4,9,15,0), LocalDateTime.of(2015,4,9,18,0));
     }
 
+    @Test (expected = IllegalArgumentException.class)
+    public void invalidTimeSpanTest() {
+        TimeSpan invalidTimeSpan = new TimeSpan(LocalDateTime.of(2015,5,1,15,0), LocalDateTime.of(2015,4,1,15,0));
+    }
+
     @Test
     public void overlapsWith_NoOverlapTest() {
         assertFalse(timeSpan1.overlapsWith(timeSpan2));
         assertFalse(timeSpan2.overlapsWith(timeSpan1));
         assertFalse(timeSpan5.overlapsWith(timeSpan6));
         assertFalse(timeSpan6.overlapsWith(timeSpan5));
+        assertFalse(timeSpan1.overlapsWith(null));
     }
 
     @Test
@@ -41,4 +50,13 @@ public class TimeSpanTest {
         assertTrue(timeSpan4.overlapsWith(timeSpan2));
     }
 
+    @Test
+    public void equalsTest_() throws Exception {
+
+        TimeSpan ts1 = new TimeSpan(LocalDateTime.of(2015,4,9,9,0), LocalDateTime.of(2015,4,9,12,0));
+        TimeSpan ts2 = new TimeSpan(LocalDateTime.of(2015,4,9,9,0), LocalDateTime.of(2015,4,9,12,0));
+
+        assertTrue(ts1.equals(ts2));
+        assertFalse(ts1.equals(timeSpan3));
+    }
 }

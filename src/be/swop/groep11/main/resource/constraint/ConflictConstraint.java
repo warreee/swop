@@ -1,13 +1,13 @@
 package be.swop.groep11.main.resource.constraint;
 
-import be.swop.groep11.main.resource.IResourceType;
+import be.swop.groep11.main.resource.AResourceType;
 
 /**
  * Created by Ronald on 9/04/2015.
  */
 public class ConflictConstraint extends ResourceTypeConstraint {
 
-    private ConflictConstraint(IResourceType ownerType, IResourceType constrainingType, int min, int max) {
+    private ConflictConstraint(AResourceType ownerType, AResourceType constrainingType, int min, int max) {
         super(ownerType, constrainingType, min, max);
     }
 
@@ -18,7 +18,7 @@ public class ConflictConstraint extends ResourceTypeConstraint {
      * @throws IllegalArgumentException
      *                          Gooi indien constrainingType of ownerType niet geinitialiseerd zijn.
      */
-    public ConflictConstraint(IResourceType ownerType, IResourceType constrainingType)throws IllegalArgumentException{
+    public ConflictConstraint(AResourceType ownerType, AResourceType constrainingType)throws IllegalArgumentException{
         this(ownerType, constrainingType, 0, (ownerType != null && ownerType.equals(constrainingType)) ? 1 : 0);
         /**
          * (ownerType.equals(constrainingType))?1:0

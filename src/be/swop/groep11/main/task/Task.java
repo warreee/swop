@@ -4,11 +4,13 @@ import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.RequirementListBuilder;
+import be.swop.groep11.main.resource.ResourceReservation;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -241,7 +243,9 @@ public class Task {
      */
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyGraph.addNewDependency(this, dependingOn);
-        makeUnAvailable();
+        if(!dependingOn.getStatus().getClass().equals(TaskFinished.class)) {
+            makeUnAvailable();
+        }
     }
 
     /**
@@ -277,7 +281,6 @@ public class Task {
      */
     public void fail(LocalDateTime endTime) {
         status.fail(this, endTime);
-
     }
 
     /**
@@ -525,6 +528,13 @@ public class Task {
      */
     public boolean isPlanned() {
         return this.plannedStartTime != null;
+    }
+
+    /**
+     * Geeft de geplande starttijd van deze taak.
+     */
+    public LocalDateTime getPlannedStartTime() {
+        return plannedStartTime;
     }
 
     private LocalDateTime plannedStartTime;

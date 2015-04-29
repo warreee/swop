@@ -1,5 +1,6 @@
-package be.swop.groep11.main.core;
+package be.swop.groep11.main.util;
 
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import org.yaml.snakeyaml.Yaml;
@@ -24,10 +25,10 @@ public class InputParser {
     ArrayList<Project> projectList = new ArrayList<>();
     ArrayList<Task> taskList = new ArrayList<>();
     Map<Integer, Task> planningTaskMap = new HashMap<>();
-    ArrayList<IResourceType> resourceTypeList = new ArrayList<>();
+    ArrayList<AResourceType> resourceTypeList = new ArrayList<>();
     ArrayList<ResourceInstance> resourceInstanceList = new ArrayList<>();
     ArrayList<DailyAvailability> dailyAvailabilityList = new ArrayList<>();
-    ArrayList<Developer> developerList = new ArrayList<>();
+    ArrayList<ResourceInstance> developerList = new ArrayList<>();
     private ResourceManager resourceManager;
     private SystemTime systemTime;
 
@@ -41,12 +42,22 @@ public class InputParser {
         this.resourceManager = resourceManager;
     }
 
+
     public static void main(String[] args) throws FileNotFoundException {
         ResourceManager typeRepo = new ResourceManager();
         ProjectRepository projectRepository = new ProjectRepository(new SystemTime(LocalDateTime.now()));
 
         InputParser parser = new InputParser(projectRepository, typeRepo);
         parser.parseInputFile();
+        System.out.println("Finished :)");
+    }
+
+    public ProjectRepository getProjectRepository(){
+        return this.projectRepository;
+    }
+
+    public ResourceManager getResourceManager(){
+        return this.getResourceManager();
     }
 
     /**
@@ -112,7 +123,7 @@ public class InputParser {
     private void handlePlannings(Map<String, Object> planningsMap){
         ArrayList plannings = (ArrayList) planningsMap.get("plannings");
         for (int i = 0; i < plannings.size(); i++){
-            addPlanning(i, (Map<String, String>) plannings.get(i));
+            addPlanning(i, (Map<String, Object>) plannings.get(i));
         }
     }
 
@@ -134,7 +145,7 @@ public class InputParser {
     private void handleReservations(Map<String, Object> reservationsMap){
         ArrayList reservations = (ArrayList) reservationsMap.get("reservations");
         for(Object reservation: reservations){
-            addReservation((Map<String, String>) reservation);
+            addReservation((Map<String, Object>) reservation);
         }
     }
 
@@ -168,6 +179,7 @@ public class InputParser {
     private void handleSystemTime(Map<String, Object> systemTimeMap){
         String time = (String) systemTimeMap.get("systemTime");
         systemTime =  new SystemTime(parseTime(time));
+        // TODO: systeemtijd zetten.
     }
 
     /**
@@ -178,8 +190,7 @@ public class InputParser {
     private void handleTasks(Map<String, Object> tasksMap){
         ArrayList tasks = (ArrayList) tasksMap.get("tasks");
         for(Object task: tasks){
-            Map<String, String> taskMap = (Map<String, String>) task;
-            addTask(taskMap);
+            addTask((Map<String, Object>) task);
         }
     }
 
@@ -201,9 +212,9 @@ public class InputParser {
      */
     private void addDeveloper(Map<String, String> propertiesList){
         String name = propertiesList.get("name");
-        IResourceType resourceType = resourceManager.getResourceTypeByName("Developer");
+        AResourceType resourceType = resourceManager.getDeveloperType();
         resourceManager.addResourceInstance(resourceType, name);
-        developerList.add((Developer) resourceManager.getDeveloperType().getResourceInstances().get(resourceManager.getDeveloperType().getResourceInstances().size() - 1));
+        developerList.add(resourceManager.getDeveloperType().getResourceInstances().get(resourceManager.getDeveloperType().getResourceInstances().size() - 1));
     }
 
     /**
@@ -211,13 +222,12 @@ public class InputParser {
      * @param number
      * @param propertiesList
      */
-    private void addPlanning(int number, Map<String, String> propertiesList){
+    private void addPlanning(int number, Map<String, Object> propertiesList){
         Task task = planningTaskMap.get(number);
-        task.plan(parseTime(propertiesList.get("plannedStartTime")));
+        task.plan(parseTime((String) propertiesList.get("plannedStartTime")));
         List<Developer> developers = new ArrayList<>();
-        Arrays.stream(parseStringArray(propertiesList.get("developers"))).forEach(x -> developers.add(developerList.get(x)));
+        //((ArrayList) propertiesList.get("developers")).forEach(x -> developers.add((Developer) developerList.get((Integer) x)));
         // TODO: afwerken en bij aan taak toevoegen
-
     }
 
     /**
@@ -242,11 +252,11 @@ public class InputParser {
      * Maakt een nieuwe reservatie in de ResourceManager.
      * @param propertiesList
      */
-    private void addReservation(Map<String, String> propertiesList){
-        ResourceInstance resourceInstance = resourceInstanceList.get(Integer.valueOf(propertiesList.get("resource")));
-        Task task = taskList.get(Integer.valueOf(propertiesList.get("task")));
-        LocalDateTime startTime = parseTime(propertiesList.get("startTime"));
-        LocalDateTime endTime = parseTime(propertiesList.get("endTime"));
+    private void addReservation(Map<String, Object> propertiesList){
+        ResourceInstance resourceInstance = resourceInstanceList.get((Integer) propertiesList.get("resource"));
+        Task task = taskList.get((Integer) propertiesList.get("task"));
+        LocalDateTime startTime = parseTime((String) propertiesList.get("startTime"));
+        LocalDateTime endTime = parseTime((String) propertiesList.get("endTime"));
         resourceManager.makeReservation(task, resourceInstance, new TimeSpan(startTime, endTime), true);
     }
 
@@ -256,7 +266,7 @@ public class InputParser {
      */
     private void addResource(Map<String, Object> propertiesList){
         String name = (String) propertiesList.get("name");
-        IResourceType resourceType = resourceTypeList.get((Integer) propertiesList.get("type"));
+        AResourceType resourceType = resourceTypeList.get((Integer) propertiesList.get("type"));
         resourceManager.addResourceInstance(resourceType, name);
         int size = resourceType.getResourceInstances().size();
         resourceInstanceList.add(resourceType.getResourceInstances().get(size - 1));
@@ -274,8 +284,8 @@ public class InputParser {
         Integer dailyAvailability = (Integer) propertiesList.get("dailyAvailability");
 
         // Haal de correcte IResourceTypes op die al bekend zijn. (Dit faalt indien er fouten staan in de inputfile.)
-        ArrayList<IResourceType> req = new ArrayList<>();
-        ArrayList<IResourceType> con = new ArrayList<>();
+        ArrayList<AResourceType> req = new ArrayList<>();
+        ArrayList<AResourceType> con = new ArrayList<>();
         requires.forEach(x -> req.add(resourceTypeList.get((Integer) x)));
         conflictsWith.forEach(x -> {
             if ((Integer) x != number) {
@@ -294,7 +304,7 @@ public class InputParser {
         }
 
         // Indien het IResourceType conflicteerd met zichzelf, voeg dit dan toe.
-        IResourceType type = resourceManager.getResourceTypeByName(name);
+        AResourceType type = resourceManager.getResourceTypeByName(name);
         if(conflictsWith.contains(number)){
             resourceManager.withConflictConstraint(type, type);
         }
@@ -306,51 +316,52 @@ public class InputParser {
      * Voegt een nieuwe taak toe.
      * @param propertiesList
      */
-    private void addTask(Map<String, String> propertiesList) {
-        String description = propertiesList.get("description");
+    private void addTask(Map<String, Object> propertiesList) {
+        String description = (String) propertiesList.get("description");
         Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
         Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation"))) / 100;
-        Project project = projectList.get(Integer.valueOf(propertiesList.get("project")));
+        Project project = projectList.get((Integer) propertiesList.get("project"));
         project.addNewTask(description, acceptableDeviation, duration);
         taskList.add(project.getTasks().get(project.getTasks().size() - 1));
         Task task = taskList.get(taskList.size() - 1);
 
         try{
-            Integer number = Integer.valueOf(propertiesList.get("planning"));
+            Integer number = (Integer) propertiesList.get("planning");
             planningTaskMap.put(number, task);
         } catch (NumberFormatException e){
             // Doe niks, het nummer van planning kon niet omgevormd worden.
         }
 
+        if(propertiesList.containsKey("prerequisiteTasks") && propertiesList.get("prerequisiteTasks") != null) {
+            for (int i : (ArrayList<Integer>) propertiesList.get("prerequisiteTasks")) {
+                task.addNewDependencyConstraint(taskList.get(i));
+            }
+        }
+
         if(propertiesList.containsKey("startTime")){
-            task.execute(parseTime(propertiesList.get("startTime")));
+            task.execute(parseTime((String) propertiesList.get("startTime")));
         }
 
         if(propertiesList.containsKey("endTime")){
             if (propertiesList.get("status").equals("finished")) {
-                task.finish(parseTime(propertiesList.get("endTime")));
+                task.finish(parseTime((String) propertiesList.get("endTime")));
             } else if(propertiesList.get("status").equals("failed")) {
-                task.fail(parseTime(propertiesList.get("endTime")));
+                task.fail(parseTime((String) propertiesList.get("endTime")));
             } else {
                 throw new IllegalArgumentException("Onbekende status bij het zetten van een eindtijd.");
             }
 
         }
 
-        if(propertiesList.containsKey("alternativeFor")){
+        if(propertiesList.containsKey("alternativeFor") && propertiesList.get("alternativeFor") != null){
             try {
-                taskList.get(Integer.valueOf(propertiesList.get("alternativeFor"))).setAlternativeTask(task);
+                taskList.get((Integer) propertiesList.get("alternativeFor")).setAlternativeTask(task);
             } catch (NumberFormatException e){
                 // Doe niks, de sleutel alternativeFor was waarschijnlijk leeg.
+            } catch (IllegalDependencyException e){
+                //debug
             }
         }
-
-        if(propertiesList.containsKey("prerequisiteTasks")){
-            for(int i: parseStringArray(propertiesList.get("prerequisiteTasks"))){
-                taskList.get(i).addNewDependencyConstraint(task);
-            }
-        }
-
     }
 
     /**
@@ -375,31 +386,5 @@ public class InputParser {
             System.out.println(e.getMessage());
             return null;
         }
-    }
-
-    /**
-     * Maakt van een array in stringformaat een int[]
-     *
-     * @param array in stringformaat
-     * @return een array van ints
-     */
-    private int[] parseStringArray(String array) {
-        String[] stringArray = array.replace("[", "").replace("]", "").replace(" ", "").trim().split(",");
-        int[] intArray = new int[stringArray.length];
-
-        for (int i = 0; i < stringArray.length; i++) {
-            intArray[i] = Integer.valueOf(stringArray[i]);
-        }
-
-        return intArray;
-    }
-
-    private boolean intArrayContains(int[] arr, int number){
-        for(int i: arr){
-            if(i == number){
-                return true;
-            }
-        }
-        return false;
     }
 }

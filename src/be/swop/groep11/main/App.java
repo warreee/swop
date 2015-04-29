@@ -1,8 +1,12 @@
-package be.swop.groep11.main.core;
+package be.swop.groep11.main;
 
 import be.swop.groep11.main.actions.Action;
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.controllers.*;
+import be.swop.groep11.main.util.InputParser;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.ui.CommandLineInterface;
@@ -53,8 +57,9 @@ public class App {
         // maak een nieuwe CommandLineInterface aan
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(java.lang.System.in));
         cli = new CommandLineInterface(bufferedReader);
-        actionBehaviourMapping = new ActionBehaviourMapping(() -> cli.printMessage("Ongeldige action")); //TODO WARD: vragen Ronald
+        actionBehaviourMapping = new ActionBehaviourMapping(() -> cli.printMessage("Ongeldige action"));
         cli.setActionBehaviourMapping(actionBehaviourMapping);
+
 
         //maak een nieuwe system aan
         systemTime = new SystemTime(); //TODO WARD: hier gaat een bug zijn indien de yaml file een tijd heeft voor die van de huidige tijd?!

@@ -85,6 +85,7 @@ public class DailyAvailabilityTest {
         assertEquals(LocalDateTime.of(2015,5,4,12,0), availability1.getNextEndTime(LocalDateTime.of(2015, 5, 1, 12, 1)));
         assertEquals(LocalDateTime.of(2015,5,4,12,0), availability1.getNextEndTime(LocalDateTime.of(2015, 5, 2, 12, 1)));
         assertEquals(LocalDateTime.of(2015,5,4,12,0), availability1.getNextEndTime(LocalDateTime.of(2015, 5, 3, 12, 1)));
+        assertEquals(LocalDateTime.of(2015,4,28,12,0), availability1.getNextEndTime(LocalDateTime.of(2015, 4, 27, 13, 0)));
     }
 
 
