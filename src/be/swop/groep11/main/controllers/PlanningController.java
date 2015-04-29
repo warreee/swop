@@ -55,7 +55,7 @@ public class PlanningController extends AbstractController {
 
             for (IPlan plan : plans) {
                 resourceManager.makeReservationsForPlan(plan);
-                plan.getTask().plan(plan.getStartTime(), plan.getEndTime());
+                plan.getTask().plan(plan.getStartTime());
             }
 
         }
