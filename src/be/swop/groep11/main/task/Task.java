@@ -3,6 +3,7 @@ package be.swop.groep11.main.task;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.resource.IRequirementList;
+import be.swop.groep11.main.resource.RequirementListBuilder;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -19,23 +20,40 @@ public class Task {
     /**
      * Constructor om een nieuwe taak te maken.
      *
-     *
      * @param description           De omschrijving van de nieuwe taak
      * @param estimatedDuration     De verwachte duur van de nieuwe taak
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
-     * @param systemTime
-     * @param dependencyGraph
+     * @param systemTime            De systeemtijd die de nieuwe taak moet gebruiken
+     * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
+     * @param requirementList       De lijst van resource requirements voor de nieuwe taak
      * @throws java.lang.IllegalArgumentException
      *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph) throws IllegalArgumentException {
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph, IRequirementList requirementList) throws IllegalArgumentException {
         this.setStatus(new TaskAvailable());
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
         this.systemTime = systemTime;
         this.dependencyGraph = dependencyGraph;
+        this.requirementList = requirementList;
+    }
+
+    /**
+     * Constructor om een nieuwe taak te maken zonder resource requirements.
+     *
+     * @param description           De omschrijving van de nieuwe taak
+     * @param estimatedDuration     De verwachte duur van de nieuwe taak
+     * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
+     * @param systemTime            De systeemtijd die de nieuwe taak moet gebruiken
+     * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
+     * @throws java.lang.IllegalArgumentException
+     *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
+     *                                            of ongeldig project
+     */
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph) throws IllegalArgumentException {
+        this(description, estimatedDuration, acceptableDeviation, systemTime, dependencyGraph, new RequirementListBuilder().getRequirements());
     }
 
     private SystemTime systemTime;
