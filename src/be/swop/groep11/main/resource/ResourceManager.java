@@ -360,9 +360,7 @@ public class ResourceManager {
      */
     public ImmutableList<ResourceReservation> getReservations() {
         List<ResourceReservation> allReservations = new LinkedList<>();
-        for (List<ResourceReservation> taskReservations : this.reservations.values()) {
-            allReservations.addAll(taskReservations);
-        }
+        this.reservations.values().forEach(allReservations::addAll);
         return ImmutableList.copyOf(allReservations);
     }
 
@@ -436,7 +434,7 @@ public class ResourceManager {
      * @return Een lijst van lengte n van de eerstvolgende mogelijke plannen
      */
     public List<IPlan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
-        // TODO: dit is misschien nog niet efficiënt genoeg?
+        // TODO: dit is misschien nog niet efficiï¿½nt genoeg?
 
         List<IPlan> plans = new LinkedList<>();
 
