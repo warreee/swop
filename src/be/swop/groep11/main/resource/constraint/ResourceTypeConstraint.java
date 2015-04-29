@@ -137,12 +137,30 @@ public abstract class ResourceTypeConstraint {
         //Moet een beperking zijn op dezelfde ResourceType, en de minimum hoeveelheid van de otherConstraint
         //moet aanvaardbaar zijn voor deze constraint. alsook de aangevraagde hoeveelheid
         boolean result = false;
-        if(otherConstraint.getConstrainingType().equals(getConstrainingType())){
-            result = isAcceptableAmount(otherConstraint.getConstrainingType(),otherConstraint.getMin());
-            result &= isAcceptableAmount(otherConstraint.getConstrainingType(),requestedAmount);
+        if(getMin() > requestedAmount || otherConstraint.getMin() > requestedAmount || requestedAmount > getMax() || requestedAmount > otherConstraint.getMax()){
+            // De requested amount ligt niet binnen de grenzen van beide ResourceTypeConstraints.
+            return false;
         }
-        return result;
-
+        if(otherConstraint.getOwnerType().equals(getOwnerType())){
+            if(otherConstraint.getConstrainingType().equals(getConstrainingType())){
+                // Ownertype zelfde, ConstrainingType zelfde
+                // Grenzen moeten hetzelfde zijn om niet te conflicteren en requestedAmount moet er binnen liggen.
+                return getMax() == otherConstraint.getMax() && getMin() == otherConstraint.getMin();
+            } else {
+                // OwnerType zelfde, ConstrainingType verschillend.
+                // requestedAmount moet binnen beide grenzen liggen.
+                return true;
+            }
+        } else {
+            if(otherConstraint.getConstrainingType().equals(getConstrainingType())){
+                // OwnerType verschillend, ConstrainingType zelfde.
+                return getMax() == otherConstraint.getMax() && getMin() == otherConstraint.getMin();
+            } else {
+                // OwnerType Verschillend, ConstrainingType verschillend.
+                // requestedAmount moet binnen beide grenzen liggen.
+                return false;
+            }
+        }
     }
 
     /**

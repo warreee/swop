@@ -87,8 +87,7 @@ public class RequirementListBuilder {
         public boolean isSatisfiableFor(AResourceType requestedType,int amount) {
             // Niet waar indien de DailyAvailability voor het aangevraagde ResourceType niet overlapt (min. 1 uur)
             // met de huidige DailyAvailabilities overeenkomstig met iedere Requirement in de lijst
-            boolean result = hasOverlappingAvailability(requestedType);
-            if(!result){
+            if(!hasOverlappingAvailability(requestedType)){
                 return false;
             }
 
