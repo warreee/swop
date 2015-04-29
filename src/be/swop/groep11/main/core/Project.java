@@ -59,7 +59,6 @@ public class Project {
         if(!isValidProjectName(name)){
             throw new IllegalArgumentException("Projectnaam kan niet 'null' zijn.");
         }
-        this.name = name;
     }
 
     /**
