@@ -34,8 +34,10 @@ public class DependencyGraph {
 
     private void addDependency(Task dependent, Task dependingOn) {
         if (dependingOnMap.containsKey(dependent)) {
-            dependingOnMap.get(dependent).add(dependingOn);
-            addToMap(dependingOn, dependingOnMap);
+            if (!dependingOnMap.get(dependent).contains(dependingOn)) {
+                dependingOnMap.get(dependent).add(dependingOn);
+                addToMap(dependingOn, dependingOnMap);
+            }
         } else {
             ArrayList<Task> dependingOnList = new ArrayList<>();
             dependingOnList.add(dependingOn);
@@ -43,9 +45,11 @@ public class DependencyGraph {
             addToMap(dependingOn, dependingOnMap);
         }
 
-        if (dependentMap.containsKey(dependingOn)) {
-            dependentMap.get(dependingOn).add(dependent);
-            addToMap(dependent, dependentMap);
+        if (dependentMap.containsKey(dependingOn) ) {
+            if(!dependentMap.get(dependingOn).contains(dependent)) {
+                dependentMap.get(dependingOn).add(dependent);
+                addToMap(dependent, dependentMap);
+            }
         } else {
             ArrayList<Task> dependentList = new ArrayList<>();
             dependentList.add(dependent);
@@ -189,5 +193,10 @@ public class DependencyGraph {
        return new ArrayList<>(this.dependentMap.keySet());
     }
 
-    
+
+    public ArrayList<Task> getLeafs() {
+        ArrayList<Task> leafs = new ArrayList<>();
+        allTasks().stream().filter(node -> dependentMap.get(node).size() == 0).forEach(leafs::add);
+        return leafs;
+    }
 }
