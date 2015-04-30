@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.time.Duration;
 import java.util.ArrayList;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -98,10 +99,10 @@ public class DependencyGraphTest {
     public void removeDependencyTest() {
         dependencyGraph.addNewDependency(taskB, taskA);
         dependencyGraph.addNewDependency(taskC, taskB);
-        helpPrint();
+        //helpPrint();
         dependencyGraph.changeDependingOnAlternativeTask(taskA, taskD);
         System.out.println("");
-        helpPrint();
+        //helpPrint();
         dependencyGraph.getDependentTasks(taskA);
         assertFalse(dependencyGraph.getDependentTasks(taskB).contains(taskA));
     }
@@ -121,8 +122,36 @@ public class DependencyGraphTest {
 
     }
 
+    @Test
+    public void getLeafsTest() {
 
+        taskB.addNewDependencyConstraint(taskA);
+        taskC.addNewDependencyConstraint(taskB);
+        helpPrint();
+        ArrayList<Task> leafs = dependencyGraph.getLeafs();
+
+        assertTrue(leafs.get(0) == taskC);
+
+        taskD.addNewDependencyConstraint(taskB);
+        leafs = dependencyGraph.getLeafs();
+
+        assertEquals(leafs.get(1), taskC);
+        assertEquals(leafs.get(0), taskD);
+    }
+
+    /*
+     * A -> B \
+     *          E
+     * C -> D /
+     */
+    @Test
+    public void getPathsToTest(Task task) {
+
+        ArrayList<ArrayList<Task>> paths = dependencyGraph.getPathsTo(taskE);
+
+    }
 
 
 }
+
 
