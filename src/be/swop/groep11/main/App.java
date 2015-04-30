@@ -126,11 +126,9 @@ public class App {
         actionBehaviourMapping.activateController(main);
         // lees commando's
         cli.run();
-
     }
 
     private void addTempDomainObjects() {
-
         resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter SWOP");
         resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ward");
         resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ronald");
