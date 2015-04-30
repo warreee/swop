@@ -263,7 +263,7 @@ public class Task {
      */
     public TaskStatus getStatus() {
         // TODO: berekenen of de taak available of unavailable is indien de taak niet executing/finished/failed is
-        return status.getTaskStatus();
+        return status.getTaskStatus(this.systemTime.getCurrentSystemTime());
     }
 
     /**

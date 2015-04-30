@@ -20,7 +20,7 @@ public class TaskExecuting extends TaskStatus {
     }
 
     @Override
-    public TaskStatus getTaskStatus() {
+    public TaskStatus getTaskStatus(LocalDateTime systemTime) {
         return new TaskExecuting();
     }
 

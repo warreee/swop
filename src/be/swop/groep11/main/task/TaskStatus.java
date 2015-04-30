@@ -21,7 +21,7 @@ public abstract class TaskStatus implements Cloneable {
 
 
     protected abstract TaskStatusEnum getStatus();
-    protected abstract TaskStatus getTaskStatus();
+    protected abstract TaskStatus getTaskStatus(LocalDateTime systemTime);
 
     @Override
     protected TaskStatus clone() throws CloneNotSupportedException {

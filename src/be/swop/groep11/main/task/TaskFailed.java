@@ -17,7 +17,7 @@ public class TaskFailed extends TaskStatus {
     }
 
     @Override
-    public TaskStatus getTaskStatus() {
+    public TaskStatus getTaskStatus(LocalDateTime systemTime) {
         return new TaskFailed();
     }
 

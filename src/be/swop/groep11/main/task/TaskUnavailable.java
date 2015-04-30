@@ -20,7 +20,7 @@ public class TaskUnavailable extends TaskStatus {
         throw new IllegalStateTransitionException("De taak kan niet naar de status UNAVAILABLE gaan want was dit reeds!");
     }
 
-    //@Override
+    //@Override //TODO
     protected void makeAvailable(Task task, LocalDateTime currenSystemTime) {
         throw  new IllegalStateTransitionException("nog niet geimplementeerd");
     }
@@ -31,7 +31,7 @@ public class TaskUnavailable extends TaskStatus {
     }
 
     @Override
-    public TaskStatus getTaskStatus() {
+    public TaskStatus getTaskStatus(LocalDateTime systemTime) {
         return new TaskUnavailable();
     }
 
