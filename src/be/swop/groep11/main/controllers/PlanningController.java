@@ -51,10 +51,11 @@ public class PlanningController extends AbstractController {
                 developers. */
 
             // op dit moment zouden er geen conflicten in de plannen mogen zitten
-            // hopelijk is dit ook zo... TODO: testen
+            // hopelijk is dit ook zo...
 
             for (IPlan plan : plans) {
                 plan.getTask().plan(plan);
+                ui.printMessage("Taak gepland ("+task.getDescription()+")");
             }
 
         }
@@ -112,11 +113,13 @@ public class PlanningController extends AbstractController {
             while (it1.hasNext()) {
                 ResourceRequirement requirement = it1.next();
                 AResourceType type = requirement.getType();
-                msgDefaultResourceInstances += "\n - Voor type " + type.getName() + ": (" + requirement.getAmount() + " instanties nodig)";
+                if (type != resourceManager.getDeveloperType()) {
+                    msgDefaultResourceInstances += "\n - Voor type " + type.getName() + ": (" + requirement.getAmount() + " instanties nodig)";
 
-                for (ResourceInstance resourceInstance : type.getResourceInstances()) {
-                    if (plan.hasReservationFor(resourceInstance)) {
-                        msgDefaultResourceInstances += "\n    - " + resourceInstance.getName();
+                    for (ResourceInstance resourceInstance : type.getResourceInstances()) {
+                        if (plan.hasReservationFor(resourceInstance)) {
+                            msgDefaultResourceInstances += "\n    - " + resourceInstance.getName();
+                        }
                     }
                 }
             }
@@ -158,8 +161,8 @@ public class PlanningController extends AbstractController {
 
             }
 
-            // zijn de reservaties geldig?
-            if (!plan.isValid()) {
+            // zijn de reservaties geldig? (zonder rekening te houden met reservaties voor developers, dat gebeurt pas hieronder)
+            if (!plan.isValidWithoutDevelopers()) {
                 throw new ConflictException("Conflict!");
             }
 

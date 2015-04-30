@@ -36,9 +36,9 @@ public class Task {
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
+        setRequirementList(requirementList);
         this.systemTime = systemTime;
         this.dependencyGraph = dependencyGraph;
-        this.requirementList = requirementList;
     }
 
     /**
