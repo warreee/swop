@@ -15,8 +15,6 @@ import java.util.*;
  */
 public class ResourceManager {
 
-    // TODO: ResourceTypeRepository hier uit halen!
-
     /**
      * Constructor om een nieuwe resource manager aan te maken.
      */
@@ -104,13 +102,12 @@ public class ResourceManager {
     }
 
     public boolean containsType(String typeName){
-        //TODO betere manier zoeken voor containsType(String typeName)?
-        try {
-            getResourceTypeByName(typeName);
-            return true;
-        } catch (NoSuchElementException e) {
-            return false;
+        for(AResourceType type : resourceTypes){
+            if(type.getName().equals(typeName)){
+                return true;
+            }
         }
+        return false;
     }
 
     /**

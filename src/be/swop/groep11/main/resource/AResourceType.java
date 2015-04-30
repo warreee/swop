@@ -3,6 +3,7 @@ package be.swop.groep11.main.resource;
 import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequiresConstraint;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
+import be.swop.groep11.main.exception.IllegalInputException;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalTime;
@@ -87,7 +88,6 @@ public abstract class AResourceType {
      * @return      De corresponderende ResourceTypeConstraint, of null indien er geen is.
      */
     public ResourceTypeConstraint getConstraintFor(AResourceType typeA) {
-        //TODO documentatie kan null terug geven
         return constraintMap.get(typeA);
     }
 
@@ -126,7 +126,9 @@ public abstract class AResourceType {
     protected abstract void addResourceInstance(String name) throws IllegalArgumentException;
 
     protected void addResourceInstance(ResourceInstance resourceInstance) {
-        //TODO check if valid
+        if (resourceInstance == null) {
+            throw new IllegalInputException("Ongeldige resourceInstance, moet ge?nitialiseerd zijn");
+        }
         instances.add(resourceInstance);
     }
 

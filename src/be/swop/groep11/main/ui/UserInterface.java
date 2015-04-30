@@ -1,10 +1,11 @@
 package be.swop.groep11.main.ui;
 
-import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.controllers.AbstractController;
-import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
-import be.swop.groep11.main.actions.CancelException;
+import be.swop.groep11.main.exception.CancelException;
+import be.swop.groep11.main.controllers.AbstractController;
+import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.exception.EmptyListException;
+import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
@@ -45,7 +46,7 @@ public interface UserInterface {
      * @param projects Lijst van projecten
      * @return Nummer van geselecteerde project in lijst
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van projecten is leeg.
-     * @throws be.swop.groep11.main.actions.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
     Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException;
 
@@ -54,7 +55,7 @@ public interface UserInterface {
      * @param tasks Lijst van taken
      * @return Nummer van geselecteerde taak in lijst
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van taken is leeg.
-     * @throws be.swop.groep11.main.actions.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
     Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
 
@@ -138,21 +139,5 @@ public interface UserInterface {
     default <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,Function<T,String> listEntryPrinter) {
         return selectMultipleFromList(request,list, preselectedList, list.size(),false,listEntryPrinter);
     }
-
-
-   /* <T> T requestUserInput(String request,userInput<T> userInput) throws CancelException;*/
-
- /*   *//**
-     * Vraag een getal aan de user tussen een min en max waarde.
-     *
-     * @param userInput de functie waarmee de invoer aan de gebruiker gevraagd wordt.
-     * @param min       De minimum toegelaten waarde (inclusief)
-     * @param max       De maximum toegelaten waarde (inclusief)
-     * @param <T>       Het Type van het gevraagde getal tussen min en max.
-     * @return          Een getal van Type <T> dat uit [min,max] komt.
-     * @throws CancelException  gooi indien de gebruiker het Command.CANCEL in geeft.
-     *//*
-    <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput,T min,T max)throws CancelException;*/
-
 
 }

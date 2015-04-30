@@ -1,4 +1,6 @@
-package be.swop.groep11.main.resource;
+package be.swop.groep11.main.exception;
+
+import be.swop.groep11.main.resource.AResourceType;
 
 /**
  * Created by Ronald on 9/04/2015.

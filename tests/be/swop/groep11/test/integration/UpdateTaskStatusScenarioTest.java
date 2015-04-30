@@ -1,6 +1,6 @@
 package be.swop.groep11.test.integration;
 
-import be.swop.groep11.main.actions.CancelException;
+import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
@@ -11,13 +11,9 @@ import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.function.Function;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;

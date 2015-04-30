@@ -1,6 +1,6 @@
 package be.swop.groep11.test.integration;
 
-import be.swop.groep11.main.actions.CancelException;
+import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.controllers.AdvanceTimeController;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.ui.UserInterface;

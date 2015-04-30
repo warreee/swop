@@ -1,5 +1,6 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.resource.IPlan;
 
 import java.time.Duration;
@@ -28,23 +29,23 @@ public abstract class TaskStatus implements Cloneable {
     }
 
     protected void execute(Task task, LocalDateTime startTime) {
-        throw new IllegalStateTransition("De taak kan niet naar de status EXECUTING gaan vanuit de huidige status");
+        throw new IllegalStateTransitionException("De taak kan niet naar de status EXECUTING gaan vanuit de huidige status");
     }
 
     protected void finish(Task task, LocalDateTime endTime){
-        throw new IllegalStateTransition("De taak kan niet naar de status FINISHED gaan vanuit de huidige status");
+        throw new IllegalStateTransitionException("De taak kan niet naar de status FINISHED gaan vanuit de huidige status");
     }
 
     protected void fail(Task task, LocalDateTime endTime){
-        throw new IllegalStateTransition("De taak kan niet naar de status FAIL gaan vanuit de huidige status");
+        throw new IllegalStateTransitionException("De taak kan niet naar de status FAIL gaan vanuit de huidige status");
     }
 
     protected void makeAvailable(Task task){
-        throw new IllegalStateTransition("De taak kan niet naar de status AVAILABLE gaan vanuit de huidige status");
+        throw new IllegalStateTransitionException("De taak kan niet naar de status AVAILABLE gaan vanuit de huidige status");
     }
 
     protected void makeUnavailable(Task task){
-        throw new IllegalStateTransition("De taak kan niet naar de status UNAVAILABLE gaan vanuit de huidige status");
+        throw new IllegalStateTransitionException("De taak kan niet naar de status UNAVAILABLE gaan vanuit de huidige status");
     }
 
     protected boolean checkPlan () {

@@ -1,5 +1,6 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.resource.IPlan;
 
 import java.time.Duration;
@@ -33,17 +34,17 @@ public class TaskAvailable extends TaskStatus {
 
     @Override
     protected void finish(Task task, LocalDateTime endTime) {
-        throw new IllegalStateTransition("Een taak moet eerst worden uitgevoerd voor hij gefinish wordt");
+        throw new IllegalStateTransitionException("Een taak moet eerst worden uitgevoerd voor hij gefinish wordt");
     }
 
     @Override
     protected void fail(Task task, LocalDateTime endTime) {
-        throw new IllegalStateTransition("Een taak kan niet van Available naar Fail gaan");
+        throw new IllegalStateTransitionException("Een taak kan niet van Available naar Fail gaan");
     }
 
     @Override
     protected void makeAvailable(Task task) {
-        throw new IllegalStateTransition("De taak was al available");
+        throw new IllegalStateTransitionException("De taak was al available");
     }
 
     @Override

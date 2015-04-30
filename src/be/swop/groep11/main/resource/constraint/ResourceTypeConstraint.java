@@ -1,7 +1,7 @@
 package be.swop.groep11.main.resource.constraint;
 
 import be.swop.groep11.main.resource.AResourceType;
-import be.swop.groep11.main.resource.UnsatisfiableRequirementException;
+import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
 
 /**
  * Created by Ronald on 9/04/2015.
@@ -91,9 +91,7 @@ public abstract class ResourceTypeConstraint {
         return min;
     }
 
-
-
-  /*  *//**
+    /**
      * Controleer voor de gegeven min en max grens mogenlijk zijn
      * @param bMin  Het minimum verwacht aantal resource instances
      * @param bMax  Het maximum toegelaten aantal resource instances
@@ -104,60 +102,6 @@ public abstract class ResourceTypeConstraint {
             return bMin >= 0 && bMax >= 0 && bMax-bMin >= 0;
     }
 
- /*   *//**
-     * Controleer of deze Constraint vervuld is voor de gegeven IRequirementList
-     * @param requirementList   De te controleren lijst requirements.
-     * @return  Waar indien de getConstrainingType() een aanvaardbaar keer voor komt in de lijst requirements
-     *//*
-    public boolean isSatisfied(IRequirementList requirementList){
-        boolean result = false;
-        if(requirementList.containsRequirementFor(getOwnerType())){
-            int count = requirementList.countRequiredInstances(getConstrainingType());
-            result = isAcceptableAmount(getConstrainingType(),count);
-        }
-        return result;
-    }*/
-
-    //TODO fix contradictsWith, is niet juist.
-    /**
-     * Controleer of deze ResourceTypeConstraint tegenstrijdig is met de gegeven ResourceTypeConstraint en een gevraagde hoeveelheid
-     * @param otherConstraint   De gegeven ResourceTypeConstraint dewelke eventueel tegenstrijdig is met deze.
-     * @param requestedAmount   De aangevraagde hoeveelheid van otherConstraint.getConstrainingType()
-     * @return                  Waar indien otherConstraint dezelfde constrainingType heeft. En de minimum van
-     *                          otherConstraint aanvaardbaar is voor deze constraint, als ook de aangevraagde hoeveelheid
-     *                          een geldige hoeveelheid is voor deze constraint.
-     */
-  /*  public boolean contradictsWith(ResourceTypeConstraint otherConstraint,int requestedAmount){
-        //Moet een beperking zijn op dezelfde ResourceType, en de minimum hoeveelheid van de otherConstraint
-        //moet aanvaardbaar zijn voor deze constraint. alsook de aangevraagde hoeveelheid
-        if(getMin() > requestedAmount || otherConstraint.getMin() > requestedAmount || requestedAmount > getMax() || requestedAmount > otherConstraint.getMax()){
-            // De requested amount ligt niet binnen de grenzen van beide ResourceTypeConstraints.
-            return true;
-        }
-        if(otherConstraint.getOwnerType().equals(getOwnerType())){
-            if(otherConstraint.getConstrainingType().equals(getConstrainingType())){
-                // Ownertype zelfde, ConstrainingType zelfde
-                // Grenzen moeten hetzelfde zijn om niet te conflicteren en requestedAmount moet er binnen liggen.
-                return getMax() != otherConstraint.getMax() || getMin() != otherConstraint.getMin();
-            }
-        }
-        return false;*/
-//            else {
-//                // OwnerType zelfde, ConstrainingType verschillend.
-//                // requestedAmount moet binnen beide grenzen liggen.
-//                return false;
-//            }
-//        } else {
-//            if(otherConstraint.getConstrainingType().equals(getConstrainingType())){
-//                // OwnerType verschillend, ConstrainingType zelfde.
-//                return false;
-//            } else {
-//                // OwnerType Verschillend, ConstrainingType verschillend.
-//                // requestedAmount moet binnen beide grenzen liggen.
-//                return false;
-//            }
-//        }
-//    }
 
     /**
      * Controleer of de gegeven hoeveelheid van resourceType een geldige hoeveelheid van getConstrainingType() resource instances zou zijn.

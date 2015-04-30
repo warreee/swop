@@ -1,5 +1,6 @@
 package be.swop.groep11.main.core;
 
+import be.swop.groep11.main.exception.IllegalDependencyException;
 import be.swop.groep11.main.task.Task;
 
 import java.util.*;

@@ -1,5 +1,7 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.exception.IllegalStateTransitionException;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -24,7 +26,7 @@ public class TaskExecuting extends TaskStatus {
 
     @Override
     protected void execute(Task task, LocalDateTime startTime) {
-        throw new IllegalStateTransition("De taak was reeds aan het uitvoeren!");
+        throw new IllegalStateTransitionException("De taak was reeds aan het uitvoeren!");
     }
 
     @Override

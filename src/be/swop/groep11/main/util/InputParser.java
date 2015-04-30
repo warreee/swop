@@ -1,6 +1,7 @@
 package be.swop.groep11.main.util;
 
 import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.exception.IllegalDependencyException;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import org.yaml.snakeyaml.Yaml;
@@ -37,17 +38,19 @@ public class InputParser {
      * @param projectRepository De ProjectRepository waaraan alle projecten moeten worden toegevoegd.
      * @param resourceManager De ResourceManager waaraan alle Resources en reservaties moeten worden toegevoegd.
      */
-    public InputParser(ProjectRepository projectRepository, ResourceManager resourceManager) {
+    public InputParser(ProjectRepository projectRepository, ResourceManager resourceManager,SystemTime systemTime) {
         this.projectRepository = projectRepository;
         this.resourceManager = resourceManager;
+        this.systemTime = systemTime;
     }
 
 
     public static void main(String[] args) throws FileNotFoundException {
         ResourceManager typeRepo = new ResourceManager();
-        ProjectRepository projectRepository = new ProjectRepository(new SystemTime(LocalDateTime.now()));
+        SystemTime systemTime = new SystemTime();
+        ProjectRepository projectRepository = new ProjectRepository(systemTime);
 
-        InputParser parser = new InputParser(projectRepository, typeRepo);
+        InputParser parser = new InputParser(projectRepository, typeRepo,systemTime);
         parser.parseInputFile();
         System.out.println("Finished :)");
     }

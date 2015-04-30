@@ -15,13 +15,14 @@ public interface IRequirementList{
      */
     boolean containsRequirementFor(AResourceType type);
 
+    /**
+     * Geef de ResourceRequirement met het RequiredType gelijk aan het gegeven AResourceType.
+     * @param type      Het Required AResourceType van de gevraagde requirement.
+     * @return          De ResourceRequirement geassocieerd met het gegeven type.
+     *                  Indien die er niet is, null.
+     */
     ResourceRequirement getRequirementFor(AResourceType type);
 
-    /**
-     * @param type  Het te controleren type.
-     * @return      Geeft aan hoeveel ResourcesInstances er required zijn voor het gegeven type.
-     */
-    int countRequiredInstances(AResourceType type);
 
     /**
      * Controleer of deze lijst met Requirements geldig blijft. Indien er een requirement voor het gegeven IResourceType

@@ -1,5 +1,7 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.exception.IllegalStateTransitionException;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -23,27 +25,27 @@ public class TaskFinished extends TaskStatus {
 
     @Override
     protected void execute(Task task,LocalDateTime time) {
-        throw new IllegalStateTransition("Een gefinishste taak kan niet opnieuw worden uitgevoerd");
+        throw new IllegalStateTransitionException("Een gefinishste taak kan niet opnieuw worden uitgevoerd");
     }
 
     @Override
     protected void finish(Task task,LocalDateTime time) {
-        throw new IllegalStateTransition("De taak was reeds gefinishd");
+        throw new IllegalStateTransitionException("De taak was reeds gefinishd");
     }
 
     @Override
     protected void fail(Task task,LocalDateTime time) {
-        throw new IllegalStateTransition("Een gefinishste taak kan niet gefaild worden!");
+        throw new IllegalStateTransitionException("Een gefinishste taak kan niet gefaild worden!");
     }
 
     @Override
     protected void makeAvailable(Task task) {
-        throw new IllegalStateTransition("Een gefinishste taak kan niet available worden!");
+        throw new IllegalStateTransitionException("Een gefinishste taak kan niet available worden!");
     }
 
     @Override
     protected void makeUnavailable(Task task) {
-        throw new IllegalStateTransition("Een gefinishste taak kan niet unavailable worden!");
+        throw new IllegalStateTransitionException("Een gefinishste taak kan niet unavailable worden!");
     }
 
     /**
