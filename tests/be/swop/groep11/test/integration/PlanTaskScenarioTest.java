@@ -181,7 +181,7 @@ public class PlanTaskScenarioTest {
 
     @Test
     public void PlanTask_ResolveConflict_MoveOtherTasksTest() throws Exception {
-        IPlan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
+        Plan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
         List<ResourceInstance> developers = new ArrayList<>();
         developers.add(resourceManager.getDeveloperType().getResourceInstances().get(3));
         plan.addReservations(developers);
