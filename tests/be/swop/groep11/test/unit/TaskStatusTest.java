@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class TaskStatusTest {
@@ -110,9 +110,9 @@ public class TaskStatusTest {
     @Test
     public void executingToFailed() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
-        // TODO heeft een gefailde taak ook een eindtijd? zie ook githubissue
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
         assertTrue(task1.getStatusString().equals("FAILED"));
+        assertEquals(LocalDateTime.of(2015, 3, 12, 10, 0), task1.getEndTime());
     }
 
     @Test(expected = IllegalStateTransition.class)

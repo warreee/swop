@@ -545,8 +545,6 @@ public class CommandLineInterface implements UserInterface {
         return selection;
     }
 
-    //TODO refactor selectFromList zodat het werkt met selectMultipleFromList
-
     /**
      * Laat de gebruiker een element kiezen uit de gegeven lijst.
      *
@@ -586,7 +584,6 @@ public class CommandLineInterface implements UserInterface {
      * @param <T>              Het type van de elementen
      */
     private <T> void printList(List<T> list, Function<T, String> listEntryPrinter) {
-        //TODO check if arguments are valid
         Consumer<List<T>> listPrint = listTemp -> {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < listTemp.size(); i++) {

@@ -87,7 +87,4 @@ public class ResourceRequirement {
                 ", type=" + type +
                 '}';
     }
-
-    //TODO override equals?
-
 }

@@ -495,7 +495,7 @@ public class Task {
         this.requirementList = requirementList;
     }
 
-    private IRequirementList requirementList; // TODO: requirement list meegeven bij creëren van taak en deze variabele final maken
+    private IRequirementList requirementList;
 
     /**
      * Geeft de duration terug van de taak.

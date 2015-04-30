@@ -65,4 +65,6 @@ public class TaskUnavailable extends TaskStatus {
     public void plan(Task task, IPlan plan) {
         task.setPlan(plan);
     }
+
+    //TODO make available
 }

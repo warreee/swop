@@ -88,7 +88,6 @@ public class ActionBehaviourMapping {
             //Gegeven controller is idd laatst toegevoegde controller.
             controllerStack.remove(controller);
         }
-        //TODO throw new Exception indien de gegeven controller niet de laatst toegevoegde was?
     }
 
     /**
