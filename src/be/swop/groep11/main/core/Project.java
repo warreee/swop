@@ -1,5 +1,6 @@
 package be.swop.groep11.main.core;
 
+import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskFailed;
 import com.google.common.collect.ImmutableList;
@@ -179,6 +180,20 @@ public class Project {
      */
     public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) throws IllegalArgumentException {
         Task task = new Task(description, estimatedDuration, acceptableDeviation, systemTime, this.dependencyGraph);
+        tasks.add(task);
+    }
+
+    /**
+     * Voegt een taak toe aan dit project.
+     * @param description           Omschrijving van de taak
+     * @param acceptableDeviation   Aanvaardbare afwijking (tijd) in percent
+     * @param estimatedDuration     Schatting nodige tijd
+     * @param requirementList       De requirement list voor de taak
+     * @throws IllegalArgumentException
+     *                              Gooi indien één of meerdere van de parameters niet geldig zijn.
+     */
+    public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration, IRequirementList requirementList) throws IllegalArgumentException {
+        Task task = new Task(description, estimatedDuration, acceptableDeviation, systemTime, this.dependencyGraph, requirementList);
         tasks.add(task);
     }
 

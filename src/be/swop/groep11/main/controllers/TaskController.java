@@ -95,14 +95,14 @@ public class TaskController extends AbstractController {
                 alternativeTaskFor =  getUserInterface().selectTaskFromList(project.getFailedTasks());
             }
 
-            project.addNewTask(description, acceptableDeviation, estimatedDuration);
-            // opm.: het toevoegen van afhankelijke taken kan nog geen fouten veroorzaken,
-            // dus het is geen probleem dat de taak al gecreëerd is
+            // Bouw de IRequirementList en voeg hem toe aan de taak.
+            IRequirementList requirementList = buildIRequirementList(selectedTypes);
+
+            project.addNewTask(description, acceptableDeviation, estimatedDuration, requirementList);
             Task task = project.getTasks().get(project.getTasks().size()-1);
 
-            // Bouw de IRequirementList en voeg hem toe aan de taak.
-            task.setRequirementList(buildIRequirementList(selectedTypes));
-
+            // opm.: het toevoegen van afhankelijke taken kan nog geen fouten veroorzaken,
+            // dus het is geen probleem dat de taak al gecreëerd is
             for (Task dependingOn : selectedTasks) {
                 task.addNewDependencyConstraint(dependingOn);
             }
