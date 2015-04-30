@@ -32,7 +32,7 @@ public class TaskExecuting extends TaskStatus {
         task.setEndTime(endTime);
         TaskStatus finished = new TaskFinished();
         task.setStatus(finished);
-        task.releaseResources(); // TODO: implementatie in task doen!
+        task.releaseResources(endTime);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class TaskExecuting extends TaskStatus {
         task.setEndTime(endTime);
         TaskStatus failed = new TaskFailed();
         task.setStatus(failed);
-        task.releaseResources(); // TODO: implementatie in task doen!
+        task.releaseResources(endTime);
     }
 
     /**
@@ -52,7 +52,6 @@ public class TaskExecuting extends TaskStatus {
      */
     @Override
     protected Duration getDuration(Task task, LocalDateTime currentSystemTime) {
-
         return task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration();
     }
 

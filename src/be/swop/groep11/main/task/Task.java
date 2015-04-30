@@ -5,13 +5,11 @@ import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.resource.IPlan;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.RequirementListBuilder;
-import be.swop.groep11.main.resource.ResourceReservation;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -500,14 +498,6 @@ public class Task {
     private IRequirementList requirementList; // TODO: requirement list meegeven bij creëren van taak en deze variabele final maken
 
     /**
-     * Deze methode zorgt ervoor dat taken hun resources kunnen vrijgeven indien ze vroegtijdig stoppen bvb.
-     * TODO: implementeren, moet dit wel hier staan?
-     */
-    protected void releaseResources(){
-
-    }
-
-    /**
      * Geeft de duration terug van de taak.
      * @param currentSystemTime
      */
@@ -540,12 +530,16 @@ public class Task {
 
     private IPlan plan;
 
-    public IPlan getPlan() {
-        return this.plan;
+    protected void setPlan(IPlan plan) {
+        plan.apply();
+        this.plan = plan;
     }
 
-    protected void setPlan(IPlan plan) {
-        this.plan = plan;
+    /**
+     * Deze methode zorgt ervoor dat taken hun resources kunnen vrijgeven indien ze vroegtijdig stoppen.
+     */
+    protected void releaseResources(LocalDateTime endTime){
+        this.plan.releaseResources(endTime);
     }
 
 }

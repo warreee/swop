@@ -59,7 +59,6 @@ public interface IPlan {
          * @param resourceInstances De gegeven resource instanties
          */
         void changeReservations(List<ResourceInstance> resourceInstances);
-        // TODO: mutators weg!
         /**
          * Voegt reservaties voor de gegeven resource instanties toe aan het plan.
          * @param resourceInstances De gegeven resource instanties
@@ -78,4 +77,11 @@ public interface IPlan {
         void releaseResources(LocalDateTime endTime);
 
         List<Task> getConflictingTasks();
+
+        /**
+         * Past dit plan toe door huidige de reservaties van de taak te verwijderen
+         * en de reservaties van het plan toe te voegen.
+         * @throws IllegalStateException Het plan is niet geldig
+         */
+        void apply();
 }

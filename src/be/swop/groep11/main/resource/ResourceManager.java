@@ -241,7 +241,7 @@ public class ResourceManager {
      * @param plan Het gegeven plan
      * @throws IllegalArgumentException Het plan is niet geldig.
      */
-    public void makeReservationsForPlan(IPlan plan) throws IllegalArgumentException {
+    private void makeReservationsForPlan(IPlan plan) throws IllegalArgumentException {
         if (! plan.isValid()) {
             throw new IllegalArgumentException("Ongeldig plan");
         }
@@ -307,8 +307,7 @@ public class ResourceManager {
             return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour()+1,0));
     }
 
-    // TODO: modifiers removeReservation
-    /**
+   /**
      * Verwijderd alle reservaties van een taak.
      * @param task De Task waarvan alle reservaties moeten verwijderd worden.
      */
@@ -331,8 +330,7 @@ public class ResourceManager {
      * @param endTime De tijd waarop de reservaties moeten eindigen.
      * @throws IllegalArgumentException Wanneer de eindtijd voor een starttijd van een reservatie ligt.
      */
-    // TODO: wanneer een taak beeindigd wordt moet dit opgeroepen worden
-    public void endReservationsFromTask(Task task, LocalDateTime endTime){
+    private void endReservationsFromTask(Task task, LocalDateTime endTime){
         List<ResourceReservation> reservations = new ArrayList<>(this.reservations.get(task));
         for(ResourceReservation reservation: reservations){
             TimeSpan newTimeSpan = new TimeSpan(reservation.getTimeSpan().getStartTime(), endTime);
@@ -715,12 +713,28 @@ public class ResourceManager {
         public List<Task> getConflictingTasks() {
             Set<Task> conflictingTasks = new HashSet<>();
             for (ResourceReservation reservation : this.getReservations()) {
-                List<ResourceReservation> conflictingReservations = getConflictingReservations(reservation.getResourceInstance(),reservation.getTimeSpan());
+                List<ResourceReservation> conflictingReservations = getConflictingReservations(reservation.getResourceInstance(), reservation.getTimeSpan());
                 if (conflictingReservations.isEmpty()) {
                     conflictingTasks.add(conflictingReservations.get(0).getTask());
                 }
             }
             return new LinkedList<>(conflictingTasks);
+        }
+
+        /**
+         * Past dit plan toe door huidige de reservaties van de taak te verwijderen
+         * en de reservaties van het plan toe te voegen.
+         * @throws IllegalStateException De reservaties voor dit plan kunnen niet gemaakt worden.
+         */
+        @Override
+        public void apply() {
+            try {
+                endReservationsFromTask(this.getTask(), this.getStartTime());
+                makeReservationsForPlan(this);
+            }
+            catch (IllegalArgumentException e) {
+                throw new IllegalStateException("De reservaties voor dit plan kunnen niet gemaakt worden.");
+            }
         }
 
         private List<ResourceReservation> calculateDefaultReservations(Task task, LocalDateTime startTime) throws IllegalArgumentException {
@@ -746,7 +760,6 @@ public class ResourceManager {
                     }
                 }
             }
-
             return defaultReservations;
         }
 
@@ -759,27 +772,6 @@ public class ResourceManager {
             endReservationsFromTask(this.getTask(), endTime);
         }
 
-        /*private LocalDateTime calculateEndTime(Task task, LocalDateTime startTime) {
-            LocalDateTime endTime = startTime.plus(task.getEstimatedDuration());
-            Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
-            while (it.hasNext()) {
-                ResourceRequirement requirement = it.next();
-
-                // lijst van beschikbare resources voor het type, gesorteerd volgens toenemend eindtijd van de eerstvolgende mogelijke tijdsspanne voor een reservatie
-                List<ResourceInstance> availableInstances = getAvailableInstances(requirement.getType(), startTime, task.getEstimatedDuration());
-
-                if (! availableInstances.isEmpty()) {
-                    int nbRequiredInstances = requirement.getAmount();
-
-                    ResourceInstance instanceWithLongestReservation = availableInstances.get(Math.min(nbRequiredInstances, availableInstances.size() - 1));
-                    LocalDateTime endTimeOfLongestReservation = getNextAvailableTimeSpan(instanceWithLongestReservation, startTime, task.getEstimatedDuration()).getEndTime();
-
-                    if (endTimeOfLongestReservation.isAfter(endTime))
-                        endTime = endTimeOfLongestReservation;
-                }
-            }
-            return endTime;
-        }*/
     }
 
 }

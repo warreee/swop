@@ -54,8 +54,7 @@ public class PlanningController extends AbstractController {
             // hopelijk is dit ook zo... TODO: testen
 
             for (IPlan plan : plans) {
-                resourceManager.makeReservationsForPlan(plan);
-                plan.getTask().plan(plan.getStartTime());
+                plan.getTask().plan(plan);
             }
 
         }
