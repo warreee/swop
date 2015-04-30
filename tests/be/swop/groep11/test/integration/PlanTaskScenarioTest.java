@@ -181,6 +181,53 @@ public class PlanTaskScenarioTest {
         System.out.println(resourceManager.getReservations(tasks.get(0)).size());
     }
 
+    @Test
+    public void PlanTask_ResolveConflict_MoveOtherTasksTest() throws Exception {
+        IPlan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
+        List<ResourceInstance> developers = new ArrayList<>();
+        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(3));
+        plan.addReservations(developers);
+        tasks.get(1).plan(plan);
+
+        // selecteer de juiste taak:
+        when(mockedUI.selectTaskFromList(anyObject())).thenReturn(tasks.get(0));
+        // starttijd zelf kiezen: maar de 2e keer niet zelf kiezen (bij resolve conflicts)
+        when (mockedUI.requestBoolean(Matchers.contains("starttijd hieruit selecteren"))).thenReturn(false).thenReturn(true);
+        when(mockedUI.requestDatum(Matchers.contains("starttijd"))).thenReturn(now);
+        // kies als starttijd de eerste in de lijst (2de keer):
+        when (mockedUI.selectLocalDateTimeFromList(anyObject())).thenAnswer(new Answer<LocalDateTime>() {
+            @Override
+            public LocalDateTime answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return ((List<LocalDateTime>) args[0]).get(0);
+            }
+        });
+        // reserveer de voorgestelde instanties:
+        when (mockedUI.requestBoolean(Matchers.contains("resource instanties reserveren"))).thenReturn(true);
+        // kies developers
+        when(mockedUI.selectMultipleFromList(Matchers.contains("developers"), anyObject(), anyObject(), anyInt(), anyBoolean(), anyObject())).thenAnswer(new Answer<List<ResourceInstance>>() {
+            @Override
+            public List<ResourceInstance> answer(InvocationOnMock invocation) throws Throwable {
+                List<ResourceInstance> gekozenDevelopers = new ArrayList<ResourceInstance>();
+                ResourceInstance dev1 = resourceManager.getDeveloperType().getResourceInstances().get(0);
+                ResourceInstance dev2 = resourceManager.getDeveloperType().getResourceInstances().get(1);
+                ResourceInstance dev3 = resourceManager.getDeveloperType().getResourceInstances().get(2);
+                gekozenDevelopers.add(dev1);
+                gekozenDevelopers.add(dev2);
+                gekozenDevelopers.add(dev3);
+                return gekozenDevelopers;
+            }
+        });
+
+        // resolve conflict
+        when(mockedUI.requestBoolean(Matchers.contains("conflicterende"))).thenReturn(true);
+
+        planningController.planTask();
+
+        System.out.println(tasks.get(0).getPlannedStartTime());
+        System.out.println(resourceManager.getReservations(tasks.get(0)).size());
+    }
+
     private void addTempDomainObjects() {
 
         resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter SWOP");
