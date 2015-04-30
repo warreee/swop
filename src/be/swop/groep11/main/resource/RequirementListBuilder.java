@@ -81,14 +81,7 @@ public class RequirementListBuilder {
                 if (!constraint.isAcceptableAmount(requestedType, amount)) {
                     return false;
                 }
-                //Nog nodig?
-        /*        for (ResourceTypeConstraint requestedCon : requestedType.getTypeConstraints()) {
-                    if (constraint.contradictsWith(requestedCon, amount)) {
-                        return false;
-                    }
-                }*/
             }
-
             return true;
         }
 
