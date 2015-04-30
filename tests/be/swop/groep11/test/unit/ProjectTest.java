@@ -10,7 +10,6 @@ import org.junit.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -68,7 +67,9 @@ public class ProjectTest {
         project1.addNewTask("Afhankelijke taak", 0, Duration.ofHours(16));
         project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
         project1.getTasks().get(0).execute(LocalDateTime.of(2015, 3, 14, 18, 0));
+        System.out.println(project1.getEstimatedEndTime());
         assertTrue(project1.isOverTime());
+        //TODO fix
     }
 
     @Test
@@ -81,8 +82,6 @@ public class ProjectTest {
         project1.getTasks().get(0).execute(LocalDateTime.of(2015, 3, 8, 0, 0));
         assertFalse(project1.isOverTime());
     }
-
-
 
     @Test
     public void NewProject_valid() throws Exception {
@@ -137,16 +136,5 @@ public class ProjectTest {
     public void NewProject_invalid_DueTimeNull() throws Exception {
         //DueTime mag niet null zijn
         new Project(name, description, create,null, systemTime);
-    }
-
-    /*@Test (expected = IllegalArgumentException.class)
-    public void NewProject_invalid_User() throws Exception {
-       new Project(name, description, create,due, systemTime );
-    }*/
-
-    @Test
-    public void getEstimatedEndTimeTest() {
-        Duration estimatedTime = Duration.ofDays(4);
-        assertEquals(project.getEstimatedEndTime(), estimatedTime);
     }
 }

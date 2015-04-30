@@ -49,8 +49,6 @@ public class Project {
         this.dependencyGraph = new DependencyGraph();
     }
 
-
-
     /**
      * @param name  De naam die dit project moet dragen.
      * @throws IllegalArgumentException
@@ -117,7 +115,6 @@ public class Project {
         this.creationTime = creationTime;
         this.dueTime = dueTime;
     }
-
 
     /**
      * Geeft de status van dit project: ONGOING of FINISHED.
@@ -199,17 +196,6 @@ public class Project {
 
     private DependencyGraph dependencyGraph;
 
-
-
-    /**
-     * Controleer of de gegeven taak bij dit project hoort.
-     * @param task  De taak die gecontroleerd moet worden.
-     * @return      Waar indien dit project de gegeven task bevat.
-     */
-    public boolean hasTask(Task task){
-        return tasks.contains(task);
-    }
-
     /**
      * @return  Waar indien de geschatte eind datum van het project na de verwachte eind datum valt.
      */
@@ -223,26 +209,25 @@ public class Project {
      * @return  De geschatte eind datum van het project, door het aantal nodige werkdagen te berekenen.
      *          Tel het aantal werkdagen (plus nodige weekends) bij de begindatum van het project op.
      */
-    public LocalDateTime getEstimatedEndTime(){ // TODO: wordt hier niet dubbel geteld? overleg met ward...
-        int HOURS_PER_DAY = 8;
-        Duration max = Duration.ofDays(0);
+    public LocalDateTime getEstimatedEndTime(){
+        long daysMax = 0;
         for(Task task :getTasks()){
             Set<Task> tasks = task.getDependingOnTasks();
             tasks.add(task);
-            Duration temp = calculateTotalDuration(tasks);
-            if(temp.compareTo(max) > 0){
-                max = temp;
+            long days = calculateNeededDays(tasks);
+
+            if (days > daysMax) {
+                daysMax = days;
             }
         }
-        long hours = max.toHours();
-        long workDays = (long) Math.ceil(hours / HOURS_PER_DAY);
 
         LocalDateTime currentWorkingDay = creationTime;
-        currentWorkingDay = currentWorkingDay.plusHours((int) hours % 8);
-        if (currentWorkingDay.getHour() > 18) {
-            currentWorkingDay = currentWorkingDay.plusDays(1);
-            currentWorkingDay = currentWorkingDay.withHour(currentWorkingDay.getHour()-9);
-        }
+//        currentWorkingDay = currentWorkingDay.plusHours((int) hours % 8);
+//        if (currentWorkingDay.getHour() > 18) {
+//            currentWorkingDay = currentWorkingDay.plusDays(1);
+//            currentWorkingDay = currentWorkingDay.withHour(currentWorkingDay.getHour()-9);
+//        }
+        long workDays = daysMax;
         while(workDays > 0){
             DayOfWeek currentDay = currentWorkingDay.getDayOfWeek();
             long add = 1;
@@ -259,24 +244,32 @@ public class Project {
             }
             currentWorkingDay = currentWorkingDay.plusDays(add);
             workDays--;
-
             }
         return currentWorkingDay;
         }
 
-    /**
-     * Berekend de totaal tijd van een set van taken.
-     * De duur van elke taak wordt teruggegeven adv status, en zijn bijhorende implementatie van getDuration.
-     * @param tasks
-     * @return
-     */
-    private Duration calculateTotalDuration(Set<Task> tasks){
+    private long calculateNeededDays(Set<Task> tasks) {
         LocalDateTime currentSystemTime = systemTime.getCurrentSystemTime();
         long total = 0;
         for(Task task :tasks){
-            total += task.getDuration(currentSystemTime).toHours();
+            long totalMinutesTask = task.getDuration(currentSystemTime).toMinutes();
+
+            final long[] minutesMinType = {Long.MAX_VALUE};
+            task.getRequirementList().iterator().forEachRemaining(resourceRequirement -> {
+                Duration d = resourceRequirement.getType().getDailyAvailability().getDuration();
+                if (d.toMinutes() < minutesMinType[0]) {
+                    minutesMinType[0] = d.toMinutes();
+                }
+            });
+            if (minutesMinType[0] == Long.MAX_VALUE) {
+                minutesMinType[0] = Duration.ofHours(8).toMinutes();
+            }
+
+            long days = (long) Math.ceil (totalMinutesTask / minutesMinType[0]);
+
+            total += days;
         }
-        return Duration.ofHours(total);
+        return total;
     }
 
     /**
@@ -291,6 +284,4 @@ public class Project {
         }
         return ImmutableList.copyOf(tasks);
     }
-
-
 }

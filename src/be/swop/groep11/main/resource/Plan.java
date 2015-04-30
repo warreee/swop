@@ -102,10 +102,8 @@ public class Plan {
                 if (nbRequiredInstances != nbReservations) {
                     return false;
                 }
-
             }
         }
-
         return true;
     }
 

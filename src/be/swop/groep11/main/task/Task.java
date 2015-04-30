@@ -234,8 +234,6 @@ public class Task {
         return dependencyGraph.getDependingOnTasks(this);
     }
 
-
-
     /**
      * Voegt een dependency constraint toe voor deze taak.
      * Wijzigt ook de status van deze taak naar UNAVAILABLE indien nodig.
@@ -243,13 +241,11 @@ public class Task {
      */
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyGraph.addNewDependency(this, dependingOn);
-
         if(!dependingOn.getStatus().getClass().equals(TaskFinished.class)
                 && !dependingOn.getStatus().getClass().equals(TaskFailed.class)) {
             if (!this.getStatus().getClass().equals(TaskUnavailable.class)){
                 this.makeUnAvailable();
             }
-
         }
     }
 

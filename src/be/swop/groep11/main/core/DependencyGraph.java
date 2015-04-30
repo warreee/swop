@@ -3,7 +3,10 @@ package be.swop.groep11.main.core;
 import be.swop.groep11.main.exception.IllegalDependencyException;
 import be.swop.groep11.main.task.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +29,6 @@ public class DependencyGraph {
      * @param dependent
      * @param dependingOn
      */
-
     public void addNewDependency(Task dependent, Task dependingOn) throws IllegalDependencyException {
         isValidDependency(dependent, dependingOn);
         addDependency(dependent, dependingOn);
@@ -94,6 +96,12 @@ public class DependencyGraph {
         return new HashSet<>();
     }
 
+    protected Set<Task> getDependencyBranch(Task task) {
+        return null;
+        //Geeft empty list indien er geen branch is
+    }
+
+
     public Set<Task> getDependingOnTasks(Task task){
 
         if (dependingOnMap.containsKey(task)) {
@@ -154,11 +162,11 @@ public class DependencyGraph {
 
 
     private boolean containsLoop(Task dependent, Task dependingOn) {
-        if (allTasks().size() == 0) { // er zitten nog geen depencies in
+        if (getAllTasks().size() == 0) { // er zitten nog geen depencies in
             return false;
         }
         ArrayList<Task> tempMarked = new ArrayList<>();
-        ArrayList<Task> allTasks = allTasks();
+        ArrayList<Task> allTasks = getAllTasks();
         ArrayList<Task> finalMarked = new ArrayList<>();
         ArrayList<Task> result = new ArrayList<>();
         addDependency(dependent, dependingOn);
@@ -190,14 +198,15 @@ public class DependencyGraph {
         }
     }
 
-    private ArrayList<Task> allTasks(){
+    //TODO beter naam zoeken
+    protected ArrayList<Task> getAllTasks(){
         return new ArrayList<>(this.dependentMap.keySet());
     }
 
 
     public ArrayList<Task> getLeafs() {
         ArrayList<Task> leafs = new ArrayList<>();
-        allTasks().stream().filter(node -> dependentMap.get(node).size() == 0).forEach(leafs::add);
+        getAllTasks().stream().filter(node -> dependentMap.get(node).size() == 0).forEach(leafs::add);
         return leafs;
     }
 
@@ -239,4 +248,6 @@ public class DependencyGraph {
         }
         return paths;
     }
+
+
 }

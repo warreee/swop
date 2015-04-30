@@ -71,6 +71,10 @@ public class DailyAvailability {
         return true;
     }
 
+    public Duration getDuration() {
+        return Duration.between(getStartTime(), getEndTime());
+    }
+
     private boolean overlapsWith(DailyAvailability other) {
         if (other == null)
             return false;

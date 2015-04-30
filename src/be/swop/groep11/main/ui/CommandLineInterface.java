@@ -84,7 +84,7 @@ public class CommandLineInterface implements UserInterface {
 
     @Override
     public void printMessage(String message) {
-        System.out.printf(message + "\n");
+        System.out.println(message);
     }
 
     @Override
@@ -304,10 +304,9 @@ public class CommandLineInterface implements UserInterface {
      */
     public <T extends Number & Comparable<T>> T numberBetween(userInput<T> userInput, T min, T max) throws CancelException {
 //        getMultipleNumberBetween(request,userInput,min,max,1,true)
-
         boolean correct = false;
         T response = null;
-        do {
+        while(!correct){
             try {
                 response = userInput.apply("Gelieve een getal tussen " + min + " & " + max + " te geven.");
                 correct = ((response.compareTo(min) > 0 || response.compareTo(min) == 0) && (response.compareTo(max) < 1 || response.compareTo(max) == 0));
@@ -317,7 +316,7 @@ public class CommandLineInterface implements UserInterface {
             if (!correct) {
                 printMessage("Verkeerde input, probeer opnieuw.");
             }
-        } while (!correct);
+        }
         return response;
     }
     /**
@@ -349,7 +348,7 @@ public class CommandLineInterface implements UserInterface {
                 correct[0] = false;
             }
             if (!correct[0]) {
-                printMessage("Verkeerde input, probeer opnieuw.");
+                printMessage("Verkeerde inputb, probeer opnieuw.");
             }
         } while (!correct[0]);
         return result;
@@ -387,21 +386,18 @@ public class CommandLineInterface implements UserInterface {
                     correct = false;
                 }
             } while (!correct);
-
             return result;
         };
-
-
         return null;
     }*/
 
     private userInput<Double> getDoubleFromUser(){
         userInput<Double> getDoubleFromUser = request -> {
-            String response = getStringFromUser().apply(request);
             boolean correct = false;
             Double result = null;
             do {
                 try {
+                    String response = getStringFromUser().apply(request);
                     result = new Double(response);
                     correct = true;
                 } catch (NumberFormatException e) {
@@ -409,7 +405,6 @@ public class CommandLineInterface implements UserInterface {
                     correct = false;
                 }
             } while (!correct);
-
             return result;
         };
         return getDoubleFromUser;
@@ -417,11 +412,12 @@ public class CommandLineInterface implements UserInterface {
 
     private userInput<Integer> getIntFromUser(){
         userInput<Integer> getIntFromUser = request -> {
-            String response = getStringFromUser().apply(request);
+
             boolean correct = false;
             Integer result = null;
             do {
                 try {
+                    String response = getStringFromUser().apply(request);
                     result = new Integer(response);
                     correct = true;
                 } catch (NumberFormatException e) {
@@ -590,7 +586,8 @@ public class CommandLineInterface implements UserInterface {
         Consumer<List<T>> listPrint = listTemp -> {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < listTemp.size(); i++) {
-                sb.append(String.format("%3d. %s\n", i, listEntryPrinter.apply(listTemp.get(i))));
+                sb.append(String.format("%3d. %s", i, listEntryPrinter.apply(listTemp.get(i))));
+                sb.append("\n");
             }
             printMessage(sb.toString());
         };
