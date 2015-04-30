@@ -1,7 +1,7 @@
 package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
-import be.swop.groep11.main.resource.IPlan;
+import be.swop.groep11.main.resource.Plan;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -68,7 +68,7 @@ public class TaskUnavailable extends TaskStatus {
      * @param task De te plannen taak
      */
     @Override
-    public void plan(Task task, IPlan plan) {
+    public void plan(Task task, Plan plan) {
         task.setPlan(plan);
     }
 

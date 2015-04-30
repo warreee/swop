@@ -58,9 +58,9 @@ public class InputParser {
         System.out.println("Finished :)");
     }
 
-    private IPlan getPlan(int i, Task task){
+    private Plan getPlan(int i, Task task){
         Map<String, Object> planMap = (Map<String, Object>) ((ArrayList) values.get("plannings")).get(i);
-        IPlan plan = resourceManager.getNextPlans(1, task, parseTime((String) planMap.get("plannedStartTime"))).get(0);
+        Plan plan = resourceManager.getNextPlans(1, task, parseTime((String) planMap.get("plannedStartTime"))).get(0);
         task.plan(plan);
         // TODO: fix
         return null;
@@ -350,7 +350,7 @@ public class InputParser {
             if(plannedStartTime == null){
                 throw new IllegalArgumentException("Om reservaties uit te voeren is een geplande starttijd nodig.");
             }
-            IPlan plan = resourceManager.getNextPlans(1, task, plannedStartTime).get(0);
+            Plan plan = resourceManager.getNextPlans(1, task, plannedStartTime).get(0);
             plan.changeReservations(new ArrayList<>());
             Map<Integer, Map<String, LocalDateTime>> reservations = reservationsMap.get(taskList.size() - 1);
             for(Integer i: reservations.keySet()){

@@ -3,7 +3,7 @@ package be.swop.groep11.main.task;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
-import be.swop.groep11.main.resource.IPlan;
+import be.swop.groep11.main.resource.Plan;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.RequirementListBuilder;
 
@@ -11,8 +11,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -519,7 +517,7 @@ public class Task {
      * @param plan Het plan voor deze taak
      * @throws IllegalStateException De taak kan niet gepland worden.
      */
-    public void plan(IPlan plan) {
+    public void plan(Plan plan) {
         this.getStatus().plan(this, plan);
     }
 
@@ -537,9 +535,9 @@ public class Task {
         return plan.getStartTime();
     }
 
-    private IPlan plan;
+    private Plan plan;
 
-    protected void setPlan(IPlan plan) {
+    protected void setPlan(Plan plan) {
         plan.apply();
         this.plan = plan;
     }

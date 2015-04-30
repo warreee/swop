@@ -442,7 +442,7 @@ public class ResourceManagerTest {
         Task task = new Task("description",Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList);
 
         // plannen maken vanaf t3
-        List<IPlan> plans_t3 = resourceManager.getNextPlans(3, task, t3);
+        List<Plan> plans_t3 = resourceManager.getNextPlans(3, task, t3);
         assertEquals(t3, plans_t3.get(0).getStartTime());
         assertEquals(t4.plus(task.getEstimatedDuration()), plans_t3.get(0).getEndTime());
         assertEquals(t3.plusHours(1), plans_t3.get(1).getStartTime());
@@ -451,7 +451,7 @@ public class ResourceManagerTest {
         assertEquals(t4.plus(task.getEstimatedDuration()), plans_t3.get(2).getEndTime());
 
         // plannen maken vanaf t4
-        List<IPlan> plans_t4 = resourceManager.getNextPlans(4, task, t4);
+        List<Plan> plans_t4 = resourceManager.getNextPlans(4, task, t4);
         assertEquals(t4, plans_t4.get(0).getStartTime());
         assertEquals(t4.plus(task.getEstimatedDuration()), plans_t4.get(0).getEndTime());
         assertEquals(t4.plusHours(1), plans_t4.get(1).getStartTime());
@@ -490,7 +490,7 @@ public class ResourceManagerTest {
         Task task = new Task("description",Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList);
 
         // plan maken vanaf t1
-        IPlan plan = resourceManager.getNextPlans(1, task, t1).get(0);
+        Plan plan = resourceManager.getNextPlans(1, task, t1).get(0);
 
         List<ResourceInstance> newReservations = new ArrayList<>();
         newReservations.add(type2.getResourceInstances().get(0));
@@ -528,7 +528,7 @@ public class ResourceManagerTest {
         Task task = new Task("description", Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList);
 
         // plan maken vanaf t4
-        IPlan plan_t4 = resourceManager.getNextPlans(4, task, t4).get(0);
+        Plan plan_t4 = resourceManager.getNextPlans(4, task, t4).get(0);
 
         plan_t4.apply();
 

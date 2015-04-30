@@ -5,7 +5,6 @@ import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
@@ -239,7 +238,7 @@ public class ResourceManager {
      * @param plan Het gegeven plan
      * @throws IllegalArgumentException Het plan is niet geldig.
      */
-    private void makeReservationsForPlan(IPlan plan) throws IllegalArgumentException {
+    protected void makeReservationsForPlan(Plan plan) throws IllegalArgumentException {
         if (! plan.isValid()) {
             throw new IllegalArgumentException("Ongeldig plan");
         }
@@ -287,7 +286,7 @@ public class ResourceManager {
      * @param timeSpan         De gegeven tijdsspanne
      * @return Lijst van reservaties voor de resource instantie waarvan de tijdsspanne overlapt met de gegeven tijdsspanne
      */
-    private List<ResourceReservation> getConflictingReservations(ResourceInstance resourceInstance, TimeSpan timeSpan) {
+    protected List<ResourceReservation> getConflictingReservations(ResourceInstance resourceInstance, TimeSpan timeSpan) {
         List<ResourceReservation> conflictingReservations = new ArrayList<>();
         ImmutableList<ResourceReservation> reservations = this.getReservations(resourceInstance);
         for (ResourceReservation reservation : reservations) {
@@ -328,7 +327,7 @@ public class ResourceManager {
      * @param endTime De tijd waarop de reservaties moeten eindigen.
      * @throws IllegalArgumentException Wanneer de eindtijd voor een starttijd van een reservatie ligt.
      */
-    private void endReservationsFromTask(Task task, LocalDateTime endTime){
+    protected void endReservationsFromTask(Task task, LocalDateTime endTime){
         List<ResourceReservation> reservations = new ArrayList<>(this.getReservations(task));
         for(ResourceReservation reservation: reservations){
             TimeSpan newTimeSpan = new TimeSpan(reservation.getTimeSpan().getStartTime(), endTime);
@@ -416,14 +415,14 @@ public class ResourceManager {
      * @param dateTime Het gegeven tijdstip waarna de plannen moeten starten
      * @return Een lijst van lengte n van de eerstvolgende mogelijke plannen
      */
-    public List<IPlan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
+    public List<Plan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
         // TODO: dit is misschien nog niet effici�nt genoeg?
 
-        List<IPlan> plans = new LinkedList<>();
+        List<Plan> plans = new LinkedList<>();
 
         LocalDateTime startTime = getNextHour(dateTime);
         while (plans.size() < n) {
-            Plan nextPlan = new Plan(task, startTime);
+            Plan nextPlan = new Plan(task, startTime,this);
             if (nextPlan.isValidWithoutDevelopers()) {
                 plans.add(nextPlan);
             }
@@ -439,19 +438,22 @@ public class ResourceManager {
      * @param task     De te plannen taak
      * @param dateTime De starttijd
      */
-    public IPlan getCustomPlan(Task task, LocalDateTime dateTime) {
-        return new Plan(task, dateTime);
+    public Plan getCustomPlan(Task task, LocalDateTime dateTime) {
+        return new Plan(task, dateTime,this);
     }
+/*
 
     private class Plan implements IPlan {
 
-        /**
+        */
+/**
          * Constructor om een nieuw plan aan te maken met default reservaties voor de resource requirements van de gegeven taak.
          * Hierbij worden ook de default reservaties voor het plan toegevoegd.
          *
          * @param task      De gegeven taak
          * @param startTime De starttijd van het plan: moet op een uur vallen (zonder minuten)
-         */
+         *//*
+
         public Plan(Task task, LocalDateTime startTime) {
             if (task == null)
                 throw new IllegalArgumentException("Taak mag niet null zijn");
@@ -464,12 +466,14 @@ public class ResourceManager {
             this.makeDefaultReservations();
         }
 
-        /**
+        */
+/**
          * Controleert of dit plan geldig is.
          *
          * @return True als de reservaties niet conflicteren met andere reservaties
          *         en alle nodige reservaties gemaakt zijn.
-         */
+         *//*
+
         @Override
         public boolean isValid() {
 
@@ -498,9 +502,11 @@ public class ResourceManager {
             return true;
         }
 
-        /**
+        */
+/**
          *
-         */
+         *//*
+
         @Override
         public boolean isValidWithoutDevelopers() {
             // geen conflicten?
@@ -532,7 +538,8 @@ public class ResourceManager {
             return true;
         }
 
-        /*
+        */
+/*
          * Controleert of op de starttijd voor alle resource requirements de nodige resource instanties kunnen
          * gereserveerd worden voor de taak.
          *
@@ -554,18 +561,23 @@ public class ResourceManager {
                 }
             }
             return true;
-        } */
+        } *//*
 
-        /**
+
+        */
+/**
          * Maakt voor elk resource type in de requirement list van de taak de nodige reservaties.
-         */
+         *//*
+
         public void makeDefaultReservations() {
             this.reservations = calculateDefaultReservations(this.getTask(), this.getStartTime());
         }
 
-        /**
+        */
+/**
          * Geeft de taak van dit plan.
-         */
+         *//*
+
         @Override
         public Task getTask() {
             return task;
@@ -573,9 +585,11 @@ public class ResourceManager {
 
         private final Task task;
 
-        /**
+        */
+/**
          * Geeft de starttijd van dit plan.
-         */
+         *//*
+
         @Override
         public LocalDateTime getStartTime() {
             return startTime;
@@ -583,12 +597,14 @@ public class ResourceManager {
 
         private final LocalDateTime startTime;
 
-        /**
+        */
+/**
          * Geeft de eindtijd van dit plan.
          *
          * @return De laatste eindtijd van alle reservaties van het plan,
          * of starttijd + de estimated duration van de taak indien er geen reservaties zijn.
-         */
+         *//*
+
         @Override
         public LocalDateTime getEndTime() {
             if (this.getReservations().isEmpty()) {
@@ -606,11 +622,13 @@ public class ResourceManager {
 
         private List<ResourceReservation> reservations = new LinkedList<>();
 
-        /**
+        */
+/**
          * Geeft de reservaties van dit plan.
          *
          * @return De reservaties van dit plan en die eindigen allemaal op hetzelfde moment.
-         */
+         *//*
+
         @Override
         public ImmutableList<ResourceReservation> getReservations() {
             List<ResourceReservation> reservations = new LinkedList<>();
@@ -632,12 +650,14 @@ public class ResourceManager {
             return ImmutableList.copyOf(reservations);
         }
 
-        /**
+        */
+/**
          * Geeft de reservaties van dit plan voor een bepaalde resource type.
          *
          * @param resourceType Het resource type
          * @return De reservaties van dit plan en die eindigen allemaal op hetzelfde moment.
-         */
+         *//*
+
         @Override
         public ImmutableList<ResourceReservation> getReservations(AResourceType resourceType) {
             List<ResourceReservation> reservations = new LinkedList<>();
@@ -660,10 +680,12 @@ public class ResourceManager {
             return maxEndTime;
         }
 
-        /**
+        */
+/**
          * Gooit de huidige reservaties weg en voegt reservaties voor de gegeven resource instanties toe.
          * @param resourceInstances De gegeven resource instanties
-         */
+         *//*
+
         @Override
         public void changeReservations(List<ResourceInstance> resourceInstances) {
             this.reservations = new LinkedList<>();
@@ -672,10 +694,12 @@ public class ResourceManager {
             }
         }
 
-        /**
+        */
+/**
          * Voegt reservaties voor de gegeven resource instanties toe.
          * @param resourceInstances De gegeven resource instanties
-         */
+         *//*
+
         @Override
         public void addReservations(List<ResourceInstance> resourceInstances) {
             for (ResourceInstance resourceInstance : resourceInstances) {
@@ -683,12 +707,14 @@ public class ResourceManager {
             }
         }
 
-        /**
+        */
+/**
          * Voegt een reservatie voor een resource instantie toe aan dit plan.
          * De toegevoegde reservatie zal een specifieke reservatie zijn.
          * @param resourceInstance De te reserveren resource instantie
          * @throws IllegalArgumentException Er is in dit plan al een reservatie voor de gegeven resource instantie gemaakt.
-         */
+         *//*
+
         public void addReservation(ResourceInstance resourceInstance) {
             if (this.hasReservationFor(resourceInstance)) {
                 throw new IllegalArgumentException("Er is in dit plan al een reservatie voor de gegeven resource instantie gemaakt.");
@@ -700,9 +726,11 @@ public class ResourceManager {
                     true));
         }
 
-        /**
+        */
+/**
          * Controleert of dit plan een reservatie voor een resource instantie bevat.
-         */
+         *//*
+
         @Override
         public boolean hasReservationFor(ResourceInstance resourceInstance) {
             for (ResourceReservation reservation : this.reservations) {
@@ -713,9 +741,11 @@ public class ResourceManager {
             return false;
         }
 
-        /**
+        */
+/**
          * Geeft de taken die reservaties hebben die conflicteren met de reservaties van dit plan.
-         */
+         *//*
+
         @Override
         public List<Task> getConflictingTasks() {
             Set<Task> conflictingTasks = new HashSet<>();
@@ -728,11 +758,13 @@ public class ResourceManager {
             return new LinkedList<>(conflictingTasks);
         }
 
-        /**
+        */
+/**
          * Past dit plan toe door huidige de reservaties van de taak te verwijderen
          * en de reservaties van het plan toe te voegen.
          * @throws IllegalStateException De reservaties voor dit plan kunnen niet gemaakt worden.
-         */
+         *//*
+
         @Override
         public void apply() {
             try {
@@ -770,10 +802,12 @@ public class ResourceManager {
             return defaultReservations;
         }
 
-        /**
+        */
+/**
          * Geeft de gereserveerde resources van de taak weer vrij.
          * @param endTime De tijd waarop de reservaties van de taak moeten eindigen.
-         */
+         *//*
+
         @Override
         public void releaseResources(LocalDateTime endTime) {
             endReservationsFromTask(this.getTask(), endTime);
@@ -781,4 +815,5 @@ public class ResourceManager {
 
     }
 
+*/
 }
