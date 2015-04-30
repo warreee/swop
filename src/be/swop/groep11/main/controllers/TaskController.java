@@ -45,7 +45,7 @@ public class TaskController extends AbstractController {
             Project project =  getUserInterface().selectProjectFromList(projectRepository.getProjects());
             String description =  getUserInterface().requestString("Beschrijving:");
             Double acceptableDeviation =  getUserInterface().requestDouble("Aanvaardbare afwijking in procent:") / 100;
-            Duration estimatedDuration = Duration.ofMinutes(Integer.valueOf( getUserInterface().requestNumber("Geschatte duur in minuten:")).longValue());
+            Duration estimatedDuration = Duration.ofMinutes(getUserInterface().requestNumber("Geschatte duur in minuten:"));
 
             // Lees alle resource types in.
             Map<AResourceType, Integer> selectedTypes = new HashMap<>();
@@ -57,15 +57,15 @@ public class TaskController extends AbstractController {
             selectedTypes = addToResourceMap(resourceManager.getDeveloperType(), nbDevelopers, selectedTypes);
 
             // Laat gebruiker resource types selecteren.
-            String message = "Voeg resource types toe? (y/N)";
+            String message = "Voeg resource types toe?";
             while (getUserInterface().requestBoolean(message)){
                 try {
-                    AResourceType iResourceType = getUserInterface().selectFromList(resourceTypes, (x -> x.getName()));
+                    AResourceType iResourceType = getUserInterface().selectFromList(resourceTypes, AResourceType::getName);
                     Integer number = getUserInterface().requestNumber("Hoeveel wil je er?");
                     selectedTypes = addToResourceMap(iResourceType, number, selectedTypes);
                     resourceTypes.remove(iResourceType);
                     printResourceMap(selectedTypes);
-                    message = "\nWilt u nog resource types toevoegen? (y/N)";
+                    message = "\nWilt u nog resource types toevoegen?";
                 }
                 catch (EmptyListException e) {
                     getUserInterface().printMessage("Geen resource types om toe te voegen");
@@ -75,7 +75,7 @@ public class TaskController extends AbstractController {
             // Lees de afhankelijkheden in.
             List<Task> tasks = new ArrayList<>(project.getTasks());
             List<Task> selectedTasks = new ArrayList<>();
-            while ( getUserInterface().requestString("Voeg een afhankelijkheid toe? (y/N)").trim().equalsIgnoreCase("y")) {
+            while ( getUserInterface().requestBoolean("Voeg een afhankelijkheid toe?")) {
                 if (tasks.isEmpty()) {
                     getUserInterface().printMessage("Geen taken om toe te voegen...");
                     break;
@@ -90,7 +90,7 @@ public class TaskController extends AbstractController {
 
             // Vraag de gebruiker dat dit een alternatieve taak voor iets is als dat kan.
             Task alternativeTaskFor = null;
-            if ( (! project.getFailedTasks().isEmpty()) &&  getUserInterface().requestString("Is deze taak een alternatieve taak? (y/N)").trim().equalsIgnoreCase("y")) {
+            if ( (! project.getFailedTasks().isEmpty()) &&  getUserInterface().requestBoolean("Is deze taak een alternatieve taak?")) {
                 getUserInterface().printMessage("Deze taak zal een zal een alternatieve taak zijn voor de geselecteerde taak.");
                 alternativeTaskFor =  getUserInterface().selectTaskFromList(project.getFailedTasks());
             }
@@ -156,10 +156,8 @@ public class TaskController extends AbstractController {
 
     private void updateTask(Task task) throws CancelException{
         try {
-            String status =  getUserInterface().requestString("Status: FAILED of FINISHED (of laat leeg om status niet te wijzigen):");
             ArrayList<String> options = new ArrayList<>(Arrays.asList("FAIL", "FINISH", "EXECUTE", "Niks doen"));
-            status = getUserInterface().selectFromList(options, (x -> x));
-            //TODO implement dit als een selectie uit een lijst. zodat de gebruiker geen verkeerde input kan geven. (ook makkeljker om te testen)
+            String status = getUserInterface().selectFromList(options, x -> x);
             if(!status.equals("Niks doen")) {
                 doTransition(status, task);
             }
