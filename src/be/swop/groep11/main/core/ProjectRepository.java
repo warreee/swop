@@ -69,6 +69,23 @@ public class ProjectRepository {
     }
 
     /**
+     * Geeft een lijst van alle executing taken in deze project repository.
+     */
+    public ImmutableList<Task> getAllExecutingTasks(){
+        List<Task> tasks = new ArrayList<Task>();
+        ImmutableList<Project> projects = this.getProjects();
+        for (Project project : projects) {
+
+            for (Task task : project.getTasks()) {
+                if (task.getStatusString().equals("EXECUTING")) {
+                    tasks.add(task);
+                }
+            }
+        }
+        return ImmutableList.copyOf(tasks);
+    }
+
+    /**
      * Geeft een ProjectRepositoryMemento object die de status van deze project repository bevat.
      */
     public IProjectRepositoryMemento createMemento() {

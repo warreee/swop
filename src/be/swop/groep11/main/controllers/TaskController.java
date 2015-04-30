@@ -4,6 +4,7 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalRequirementAmountException;
+import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.exception.EmptyListException;
@@ -126,7 +127,9 @@ public class TaskController extends AbstractController {
      */
     public void updateTask() {
         try {
-            Task task =  getUserInterface().selectTaskFromList(projectRepository.getAllAvailableTasks());
+            List<Task> tasks = new LinkedList<>(projectRepository.getAllAvailableTasks());
+            tasks.addAll(projectRepository.getAllExecutingTasks());
+            Task task =  getUserInterface().selectTaskFromList(ImmutableList.copyOf(tasks));
             updateTask(task);
         }
         catch (CancelException|EmptyListException e) {
@@ -162,7 +165,7 @@ public class TaskController extends AbstractController {
                 doTransition(status, task);
             }
         }
-        catch (IllegalArgumentException e) {
+        catch (IllegalArgumentException|IllegalStateTransitionException e) {
             getUserInterface().printException(e);
             updateTask(task);
         }

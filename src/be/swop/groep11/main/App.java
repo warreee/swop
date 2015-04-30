@@ -38,7 +38,7 @@ public class App {
         initControllers();
         initBehaviourMapping();
 
-        //addTempDomainObjects();
+        addTempDomainObjects();
     }
     private SystemTime systemTime;
     private CommandLineInterface cli;

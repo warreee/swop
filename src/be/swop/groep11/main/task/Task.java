@@ -480,8 +480,9 @@ public class Task {
         for (Task task : this.getDependentTasks()) {
             try {
                 task.makeAvailable();
-            } catch (IllegalStateTransitionException e) {
-                e.printStackTrace();
+            }
+            catch (IllegalStateTransitionException e) {
+                // do nothing
             }
         }
     }
