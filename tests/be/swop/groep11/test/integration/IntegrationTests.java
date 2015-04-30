@@ -6,7 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({AdvanceTimeScenarioTest.class,CreateProjectScenarioTest.class,CreateTaskScenarioTest.class,UpdateTaskStatusScenarioTest.class,ShowProjectsScenarioTest.class,PlanTaskScenarioTest.class})
+@SuiteClasses({AdvanceTimeScenarioTest.class,CreateProjectScenarioTest.class,CreateTaskScenarioTest.class,UpdateTaskStatusScenarioTest.class,ShowProjectsScenarioTest.class,PlanTaskScenarioTest.class,
+SimulationScenarioTest.class})
 /**
  * Dit functioneert als verzameling voor alle IntegrationTests.
  */

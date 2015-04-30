@@ -126,7 +126,6 @@ public class TaskController extends AbstractController {
      */
     public void updateTask() {
         try {
-            //TODO select from list voor ieder project apart
             Task task =  getUserInterface().selectTaskFromList(projectRepository.getAllAvailableTasks());
             updateTask(task);
         }
