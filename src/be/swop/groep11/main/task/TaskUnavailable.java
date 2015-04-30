@@ -21,6 +21,11 @@ public class TaskUnavailable extends TaskStatus {
     }
 
     @Override
+    protected void makeAvailable(Task task) {
+
+    }
+
+    @Override
     public TaskStatusEnum getStatus() {
         return TaskStatusEnum.UNAVAILABLE;
     }
