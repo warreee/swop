@@ -15,6 +15,11 @@ public class TaskUnavailable extends TaskStatus {
     }
 
     @Override
+    protected void makeUnavailable(Task task) {
+        throw new IllegalStateTransition("De taak kan niet naar de status UNAVAILABLE gaan want was dit reeds!");
+    }
+
+    @Override
     public TaskStatusEnum getStatus() {
         return TaskStatusEnum.UNAVAILABLE;
     }

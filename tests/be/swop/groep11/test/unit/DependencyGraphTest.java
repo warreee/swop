@@ -135,8 +135,8 @@ public class DependencyGraphTest {
         taskD.addNewDependencyConstraint(taskB);
         leafs = dependencyGraph.getLeafs();
 
-        assertEquals(leafs.get(1), taskC);
-        assertEquals(leafs.get(0), taskD);
+        assertTrue(leafs.contains(taskC));
+        assertTrue(leafs.contains(taskD));
     }
 
     /*
@@ -145,9 +145,19 @@ public class DependencyGraphTest {
      * C -> D /
      */
     @Test
-    public void getPathsToTest(Task task) {
-
+    public void getPathsToTest() {
+        taskB.addNewDependencyConstraint(taskA);
+        taskE.addNewDependencyConstraint(taskB);
+        taskD.addNewDependencyConstraint(taskC);
+        taskE.addNewDependencyConstraint(taskD);
         ArrayList<ArrayList<Task>> paths = dependencyGraph.getPathsTo(taskE);
+        assertEquals(paths.size(), 2);
+        assertTrue(paths.get(0).contains(taskE));
+        assertTrue(paths.get(0).contains(taskB));
+        assertTrue(paths.get(0).contains(taskA));
+        assertTrue(paths.get(1).contains(taskE));
+        assertTrue(paths.get(1).contains(taskC));
+        assertTrue(paths.get(1).contains(taskD));
 
     }
 

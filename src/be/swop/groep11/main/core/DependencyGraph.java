@@ -169,8 +169,8 @@ public class DependencyGraph {
                 visit(unMarked.get(0), tempMarked, finalMarked, result);
             }
         } catch (IllegalArgumentException e) {
-                undoAddDependency(dependent, dependingOn);
-                return true;
+            undoAddDependency(dependent, dependingOn);
+            return true;
         }
         return false;
     }
@@ -191,7 +191,7 @@ public class DependencyGraph {
     }
 
     private ArrayList<Task> allTasks(){
-       return new ArrayList<>(this.dependentMap.keySet());
+        return new ArrayList<>(this.dependentMap.keySet());
     }
 
 
@@ -209,6 +209,7 @@ public class DependencyGraph {
     public ArrayList<ArrayList<Task>> getPathsTo(Task task) {
         ArrayList<Task> currentPath = new ArrayList<>();
         ArrayList<ArrayList<Task>> paths = new ArrayList<>();
+        currentPath.add(task);
 
         return getPathsTo(task, currentPath, paths, task);
 
@@ -220,15 +221,20 @@ public class DependencyGraph {
      * @return
      */
     private ArrayList<ArrayList<Task>> getPathsTo(Task task, ArrayList<Task> currentPath, ArrayList<ArrayList<Task>> paths, Task leaf) {
+        Set<Task> dependingon = task.getDependingOnTasks();
+        if (task.getDependingOnTasks().isEmpty()){
+            ArrayList<Task> path = new ArrayList<>(3);
+            currentPath.forEach(path::add);
+            paths.add(path);
+            //currentPath.remove(currentPath.size() - 1);
+        } else {
 
-        for (Task T : task.getDependingOnTasks()) {
-            if (T.getDependingOnTasks().isEmpty()){ // komt aan bij rootnode
-                currentPath.add(0, leaf);
+            for (Task T : task.getDependingOnTasks()) {
+
                 currentPath.add(T);
-                paths.add(currentPath);
-            } else {
-                currentPath.add(T);
-                getPathsTo(task, currentPath, paths, leaf);
+                getPathsTo(T, currentPath, paths, leaf);
+                currentPath.remove(T);
+
             }
         }
         return paths;

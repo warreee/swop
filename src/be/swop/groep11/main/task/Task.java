@@ -11,6 +11,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -243,8 +245,13 @@ public class Task {
      */
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyGraph.addNewDependency(this, dependingOn);
-        if(!dependingOn.getStatus().getClass().equals(TaskFinished.class)) {
-            makeUnAvailable();
+
+        if(!dependingOn.getStatus().getClass().equals(TaskFinished.class)
+                || !dependingOn.getStatus().getClass().equals(TaskFailed.class)) {
+            if (!this.getStatus().getClass().equals(TaskUnavailable.class)){
+                this.makeUnAvailable();
+            }
+
         }
     }
 
