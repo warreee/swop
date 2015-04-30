@@ -29,11 +29,15 @@ public abstract class ResourceTypeConstraint {
      */
     protected ResourceTypeConstraint(AResourceType ownerType, AResourceType constrainingType, int min, int max) throws IllegalArgumentException{
         if(!areValidTypes(ownerType, constrainingType)){
+            throw new IllegalArgumentException();
+        }
+        if(!areValidBounds(min, max)){
+            throw new IllegalArgumentException("Ongeldige min en max voor constraint");
+        }
+        if (!recursiveValidTypesCheck(ownerType, constrainingType, min, max)) {
             throw new UnsatisfiableRequirementException();
         }
-//        if(!areValidBounds(ownerType, constrainingType, min, max)){
-//            throw new IllegalArgumentException("Ongeldige min en max voor constraint");
-//        }
+
         this.ownerType = ownerType;
         this.constrainingType = constrainingType;
         this.min = min;
@@ -44,15 +48,19 @@ public abstract class ResourceTypeConstraint {
      * @return Waar indien ownerType & constrainingType niet null zijn.
      */
     private boolean areValidTypes(AResourceType ownerType,AResourceType constrainingType) {
-        return ownerType != null && constrainingType != null && recursiveCheck(ownerType,constrainingType);
+        return ownerType != null && constrainingType != null;
     }
 
-    private boolean recursiveCheck(AResourceType ownerType,AResourceType newConstrainingType) {
+    private boolean recursiveValidTypesCheck(AResourceType ownerType,AResourceType newConstrainingType,int min,int max) {
 
         boolean result = true;
         for (ResourceTypeConstraint typeConstraint : ownerType.getTypeConstraints()) {
             result &= typeConstraint.getConstrainingType() != newConstrainingType &&
-            recursiveCheck(typeConstraint.getConstrainingType(),newConstrainingType);
+                    recursiveValidTypesCheck(typeConstraint.getConstrainingType(), newConstrainingType,min,max);
+        }
+        if (newConstrainingType.hasConstraintFor(ownerType)) {
+            ResourceTypeConstraint rtc = newConstrainingType.getConstraintFor(ownerType);
+            result &= !(rtc.getMin() > max);
         }
         return result;
     }
@@ -86,42 +94,15 @@ public abstract class ResourceTypeConstraint {
 
 
   /*  *//**
-     * Controleer voor de gegeven IResourceTypes of de gegeven grenzen kunnen kloppen
-     * @param typeA De eigenaar van de constraint
-     * @param typeB Het beperkende IResourceType voor deze constraint
+     * Controleer voor de gegeven min en max grens mogenlijk zijn
      * @param bMin  Het minimum verwacht aantal resource instances
      * @param bMax  Het maximum toegelaten aantal resource instances
-     * @return      Waar indien typeB geen constraint heeft voor TypeA,
-     *              Anders
-     *                      Waar indien de gegeven bMin en bMax grenzen,
-     *                      de minimum en maximum grenzen van de constraint in typeB voor typeA
-     *                      niet overschrijden.
-     *                      Anders niet waar.
-     *//*
-    private static boolean areValidBounds(AResourceType typeA,AResourceType typeB,int bMin, int bMax) {
-        if(!typeB.hasConstraintFor(typeA)){
-            return true;
-        }else{
-            //wel een constraint voor typeA aanwezig in typeB
-            ResourceTypeConstraint consA = typeB.getConstraintFor(typeA);
-            int aMin = consA.getMin();
-            int aMax = consA.getMax();
-            boolean result;
-
-            if(aMin < bMin){
-                result = false;
-            }else if(aMin > bMax) {
-                result = false;
-            }else if (aMax < bMin){
-                result = false;
-            }else{
-                //aMax < bMax is ok.
-                //aMax > bMax is ok.
-                result = true;
-            }
-            return result;
-        }
-    }*/
+     * @return      Waar indien grenzen >= 0 en bMax is groter of gelijk aan bMin
+     *
+     */
+    private static boolean areValidBounds(int bMin, int bMax) {
+            return bMin >= 0 && bMax >= 0 && bMax-bMin >= 0;
+    }
 
  /*   *//**
      * Controleer of deze Constraint vervuld is voor de gegeven IRequirementList
