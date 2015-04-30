@@ -52,12 +52,6 @@ public class RequirementListBuilder {
             return requirements.containsKey(type);
         }
 
-        @Override
-        public int countRequiredInstances(AResourceType type) {
-            ResourceRequirement req = requirements.get(type);
-            return (req == null) ? 0 : req.getAmount();
-        }
-
         /**
          * Controleer of deze lijst met Requirements geldig blijft. Indien er een requirement voor het gegeven IResourceType
          * en hoeveelheid zou worden toegevoegd.
