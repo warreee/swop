@@ -139,7 +139,17 @@ public class DependencyGraphTest {
         assertEquals(leafs.get(0), taskD);
     }
 
+    /*
+     * A -> B \
+     *          E
+     * C -> D /
+     */
+    @Test
+    public void getPathsToTest(Task task) {
 
+        ArrayList<ArrayList<Task>> paths = dependencyGraph.getPathsTo(taskE);
+
+    }
 
 
 }

@@ -199,4 +199,37 @@ public class DependencyGraph {
         allTasks().stream().filter(node -> dependentMap.get(node).size() == 0).forEach(leafs::add);
         return leafs;
     }
+
+    /**
+     * Zoekt recursief een pad dat begint met een rootnode
+     * @param task
+     * @return
+     */
+    public ArrayList<ArrayList<Task>> getPathsTo(Task task) {
+        ArrayList<Task> currentPath = new ArrayList<>();
+        ArrayList<ArrayList<Task>> paths = new ArrayList<>();
+
+        return getPathsTo(task, currentPath, paths, task);
+
+    }
+
+    /**
+     * Zoekt recursief een pad dat begint met een rootnode
+     * @param task
+     * @return
+     */
+    private ArrayList<ArrayList<Task>> getPathsTo(Task task, ArrayList<Task> currentPath, ArrayList<ArrayList<Task>> paths, Task leaf) {
+
+        for (Task T : task.getDependingOnTasks()) {
+            if (T.getDependingOnTasks().isEmpty()){ // komt aan bij rootnode
+                currentPath.add(0, leaf);
+                currentPath.add(T);
+                paths.add(currentPath);
+            } else {
+                currentPath.add(T);
+                getPathsTo(task, currentPath, paths, leaf);
+            }
+        }
+        return paths;
+    }
 }
