@@ -348,6 +348,7 @@ public class InputParser {
             for(Developer developer: taskDevelopers){
                 plan.addReservation(developer);
             }
+//            task.plan(plan);
             plan.apply();
         }
 

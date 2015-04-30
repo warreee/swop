@@ -3,8 +3,8 @@ package be.swop.groep11.main.task;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
-import be.swop.groep11.main.resource.Plan;
 import be.swop.groep11.main.resource.IRequirementList;
+import be.swop.groep11.main.resource.Plan;
 import be.swop.groep11.main.resource.RequirementListBuilder;
 
 import java.time.Duration;
@@ -17,7 +17,7 @@ import java.util.Set;
  * Stelt een taak voor met een beschrijving, starttijd, eindtijd, verwachte duur en een aanvaardbare marge.
  * Een taak behoort heeft een lijst van dependency constraints.
  */
-public class Task {
+public class Task{
 
     /**
      * Constructor om een nieuwe taak te maken.
@@ -252,7 +252,6 @@ public class Task {
     /**
      * Status van de taak
      */
-
     private TaskStatus status;
     /**
      * Geeft de status van deze taak, er wordt telkens een nieuw object aangemaakt zodat de interne variabele niet wordt terugggeven.
@@ -357,7 +356,6 @@ public class Task {
     protected void setStatus(TaskStatus status) {
         this.status = status;
     }
-
 
     public enum FinishedStatus {
         EARLY,

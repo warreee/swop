@@ -100,9 +100,9 @@ public class ActionBehaviourMapping {
     public void executeAction(Action action){
         HashMap<Action,ActionBehaviour> map = getMappingFor(getActiveController());
 
-        ActionBehaviour strategy = map.get(action);
-        if(strategy != null){
-            strategy.execute();
+        ActionBehaviour behaviour = map.get(action);
+        if(behaviour != null){
+            behaviour.execute();
         }else{
             //Action niet herkend!
             getInvalidBehaviour().execute();
@@ -134,7 +134,7 @@ public class ActionBehaviourMapping {
      *                      Deze zijn niet geldig indien ze niet geinitialiseerd zijn.
      */
     public void addDefaultBehaviour(Action action, ActionBehaviour behaviour) throws IllegalArgumentException{
-        if(!isValidActionStrategy(action, behaviour)) {
+        if(!isValidActionBehaviour(action, behaviour)) {
             throw new IllegalArgumentException("Invalid action & ActionBehaviour");
         }
         getDefaultMap().put(action, behaviour);
@@ -146,7 +146,7 @@ public class ActionBehaviourMapping {
      * @param behaviour      De te controleren ActionBehaviour
      * @return      Waar indien action & behaviour geinitialiseerd zijn.
      */
-    private boolean isValidActionStrategy(Action action, ActionBehaviour behaviour) {
+    private boolean isValidActionBehaviour(Action action, ActionBehaviour behaviour) {
         return action != null & behaviour != null;
     }
 

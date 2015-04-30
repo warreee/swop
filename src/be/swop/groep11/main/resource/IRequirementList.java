@@ -45,4 +45,5 @@ public interface IRequirementList{
      * @return Een Iterator<ResourceRequirement>
      */
     Iterator<ResourceRequirement> iterator();
+
 }
