@@ -2,6 +2,7 @@ package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.resource.IPlan;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.RequirementListBuilder;
@@ -474,7 +475,7 @@ public class Task {
         for (Task task : this.getDependentTasks()) {
             try {
                 task.makeAvailable();
-            } catch (IllegalStateTransition e) {
+            } catch (IllegalStateTransitionException e) {
                 e.printStackTrace(); // TODO: is deze try catch juist geïmplementeerd?
             }
         }

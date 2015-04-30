@@ -3,7 +3,7 @@ package be.swop.groep11.main.resource;
 import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequiresConstraint;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
-import be.swop.groep11.main.ui.IllegalInputException;
+import be.swop.groep11.main.exception.IllegalInputException;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalTime;

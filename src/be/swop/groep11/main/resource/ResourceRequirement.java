@@ -1,5 +1,6 @@
 package be.swop.groep11.main.resource;
 
+import be.swop.groep11.main.exception.IllegalRequirementAmountException;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 
 /**

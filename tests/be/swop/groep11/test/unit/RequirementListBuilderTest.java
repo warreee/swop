@@ -1,5 +1,7 @@
 package be.swop.groep11.test.unit;
 
+import be.swop.groep11.main.exception.IllegalRequirementAmountException;
+import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
 import be.swop.groep11.main.resource.*;
 import org.junit.Before;
 import org.junit.Test;

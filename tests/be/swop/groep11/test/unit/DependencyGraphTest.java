@@ -1,7 +1,7 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.DependencyGraph;
-import be.swop.groep11.main.core.IllegalDependencyException;
+import be.swop.groep11.main.exception.IllegalDependencyException;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;

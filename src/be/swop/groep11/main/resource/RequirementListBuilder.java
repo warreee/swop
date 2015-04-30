@@ -1,5 +1,7 @@
 package be.swop.groep11.main.resource;
 
+import be.swop.groep11.main.exception.IllegalRequirementAmountException;
+import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 
 import java.util.*;
@@ -30,7 +32,7 @@ public class RequirementListBuilder {
      * @throws IllegalRequirementAmountException
      *
      */
-    public void addNewRequirement(AResourceType type, int amount) throws IllegalRequirementAmountException,IllegalArgumentException,UnsatisfiableRequirementException{
+    public void addNewRequirement(AResourceType type, int amount) throws IllegalRequirementAmountException,IllegalArgumentException,UnsatisfiableRequirementException {
         this.reqList.addRequirement(type,amount);
     }
 

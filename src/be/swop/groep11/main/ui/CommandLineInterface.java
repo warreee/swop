@@ -3,6 +3,8 @@ package be.swop.groep11.main.ui;
 import be.swop.groep11.main.actions.*;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.exception.EmptyListException;
+import be.swop.groep11.main.exception.IllegalActionException;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 

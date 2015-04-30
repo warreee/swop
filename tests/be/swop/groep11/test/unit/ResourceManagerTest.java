@@ -3,6 +3,7 @@ package be.swop.groep11.test.unit;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;

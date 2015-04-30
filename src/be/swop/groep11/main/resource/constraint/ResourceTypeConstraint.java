@@ -1,7 +1,7 @@
 package be.swop.groep11.main.resource.constraint;
 
 import be.swop.groep11.main.resource.AResourceType;
-import be.swop.groep11.main.resource.UnsatisfiableRequirementException;
+import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
 
 /**
  * Created by Ronald on 9/04/2015.

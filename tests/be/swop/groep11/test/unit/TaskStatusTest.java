@@ -2,7 +2,7 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.task.IllegalStateTransition;
+import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,14 +84,14 @@ public class TaskStatusTest {
         assertTrue(task1.getStatusString().equals("EXECUTING"));
     }
 
-    @Test(expected = IllegalStateTransition.class)
+    @Test(expected = IllegalStateTransitionException.class)
     public void availableToFailedTest() throws Exception {
         assertTrue(task1.getStatusString().equals("AVAILABLE"));
         task1.fail(now);
     }
 
 
-    @Test(expected = IllegalStateTransition.class)
+    @Test(expected = IllegalStateTransitionException.class)
     public void availableToFinishedTest() throws Exception {
         assertTrue(task1.getStatusString().equals("AVAILABLE"));
         task1.finish(now);
@@ -115,7 +115,7 @@ public class TaskStatusTest {
         assertEquals(LocalDateTime.of(2015, 3, 12, 10, 0), task1.getEndTime());
     }
 
-    @Test(expected = IllegalStateTransition.class)
+    @Test(expected = IllegalStateTransitionException.class)
     public void executingToExecuting() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.execute(LocalDateTime.of(2015, 3, 12, 18, 0));
@@ -123,7 +123,7 @@ public class TaskStatusTest {
 
     //////////////////////// FINISHED___TO____ //////////////////////
 
-    @Test(expected = IllegalStateTransition.class)
+    @Test(expected = IllegalStateTransitionException.class)
     public void finishedToExecuting() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.finish(LocalDateTime.of(2015, 3, 12, 8, 0).plusHours(2));
@@ -131,7 +131,7 @@ public class TaskStatusTest {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0).plusHours(4));
     }
 
-    @Test(expected = IllegalStateTransition.class)
+    @Test(expected = IllegalStateTransitionException.class)
     public void finishedToFailed() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
@@ -139,7 +139,7 @@ public class TaskStatusTest {
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
-    @Test(expected = IllegalStateTransition.class)
+    @Test(expected = IllegalStateTransitionException.class)
     public void finishedToFinished() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
@@ -149,7 +149,7 @@ public class TaskStatusTest {
 
     //////////////////////// FAILED___TO____ //////////////////////
 
-    @Test(expected = IllegalStateTransition.class)
+    @Test(expected = IllegalStateTransitionException.class)
     public void failedToExecuting() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
@@ -157,7 +157,7 @@ public class TaskStatusTest {
         task1.execute(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
-    @Test(expected = IllegalStateTransition.class)
+    @Test(expected = IllegalStateTransitionException.class)
     public void failedToFinished() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
@@ -165,7 +165,7 @@ public class TaskStatusTest {
         task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
-    @Test(expected = IllegalStateTransition.class)
+    @Test(expected = IllegalStateTransitionException.class)
     public void failedToFailed() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
