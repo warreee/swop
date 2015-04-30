@@ -38,8 +38,7 @@ public class App {
         initControllers();
         initBehaviourMapping();
 
-        // TODO: geen temp domain objects toevoegen bij uiteindelijke versie van het programma!!!!!!!
-        addTempDomainObjects();
+        //addTempDomainObjects();
     }
     private SystemTime systemTime;
     private CommandLineInterface cli;
