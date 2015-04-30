@@ -247,7 +247,7 @@ public class Task {
         dependencyGraph.addNewDependency(this, dependingOn);
 
         if(!dependingOn.getStatus().getClass().equals(TaskFinished.class)
-                || !dependingOn.getStatus().getClass().equals(TaskFailed.class)) {
+                && !dependingOn.getStatus().getClass().equals(TaskFailed.class)) {
             if (!this.getStatus().getClass().equals(TaskUnavailable.class)){
                 this.makeUnAvailable();
             }
@@ -264,6 +264,7 @@ public class Task {
      * Geeft de status van deze taak, er wordt telkens een nieuw object aangemaakt zodat de interne variabele niet wordt terugggeven.
      */
     public TaskStatus getStatus() {
+        // TODO: berekenen of de taak available of unavailable is indien de taak niet executing/finished/failed is
         return status.getTaskStatus();
     }
 

@@ -5,6 +5,7 @@ import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
@@ -169,7 +170,8 @@ public class ResourceManager {
      * @throws IllegalArgumentException De resource instantie is niet beschikbaar in de gegeven tijdsspanne,
      *                                  of de gegeven taak is null
      */
-    public void makeReservation(Task task, ResourceInstance resourceInstance, TimeSpan timeSpan, boolean isSpecific) {
+
+    private void makeReservation(Task task, ResourceInstance resourceInstance, TimeSpan timeSpan, boolean isSpecific) {
         if (task == null)
             throw new IllegalArgumentException("Taak mag niet null zijn");
         if (! isAvailable(resourceInstance, timeSpan))
@@ -431,6 +433,15 @@ public class ResourceManager {
         }
 
         return plans;
+    }
+
+    /**
+     * Geeft een plan met de gegeven starttijd, ook al is de starttijd niet geldig.
+     * @param task     De te plannen taak
+     * @param dateTime De starttijd
+     */
+    public IPlan getCustomPlan(Task task, LocalDateTime dateTime) {
+        return new Plan(task, dateTime);
     }
 
     private class Plan implements IPlan {
@@ -711,7 +722,7 @@ public class ResourceManager {
             Set<Task> conflictingTasks = new HashSet<>();
             for (ResourceReservation reservation : this.getReservations()) {
                 List<ResourceReservation> conflictingReservations = getConflictingReservations(reservation.getResourceInstance(), reservation.getTimeSpan());
-                if (conflictingReservations.isEmpty()) {
+                if (! conflictingReservations.isEmpty()) {
                     conflictingTasks.add(conflictingReservations.get(0).getTask());
                 }
             }
