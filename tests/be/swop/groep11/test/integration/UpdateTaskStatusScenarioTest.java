@@ -11,10 +11,15 @@ import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.function.Function;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -51,7 +56,7 @@ public class UpdateTaskStatusScenarioTest {
         //stubbing
         when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
-        when(mockedUI.requestString(anyString())).thenReturn("EXECUTE");
+        when(mockedUI.selectFromList(anyListOf(String.class), anyObject())).thenReturn("EXECUTE");
 
         taskController = new TaskController(repository,systemTime,mockedUI, resourceManager);
         taskController.updateTask();
@@ -62,7 +67,7 @@ public class UpdateTaskStatusScenarioTest {
         //stubbing
         when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
         when(mockedUI.requestDatum(anyString())).thenThrow(new CancelException("cancel in test")).thenReturn(now.plusDays(1));
-        when(mockedUI.requestString(anyString())).thenReturn("FINISHED");
+        when(mockedUI.selectFromList(anyListOf(String.class), anyObject())).thenThrow(new CancelException("cancel in test")).thenReturn("Niks doen");
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         //Cancel exception wordt opgevangen in de controller.
@@ -73,14 +78,20 @@ public class UpdateTaskStatusScenarioTest {
     @Test (expected = StopTestException.class)
     public void updateTask_invalidStartAndDueTimeTest() throws Exception {
         //stubbing
-        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        projects.get(0).addNewTask("description", 0.1, Duration.ofHours(1));
+        tasks = projects.get(0).getTasks();
+        when(mockedUI.selectTaskFromList(anyObject())).thenReturn(tasks.get(0));
         when(mockedUI.requestDatum(anyString())).thenReturn(now.plusDays(1)).thenReturn(now);
-        when(mockedUI.requestString(anyString())).thenReturn("FINISHED");
+        when(mockedUI.selectFromList(anyListOf(String.class), anyObject())).thenReturn("EXECUTE").thenReturn("FINISH");
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         taskController = new TaskController(repository,systemTime,mockedUI, resourceManager);
         taskController.updateTask();
+        taskController.updateTask();
     }
+
+    /*
+    Niet meer nodig omdat gebruiker nu alleen uit "FAIL", "FINISH", "EXECUTE", "Niks doen" kan kiezen?
 
     @Test (expected = StopTestException.class)
     public void updateTask_invalidNewStatusUnavailableTest() throws Exception {
@@ -91,7 +102,12 @@ public class UpdateTaskStatusScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         taskController = new TaskController(repository,systemTime,mockedUI, resourceManager);
-        taskController.updateTask();    }
+        taskController.updateTask();
+    }
+    */
+
+    /*
+    Niet meer nodig omdat gebruiker nu alleen uit "FAIL", "FINISH", "EXECUTE", "Niks doen" kan kiezen?
 
     @Test (expected = StopTestException.class)
     public void updateTask_invalidNewStatusAvailableTest() throws Exception {
@@ -104,6 +120,7 @@ public class UpdateTaskStatusScenarioTest {
         taskController = new TaskController(repository,systemTime,mockedUI, resourceManager);
         taskController.updateTask();
     }
+    */
 
 
 }

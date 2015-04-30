@@ -5,6 +5,7 @@ import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
@@ -13,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -41,6 +43,8 @@ public class CreateTaskScenarioTest {
         projectRepository = new ProjectRepository(systemTime);
         resourceManager = new ResourceManager();
 
+        addTempDomainObjects();
+
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
         this.taskController = new TaskController(projectRepository,systemTime,mockedUI, resourceManager);
 
@@ -53,7 +57,7 @@ public class CreateTaskScenarioTest {
         //stubbing
         when(mockedUI.requestString(anyString())).thenReturn("beschrijving Test");
         when(mockedUI.requestDouble(anyString())).thenReturn(new Double(50));
-        when(mockedUI.requestNumber(anyString())).thenReturn(8);
+        when(mockedUI.requestNumber(anyString())).thenReturn(2);
         when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
 
         taskController.createTask();
@@ -132,6 +136,25 @@ public class CreateTaskScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         taskController.createTask();
+    }
+
+    private void addTempDomainObjects() {
+
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter SWOP");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ward");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ronald");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Robin");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Arne");
+
+        resourceManager.addNewResourceType("Auto");
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Aston Martin Rapide");
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Toyota Auris");
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Rolls Royce Phantom");
+
+        resourceManager.addNewResourceType("Koets", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(14, 0)));
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Koets"), "Koets 1");
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Koets"), "Koets 2");
+
     }
 
 }

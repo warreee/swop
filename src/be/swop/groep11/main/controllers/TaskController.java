@@ -172,13 +172,13 @@ public class TaskController extends AbstractController {
         status = status.toLowerCase();
         switch (status) {
             case "execute":
-                task.execute(getSystemTime().getCurrentSystemTime());
+                task.execute(getUserInterface().requestDatum("Starttijd:"));
                 break;
             case "fail":
-                task.fail(getSystemTime().getCurrentSystemTime());
+                task.fail(getUserInterface().requestDatum("Eindtijd:"));
                 break;
             case "finish":
-                task.finish(getSystemTime().getCurrentSystemTime());
+                task.finish(getUserInterface().requestDatum("Eindtijd:"));
                 break;
             default:
                 throw new IllegalArgumentException("Een verkeerd status werd meegegeven!");
