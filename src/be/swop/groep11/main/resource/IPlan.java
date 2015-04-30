@@ -66,6 +66,12 @@ public interface IPlan {
         void addReservations(List<ResourceInstance> resourceInstances);
 
         /**
+         * Voegt een reservatie voor de gegeven resourceInstance toe aan het plan.
+         * @param resourceInstance
+         */
+        void addReservation(ResourceInstance resourceInstance);
+
+        /**
          * Controleert of het plan een reservatie voor een resource instantie bevat.
          */
         boolean hasReservationFor(ResourceInstance resourceInstance);

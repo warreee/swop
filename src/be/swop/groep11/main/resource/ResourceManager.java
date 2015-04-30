@@ -170,7 +170,8 @@ public class ResourceManager {
      * @throws IllegalArgumentException De resource instantie is niet beschikbaar in de gegeven tijdsspanne,
      *                                  of de gegeven taak is null
      */
-    public void makeReservation(Task task, ResourceInstance resourceInstance, TimeSpan timeSpan, boolean isSpecific) {
+
+    private void makeReservation(Task task, ResourceInstance resourceInstance, TimeSpan timeSpan, boolean isSpecific) {
         if (task == null)
             throw new IllegalArgumentException("Taak mag niet null zijn");
         if (! isAvailable(resourceInstance, timeSpan))

@@ -247,7 +247,7 @@ public class Task {
         dependencyGraph.addNewDependency(this, dependingOn);
 
         if(!dependingOn.getStatus().getClass().equals(TaskFinished.class)
-                || !dependingOn.getStatus().getClass().equals(TaskFailed.class)) {
+                && !dependingOn.getStatus().getClass().equals(TaskFailed.class)) {
             if (!this.getStatus().getClass().equals(TaskUnavailable.class)){
                 this.makeUnAvailable();
             }
