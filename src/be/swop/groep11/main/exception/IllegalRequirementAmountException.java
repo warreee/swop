@@ -15,6 +15,11 @@ public class IllegalRequirementAmountException extends RuntimeException {
         this.amount = amount;
     }
 
+    @Override
+    public String getMessage() {
+        return super.getMessage() + "\n" +"ResourceType: " + type.getName() + "\n"+ "Gevraagde hoeveelheid: " + amount + "\n" + "Beschikbare hoeveelheid: " + type.getResourceInstances().size();
+    }
+
     public int getAmount() {
         return amount;
     }
