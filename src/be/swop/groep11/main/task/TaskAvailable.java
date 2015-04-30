@@ -21,7 +21,7 @@ public class TaskAvailable extends TaskStatus {
     }
 
     @Override
-    public TaskStatus getTaskStatus() {
+    public TaskStatus getTaskStatus(LocalDateTime systemTime) {
         return new TaskAvailable();
     }
 
@@ -31,6 +31,8 @@ public class TaskAvailable extends TaskStatus {
         TaskStatus executing = new TaskExecuting();
         task.setStatus(executing);
     }
+
+
 
     @Override
     protected void finish(Task task, LocalDateTime endTime) {
