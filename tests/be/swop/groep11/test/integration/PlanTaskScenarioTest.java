@@ -176,9 +176,6 @@ public class PlanTaskScenarioTest {
         when(mockedUI.requestBoolean(Matchers.contains("conflicterende"))).thenReturn(false);
 
         planningController.planTask();
-
-        System.out.println(tasks.get(0).getPlannedStartTime());
-        System.out.println(resourceManager.getReservations(tasks.get(0)).size());
     }
 
     @Test
@@ -223,9 +220,64 @@ public class PlanTaskScenarioTest {
         when(mockedUI.requestBoolean(Matchers.contains("conflicterende"))).thenReturn(true);
 
         planningController.planTask();
+    }
 
-        System.out.println(tasks.get(0).getPlannedStartTime());
-        System.out.println(resourceManager.getReservations(tasks.get(0)).size());
+    @Test
+    public void PlanTask_ResolveConflict_SelectResoourcesTest() throws Exception {
+        // selecteer de juiste taak:
+        when(mockedUI.selectTaskFromList(anyObject())).thenReturn(tasks.get(0));
+        // starttijd zelf kiezen:
+        when (mockedUI.requestBoolean(Matchers.contains("starttijd hieruit selecteren"))).thenReturn(true);
+        when(mockedUI.requestDatum(Matchers.contains("starttijd"))).thenReturn(now);
+        // kies als starttijd de eerste in de lijst:
+        when (mockedUI.selectLocalDateTimeFromList(anyObject())).thenAnswer(new Answer<LocalDateTime>() {
+            @Override
+            public LocalDateTime answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return ((List<LocalDateTime>) args[0]).get(0);
+            }
+        });
+        // reserveer zelf de resource instanties:
+        when (mockedUI.requestBoolean(Matchers.contains("resource instanties reserveren"))).thenReturn(false);
+        // kies resoruces
+        when(mockedUI.selectMultipleFromList(Matchers.contains("instanties"), anyObject(), anyObject(), anyInt(), anyBoolean(), anyObject())).thenAnswer(new Answer<List<ResourceInstance>>() {
+            @Override
+            public List<ResourceInstance> answer(InvocationOnMock invocation) throws Throwable {
+                List<ResourceInstance> gekozenInstanties = new ArrayList<ResourceInstance>();
+                ResourceInstance inst1 = resourceManager.getResourceTypeByName("Auto").getResourceInstances().get(0);
+                ResourceInstance inst2 = resourceManager.getResourceTypeByName("Auto").getResourceInstances().get(1);
+                gekozenInstanties.add(inst1);
+                gekozenInstanties.add(inst2);
+                return gekozenInstanties;
+            }
+        }).thenAnswer(new Answer<List<ResourceInstance>>() {
+            @Override
+            public List<ResourceInstance> answer(InvocationOnMock invocation) throws Throwable {
+                List<ResourceInstance> gekozenInstanties = new ArrayList<ResourceInstance>();
+                ResourceInstance inst1 = resourceManager.getResourceTypeByName("Koets").getResourceInstances().get(0);
+                gekozenInstanties.add(inst1);
+                return gekozenInstanties;
+            }
+        });
+        // kies developers
+        when(mockedUI.selectMultipleFromList(Matchers.contains("developers"), anyObject(), anyObject(), anyInt(), anyBoolean(), anyObject())).thenAnswer(new Answer<List<ResourceInstance>>() {
+            @Override
+            public List<ResourceInstance> answer(InvocationOnMock invocation) throws Throwable {
+                List<ResourceInstance> gekozenDevelopers = new ArrayList<ResourceInstance>();
+                ResourceInstance dev1 = resourceManager.getDeveloperType().getResourceInstances().get(0);
+                ResourceInstance dev2 = resourceManager.getDeveloperType().getResourceInstances().get(1);
+                ResourceInstance dev3 = resourceManager.getDeveloperType().getResourceInstances().get(2);
+                gekozenDevelopers.add(dev1);
+                gekozenDevelopers.add(dev2);
+                gekozenDevelopers.add(dev3);
+                return gekozenDevelopers;
+            }
+        });
+
+        // resolve conflict
+        when(mockedUI.requestBoolean(Matchers.contains("conflicterende"))).thenReturn(false);
+
+        planningController.planTask();
     }
 
     private void addTempDomainObjects() {
