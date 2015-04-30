@@ -1,11 +1,9 @@
 package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.controllers.PlanningController;
-import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
@@ -106,7 +104,7 @@ public class PlanTaskScenarioTest {
 
     @Test (expected = IllegalStateException.class)
     public void PlanTask_ConflictTest() throws Exception {
-        IPlan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
+        Plan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
         tasks.get(1).plan(plan);
 
         // selecteer de juiste taak:
@@ -136,7 +134,7 @@ public class PlanTaskScenarioTest {
 
     @Test
     public void PlanTask_ResolveConflict_MoveCurrentTaskTest() throws Exception {
-        IPlan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
+        Plan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
         List<ResourceInstance> developers = new ArrayList<>();
         developers.add(resourceManager.getDeveloperType().getResourceInstances().get(3));
         plan.addReservations(developers);
