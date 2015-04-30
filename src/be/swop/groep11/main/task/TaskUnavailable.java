@@ -1,5 +1,6 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.resource.IPlan;
 
 import java.time.Duration;
@@ -16,7 +17,7 @@ public class TaskUnavailable extends TaskStatus {
 
     @Override
     protected void makeUnavailable(Task task) {
-        throw new IllegalStateTransition("De taak kan niet naar de status UNAVAILABLE gaan want was dit reeds!");
+        throw new IllegalStateTransitionException("De taak kan niet naar de status UNAVAILABLE gaan want was dit reeds!");
     }
 
     @Override
