@@ -262,7 +262,7 @@ public class Task {
      * Geeft de status van deze taak, er wordt telkens een nieuw object aangemaakt zodat de interne variabele niet wordt terugggeven.
      */
     public TaskStatus getStatus() {
-        return status.getTaskStatus();
+        return status.getTaskStatus(systemTime.getCurrentSystemTime());
     }
 
     /**
