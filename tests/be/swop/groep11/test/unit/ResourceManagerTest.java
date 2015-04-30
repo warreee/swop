@@ -463,7 +463,7 @@ public class ResourceManagerTest {
         assertEquals( t4.plus(task.getEstimatedDuration().plusDays(1)), plans_t4.get(3).getEndTime());
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = IllegalStateException.class)
     public void makeReservationsForPlan_InvalidPlanTest() {
         LocalDateTime t1 = LocalDateTime.of(2015,4,20, 8,0);
         LocalDateTime t2 = LocalDateTime.of(2015,4,22,17,0);
@@ -497,7 +497,7 @@ public class ResourceManagerTest {
         newReservations.add(type2.getResourceInstances().get(0));
         plan.changeReservations(newReservations);
 
-        resourceManager.makeReservationsForPlan(plan);
+        plan.apply();
     }
 
     @Test
@@ -531,7 +531,7 @@ public class ResourceManagerTest {
         // plan maken vanaf t4
         IPlan plan_t4 = resourceManager.getNextPlans(4, task, t4).get(0);
 
-        resourceManager.makeReservationsForPlan(plan_t4);
+        plan_t4.apply();
 
         assertTrue(reservationForResourceInstanceExists(task, type1.getResourceInstances().get(0)));
         assertTrue(reservationForResourceInstanceExists(task, type1.getResourceInstances().get(1)));

@@ -331,7 +331,7 @@ public class ResourceManager {
      * @throws IllegalArgumentException Wanneer de eindtijd voor een starttijd van een reservatie ligt.
      */
     private void endReservationsFromTask(Task task, LocalDateTime endTime){
-        List<ResourceReservation> reservations = new ArrayList<>(this.reservations.get(task));
+        List<ResourceReservation> reservations = new ArrayList<>(this.getReservations(task));
         for(ResourceReservation reservation: reservations){
             TimeSpan newTimeSpan = new TimeSpan(reservation.getTimeSpan().getStartTime(), endTime);
             ResourceReservation resourceReservation = new ResourceReservation(task, reservation.getResourceInstance(), newTimeSpan, reservation.isSpecific());
