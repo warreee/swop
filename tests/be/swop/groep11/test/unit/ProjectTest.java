@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -142,4 +143,10 @@ public class ProjectTest {
     public void NewProject_invalid_User() throws Exception {
        new Project(name, description, create,due, systemTime );
     }*/
+
+    @Test
+    public void getEstimatedEndTimeTest() {
+        Duration estimatedTime = Duration.ofDays(4);
+        assertEquals(project.getEstimatedEndTime(), estimatedTime);
+    }
 }
