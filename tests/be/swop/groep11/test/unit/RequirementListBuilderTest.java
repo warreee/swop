@@ -69,10 +69,10 @@ public class RequirementListBuilderTest {
 
     @Test
     public void testName() throws Exception {
-        AResourceType D = addResourceType("D");
-        AResourceType E = addResourceType("E");
-        AResourceType F = addResourceType("F");
-        AResourceType G = addResourceType("G");
+        AResourceType D = addResourceTypeAndInstance("D");
+        AResourceType E = addResourceTypeAndInstance("E");
+        AResourceType F = addResourceTypeAndInstance("F");
+        AResourceType G = addResourceTypeAndInstance("G");
 
         resourceManager.withRequirementConstraint(D,E);
         resourceManager.withRequirementConstraint(E,F);
@@ -89,9 +89,10 @@ public class RequirementListBuilderTest {
     }
 
 
-    private AResourceType addResourceType(String name) {
+    private AResourceType addResourceTypeAndInstance(String name) {
         resourceManager.addNewResourceType(name);
         AResourceType type = resourceManager.getResourceTypeByName(name);
+        resourceManager.addResourceInstance(type,"instance");
         return type;
     }
 }
