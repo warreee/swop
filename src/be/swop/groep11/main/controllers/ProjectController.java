@@ -21,7 +21,6 @@ public class ProjectController extends AbstractController {
 
     /**
      * Constructor om een nieuwe project controller te maken.
-     * @param ui Gebruikersinterface
      * @param projectRepository Project repository om projecten aan toe te voegen
      * @param user Gebruiker die projecten aanmaakt
      * @param userInterface
