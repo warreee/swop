@@ -38,8 +38,7 @@ public class App {
         initControllers();
         initBehaviourMapping();
 
-        // TODO: geen temp domain objects toevoegen bij uiteindelijke versie van het programma!!!!!!!
-        addTempDomainObjects();
+        //addTempDomainObjects();
     }
     private SystemTime systemTime;
     private CommandLineInterface cli;
@@ -71,7 +70,7 @@ public class App {
     private void initInputParser(boolean readYamlFile){
         if (readYamlFile) {
             // run inputreader
-            InputParser inputParser = new InputParser(projectRepository, resourceManager,systemTime);
+            InputParser inputParser = new InputParser(projectRepository, resourceManager, systemTime);
             try {
                 inputParser.parseInputFile();
             } catch (FileNotFoundException e) {
@@ -126,9 +125,11 @@ public class App {
         actionBehaviourMapping.activateController(main);
         // lees commando's
         cli.run();
+
     }
 
     private void addTempDomainObjects() {
+
         resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter SWOP");
         resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ward");
         resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ronald");

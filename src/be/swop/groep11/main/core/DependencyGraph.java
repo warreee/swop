@@ -37,8 +37,9 @@ public class DependencyGraph {
         if (dependingOnMap.containsKey(dependent)) {
             if (!dependingOnMap.get(dependent).contains(dependingOn)) {
                 dependingOnMap.get(dependent).add(dependingOn);
-                addToMap(dependingOn, dependingOnMap);
+
             }
+            addToMap(dependingOn, dependingOnMap);
         } else {
             ArrayList<Task> dependingOnList = new ArrayList<>();
             dependingOnList.add(dependingOn);
@@ -49,8 +50,9 @@ public class DependencyGraph {
         if (dependentMap.containsKey(dependingOn) ) {
             if(!dependentMap.get(dependingOn).contains(dependent)) {
                 dependentMap.get(dependingOn).add(dependent);
-                addToMap(dependent, dependentMap);
+
             }
+            addToMap(dependent, dependentMap);
         } else {
             ArrayList<Task> dependentList = new ArrayList<>();
             dependentList.add(dependent);
@@ -58,8 +60,6 @@ public class DependencyGraph {
             addToMap(dependent, dependentMap);
         }
     }
-
-
 
     /**
      * Verwijdert de laatst toegevoegde dependency
@@ -221,7 +221,7 @@ public class DependencyGraph {
      * @return
      */
     private ArrayList<ArrayList<Task>> getPathsTo(Task task, ArrayList<Task> currentPath, ArrayList<ArrayList<Task>> paths, Task leaf) {
-        Set<Task> dependingon = task.getDependingOnTasks();
+
         if (task.getDependingOnTasks().isEmpty()){
             ArrayList<Task> path = new ArrayList<>(3);
             currentPath.forEach(path::add);

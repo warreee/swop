@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,6 +30,9 @@ public class DependencyGraphTest {
     Task taskC;
     Task taskD;
     Task taskE;
+    Task taskF;
+    Task taskG;
+    Task taskH;
     ArrayList<Task> allTasks = new ArrayList<>();
 
 
@@ -39,6 +43,9 @@ public class DependencyGraphTest {
         taskC = new Task("Taak C", duration, deviation, systemTime, dependencyGraph);
         taskD = new Task("Taak D", duration, deviation, systemTime, dependencyGraph);
         taskE = new Task("Taak E", duration, deviation, systemTime, dependencyGraph);
+        taskF = new Task("Taak F", duration, deviation, systemTime, dependencyGraph);
+        taskG = new Task("Taak G", duration, deviation, systemTime, dependencyGraph);
+        taskH = new Task("Taak H", duration, deviation, systemTime, dependencyGraph);
 
         allTasks.add(taskA);
         allTasks.add(taskB);
@@ -152,13 +159,40 @@ public class DependencyGraphTest {
         taskE.addNewDependencyConstraint(taskD);
         ArrayList<ArrayList<Task>> paths = dependencyGraph.getPathsTo(taskE);
         assertEquals(paths.size(), 2);
-        assertTrue(paths.get(0).contains(taskE));
-        assertTrue(paths.get(0).contains(taskB));
-        assertTrue(paths.get(0).contains(taskA));
-        assertTrue(paths.get(1).contains(taskE));
-        assertTrue(paths.get(1).contains(taskC));
-        assertTrue(paths.get(1).contains(taskD));
+        assertTrue(paths.get(0).contains(taskE) && paths.get(1).contains(taskE));
+        assertTrue((paths.get(0).contains(taskC) && paths.get(1).contains(taskA)) ^
+                (paths.get(1).contains(taskC) && paths.get(0).contains(taskA)));
+        assertTrue((paths.get(0).contains(taskB) && paths.get(1).contains(taskD)) ^
+                (paths.get(1).contains(taskB) && paths.get(0).contains(taskD)));
 
+    }
+
+    /*
+    * A -> B >   > G -> H
+    *         \ /  |
+    *          E   |
+    *         ^ \  >
+    * C -> D /   > F
+    */
+    @Test
+    public void getComplicatedPathsToTest() {
+        taskB.addNewDependencyConstraint(taskA);
+        taskE.addNewDependencyConstraint(taskB);
+        taskD.addNewDependencyConstraint(taskC);
+        taskE.addNewDependencyConstraint(taskD);
+        taskG.addNewDependencyConstraint(taskE);
+        taskF.addNewDependencyConstraint(taskE);
+        taskF.addNewDependencyConstraint(taskG);
+        taskH.addNewDependencyConstraint(taskG);
+
+        HashMap<Task, ArrayList<ArrayList<Task>>> leafPaths = new HashMap<>();
+        ArrayList<Task> leafs =dependencyGraph.getLeafs();
+        for (Task leaf : leafs){
+            leafPaths.put(leaf, dependencyGraph.getPathsTo(leaf));
+        }
+        assertEquals(leafPaths.get(taskH).size(), 2);
+        assertEquals(leafPaths.get(taskF).size(), 4);
+        helpPrint();
     }
 
 
