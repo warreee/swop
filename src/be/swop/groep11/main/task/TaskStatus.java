@@ -99,8 +99,8 @@ public abstract class TaskStatus implements Cloneable {
             return false;
         }
 
-        if (task.getStartTime().isBefore(endTime)){
-            return true;
+        if (task.getStartTime().isAfter(endTime)){
+            return false;
         }
 
         return true;
