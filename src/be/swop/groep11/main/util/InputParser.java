@@ -21,18 +21,15 @@ import java.util.*;
  * Klasse voor het inlezen van de de input file, deze moet staan in /input met de naam input.tman
  */
 public class InputParser {
-    User user = new User("InputParser");
-    ProjectRepository projectRepository;
-    ArrayList<Project> projectList = new ArrayList<>();
-    ArrayList<Task> taskList = new ArrayList<>();
-    Map<Integer, Task> planningTaskMap = new HashMap<>();
-    ArrayList<AResourceType> resourceTypeList = new ArrayList<>();
-    ArrayList<ResourceInstance> resourceInstanceList = new ArrayList<>();
-    ArrayList<DailyAvailability> dailyAvailabilityList = new ArrayList<>();
-    ArrayList<ResourceInstance> developerList = new ArrayList<>();
-    ArrayList<Map<String, Object>> planningsList = new ArrayList<>();
-    Map<String, Object> values;
-    Map<Integer, Map<Integer, Map<String, LocalDateTime>>> reservationsMap = new HashMap<>();
+    private ProjectRepository projectRepository;
+    private ArrayList<Project> projectList = new ArrayList<>();
+    private ArrayList<Task> taskList = new ArrayList<>();
+    private ArrayList<AResourceType> resourceTypeList = new ArrayList<>();
+    private ArrayList<ResourceInstance> resourceInstanceList = new ArrayList<>();
+    private ArrayList<DailyAvailability> dailyAvailabilityList = new ArrayList<>();
+    private ArrayList<ResourceInstance> developerList = new ArrayList<>();
+    private ArrayList<Map<String, Object>> planningsList = new ArrayList<>();
+    private Map<Integer, Map<Integer, Map<String, LocalDateTime>>> reservationsMap = new HashMap<>();
     private ResourceManager resourceManager;
     private SystemTime systemTime;
 
@@ -58,14 +55,6 @@ public class InputParser {
         System.out.println("Finished :)");
     }
 
-    private Plan getPlan(int i, Task task){
-        Map<String, Object> planMap = (Map<String, Object>) ((ArrayList) values.get("plannings")).get(i);
-        Plan plan = resourceManager.getNextPlans(1, task, parseTime((String) planMap.get("plannedStartTime"))).get(0);
-        task.plan(plan);
-        // TODO: fix
-        return null;
-    }
-
     /**
      * Leest input.tman in, parset de file en maakt de objecten aan in de meegegeven projectRepository
      *
@@ -79,7 +68,7 @@ public class InputParser {
         Map<String, Object> values;
 
         try {
-            this.values = values = (Map<String, Object>) yaml.load(new FileInputStream(new File(path)));
+            values = (Map<String, Object>) yaml.load(new FileInputStream(new File(path)));
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
             return; // Return omdat de inputfile niet gelezen kon worden.
