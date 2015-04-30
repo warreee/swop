@@ -62,7 +62,7 @@ public class App {
 
 
         //maak een nieuwe system aan
-        systemTime = new SystemTime(LocalDateTime.MIN); //TODO WARD: hier gaat een bug zijn indien de yaml file een tijd heeft voor die van de huidige tijd?!
+        systemTime = new SystemTime(LocalDateTime.MIN);
         resourceManager = new ResourceManager();
         projectRepository = new ProjectRepository(systemTime);
     }
