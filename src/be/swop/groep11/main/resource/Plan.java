@@ -18,8 +18,9 @@ public class Plan {
      * Constructor om een nieuw plan aan te maken met default reservaties voor de resource requirements van de gegeven taak.
      * Hierbij worden ook de default reservaties voor het plan toegevoegd.
      *
-     * @param task      De gegeven taak
-     * @param startTime De starttijd van het plan: moet op een uur vallen (zonder minuten)
+     * @param task            De gegeven taak
+     * @param startTime       De starttijd van het plan: moet op een uur vallen (zonder minuten)
+     * @param resourceManager De resource manager die het plan moet gebruiken
      */
     public Plan(Task task, LocalDateTime startTime,ResourceManager resourceManager) {
         if (resourceManager == null) {
@@ -108,6 +109,9 @@ public class Plan {
         return true;
     }
 
+    /**
+     * Maakt voor elk resource type in de requirement list van de taak de nodige reservaties.
+     */
     public void makeDefaultReservations() {
         this.reservations = calculateDefaultReservations(this.getTask(), this.getStartTime());
     }
@@ -119,6 +123,7 @@ public class Plan {
     public Task getTask() {
         return task;
     }
+
     private final Task task;
 
     /**
@@ -127,7 +132,9 @@ public class Plan {
     public LocalDateTime getStartTime() {
         return startTime;
     }
+
     private final LocalDateTime startTime;
+
     /**
      * Geeft de eindtijd van het plan.
      */
@@ -144,6 +151,7 @@ public class Plan {
             return endTime;
         }
     }
+
     private List<ResourceReservation> reservations = new LinkedList<>();
 
     /**
