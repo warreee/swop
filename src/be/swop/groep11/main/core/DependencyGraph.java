@@ -221,7 +221,7 @@ public class DependencyGraph {
      * @return
      */
     private ArrayList<ArrayList<Task>> getPathsTo(Task task, ArrayList<Task> currentPath, ArrayList<ArrayList<Task>> paths, Task leaf) {
-        Set<Task> dependingon = task.getDependingOnTasks();
+
         if (task.getDependingOnTasks().isEmpty()){
             ArrayList<Task> path = new ArrayList<>(3);
             currentPath.forEach(path::add);
