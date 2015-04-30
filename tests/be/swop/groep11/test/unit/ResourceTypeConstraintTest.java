@@ -75,11 +75,4 @@ public class ResourceTypeConstraintTest {
         assertFalse(con2.isAcceptableAmount(typeC, 2));
         assertTrue(con2.isAcceptableAmount(typeC, 1));
     }
-
-    @Test
-    public void conflictConstraintCyclicTest() throws Exception {
-        fail("implement");
-    }
-
-
 }
