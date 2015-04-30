@@ -90,7 +90,7 @@ public class PlanningController extends AbstractController {
                 startTime = ui.selectLocalDateTimeFromList(new LinkedList<LocalDateTime>(plansMap.keySet()));
             } else {
         /* 5a. The user indicates he wants to select another time */
-                while (startTime == null || startTime.getMinute() == 0 || startTime.isBefore(systemTime.getCurrentSystemTime())) {
+                while (startTime == null || startTime.getMinute() != 0 || startTime.isBefore(systemTime.getCurrentSystemTime())) {
                     startTime = ui.requestDatum("Kies een starttijd (moet op een uur vallen en mag niet voor de huidige systeemtijd (" + systemTime.getCurrentSystemTime().format(formatter) + ") vallen:");
                 }
             }
@@ -101,7 +101,7 @@ public class PlanningController extends AbstractController {
             type instance to perform the task, the system proposes a resource instance
             to make a reservation for. */
 
-            IPlan plan = resourceManager.getNextPlans(1, task, startTime).get(0);
+            IPlan plan = resourceManager.getCustomPlan(task, startTime);
 
         try {
 
