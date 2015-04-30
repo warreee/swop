@@ -71,7 +71,7 @@ public class App {
     private void initInputParser(boolean readYamlFile){
         if (readYamlFile) {
             // run inputreader
-            InputParser inputParser = new InputParser(projectRepository, resourceManager, systemTime);
+            InputParser inputParser = new InputParser(projectRepository, resourceManager);
             try {
                 inputParser.parseInputFile();
             } catch (FileNotFoundException e) {

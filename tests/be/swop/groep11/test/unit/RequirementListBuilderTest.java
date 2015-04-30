@@ -53,7 +53,6 @@ public class RequirementListBuilderTest {
         resourceManager.withRequirementConstraint(typeA, typeB);
         //B conflicts C
         resourceManager.withConflictConstraint(typeB, typeC);
-
         rlb.addNewRequirement(typeA, 1);
         rlb.addNewRequirement(typeC, 1);
     }
@@ -62,13 +61,12 @@ public class RequirementListBuilderTest {
     public void selfConflictingType_addIllegalConstraint() throws Exception {
         //C conflicts C
         resourceManager.withConflictConstraint(typeC, typeC);
-
         rlb.addNewRequirement(typeC,2);
     }
 
 
     @Test
-    public void testName() throws Exception {
+    public void recursiveRequirementsAddition() throws Exception {
         AResourceType D = addResourceTypeAndInstance("D");
         AResourceType E = addResourceTypeAndInstance("E");
         AResourceType F = addResourceTypeAndInstance("F");
@@ -83,11 +81,29 @@ public class RequirementListBuilderTest {
         assertTrue(rlb.getRequirements().containsRequirementFor(E));
         assertTrue(rlb.getRequirements().containsRequirementFor(F));
         assertTrue(rlb.getRequirements().containsRequirementFor(G));
-
-
-
     }
 
+    @Test(expected = UnsatisfiableRequirementException.class)
+    public void illegalRecursiveRequirementsAddition() throws Exception {
+        AResourceType D = addResourceTypeAndInstance("D");
+        AResourceType E = addResourceTypeAndInstance("E");
+        AResourceType F = addResourceTypeAndInstance("F");
+        AResourceType G = addResourceTypeAndInstance("G");
+
+        resourceManager.withRequirementConstraint(D, E);
+        resourceManager.withRequirementConstraint(E, F);
+        resourceManager.withRequirementConstraint(F, G);
+        resourceManager.withConflictConstraint(E, G);
+
+        rlb.addNewRequirement(D, 1);
+    }
+
+    @Test(expected = UnsatisfiableRequirementException.class)
+    public void illegalRequiresAndConflictConstraintsOnSameTypes() throws Exception {
+        resourceManager.withRequirementConstraint(typeA,typeB);
+        resourceManager.withConflictConstraint(typeA,typeB);
+
+    }
 
     private AResourceType addResourceTypeAndInstance(String name) {
         resourceManager.addNewResourceType(name);
