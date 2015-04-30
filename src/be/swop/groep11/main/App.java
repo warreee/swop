@@ -14,6 +14,7 @@ import be.swop.groep11.main.ui.CommandLineInterface;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -62,7 +63,7 @@ public class App {
 
 
         //maak een nieuwe system aan
-        systemTime = new SystemTime(); //TODO WARD: hier gaat een bug zijn indien de yaml file een tijd heeft voor die van de huidige tijd?!
+        systemTime = new SystemTime(LocalDateTime.MIN); //TODO WARD: hier gaat een bug zijn indien de yaml file een tijd heeft voor die van de huidige tijd?!
         resourceManager = new ResourceManager();
         projectRepository = new ProjectRepository(systemTime);
     }
@@ -70,7 +71,7 @@ public class App {
     private void initInputParser(boolean readYamlFile){
         if (readYamlFile) {
             // run inputreader
-            InputParser inputParser = new InputParser(projectRepository, resourceManager);
+            InputParser inputParser = new InputParser(projectRepository, resourceManager, systemTime);
             try {
                 inputParser.parseInputFile();
             } catch (FileNotFoundException e) {

@@ -143,7 +143,7 @@ public class RequirementListBuilder {
                 requirements.put(requiredType,requirement);
                 requiredType.getTypeConstraints().forEach(constraint -> {
                     if (constraint.getMin() > 0 && constraint.getMax() >= constraint.getMin()) {
-                        requirements.put(constraint.getConstrainingType(), new ResourceRequirement(constraint.getConstrainingType(), constraint.getMin()));
+                        addRequirement(constraint.getConstrainingType(),constraint.getMin());
                     }
                 });
             }

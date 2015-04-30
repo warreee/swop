@@ -39,27 +39,6 @@ public class SimulationController extends AbstractController {
         ui.showHelp(this);
     }
 
-/*    public void endSimulation() {
-      *//*  try {
-            String command = ui.requestString("Wat wil je doen met de huidige simulatie?\n"
-                                                + "continue = verdergaan met de simulatie\n"
-                                                + "cancel   = stoppen met de simulatie (en dus niet realiseren)\n"
-                                                + "realize  = de simulatie realiseren");
-            if (command.equalsIgnoreCase("continue")) {
-                // doe niets, want de simulatie is al gestart
-            }
-            else if (command.equalsIgnoreCase("realize")) {
-                // realiseer de simulatie
-//                this.realizeState();
-                ui.printMessage("Simulatie werd gerealiseerd");
-            }
-        } catch (CancelException e) {
-            restoreState();
-            ui.printMessage("Simulatie werd niet gerealiseerd");
-        }*//*
-        deActivate(this);
-    }*/
-
     public void realize() {
         //projectRepository bezit all alle veranderingen ...
 

@@ -539,7 +539,9 @@ public class Task {
      * Deze methode zorgt ervoor dat taken hun resources kunnen vrijgeven indien ze vroegtijdig stoppen.
      */
     protected void releaseResources(LocalDateTime endTime){
-        this.plan.releaseResources(endTime);
+        if(plan != null) {
+            plan.releaseResources(endTime);
+        }
     }
 
 }
