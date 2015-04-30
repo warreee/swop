@@ -1,7 +1,7 @@
 package be.swop.groep11.main.resource.constraint;
 
-import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.AResourceType;
+import be.swop.groep11.main.resource.UnsatisfiableRequirementException;
 
 /**
  * Created by Ronald on 9/04/2015.
@@ -23,16 +23,21 @@ public abstract class ResourceTypeConstraint {
      * @param constrainingType  Het IResourceType dewelke de beperkende rol vervult.
      * @param min               Het minimum aantal toegelaten instances van IResourceType
      * @param max               Het maximum aantal toegelaten instances van IResourceType
-     * @throws IllegalArgumentException
+     * @throws UnsatisfiableRequirementException
      *                          Gooi indien de gegeven ownerType || constrainingType niet ge?nitialiseerd zijn.
+     *                          TODO fix documentatie volgens recursive check
      */
     protected ResourceTypeConstraint(AResourceType ownerType, AResourceType constrainingType, int min, int max) throws IllegalArgumentException{
         if(!areValidTypes(ownerType, constrainingType)){
-            throw new IllegalArgumentException("Ongeldig ResourceType's");
+            throw new IllegalArgumentException();
         }
-        if(!areValidBounds(ownerType, constrainingType, min, max)){
+        if(!areValidBounds(min, max)){
             throw new IllegalArgumentException("Ongeldige min en max voor constraint");
         }
+        if (!recursiveValidTypesCheck(ownerType, constrainingType, min, max)) {
+            throw new UnsatisfiableRequirementException();
+        }
+
         this.ownerType = ownerType;
         this.constrainingType = constrainingType;
         this.min = min;
@@ -44,6 +49,20 @@ public abstract class ResourceTypeConstraint {
      */
     private boolean areValidTypes(AResourceType ownerType,AResourceType constrainingType) {
         return ownerType != null && constrainingType != null;
+    }
+
+    private boolean recursiveValidTypesCheck(AResourceType ownerType,AResourceType newConstrainingType,int min,int max) {
+
+        boolean result = true;
+        for (ResourceTypeConstraint typeConstraint : ownerType.getTypeConstraints()) {
+            result &= typeConstraint.getConstrainingType() != newConstrainingType &&
+                    recursiveValidTypesCheck(typeConstraint.getConstrainingType(), newConstrainingType,min,max);
+        }
+        if (newConstrainingType.hasConstraintFor(ownerType)) {
+            ResourceTypeConstraint rtc = newConstrainingType.getConstraintFor(ownerType);
+            result &= !(rtc.getMin() > max);
+        }
+        return result;
     }
 
     /**
@@ -72,49 +91,24 @@ public abstract class ResourceTypeConstraint {
         return min;
     }
 
-    /**
-     * Controleer voor de gegeven IResourceTypes of de gegeven grenzen kunnen kloppen
-     * @param typeA De eigenaar van de constraint
-     * @param typeB Het beperkende IResourceType voor deze constraint
+
+
+  /*  *//**
+     * Controleer voor de gegeven min en max grens mogenlijk zijn
      * @param bMin  Het minimum verwacht aantal resource instances
      * @param bMax  Het maximum toegelaten aantal resource instances
-     * @return      Waar indien typeB geen constraint heeft voor TypeA,
-     *              Anders
-     *                      Waar indien de gegeven bMin en bMax grenzen,
-     *                      de minimum en maximum grenzen van de constraint in typeB voor typeA
-     *                      niet overschrijden.
-     *                      Anders niet waar.
+     * @return      Waar indien grenzen >= 0 en bMax is groter of gelijk aan bMin
+     *
      */
-    private boolean areValidBounds(AResourceType typeA,AResourceType typeB,int bMin, int bMax) {
-        if(!typeB.hasConstraintFor(typeA)){
-            return true;
-        }else{
-            //wel een constraint voor typeA aanwezig in typeB
-            ResourceTypeConstraint consA = typeB.getConstraintFor(typeA);
-            int aMin = consA.getMin();
-            int aMax = consA.getMax();
-            boolean result;
-
-            if(aMin < bMin){
-                result = false;
-            }else if(aMin > bMax) {
-                result = false;
-            }else if (aMax < bMin){
-                result = false;
-            }else{
-                //aMax < bMax is ok.
-                //aMax > bMax is ok.
-                result = true;
-            }
-            return result;
-        }
+    private static boolean areValidBounds(int bMin, int bMax) {
+            return bMin >= 0 && bMax >= 0 && bMax-bMin >= 0;
     }
 
-    /**
+ /*   *//**
      * Controleer of deze Constraint vervuld is voor de gegeven IRequirementList
      * @param requirementList   De te controleren lijst requirements.
      * @return  Waar indien de getConstrainingType() een aanvaardbaar keer voor komt in de lijst requirements
-     */
+     *//*
     public boolean isSatisfied(IRequirementList requirementList){
         boolean result = false;
         if(requirementList.containsRequirementFor(getOwnerType())){
@@ -122,7 +116,7 @@ public abstract class ResourceTypeConstraint {
             result = isAcceptableAmount(getConstrainingType(),count);
         }
         return result;
-    }
+    }*/
 
     //TODO fix contradictsWith, is niet juist.
     /**
@@ -133,7 +127,7 @@ public abstract class ResourceTypeConstraint {
      *                          otherConstraint aanvaardbaar is voor deze constraint, als ook de aangevraagde hoeveelheid
      *                          een geldige hoeveelheid is voor deze constraint.
      */
-    public boolean contradictsWith(ResourceTypeConstraint otherConstraint,int requestedAmount){
+  /*  public boolean contradictsWith(ResourceTypeConstraint otherConstraint,int requestedAmount){
         //Moet een beperking zijn op dezelfde ResourceType, en de minimum hoeveelheid van de otherConstraint
         //moet aanvaardbaar zijn voor deze constraint. alsook de aangevraagde hoeveelheid
         if(getMin() > requestedAmount || otherConstraint.getMin() > requestedAmount || requestedAmount > getMax() || requestedAmount > otherConstraint.getMax()){
@@ -147,7 +141,7 @@ public abstract class ResourceTypeConstraint {
                 return getMax() != otherConstraint.getMax() || getMin() != otherConstraint.getMin();
             }
         }
-        return false;
+        return false;*/
 //            else {
 //                // OwnerType zelfde, ConstrainingType verschillend.
 //                // requestedAmount moet binnen beide grenzen liggen.
@@ -163,7 +157,7 @@ public abstract class ResourceTypeConstraint {
 //                return false;
 //            }
 //        }
-    }
+//    }
 
     /**
      * Controleer of de gegeven hoeveelheid van resourceType een geldige hoeveelheid van getConstrainingType() resource instances zou zijn.

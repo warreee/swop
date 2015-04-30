@@ -12,9 +12,6 @@ import java.util.*;
  */
 public class RequirementListBuilder {
 
-    //TODO finish RequirementListBuilder.
-    //WIP
-
     private RequirementList reqList;
 
     /**
@@ -33,7 +30,7 @@ public class RequirementListBuilder {
      * @throws IllegalRequirementAmountException
      *
      */
-    public void addNewRequirement(AResourceType type, int amount) throws IllegalArgumentException,IllegalRequirementAmountException{
+    public void addNewRequirement(AResourceType type, int amount) throws IllegalRequirementAmountException,IllegalArgumentException,UnsatisfiableRequirementException{
         this.reqList.addRequirement(type,amount);
     }
 
@@ -79,8 +76,6 @@ public class RequirementListBuilder {
             if(!hasOverlappingAvailability(requestedType)){
                 return false;
             }
-
-
             ArrayList<ResourceTypeConstraint> cons = new ArrayList<>();
             for (AResourceType type : requirements.keySet()) {
                 cons.addAll(type.getTypeConstraints());
@@ -90,30 +85,16 @@ public class RequirementListBuilder {
                 if (!constraint.isAcceptableAmount(requestedType, amount)) {
                     return false;
                 }
-
-                for (ResourceTypeConstraint requestedCon : requestedType.getTypeConstraints()) {
+                //Nog nodig?
+        /*        for (ResourceTypeConstraint requestedCon : requestedType.getTypeConstraints()) {
                     if (constraint.contradictsWith(requestedCon, amount)) {
                         return false;
                     }
-                }
+                }*/
             }
 
-
-         /*   //Niet waar indien aangevraagde hoeveelheid niet aanvaard kan worden door de aanwezige ResourceTypes geassocieerd met de requirements
-            for (AResourceType type : requirements.keySet()) {
-                for (ResourceTypeConstraint conInList : type.getTypeConstraints()) {
-                    for (ResourceTypeConstraint requestedCon : requestedType.getTypeConstraints()) {
-                        if (conInList.contradictsWith(requestedCon,amount)) {
-                            return false;
-                        }
-                    }
-                }
-            }*/
             return true;
         }
-
-
-
 
         @Override
         public Iterator<ResourceRequirement> iterator() {
@@ -135,7 +116,7 @@ public class RequirementListBuilder {
 
         private void addRequirement(AResourceType requiredType,int amount) throws IllegalRequirementAmountException,IllegalArgumentException,UnsatisfiableRequirementException{
             if(!isSatisfiableFor(requiredType, amount)){
-                throw new UnsatisfiableRequirementException(requiredType, amount);
+                throw new UnsatisfiableRequirementException();
             }else {
                 //Indien er al een requirement is voor type zijn we reeds zeker dat een nieuwe requirement de plaats mag vervangen.
                 // Plus de gevraagde hoeveelheid is geen probleem
@@ -143,7 +124,7 @@ public class RequirementListBuilder {
                 requirements.put(requiredType,requirement);
                 requiredType.getTypeConstraints().forEach(constraint -> {
                     if (constraint.getMin() > 0 && constraint.getMax() >= constraint.getMin()) {
-                        addRequirement(constraint.getConstrainingType(),constraint.getMin());
+                        addRequirement(constraint.getConstrainingType(), constraint.getMin());
                     }
                 });
             }

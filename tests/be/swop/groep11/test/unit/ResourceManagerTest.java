@@ -119,7 +119,7 @@ public class ResourceManagerTest {
         assertTrue(typeA.hasConstraintFor(typeB));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = UnsatisfiableRequirementException.class)
     public void testWithConstraints_invalid() throws Exception {
         resourceManager.addNewResourceType("A");
         resourceManager.addNewResourceType("B");
@@ -142,9 +142,7 @@ public class ResourceManagerTest {
     @Test(expected = IllegalArgumentException.class)
     public void testSelfRequireConstraint_invalid() throws Exception {
         resourceManager.addNewResourceType("A");
-        resourceManager.addNewResourceType("B");
         AResourceType typeA = resourceManager.getResourceTypeByName("A");
-        AResourceType typeB = resourceManager.getResourceTypeByName("B");
         resourceManager.withRequirementConstraint(typeA, typeA);
     }
 
