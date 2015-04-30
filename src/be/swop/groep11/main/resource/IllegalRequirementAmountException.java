@@ -4,10 +4,10 @@ package be.swop.groep11.main.resource;
  * Created by Ronald on 9/04/2015.
  */
 public class IllegalRequirementAmountException extends RuntimeException {
-    private final IResourceType type;
+    private final AResourceType type;
     private final int amount;
 
-    public IllegalRequirementAmountException(String message, IResourceType type, int amount) {
+    public IllegalRequirementAmountException(String message, AResourceType type, int amount) {
         super(message);
         this.type = type;
         this.amount = amount;
@@ -17,7 +17,7 @@ public class IllegalRequirementAmountException extends RuntimeException {
         return amount;
     }
 
-    public IResourceType getType() {
+    public AResourceType getType() {
         return type;
     }
 }

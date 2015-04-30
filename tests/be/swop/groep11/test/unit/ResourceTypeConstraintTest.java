@@ -1,6 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.resource.IResourceType;
+import be.swop.groep11.main.resource.AResourceType;
 import be.swop.groep11.main.resource.RequirementListBuilder;
 import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.resource.constraint.ConflictConstraint;
@@ -16,9 +16,9 @@ import static org.junit.Assert.*;
 public class ResourceTypeConstraintTest {
 
     private ResourceManager repository;
-    private IResourceType typeA;
-    private IResourceType typeB;
-    private IResourceType typeC;
+    private AResourceType typeA;
+    private AResourceType typeB;
+    private AResourceType typeC;
 
     @Before
     public void setUp() throws Exception {

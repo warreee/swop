@@ -13,13 +13,15 @@ public interface IRequirementList{
      * @return      Waar indien deze IRequirementList een Requirement bevat voor het gegeven type.
      *              Anders niet waar.
      */
-    boolean containsRequirementFor(IResourceType type);
+    boolean containsRequirementFor(AResourceType type);
+
+    ResourceRequirement getRequirementFor(AResourceType type);
 
     /**
      * @param type  Het te controleren type.
      * @return      Geeft aan hoeveel ResourcesInstances er required zijn voor het gegeven type.
      */
-    int countRequiredInstances(IResourceType type);
+    int countRequiredInstances(AResourceType type);
 
     /**
      * Controleer of deze lijst met Requirements geldig blijft. Indien er een requirement voor het gegeven IResourceType
@@ -36,7 +38,7 @@ public interface IRequirementList{
      *          door de aanwezige ResourceTypes geassocieerd met de requirements.
      *        | anders wel waar
      */
-    boolean isSatisfiableFor(IResourceType type, int amount) ;
+    boolean isSatisfiableFor(AResourceType type, int amount) ;
 
     /**
      * @return Een Iterator<ResourceRequirement>

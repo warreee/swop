@@ -1,8 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.resource.IResourceType;
-import be.swop.groep11.main.resource.RequirementListBuilder;
-import be.swop.groep11.main.resource.ResourceTypeBuilder;
+import be.swop.groep11.main.resource.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,50 +11,87 @@ import static org.junit.Assert.*;
  */
 public class RequirementListBuilderTest {
 
-    private IResourceType typeA;
-    private IResourceType typeB;
-    private IResourceType typeC;
-    private  RequirementListBuilder rlb;
+    private AResourceType typeA;
+    private AResourceType typeB;
+    private AResourceType typeC;
+    private ResourceManager resourceManager;
+
+    private RequirementListBuilder rlb;
 
     @Before
     public void setUp() throws Exception {
-        ResourceTypeBuilder bA = new ResourceTypeBuilder("A");
-        ResourceTypeBuilder bB = new ResourceTypeBuilder("B");
-        ResourceTypeBuilder bC = new ResourceTypeBuilder("C");
+        this.resourceManager = new ResourceManager();
+        resourceManager.addNewResourceType("A");
+        resourceManager.addNewResourceType("B");
+        resourceManager.addNewResourceType("C");
+        typeA = resourceManager.getResourceTypeByName("A");
+        typeB = resourceManager.getResourceTypeByName("B");
+        typeC = resourceManager.getResourceTypeByName("C");
 
-        //A requires B
-        bA.withRequirementConstraint(bB.getResourceType());
-
-        //B conflicts C
-        bB.withConflictConstraint(bC.getResourceType());
-
-        //C conflicts C
-        bC.withConflictConstraint(bC.getResourceType());
-
-        bA.addResourceInstance("a1");
-        bA.addResourceInstance("a2");
-        bB.addResourceInstance("b1");
-        bC.addResourceInstance("c1");
+        resourceManager.addResourceInstance(typeA,"a1");
+        resourceManager.addResourceInstance(typeA,"a2");
+        resourceManager.addResourceInstance(typeB,"b1");
+        resourceManager.addResourceInstance(typeC,"c1");
 
         rlb = new RequirementListBuilder();
-
-        typeA = bA.getResourceType();
-        typeB = bB.getResourceType();
-        typeC = bC.getResourceType();
     }
 
     @Test
     public void AddRequirement_TypeWithRequiresConstraint_valid() throws Exception {
-        rlb.addNewRequirement(typeA,2);
+        //A requires B
+        resourceManager.withRequirementConstraint(typeA, typeB);
+
+        rlb.addNewRequirement(typeA, 2);
+
         assertTrue(rlb.getRequirements().containsRequirementFor(typeB));
+        assertEquals(2, rlb.getRequirements().getRequirementFor(typeA).getAmount());
+    }
+
+    @Test(expected = UnsatisfiableRequirementException.class)
+    public void AddIllegalRequirement() throws Exception {
+        //A requires B
+        resourceManager.withRequirementConstraint(typeA, typeB);
+        //B conflicts C
+        resourceManager.withConflictConstraint(typeB, typeC);
+
+        rlb.addNewRequirement(typeA, 1);
+        rlb.addNewRequirement(typeC, 1);
+    }
+
+    @Test(expected = IllegalRequirementAmountException.class)
+    public void selfConflictingType_addIllegalConstraint() throws Exception {
+        //C conflicts C
+        resourceManager.withConflictConstraint(typeC, typeC);
+
+        rlb.addNewRequirement(typeC,2);
     }
 
 
     @Test
     public void testName() throws Exception {
-        rlb.addNewRequirement(typeA,1);
-        rlb.addNewRequirement(typeC,1);
-        assertFalse(rlb.getRequirements().containsRequirementFor(typeC));
+        AResourceType D = addResourceType("D");
+        AResourceType E = addResourceType("E");
+        AResourceType F = addResourceType("F");
+        AResourceType G = addResourceType("G");
 
+        resourceManager.withRequirementConstraint(D,E);
+        resourceManager.withRequirementConstraint(E,F);
+        resourceManager.withRequirementConstraint(F,G);
+
+        rlb.addNewRequirement(D, 1);
+        assertTrue(rlb.getRequirements().containsRequirementFor(D));
+        assertTrue(rlb.getRequirements().containsRequirementFor(E));
+        assertTrue(rlb.getRequirements().containsRequirementFor(F));
+        assertTrue(rlb.getRequirements().containsRequirementFor(G));
+
+
+
+    }
+
+
+    private AResourceType addResourceType(String name) {
+        resourceManager.addNewResourceType(name);
+        AResourceType type = resourceManager.getResourceTypeByName(name);
+        return type;
     }
 }

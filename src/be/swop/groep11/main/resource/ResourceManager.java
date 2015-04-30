@@ -3,7 +3,6 @@ package be.swop.groep11.main.resource;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
-import org.mockito.cglib.core.Local;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -22,27 +21,18 @@ public class ResourceManager {
      * Constructor om een nieuwe resource manager aan te maken.
      */
     public ResourceManager() {
-        //TODO garantie developers als resourceType niet in de constructor van ResourceManager?
-        //Zeker zijn dat developers beschikbaar zijn als type
-        addDeveloperType();
+
     }
 
-    /**
-     * Voegt een "Developer" type toe aan deze repository. Doet niets als het "Developer" type al bestaat of er een
-     * probleem is met de naam.
-     */
-    private void addDeveloperType(){
-        if(developerType == null) {
-            addNewResourceType("Developer", new DailyAvailability(LocalTime.of(8, 0), LocalTime.of(17, 0)));
-            developerType = this.getResourceTypeByName("Developer");
+    public AResourceType getDeveloperType() {
+        if (this.developerType == null) {
+            developerType =  new DeveloperType();
+            resourceTypes.add(developerType);
         }
-    }
-
-    public IResourceType getDeveloperType() {
         return developerType;
     }
 
-    private IResourceType developerType;
+    private DeveloperType developerType;
 
     //TODO documentatie
     /**
@@ -50,24 +40,24 @@ public class ResourceManager {
      * @param name De naam van de toe te voegen ResourceType
      *
      */
-    public void addNewResourceType(String name, DailyAvailability availability, List<IResourceType> requireTypes, List<IResourceType> conflictingTypes) {
+    public void addNewResourceType(String name, DailyAvailability availability, List<AResourceType> requireTypes, List<AResourceType> conflictingTypes) {
         if(containsType(name)){
             throw new IllegalArgumentException("Er bestaat reeds een ResourceType met de naam " +name);
         }
-        ResourceTypeBuilder newTypeBuilder = new ResourceTypeBuilder(name);
-        typeBuilders.put(newTypeBuilder.getResourceType(),newTypeBuilder);
-        newTypeBuilder.withDailyAvailability(availability);
+        ResourceType type = new ResourceType(name);
+        type.setDailyAvailability(availability);
+
         //Add require constraints
-        for (IResourceType reqType : requireTypes) {
-            newTypeBuilder.withRequirementConstraint(reqType);
+        for (AResourceType reqType : requireTypes) {
+            type.addRequirementConstraint(reqType);
         }
 
         //Add conflicting constraints
-        for (IResourceType conflictType : conflictingTypes) {
-            newTypeBuilder.withConflictConstraint(conflictType);
+        for (AResourceType conflictType : conflictingTypes) {
+            type.addConflictConstraint(conflictType);
         }
 
-        resourceTypes.add(newTypeBuilder.getResourceType());
+        resourceTypes.add(type);
     }
 
     /**
@@ -94,7 +84,7 @@ public class ResourceManager {
      * @param requireTypes De ResourceTypes(lijst) waarvan het toe te voegen ResourceType afhangt.
      * @param conflictingTypes De ResourceTypes(lijst) waarmee het toe te voegen ResourceType conflicteerd.
      */
-    public void addNewResourceType(String name,  List<IResourceType> requireTypes, List<IResourceType> conflictingTypes){
+    public void addNewResourceType(String name,  List<AResourceType> requireTypes, List<AResourceType> conflictingTypes){
         addNewResourceType(name, new DailyAvailability(LocalTime.MIN, LocalTime.MAX), requireTypes, conflictingTypes);
     }
 
@@ -104,8 +94,8 @@ public class ResourceManager {
      * @throws NoSuchElementException   wordt gegooid als de naam niet in deze repository zit.
      * @return
      */
-    public IResourceType getResourceTypeByName(String name)throws NoSuchElementException{
-        for(IResourceType type : typeBuilders.keySet()){
+    public AResourceType getResourceTypeByName(String name)throws NoSuchElementException{
+        for(AResourceType type : resourceTypes){
             if(type.getName().equals(name)){
                 return type;
             }
@@ -126,14 +116,11 @@ public class ResourceManager {
     /**
      * Een lijst die alle bekende resourceType van deze repository bevat.
      */
-    private ArrayList<IResourceType> resourceTypes = new ArrayList<>();
+    private ArrayList<AResourceType> resourceTypes = new ArrayList<>();
 
-    public ImmutableList<IResourceType> getResourceTypes() {
+    public ImmutableList<AResourceType> getResourceTypes() {
         return ImmutableList.copyOf(resourceTypes);
     }
-
-    //TODO eventueel naar map<String,Map<IResourceType,ResourceTypeBuilder>>
-    private HashMap<IResourceType, ResourceTypeBuilder> typeBuilders = new HashMap<>();
 
 
     /**
@@ -143,8 +130,8 @@ public class ResourceManager {
      * @throws IllegalArgumentException
      *                      Gooi indien availability null is
      */
-    public void withDailyAvailability(IResourceType ownerType, DailyAvailability availability) throws IllegalArgumentException{
-        typeBuilders.get(ownerType).withDailyAvailability(availability);
+    public void withDailyAvailability(AResourceType ownerType, DailyAvailability availability) throws IllegalArgumentException{
+        ownerType.setDailyAvailability(availability);
     }
 
     /**
@@ -152,8 +139,8 @@ public class ResourceManager {
      * @param ownerType
      * @param reqType
      */
-    public void withRequirementConstraint(IResourceType ownerType, IResourceType reqType) {
-        typeBuilders.get(ownerType).withRequirementConstraint(reqType);
+    public void withRequirementConstraint(AResourceType ownerType, AResourceType reqType) {
+        ownerType.addRequirementConstraint(reqType);
     }
 
     /**
@@ -161,8 +148,8 @@ public class ResourceManager {
      * @param ownerType
      * @param conflictType
      */
-    public void withConflictConstraint(IResourceType ownerType, IResourceType conflictType) {
-        typeBuilders.get(ownerType).withConflictConstraint(conflictType);
+    public void withConflictConstraint(AResourceType ownerType, AResourceType conflictType) {
+        ownerType.addConflictConstraint(conflictType);
     }
 
     /**
@@ -170,9 +157,8 @@ public class ResourceManager {
      * @param ownerType
      * @param inst
      */
-    public void addResourceInstance(IResourceType ownerType, String inst) {
-        typeBuilders.get(ownerType).addResourceInstance(inst);
-
+    public void addResourceInstance(AResourceType ownerType, String inst) {
+        ownerType.addResourceInstance(inst);
     }
 
     //////////////////////////////////////// RESOURCE RESERVATIONS /////////////////////////////////////////////////////
@@ -215,8 +201,7 @@ public class ResourceManager {
      * @param duration         De gegeven duur
      */
     public TimeSpan getNextAvailableTimeSpan(ResourceInstance resourceInstance, LocalDateTime startTime, Duration duration) {
-        // TODO: deze methode werkt nog niet zoals verwacht: testen schrijven!!
-        IResourceType resourceType = resourceInstance.getResourceType();
+        AResourceType resourceType = resourceInstance.getResourceType();
 
         // bereken de "echte starttijd": hangt af van de dagelijkse beschikbaarheid en moet op een uur (zonder minuten) vallen
         LocalDateTime realStartTime;
@@ -232,13 +217,13 @@ public class ResourceManager {
         LocalDateTime realEndTime = resourceInstance.calculateEndTime(realStartTime, duration);
 
         // maak van de start- en eindtijd een tijdsspanne
-        TimeSpan timeSpan = new TimeSpan(realStartTime, realEndTime);
+        TimeSpan timeSpan = new TimeSpan(startTime, realEndTime);
 
         // is de resource wel beschikbaar in die tijdsspanne?
         if (! isAvailable(resourceInstance, timeSpan)) {
             List<ResourceReservation> conflictingAllocations = getConflictingReservations(resourceInstance, timeSpan);
             // bereken hiermee de volgende mogelijke starttijd = de grootste van alle eindtijden van de resources
-            LocalDateTime nextStartTime = realStartTime;
+            LocalDateTime nextStartTime = startTime;
             for (ResourceReservation allocation : conflictingAllocations) {
                 if (allocation.getTimeSpan().getEndTime().isAfter(nextStartTime)) {
                     nextStartTime = allocation.getTimeSpan().getEndTime();
@@ -257,12 +242,12 @@ public class ResourceManager {
      * @throws IllegalArgumentException Het plan is niet geldig.
      */
     public void makeReservationsForPlan(IPlan plan) throws IllegalArgumentException {
-        if (! plan.isValidPlan()) {
+        if (! plan.isValid()) {
             throw new IllegalArgumentException("Ongeldig plan");
         }
 
+        removeReservationsFromTask(plan.getTask());
         for (ResourceReservation reservation : plan.getReservations()) {
-            removeReservationsFromTask(plan.getTask());
             this.addReservation(plan.getTask(), reservation);
         }
     }
@@ -275,7 +260,7 @@ public class ResourceManager {
      * @param startTime    De gegeven starttijd
      * @param duration     De gegeven duur
      */
-    public List<ResourceInstance> getAvailableInstances(IResourceType resourceType, LocalDateTime startTime, Duration duration) {
+    public List<ResourceInstance> getAvailableInstances(AResourceType resourceType, LocalDateTime startTime, Duration duration) {
         List<ResourceInstance> availableInstances = new ArrayList<>();
 
         // voeg alle resource instances toe die beschikbaar zijn vanaf startTime
@@ -341,13 +326,13 @@ public class ResourceManager {
     }
 
     /**
-     * Beeindigd alle reservaties van de gegeven taak op de gegeven eindtijd.
+     * Beeindigt alle reservaties van de gegeven taak op de gegeven eindtijd.
      * @param task De Task waarvan we de Reservaties willen beeindigen.
      * @param endTime De tijd waarop de reservaties moeten eindigen.
      * @throws IllegalArgumentException Wanneer de eindtijd voor een starttijd van een reservatie ligt.
      */
-    // TODO: modifier juist zetten.
-    private void endReservationsFromTask(Task task, LocalDateTime endTime){
+    // TODO: wanneer een taak beeindigd wordt moet dit opgeroepen worden
+    public void endReservationsFromTask(Task task, LocalDateTime endTime){
         List<ResourceReservation> reservations = new ArrayList<>(this.reservations.get(task));
         for(ResourceReservation reservation: reservations){
             TimeSpan newTimeSpan = new TimeSpan(reservation.getTimeSpan().getStartTime(), endTime);
@@ -362,9 +347,7 @@ public class ResourceManager {
      */
     public ImmutableList<ResourceReservation> getReservations() {
         List<ResourceReservation> allReservations = new LinkedList<>();
-        for (List<ResourceReservation> taskReservations : this.reservations.values()) {
-            allReservations.addAll(taskReservations);
-        }
+        this.reservations.values().forEach(allReservations::addAll);
         return ImmutableList.copyOf(allReservations);
     }
 
@@ -419,7 +402,7 @@ public class ResourceManager {
      * @param resourceType Het gegeven resource type
      * @param timeSpan     De gegeven tijdsspanne
      */
-    public ImmutableList<ResourceInstance> getAvailableInstances(IResourceType resourceType, TimeSpan timeSpan) {
+    public ImmutableList<ResourceInstance> getAvailableInstances(AResourceType resourceType, TimeSpan timeSpan) {
         ImmutableList<ResourceInstance> instances = resourceType.getResourceInstances();
         List<ResourceInstance> availableInstances = new LinkedList<>();
         for (ResourceInstance resourceInstance : instances) {
@@ -438,14 +421,14 @@ public class ResourceManager {
      * @return Een lijst van lengte n van de eerstvolgende mogelijke plannen
      */
     public List<IPlan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
-        // TODO: dit is misschien nog niet efficiënt genoeg?
+        // TODO: dit is misschien nog niet efficiï¿½nt genoeg?
 
         List<IPlan> plans = new LinkedList<>();
 
         LocalDateTime startTime = getNextHour(dateTime);
         while (plans.size() < n) {
             Plan nextPlan = new Plan(task, startTime);
-            if (nextPlan.canMakeDefaultReservations()) {
+            if (nextPlan.isValidWithoutDevelopers()) {
                 plans.add(nextPlan);
             }
 
@@ -483,7 +466,7 @@ public class ResourceManager {
          *         en alle nodige reservaties gemaakt zijn.
          */
         @Override
-        public boolean isValidPlan() {
+        public boolean isValid() {
 
             // geen conflicten?
             for (ResourceReservation reservation : this.getReservations()) {
@@ -511,9 +494,43 @@ public class ResourceManager {
         }
 
         /**
+         *
+         */
+        @Override
+        public boolean isValidWithoutDevelopers() {
+            // geen conflicten?
+            for (ResourceReservation reservation : this.getReservations()) {
+                if (!isAvailable(reservation.getResourceInstance(), reservation.getTimeSpan())) {
+                    return false;
+                }
+            }
+
+            // nodige reservaties gemaakt?
+            Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
+            while (it.hasNext()) {
+                ResourceRequirement requirement = it.next();
+
+                if (requirement.getType() != getDeveloperType()) {
+
+                    ImmutableList<ResourceReservation> reservations = this.getReservations(requirement.getType());
+
+                    int nbRequiredInstances = requirement.getAmount();
+                    int nbReservations = reservations.size();
+
+                    if (nbRequiredInstances != nbReservations) {
+                        return false;
+                    }
+
+                }
+            }
+
+            return true;
+        }
+
+        /*
          * Controleert of op de starttijd voor alle resource requirements de nodige resource instanties kunnen
          * gereserveerd worden voor de taak.
-         */
+         *
         public boolean canMakeDefaultReservations() {
             LocalDateTime endTime = calculateEndTime(task, startTime);
             TimeSpan timeSpanOfPlan = new TimeSpan(startTime, endTime);
@@ -532,7 +549,7 @@ public class ResourceManager {
                 }
             }
             return true;
-        }
+        } */
 
         /**
          * Maakt voor elk resource type in de requirement list van de taak de nodige reservaties.
@@ -594,10 +611,16 @@ public class ResourceManager {
             List<ResourceReservation> reservations = new LinkedList<>();
             // zorg wel dat alle reservaties op het zelfde moment eindigen!
             for (ResourceReservation reservation : this.reservations) {
-                if (reservation.getTimeSpan().getEndTime().isBefore(this.getEndTime())) {
+                if (reservation.getTimeSpan().getEndTime().isBefore(this.maxEndTime())) {
                     reservations.add(new ResourceReservation(reservation.getTask(),
                             reservation.getResourceInstance(),
-                            new TimeSpan(reservation.getTimeSpan().getStartTime(), this.getEndTime()),
+                            new TimeSpan(reservation.getTimeSpan().getStartTime(), this.maxEndTime()),
+                            reservation.isSpecific()));
+                }
+                else {
+                    reservations.add(new ResourceReservation(reservation.getTask(),
+                            reservation.getResourceInstance(),
+                            reservation.getTimeSpan(),
                             reservation.isSpecific()));
                 }
             }
@@ -611,14 +634,25 @@ public class ResourceManager {
          * @return De reservaties van dit plan en die eindigen allemaal op hetzelfde moment.
          */
         @Override
-        public ImmutableList<ResourceReservation> getReservations(IResourceType resourceType) {
+        public ImmutableList<ResourceReservation> getReservations(AResourceType resourceType) {
             List<ResourceReservation> reservations = new LinkedList<>();
-            for (ResourceReservation reservation : this.getReservations()) {
+            ImmutableList<ResourceReservation> reservationlist = this.getReservations();
+            for (ResourceReservation reservation : reservationlist) {
                 if (reservation.getResourceInstance().getResourceType() == resourceType) {
                     reservations.add(reservation);
                 }
             }
             return ImmutableList.copyOf(reservations);
+        }
+
+        private LocalDateTime maxEndTime() {
+            LocalDateTime maxEndTime = this.getStartTime();
+            for (ResourceReservation reservation : this.reservations) {
+                if (reservation.getTimeSpan().getEndTime().isAfter(maxEndTime)) {
+                    maxEndTime = reservation.getTimeSpan().getEndTime();
+                }
+            }
+            return maxEndTime;
         }
 
         /**
@@ -692,40 +726,22 @@ public class ResourceManager {
         private List<ResourceReservation> calculateDefaultReservations(Task task, LocalDateTime startTime) throws IllegalArgumentException {
             List<ResourceReservation> defaultReservations = new LinkedList<>();
 
-            LocalDateTime endTime = calculateEndTime(task, startTime);
-            TimeSpan timeSpanOfPlan = new TimeSpan(startTime, endTime);
-
             Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
             while (it.hasNext()) {
                 ResourceRequirement requirement = it.next();
 
                 if (requirement.getType() != getDeveloperType()) {
-                    List<ResourceInstance> availableInstances = getAvailableInstances(requirement.getType(), timeSpanOfPlan);
+                    List<ResourceInstance> availableInstances = getAvailableInstances(requirement.getType(), startTime, task.getEstimatedDuration());
 
                     int nbRequiredInstances = requirement.getAmount();
                     int nbAvailableInstances = availableInstances.size();
-                    if (availableInstances.size() < nbRequiredInstances) {
-                        // niet genoeg resource instanties beschikbaar
-                        // maar probeer wel reservaties te maken, ook al zijn die niet geldig
-                        // dit zal wel resulteren in conflicten
-
-                        List<ResourceInstance> resourceInstancesOfType = new LinkedList<>(requirement.getType().getResourceInstances());
-
-                        // maak eerst reservaties voor beschikbare instances
-                        for (int i = 0; i < nbAvailableInstances - 1; i++) {
-                            defaultReservations.add(new ResourceReservation(task, availableInstances.get(i), timeSpanOfPlan, false));
-                            resourceInstancesOfType.remove(availableInstances.get(i));
-                        }
-
-                        // maak daarna ook nog voor niet-beschikbare instances reservaties
-                        for (int i=0; i<nbRequiredInstances-nbAvailableInstances && i<resourceInstancesOfType.size()-1; i++) {
-                            defaultReservations.add(new ResourceReservation(task, resourceInstancesOfType.get(i), timeSpanOfPlan, false));
-                        }
-
+                    if (nbAvailableInstances < nbRequiredInstances) {
+                        // maak geen reservaties
                     } else {
                         // voeg de nodige reservaties toe
-                        for (int i = 0; i < nbRequiredInstances - 1; i++) {
-                            defaultReservations.add(new ResourceReservation(task, availableInstances.get(i), timeSpanOfPlan, false));
+                        for (int i = 0; i < nbRequiredInstances; i++) {
+                            defaultReservations.add(new ResourceReservation(task, availableInstances.get(i),
+                                    getNextAvailableTimeSpan(availableInstances.get(i), startTime, task.getEstimatedDuration()), false));
                         }
                     }
                 }
@@ -734,7 +750,16 @@ public class ResourceManager {
             return defaultReservations;
         }
 
-        private LocalDateTime calculateEndTime(Task task, LocalDateTime startTime) {
+        /**
+         * Geeft de gereserveerde resources van de taak weer vrij.
+         * @param endTime De tijd waarop de reservaties van de taak moeten eindigen.
+         */
+        @Override
+        public void releaseResources(LocalDateTime endTime) {
+            endReservationsFromTask(this.getTask(), endTime);
+        }
+
+        /*private LocalDateTime calculateEndTime(Task task, LocalDateTime startTime) {
             LocalDateTime endTime = startTime.plus(task.getEstimatedDuration());
             Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
             while (it.hasNext()) {
@@ -754,7 +779,7 @@ public class ResourceManager {
                 }
             }
             return endTime;
-        }
+        }*/
     }
 
 }

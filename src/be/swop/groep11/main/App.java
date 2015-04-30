@@ -1,8 +1,12 @@
-package be.swop.groep11.main.core;
+package be.swop.groep11.main;
 
 import be.swop.groep11.main.actions.Action;
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.controllers.*;
+import be.swop.groep11.main.util.InputParser;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.ui.CommandLineInterface;
@@ -56,8 +60,9 @@ public class App {
         actionBehaviourMapping = new ActionBehaviourMapping(() -> cli.printMessage("Ongeldige action"));
         cli.setActionBehaviourMapping(actionBehaviourMapping);
 
+
         //maak een nieuwe system aan
-        systemTime = new SystemTime();
+        systemTime = new SystemTime(); //TODO WARD: hier gaat een bug zijn indien de yaml file een tijd heeft voor die van de huidige tijd?!
         resourceManager = new ResourceManager();
         projectRepository = new ProjectRepository(systemTime);
     }
@@ -65,7 +70,7 @@ public class App {
     private void initInputParser(boolean readYamlFile){
         if (readYamlFile) {
             // run inputreader
-            InputParser inputParser = new InputParser(projectRepository,resourceManager );
+            InputParser inputParser = new InputParser(projectRepository, resourceManager);
             try {
                 inputParser.parseInputFile();
             } catch (FileNotFoundException e) {

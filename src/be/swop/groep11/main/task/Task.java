@@ -2,12 +2,16 @@ package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.resource.IPlan;
 import be.swop.groep11.main.resource.IRequirementList;
+import be.swop.groep11.main.resource.RequirementListBuilder;
+import be.swop.groep11.main.resource.ResourceReservation;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,23 +23,40 @@ public class Task {
     /**
      * Constructor om een nieuwe taak te maken.
      *
-     *
      * @param description           De omschrijving van de nieuwe taak
      * @param estimatedDuration     De verwachte duur van de nieuwe taak
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
-     * @param systemTime
-     * @param dependencyGraph
+     * @param systemTime            De systeemtijd die de nieuwe taak moet gebruiken
+     * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
+     * @param requirementList       De lijst van resource requirements voor de nieuwe taak
      * @throws java.lang.IllegalArgumentException
      *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph) throws IllegalArgumentException {
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph, IRequirementList requirementList) throws IllegalArgumentException {
         this.setStatus(new TaskAvailable());
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
         this.systemTime = systemTime;
         this.dependencyGraph = dependencyGraph;
+        this.requirementList = requirementList;
+    }
+
+    /**
+     * Constructor om een nieuwe taak te maken zonder resource requirements.
+     *
+     * @param description           De omschrijving van de nieuwe taak
+     * @param estimatedDuration     De verwachte duur van de nieuwe taak
+     * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
+     * @param systemTime            De systeemtijd die de nieuwe taak moet gebruiken
+     * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
+     * @throws java.lang.IllegalArgumentException
+     *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
+     *                                            of ongeldig project
+     */
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph) throws IllegalArgumentException {
+        this(description, estimatedDuration, acceptableDeviation, systemTime, dependencyGraph, new RequirementListBuilder().getRequirements());
     }
 
     private SystemTime systemTime;
@@ -223,7 +244,9 @@ public class Task {
      */
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyGraph.addNewDependency(this, dependingOn);
-        makeUnAvailable();
+        if(!dependingOn.getStatus().getClass().equals(TaskFinished.class)) {
+            makeUnAvailable();
+        }
     }
 
     /**
@@ -259,7 +282,6 @@ public class Task {
      */
     public void fail(LocalDateTime endTime) {
         status.fail(this, endTime);
-
     }
 
     /**
@@ -488,7 +510,6 @@ public class Task {
     /**
      * Geeft de duration terug van de taak.
      * @param currentSystemTime
-     * @return
      */
     public Duration getDuration(LocalDateTime currentSystemTime){
         return this.status.getDuration(this, currentSystemTime);
@@ -496,19 +517,35 @@ public class Task {
 
     /**
      * Plant deze taak.
-     * @param plannedStartTime De geplande starttijd voor deze taak
+     * @param plan Het plan voor deze taak
+     * @throws IllegalStateException De taak kan niet gepland worden.
      */
-    public void plan(LocalDateTime plannedStartTime) {
-        this.plannedStartTime = plannedStartTime;
+    public void plan(IPlan plan) {
+        this.getStatus().plan(this, plan);
     }
 
     /**
      * Controleert of deze taak gepland is.
      */
     public boolean isPlanned() {
-        return this.plannedStartTime != null;
+        return this.plan != null;
     }
 
-    private LocalDateTime plannedStartTime;
+    /**
+     * Geeft de geplande starttijd van deze taak.
+     */
+    public LocalDateTime getPlannedStartTime() {
+        return plan.getStartTime();
+    }
+
+    private IPlan plan;
+
+    public IPlan getPlan() {
+        return this.plan;
+    }
+
+    protected void setPlan(IPlan plan) {
+        this.plan = plan;
+    }
 
 }
