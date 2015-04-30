@@ -1,4 +1,4 @@
-package be.swop.groep11.main.actions;
+package be.swop.groep11.main.exception;
 
 /**
  * Created by Ronald on 10/03/2015.

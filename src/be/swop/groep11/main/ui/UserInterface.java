@@ -1,7 +1,7 @@
 package be.swop.groep11.main.ui;
 
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
-import be.swop.groep11.main.actions.CancelException;
+import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.exception.EmptyListException;
@@ -46,7 +46,7 @@ public interface UserInterface {
      * @param projects Lijst van projecten
      * @return Nummer van geselecteerde project in lijst
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van projecten is leeg.
-     * @throws be.swop.groep11.main.actions.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
     Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException;
 
@@ -55,7 +55,7 @@ public interface UserInterface {
      * @param tasks Lijst van taken
      * @return Nummer van geselecteerde taak in lijst
      * @throws be.swop.groep11.main.ui.EmptyListException De lijst van taken is leeg.
-     * @throws be.swop.groep11.main.actions.CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
     Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
 
