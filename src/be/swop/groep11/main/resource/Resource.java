@@ -34,9 +34,7 @@ public class Resource implements ResourceInstance {
         if (this.getResourceType().getDailyAvailability() == null) {
             return startTime.plus(duration);
         }
-
         else {
-
             LocalDateTime currentStartTime = this.getResourceType().getDailyAvailability().getNextTime(startTime);
             LocalDateTime currentEndTime   = null;
             Duration      currentDuration  = duration;
@@ -80,7 +78,7 @@ public class Resource implements ResourceInstance {
      * @param name De te controleren naam
      * @return True als de naam niet null en niet leeg is.
      */
-    public static boolean isValidName(String name) {
+    private static boolean isValidName(String name) {
         return name != null && ! name.isEmpty();
     }
 

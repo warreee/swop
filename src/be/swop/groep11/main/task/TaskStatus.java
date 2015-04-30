@@ -112,7 +112,7 @@ public abstract class TaskStatus implements Cloneable {
      * @param task De te plannen taak
      * @throws IllegalStateException De taak kan niet gepland worden.
      */
-    public void plan(Task task, IPlan plan) throws IllegalArgumentException {
+    protected void plan(Task task, IPlan plan) throws IllegalArgumentException {
         throw new IllegalStateException("De taak kan niet gepland worden.");
     }
 }

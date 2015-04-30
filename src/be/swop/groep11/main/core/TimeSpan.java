@@ -43,7 +43,7 @@ public class TimeSpan {
      * @param endTime   De eindtijd die gecontroleerd moet worden.
      * @return          Waar indien startTime, endTime niet null zijn. En bovendien startTime.isBefore(endTime)
      */
-    public static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime){
+    private static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime){
         return startTime !=null && endTime != null && startTime.isBefore(endTime);
     }
 

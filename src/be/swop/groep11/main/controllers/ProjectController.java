@@ -31,9 +31,6 @@ public class ProjectController extends AbstractController {
         this.user = user;
     }
 
-    protected ProjectRepository getProjectRepository() {
-        return projectRepository;
-    }
 
     /**
      * Voert de stappen voor de use case "Show Projects" uit.
