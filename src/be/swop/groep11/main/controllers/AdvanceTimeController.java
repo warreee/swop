@@ -13,9 +13,8 @@ public class AdvanceTimeController extends AbstractController {
 
     /**
      * Constructor om een nieuwe advance time controller te maken.
-     * @param TMSystem Task man die de systeemtijd bijhoudt
-     * @param ui Gebruikersinterface
-     * @param userInterface
+     * @param systemTime Systeemtijd
+     * @param userInterface Gebruikersinterface
      */
     public AdvanceTimeController(SystemTime systemTime, UserInterface userInterface) {
         super(userInterface);
