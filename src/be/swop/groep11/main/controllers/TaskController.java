@@ -174,6 +174,7 @@ public class TaskController extends AbstractController {
         switch (status) {
             case "execute":
                 task.execute(getUserInterface().requestDatum("Starttijd:"));
+                // TODO: planned of unplanned execution? (unplanned => extra reservaties maken = mogelijk)
                 break;
             case "fail":
                 task.fail(getUserInterface().requestDatum("Eindtijd:"));
