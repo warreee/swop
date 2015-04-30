@@ -30,6 +30,9 @@ public class InputParser {
     ArrayList<ResourceInstance> resourceInstanceList = new ArrayList<>();
     ArrayList<DailyAvailability> dailyAvailabilityList = new ArrayList<>();
     ArrayList<ResourceInstance> developerList = new ArrayList<>();
+    ArrayList<Map<String, Object>> planningsList = new ArrayList<>();
+    Map<String, Object> values;
+    Map<Integer, Map<Integer, Map<String, LocalDateTime>>> reservationsMap = new HashMap<>();
     private ResourceManager resourceManager;
     private SystemTime systemTime;
 
@@ -38,7 +41,7 @@ public class InputParser {
      * @param projectRepository De ProjectRepository waaraan alle projecten moeten worden toegevoegd.
      * @param resourceManager De ResourceManager waaraan alle Resources en reservaties moeten worden toegevoegd.
      */
-    public InputParser(ProjectRepository projectRepository, ResourceManager resourceManager,SystemTime systemTime) {
+    public InputParser(ProjectRepository projectRepository, ResourceManager resourceManager, SystemTime systemTime) {
         this.projectRepository = projectRepository;
         this.resourceManager = resourceManager;
         this.systemTime = systemTime;
@@ -46,21 +49,21 @@ public class InputParser {
 
 
     public static void main(String[] args) throws FileNotFoundException {
+        SystemTime systemTime = new SystemTime(LocalDateTime.MIN);
         ResourceManager typeRepo = new ResourceManager();
-        SystemTime systemTime = new SystemTime();
         ProjectRepository projectRepository = new ProjectRepository(systemTime);
 
-        InputParser parser = new InputParser(projectRepository, typeRepo,systemTime);
+        InputParser parser = new InputParser(projectRepository, typeRepo, systemTime);
         parser.parseInputFile();
         System.out.println("Finished :)");
     }
 
-    public ProjectRepository getProjectRepository(){
-        return this.projectRepository;
-    }
-
-    public ResourceManager getResourceManager(){
-        return this.getResourceManager();
+    private IPlan getPlan(int i, Task task){
+        Map<String, Object> planMap = (Map<String, Object>) ((ArrayList) values.get("plannings")).get(i);
+        IPlan plan = resourceManager.getNextPlans(1, task, parseTime((String) planMap.get("plannedStartTime"))).get(0);
+        task.plan(plan);
+        // TODO: fix
+        return null;
     }
 
     /**
@@ -76,22 +79,23 @@ public class InputParser {
         Map<String, Object> values;
 
         try {
-            values = (Map<String, Object>) yaml.load(new FileInputStream(new File(path)));
+            this.values = values = (Map<String, Object>) yaml.load(new FileInputStream(new File(path)));
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
             return; // Return omdat de inputfile niet gelezen kon worden.
         }
 
         // De volgorde is van belang.
+        handleDevelopers(values);
         handleDailyAvailability(values);
         handleSystemTime(values);
+        handleReservations(values);
+        handlePlannings(values);
         handleResourceTypes(values);
         handleResources(values);
-        handleDevelopers(values);
         handleProjects(values);
         handleTasks(values);
-        handlePlannings(values);
-        handleReservations(values);
+
     }
 
     /**
@@ -126,8 +130,19 @@ public class InputParser {
     private void handlePlannings(Map<String, Object> planningsMap){
         ArrayList plannings = (ArrayList) planningsMap.get("plannings");
         for (int i = 0; i < plannings.size(); i++){
-            addPlanning(i, (Map<String, Object>) plannings.get(i));
+            planningsList.add(new HashMap<>());
+            Map<String, Object> planningMap = (Map<String, Object>) plannings.get(i);
+            Map<String, Object> planningListMap = planningsList.get(planningsList.size() - 1);
+
+            planningListMap.put("plannedStartTime", parseTime((String) planningMap.get("plannedStartTime")));
+            planningListMap.put("developers", planningMap.get("developers"));
+            HashMap<Integer, Integer> resourcesMap = new HashMap<>();
+            planningListMap.put("resources", resourcesMap);
+            for(Map<Integer, Integer> rMap: (ArrayList<Map<Integer, Integer>>) planningMap.get("resources")){
+                resourcesMap.put(rMap.get("type"), rMap.get("quantity"));
+            }
         }
+        return;
     }
 
     /**
@@ -148,8 +163,15 @@ public class InputParser {
     private void handleReservations(Map<String, Object> reservationsMap){
         ArrayList reservations = (ArrayList) reservationsMap.get("reservations");
         for(Object reservation: reservations){
-            addReservation((Map<String, Object>) reservation);
+            Map<String, Object> reservationMap = (Map<String, Object>) reservation;
+            Integer taskId = (Integer) reservationMap.get("task");
+            Integer resourceID = (Integer) reservationMap.get("resource");
+            this.reservationsMap.putIfAbsent(taskId, new HashMap<>());
+            this.reservationsMap.get(taskId).putIfAbsent(resourceID, new HashMap<>());
+            this.reservationsMap.get(taskId).get(resourceID).put("startTime", parseTime((String) reservationMap.get("startTime")));
+            this.reservationsMap.get(taskId).get(resourceID).put("endTime", parseTime((String) reservationMap.get("endTime")));
         }
+        return;
     }
 
     /**
@@ -181,8 +203,7 @@ public class InputParser {
      */
     private void handleSystemTime(Map<String, Object> systemTimeMap){
         String time = (String) systemTimeMap.get("systemTime");
-        systemTime =  new SystemTime(parseTime(time));
-        // TODO: systeemtijd zetten.
+        systemTime.updateSystemTime(parseTime(time));
     }
 
     /**
@@ -221,23 +242,6 @@ public class InputParser {
     }
 
     /**
-     * TODO: Documentatie schrijven als methode af is.
-     * @param number
-     * @param propertiesList
-     */
-    private void addPlanning(int number, Map<String, Object> propertiesList){
-        Task task = planningTaskMap.get(number);
-        IPlan plan = resourceManager.getNextPlans(1, task, parseTime((String) propertiesList.get("plannedStartTime"))).get(0);
-        task.plan(plan);
-        List<Developer> developers = new ArrayList<>();
-        //((ArrayList) propertiesList.get("developers")).forEach(x -> developers.add((Developer) developerList.get((Integer) x)));
-        // TODO: afwerken en bij aan taak toevoegen
-        plan.addReservations(developerList);
-
-        // TODO: requirement list toevoegen
-    }
-
-    /**
      * Gebruikt de projectrepostory om een project toe te voegen aan het systeem
      *
      * @param propertiesList de eigenschappen van het project ingelezen vanuit de tman file.
@@ -253,19 +257,6 @@ public class InputParser {
 
         // Haalt het laatst toegevoegde project op.
         projectList.add(projectRepository.getProjects().get(projectRepository.getProjects().size() - 1));
-    }
-
-    /**
-     * Maakt een nieuwe reservatie in de ResourceManager.
-     * @param propertiesList
-     */
-    private void addReservation(Map<String, Object> propertiesList){
-        ResourceInstance resourceInstance = resourceInstanceList.get((Integer) propertiesList.get("resource"));
-        Task task = taskList.get((Integer) propertiesList.get("task"));
-        LocalDateTime startTime = parseTime((String) propertiesList.get("startTime"));
-        LocalDateTime endTime = parseTime((String) propertiesList.get("endTime"));
-        resourceManager.makeReservation(task, resourceInstance, new TimeSpan(startTime, endTime), true);
-        // TODO add reservations to plan
     }
 
     /**
@@ -332,12 +323,43 @@ public class InputParser {
         project.addNewTask(description, acceptableDeviation, duration);
         taskList.add(project.getTasks().get(project.getTasks().size() - 1));
         Task task = taskList.get(taskList.size() - 1);
+        ArrayList<Developer> taskDevelopers = new ArrayList<>();
+        LocalDateTime plannedStartTime = null;
 
         try{
             Integer number = (Integer) propertiesList.get("planning");
-            planningTaskMap.put(number, task);
+            if(number != null) {
+                Map<String, Object> planning = planningsList.get(number);
+                RequirementListBuilder builder = new RequirementListBuilder();
+                for (Integer i : ((Map<Integer, Integer>) planning.get("resources")).keySet()) {
+                    builder.addNewRequirement(resourceTypeList.get(i), ((Map<Integer, Integer>) planning.get("resources")).get(i));
+                }
+                for (Integer i : (ArrayList<Integer>) planning.get("developers")) {
+                    taskDevelopers.add((Developer) developerList.get(i));
+                }
+                builder.addNewRequirement(resourceManager.getDeveloperType(), taskDevelopers.size());
+                task.setRequirementList(builder.getRequirements());
+                plannedStartTime = (LocalDateTime) planning.get("plannedStartTime");
+            }
         } catch (NumberFormatException e){
             // Doe niks, het nummer van planning kon niet omgevormd worden.
+        }
+
+        if(reservationsMap.containsKey(taskList.size() - 1)){
+            // Als er reservaties zijn voor deze taak voeren we die uit.
+            if(plannedStartTime == null){
+                throw new IllegalArgumentException("Om reservaties uit te voeren is een geplande starttijd nodig.");
+            }
+            IPlan plan = resourceManager.getNextPlans(1, task, plannedStartTime).get(0);
+            plan.changeReservations(new ArrayList<>());
+            Map<Integer, Map<String, LocalDateTime>> reservations = reservationsMap.get(taskList.size() - 1);
+            for(Integer i: reservations.keySet()){
+                plan.addReservation(resourceInstanceList.get(i));
+            }
+            for(Developer developer: taskDevelopers){
+                plan.addReservation(developer);
+            }
+            plan.apply();
         }
 
         if(propertiesList.containsKey("prerequisiteTasks") && propertiesList.get("prerequisiteTasks") != null) {
