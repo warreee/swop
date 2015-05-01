@@ -1,7 +1,7 @@
 package be.swop.groep11.main.exception;
 
 /**
- * Created by Ronald on 9/04/2015.
+ * Exception die wordt gegooid wanneer de opgegeven requirements niet voldaan kunnen worden.
  */
 public class UnsatisfiableRequirementException extends RuntimeException {
 

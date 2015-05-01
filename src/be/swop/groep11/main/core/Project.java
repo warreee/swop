@@ -197,7 +197,7 @@ public class Project {
     private DependencyGraph dependencyGraph;
 
     /**
-     * @return  Waar indien de geschatte eind datum van het project na de verwachte eind datum valt.
+     * @return  True indien de geschatte eind datum van het project na de verwachte eind datum valt anders False.
      */
     public boolean isOverTime(){
         return getEstimatedEndTime().isAfter(dueTime);
@@ -248,6 +248,11 @@ public class Project {
         return currentWorkingDay;
         }
 
+    /**
+     * Voor een gegeven set van Tasks, bereken hoeveel dagen hiervoor nodig zouden zijn.
+     * @param tasks De set met Tasks waarvoor het aantal dagen berekend moet worden.
+     * @return Het aantal dagen nodig voor de gegeven set taken.
+     */
     private long calculateNeededDays(Set<Task> tasks) {
         LocalDateTime currentSystemTime = systemTime.getCurrentSystemTime();
         long total = 0;
