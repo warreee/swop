@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
- * Created by Ronald on 22/04/2015.
+ * Klasse verantwoordelijk voor BootStrapping.
  */
 public class App {
 
@@ -123,7 +123,6 @@ public class App {
         actionBehaviourMapping.activateController(main);
         // lees commando's
         cli.run();
-
     }
 
     private void addTempDomainObjects() {
