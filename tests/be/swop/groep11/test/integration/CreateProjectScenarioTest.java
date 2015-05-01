@@ -45,7 +45,7 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
 
-        this.projectController = new ProjectController(projectRepository,user,mockedUI);
+        this.projectController = new ProjectController(projectRepository,mockedUI);
         projectController.createProject();
     }
 
@@ -56,7 +56,7 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(IllegalArgumentException.class));
 
-        projectController = new ProjectController(projectRepository,user,mockedUI);
+        projectController = new ProjectController(projectRepository,mockedUI);
         projectController.createProject();
     }
 
@@ -67,7 +67,7 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(IllegalArgumentException.class));
 
-        projectController = new ProjectController(projectRepository,user,mockedUI);
+        projectController = new ProjectController(projectRepository,mockedUI);
         projectController.createProject();
     }
 
@@ -78,7 +78,7 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now.plusDays(1)).thenReturn(now);
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
-        projectController = new ProjectController(projectRepository,user,mockedUI);
+        projectController = new ProjectController(projectRepository,mockedUI);
         projectController.createProject();
     }
 
@@ -89,7 +89,7 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
-        projectController = new ProjectController(projectRepository,user,mockedUI);
+        projectController = new ProjectController(projectRepository,mockedUI);
         projectController.createProject();
     }
 
@@ -101,7 +101,7 @@ public class CreateProjectScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
-        projectController = new ProjectController(projectRepository,user,mockedUI);
+        projectController = new ProjectController(projectRepository,mockedUI);
         projectController.createProject();
     }
     @Test(expected = StopTestException.class)
@@ -112,7 +112,7 @@ public class CreateProjectScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
-        projectController = new ProjectController(projectRepository,user,mockedUI);
+        projectController = new ProjectController(projectRepository,mockedUI);
         projectController.createProject();
     }
     @Test(expected = StopTestException.class)
@@ -123,7 +123,7 @@ public class CreateProjectScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
-        projectController = new ProjectController(projectRepository,user,mockedUI);
+        projectController = new ProjectController(projectRepository,mockedUI);
         projectController.createProject();
     }
 }

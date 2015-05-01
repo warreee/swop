@@ -9,7 +9,6 @@ import be.swop.groep11.main.resource.RequirementListBuilder;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
@@ -332,11 +331,10 @@ public class Task{
      *                   of (task is gefaald en alternativeTask != task en alternativeTask hangt niet af van task)
      */
     public static boolean canSetAlternativeTask(Task task, Task alternativeTask) {
-        return task != null
-                && ( (task.getStatus() instanceof TaskFailed && task != alternativeTask && (! alternativeTask.dependsOn(task))) || (alternativeTask == null) );
+        return task.status.canSetAlternativeTask(task,alternativeTask);
     }
 
-    private boolean dependsOn(Task other) {
+    protected boolean dependsOn(Task other) {
         return this.getDependingOnTasks().contains(other);
     }
 
@@ -453,18 +451,6 @@ public class Task{
     }
 
     /**
-     * Voor de gegeven LocalDateTime, geef een LocalDateTime terug die het volgende volledige uur bevat.
-     * @param dateTime
-     * @return
-     */
-    private LocalDateTime getNextHour(LocalDateTime dateTime) {
-        if (dateTime.getMinute() == 0)
-            return dateTime;
-        else
-            return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour() + 1, 0));
-    }
-
-    /**
      * Maakt de afhankelijke taken (if any) van deze taak AVAILABLE,
      * indien dat mogelijk is.
      * Als deze taak een alternatieve taak voor een andere taak is.
@@ -531,7 +517,7 @@ public class Task{
     private Plan plan;
 
     protected void setPlan(Plan plan) {
-        plan.apply();
+        plan.applyReservations();
         this.plan = plan;
     }
 

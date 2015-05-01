@@ -4,7 +4,7 @@ import be.swop.groep11.main.exception.IllegalRequirementAmountException;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 
 /**
- * Created by Ronald on 3/04/2015.
+ * Een klasse die een ResourceRequirement voorstelt.
  */
 public class ResourceRequirement {
     /**

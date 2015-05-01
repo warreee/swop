@@ -369,28 +369,7 @@ public class CommandLineInterface implements UserInterface {
         };
         return getStringFromUser;
     }
-
-/*    private userInput<List<String>> getMultipleString(String seperator){
-        userInput<List<String>> foo = request ->{
-            boolean correct = false;
-            ArrayList<Integer> result = new ArrayList<>();
-            do {
-                try {
-                    String response = getStringFromUser().apply(request);
-                    List<String> numbers = Arrays.asList(response.split(","));
-                    final ArrayList<Integer> finalResult = result;
-                    numbers.stream().forEach(num -> finalResult.add(new Integer(num)));
-                    correct = true;
-                } catch (NumberFormatException e) {
-                    printMessage("Verkeerde input, probeer opnieuw.");
-                    correct = false;
-                }
-            } while (!correct);
-            return result;
-        };
-        return null;
-    }*/
-
+    
     private userInput<Double> getDoubleFromUser(){
         userInput<Double> getDoubleFromUser = request -> {
             boolean correct = false;

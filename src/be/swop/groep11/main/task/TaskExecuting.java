@@ -7,28 +7,47 @@ import java.time.LocalDateTime;
 
 
 /**
- * Created by warreee on 4/7/15.
+ * Stelt een taak status voor. Deze status is Executing.
  */
 public class TaskExecuting extends TaskStatus {
+    /**
+     * Maakt een nieuw TaskExecuting object aan.
+     */
     protected TaskExecuting() {
         super(TaskStatusEnum.EXECUTING);
     }
 
+    /**
+     * Haalt de status op.
+     */
     @Override
     public TaskStatusEnum getStatus() {
         return TaskStatusEnum.EXECUTING;
     }
 
+    /**
+     * Haalt een nieuwe TaskExecutingStatus op.
+     */
     @Override
     public TaskStatus getTaskStatus() {
         return new TaskExecuting();
     }
 
+    /**
+     * Start met de uitvoer van de gegeven taak op de gegeven moment. Dit mag niet dus gooit een exception.
+     * @param task De taak die moet uitgevoerd worden.
+     * @param startTime De starttijd van de uitvoer.
+     */
     @Override
     protected void execute(Task task, LocalDateTime startTime) {
         throw new IllegalStateTransitionException("De taak was reeds aan het uitvoeren!");
     }
 
+    /**
+     * Beeindigd de uitvoer van de gegeven taak op het gegeven moment.
+     * @param task De taak die moet beeindigd worden.
+     * @param endTime De eindtijd van de uitvoer.
+     */
     @Override
     protected void finish(Task task, LocalDateTime endTime) {
         task.setEndTime(endTime);
@@ -38,6 +57,11 @@ public class TaskExecuting extends TaskStatus {
         task.makeDependentTasksAvailable();
     }
 
+    /**
+     * Faalt de gegeven taak op het gegeven moment.
+     * @param task De taak die moet falen.
+     * @param endTime De tijd van het falen.
+     */
     @Override
     protected void fail(Task task, LocalDateTime endTime) {
         task.setEndTime(endTime);
@@ -48,7 +72,7 @@ public class TaskExecuting extends TaskStatus {
 
     /**
      * Geeft de geschatte duur van de taak die aan het uitvoeren is, indien de taak over tijd is
-     * dan wordt de duur berekend als het vereschil tussen de starttijd en de huidige systeemtijd.
+     * dan wordt de duur berekend als het verschil tussen de starttijd en de huidige systeemtijd.
      * @param task
      * @param currentSystemTime
      * @return de duur van de taak.

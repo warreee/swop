@@ -7,19 +7,30 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
- * Created by warreee on 4/7/15.
+ * Stelt een taak status voor. Deze status is Unvailable
  */
 public class TaskUnavailable extends TaskStatus {
 
+    /**
+     * Maakt een nieuw TaskUnavailable object aan.
+     */
     protected TaskUnavailable() {
         super(TaskStatusEnum.UNAVAILABLE);
     }
 
+    /**
+     * Maakt de gegeven taak unavailable. Dit mag niet dus gooit een exception.
+     * @param task De taak die unavailable moet gemaakt wotden.
+     */
     @Override
     protected void makeUnavailable(Task task) {
         throw new IllegalStateTransitionException("De taak kan niet naar de status UNAVAILABLE gaan want was dit reeds!");
     }
 
+    /**
+     * Maakt de gegeven taak available.
+     * @param task De taak die available moet gemaakt worden.
+     */
     @Override
     protected void makeAvailable(Task task) {
         // Indien de dependingOn taken van deze taak niet finished zijn, zijn ze nog niet gereed en mag deze taak
@@ -32,11 +43,16 @@ public class TaskUnavailable extends TaskStatus {
         }
     }
 
+    /**
+     */
     @Override
     public TaskStatusEnum getStatus() {
         return TaskStatusEnum.UNAVAILABLE;
     }
 
+    /**
+     * Haalt het Statusobject op van deze status.
+     */
     @Override
     public TaskStatus getTaskStatus() {
         return new TaskUnavailable();

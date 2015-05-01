@@ -1,7 +1,7 @@
 package be.swop.groep11.main.exception;
 
 /**
- * Created by Ronald on 10/03/2015.
+ * Exception die wordt gegooid wanneer er foute input wordt gegeven door de gebruiker.
  */
 public class IllegalInputException extends RuntimeException {
     public IllegalInputException(String message) {

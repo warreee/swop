@@ -1,7 +1,7 @@
 package be.swop.groep11.main.exception;
 
 /**
- * Created by Ronald on 28/02/2015.
+ * Exception die wordt gegooid wanneer de gebruiker een ongeldige actie doet.
  */
 public class IllegalActionException extends RuntimeException {
 

@@ -7,10 +7,7 @@ import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import java.util.*;
 
 /**
- * Created by Ronald on 9/04/2015.
- *
  * Aanmaken van requirements en bijhouden in een lijst
- *
  */
 public class RequirementListBuilder {
 
@@ -36,17 +33,32 @@ public class RequirementListBuilder {
         this.reqList.addRequirement(type,amount);
     }
 
+    /**
+     * Geeft alle requirements terug die al in deze builder zitten.
+     * @return Een lijst met requirements.
+     */
     public IRequirementList getRequirements(){
         return this.reqList;
     }
 
+    /**
+     * Private klasse die de interface IRequirementList implementeerd.
+     */
     private class RequirementList implements IRequirementList {
 
+        /**
+         * Package accesable constructor voor bescherming.
+         */
         RequirementList() {
         }
 
         private final HashMap<AResourceType,ResourceRequirement> requirements = new HashMap<>();
 
+        /**
+         * Controleer of er voor het gegeven AResourceType een requirements aanwezig is.
+         * @param type  Het type waarvoor we controleren
+         * @return True als dit aanwezig is anders False.
+         */
         @Override
         public boolean containsRequirementFor(AResourceType type) {
             return requirements.containsKey(type);
@@ -92,11 +104,20 @@ public class RequirementListBuilder {
             return true;
         }
 
+        /**
+         * Geeft een iterator terug om over alle waarden in deze lijst te itereren.
+         * @return De iterator.
+         */
         @Override
         public Iterator<ResourceRequirement> iterator() {
             return this.requirements.values().iterator();
         }
 
+        /**
+         * Controleer of alle DailyAvailabilities van deze lijst overlappen met de DailyAvailability van requestedType.
+         * @param requestedType Het te controleren type.
+         * @return True als dit zo is anders False.
+         */
         private boolean hasOverlappingAvailability(AResourceType requestedType){
             List<DailyAvailability> availabilities = new ArrayList<>();
             for(AResourceType type : requirements.keySet()){
@@ -110,6 +131,14 @@ public class RequirementListBuilder {
             }
         }
 
+        /**
+         * Voegt een Requirement toe aan deze lijst.
+         * @param requiredType Het AResourceType dat required is.
+         * @param amount Hoeveel er required zijn.
+         * @throws IllegalRequirementAmountException
+         * @throws IllegalArgumentException
+         * @throws UnsatisfiableRequirementException Wordt gegooid indien er conflicten zijn met het toevoegen van requiredType.
+         */
         private void addRequirement(AResourceType requiredType,int amount) throws IllegalRequirementAmountException,IllegalArgumentException,UnsatisfiableRequirementException{
             if(!isSatisfiableFor(requiredType, amount)){
                 throw new UnsatisfiableRequirementException();
@@ -126,6 +155,11 @@ public class RequirementListBuilder {
             }
         }
 
+        /**
+         * Geeft de ResourceRequirement terug voor het gegeven AResourceType.
+         * @param type      Het Required AResourceType van de gevraagde requirement.
+         * @return De ResourceRequirement.
+         */
         public ResourceRequirement getRequirementFor(AResourceType type) {
             return requirements.get(type);
         }

@@ -99,7 +99,7 @@ public class PlanTest {
         developers.add(resourceManager.getDeveloperType().getResourceInstances().get(0));
         developers.add(resourceManager.getDeveloperType().getResourceInstances().get(1));
         plan.addReservations(developers);
-        plan.apply();
+        plan.applyReservations();
         assertTrue(resourceManager.getReservations(plan.getTask()).size() == 3);
         assertTrue(reservationsListContainsInstance(resourceManager.getReservations(plan.getTask()),
                 resourceManager.getDeveloperType().getResourceInstances().get(0)));
@@ -115,7 +115,7 @@ public class PlanTest {
         developers.add(resourceManager.getDeveloperType().getResourceInstances().get(0));
         developers.add(resourceManager.getDeveloperType().getResourceInstances().get(1));
         plan.addReservations(developers);
-        plan.apply();
+        plan.applyReservations();
         assertTrue(reservationsListContainsInstance(plan.getReservations(),
                 resourceManager.getDeveloperType().getResourceInstances().get(0)));
         assertTrue(reservationsListContainsInstance(plan.getReservations(),

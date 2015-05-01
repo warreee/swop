@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by Ronald on 13/04/2015.
+ * Abstracte klasse die als basis dient voor ResourceTypes.
  */
 public abstract class AResourceType {
 
@@ -31,6 +31,11 @@ public abstract class AResourceType {
         setDailyAvailability(new DailyAvailability(LocalTime.MIN, LocalTime.MAX));
     }
 
+    /**
+     * Zet de dagelijkse beschikbaar van dit AResourceType.
+     * @param availability De dagelijkse beschikbaarheid.
+     * @throws IllegalArgumentException Wordt gegooid indien die DailyAvailability ongeldig is.
+     */
     protected void setDailyAvailability(DailyAvailability availability) throws IllegalArgumentException {
         if (!isValidDailyAvailability(availability)) {
             throw new IllegalArgumentException("Ongeldige DailyAvailability");
@@ -38,6 +43,11 @@ public abstract class AResourceType {
         this.dailyAvailability = availability;
     }
 
+    /**
+     * Controleerd of de gegeven DailyAvailability een geldige DailyAvailability is.
+     * @param availability De te controleren DailyAvailability.
+     * @return True als de gegeven DailyAvailability geldig is, anders False.
+     */
     private boolean isValidDailyAvailability(DailyAvailability availability) {
         return availability != null;
     }
@@ -62,11 +72,19 @@ public abstract class AResourceType {
         return new ArrayList<>(constraintMap.values());
     }
 
+    /**
+     * Voegt een ConflictConstraint toe.
+     * @param constrainingType Het AResourceType waarvoor deze ConflictConstraint wordt toegevoegd.
+     */
     protected void addConflictConstraint(AResourceType constrainingType) {
         ResourceTypeConstraint constraint = new ConflictConstraint(this, constrainingType);
         constraintMap.put(constrainingType, constraint);
     }
 
+    /**
+     * Voegt een RequiresConstraint toe.
+     * @param constrainingType Het AResourceType waarvoor deze ConflictConstraint wordt toegevoegd.
+     */
     protected void addRequirementConstraint(AResourceType constrainingType){
         ResourceTypeConstraint constraint = new RequiresConstraint(this, constrainingType);
         constraintMap.put(constrainingType, constraint);
@@ -125,6 +143,10 @@ public abstract class AResourceType {
      */
     protected abstract void addResourceInstance(String name) throws IllegalArgumentException;
 
+    /**
+     * Voegt een instantie van dit AResourceType toe.
+     * @param resourceInstance De instantie.
+     */
     protected void addResourceInstance(ResourceInstance resourceInstance) {
         if (resourceInstance == null) {
             throw new IllegalInputException("Ongeldige resourceInstance, moet ge?nitialiseerd zijn");

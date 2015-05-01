@@ -3,7 +3,7 @@ package be.swop.groep11.main.resource;
 import java.util.Iterator;
 
 /**
- * Created by Ronald on 9/04/2015.
+ * Interface voor RequirementsList.
  */
 public interface IRequirementList{
 
