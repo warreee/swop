@@ -302,6 +302,8 @@ public class InputParser {
 
     /**
      * Voegt een nieuwe taak toe.
+     * Er wordt voor gezorgd dat de toegevoegde taak 1 developer als requirement heeft,
+     * indien er geen plan in de input file stond voor die taak.
      * @param propertiesList
      */
     private void addTask(Map<String, Object> propertiesList) {
@@ -309,7 +311,9 @@ public class InputParser {
         Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
         Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation"))) / 100;
         Project project = projectList.get((Integer) propertiesList.get("project"));
-        project.addNewTask(description, acceptableDeviation, duration);
+        RequirementListBuilder requirementListBuilder = new RequirementListBuilder();
+        requirementListBuilder.addNewRequirement(resourceManager.getDeveloperType(), 1);
+        project.addNewTask(description, acceptableDeviation, duration, requirementListBuilder.getRequirements());
         taskList.add(project.getTasks().get(project.getTasks().size() - 1));
         Task task = taskList.get(taskList.size() - 1);
         ArrayList<Developer> taskDevelopers = new ArrayList<>();
