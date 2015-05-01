@@ -9,7 +9,6 @@ import be.swop.groep11.main.resource.RequirementListBuilder;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
@@ -449,18 +448,6 @@ public class Task{
         } else {
             return percent;
         }
-    }
-
-    /**
-     * Voor de gegeven LocalDateTime, geef een LocalDateTime terug die het volgende volledige uur bevat.
-     * @param dateTime
-     * @return
-     */
-    private LocalDateTime getNextHour(LocalDateTime dateTime) {
-        if (dateTime.getMinute() == 0)
-            return dateTime;
-        else
-            return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour() + 1, 0));
     }
 
     /**
