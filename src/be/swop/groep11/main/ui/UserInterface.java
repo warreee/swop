@@ -114,27 +114,62 @@ public interface UserInterface {
      */
     void printException(Exception e);
 
+    /**
+     * Toont de beschikbare acties die uitgevoerd kunnen worden in een controller.
+     * @param controller De controller
+     */
     void showHelp(AbstractController controller);
 
+    /**
+     * Stopt de gebruikersinterface.
+     */
     void wantsToExit();
 
+    /**
+     * Geeft de action behaviour mapping van de gebruikersinterface.
+     */
     ActionBehaviourMapping getActionBehaviourMapping();
 
+    /**
+     * Zet de action behaviour mapping van de gebruikersinterface.
+     */
     void setActionBehaviourMapping(ActionBehaviourMapping actionBehaviourMapping);
 
-        /**
-         * Laat de gebruiker een element kiezen uit de gegeven lijst.
-         * @param tList             De lijst waaruit men kan kiezen
-         * @param listEntryPrinter  De manier waarop ieder element wordt voorgesteld
-         * @param <T>               Het type van het geslecteerde element
-         * @return                  Geeft het element dat de gebruiker selecteerde.
-         * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
-         */
+    /**
+     * Laat de gebruiker een element kiezen uit de gegeven lijst.
+     * @param tList             De lijst waaruit men kan kiezen
+     * @param listEntryPrinter  De manier waarop ieder element wordt voorgesteld
+     * @param <T>               Het type van het geslecteerde element
+     * @return                  Geeft het element dat de gebruiker selecteerde.
+     * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
+     */
     <T> T selectFromList(List<T> tList, Function<T, String> listEntryPrinter)throws CancelException;
 
-    <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,int maxSelected,boolean exactAmount,Function<T,String> listEntryPrinter);
+    /**
+     * Laat de gebruiker meerdere elementen kiezen uit de gegeven lijst.
+     * @param request          De request string die een omschrijving van de invoer bevat
+     * @param list             De lijst van elementen waaruit men kan kiezen
+     * @param preselectedList  De voorgeselecteerde elementen
+     * @param maxSelected      Het maximum aantal elementen dat de gebruiker mag selecteren
+     * @param exactAmount      True als de gebruiker steeds exact maxSelected elementen moet selecteren
+     * @param listEntryPrinter De manier waarop ieder element wordt voorgesteld
+     * @param <T>              Het type van het geslecteerde element
+     * @return                 Geeft een lijst van de elementen die de gebruiker selecteerde.
+     * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
+     */
+    <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,int maxSelected,boolean exactAmount,Function<T,String> listEntryPrinter) throws CancelException;
 
-    default <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,Function<T,String> listEntryPrinter) {
+    /**
+     * Laat de gebruiker meerdere elementen kiezen uit de gegeven lijst.
+     * @param request          De request string die een omschrijving van de invoer bevat
+     * @param list             De lijst van elementen waaruit men kan kiezen
+     * @param preselectedList  De voorgeselecteerde elementen
+     * @param listEntryPrinter De manier waarop ieder element wordt voorgesteld
+     * @param <T>              Het type van het geslecteerde element
+     * @return                 Geeft een lijst van de elementen die de gebruiker selecteerde.
+     * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
+     */
+    default <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,Function<T,String> listEntryPrinter) throws CancelException {
         return selectMultipleFromList(request,list, preselectedList, list.size(),false,listEntryPrinter);
     }
 

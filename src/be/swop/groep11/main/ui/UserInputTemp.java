@@ -3,10 +3,10 @@ package be.swop.groep11.main.ui;
 import java.util.function.Function;
 
 /**
- * Created by Ronald on 20/04/2015.
+ * Stelt een functie voor om een invoer van de gebruiker te vragen.
  * @param <T> Het type van de gevraagde userInput.
  */
-public interface userInput<T> extends Function<String,T> {
+public interface UserInputTemp<T> extends Function<String,T> {
     /**
      * Vraag input van de gebruiker.
      *
