@@ -127,20 +127,20 @@ public class App {
 
     private void addTempDomainObjects() {
 
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter SWOP");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ward");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ronald");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Robin");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Arne");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevA");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevB");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevC");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevD");
+        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevE");
 
         resourceManager.addNewResourceType("Auto");
         resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Aston Martin Rapide");
         resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Toyota Auris");
         resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Rolls Royce Phantom");
 
-        resourceManager.addNewResourceType("Koets", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(14, 0)));
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Koets"), "Koets 1");
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Koets"), "Koets 2");
+        resourceManager.addNewResourceType("CarWash", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(14, 0)));
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("CarWash"), "car wash A");
+        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("CarWash"), "car wash B");
 
     }
 }
