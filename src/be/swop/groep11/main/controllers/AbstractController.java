@@ -3,7 +3,7 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.ui.UserInterface;
 
 /**
- * Created by Ronald on 17/04/2015.
+ * Basis controller die alle methodes van de concrete controllers definieerd.
  */
 public abstract class AbstractController {
     private final UserInterface userInterface;
