@@ -7,6 +7,10 @@ import java.time.LocalDateTime;
  * Stelt een taak status voor. Deze status is Failed.
  */
 public class TaskFailed extends TaskStatus {
+
+    /**
+     * Maakt een nieuw TaskFailed object aan.
+     */
     protected TaskFailed() {
         super(TaskStatusEnum.FAILED);
     }
