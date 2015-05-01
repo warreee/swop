@@ -4,7 +4,6 @@ import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -108,8 +107,7 @@ public class Plan {
         return true;
     }
 
-    //TODO controleer waar leeg plan aan ta maken .........
-    public boolean isPlannable(LocalDateTime date,Duration duration){
+/*    public boolean isPlannable(LocalDateTime date,Duration duration){
         task.getRequirementList();
         final boolean[] result = {true};
         task.getRequirementList().iterator().forEachRemaining((resourceRequirement) -> {
@@ -119,25 +117,9 @@ public class Plan {
 
         });
         return result[0];
-    }
+    }*/
 
-    /*
-    *    @Override
-        public boolean isPlannable(LocalDateTime date, Duration duration) {
-            final boolean[] result = {true};
-            requirements.forEach((type, resourceRequirement) -> {
-                List<ResourceInstance> list = resourceManager.getAvailableInstances(type,date,duration);
-
-                    result[0] &= list.size() >= resourceRequirement.getAmount();
-
-            });
-            return result[0];
-        }
-
-    *
-    * */
-
-    /**
+        /**
      * Maakt voor elk resource type in de requirement list van de taak de nodige reservaties.
      */
     public void makeDefaultReservations() {
