@@ -113,7 +113,7 @@ public class App {
         actionBehaviourMapping.addActionBehaviour(advanceTimeController, Action.ADVANCETIME, advanceTimeController::advanceTime);
         //SimulationController
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.CREATETASK, taskController::createTask);
-        actionBehaviourMapping.addActionBehaviour(simulationController, Action.PLANTASK, taskController::planTask);
+        actionBehaviourMapping.addActionBehaviour(simulationController, Action.PLANTASK, planningController::planTask);
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.SHOWPROJECTS, projectController::showProjects);
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.REALIZESIMULATION, simulationController::realize);
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.CANCEL, simulationController::cancel); //Cancel Simulation
