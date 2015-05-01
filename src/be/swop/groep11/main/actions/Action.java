@@ -4,8 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by Ronald on 28/02/2015.
- */
+ * Enumeratie van Action, dewelke mogelijke commando's zijn die de gebruiker kan ingeven.
+ **/
 public enum Action {
 
     EXIT("exit"),
