@@ -30,6 +30,8 @@ public class TaskStatusTest {
     private Method TEmethodmakeUnavailable;
     private Method FmethodmakeAvailable;
     private Method FmethodmakeUnavailable;
+    private Method FamethodmakeAvailable;
+    private Method FamethodmakeUnavailable;
 
     @Before
     public void setUp() throws NoSuchMethodException {
@@ -69,6 +71,11 @@ public class TaskStatusTest {
         FmethodmakeAvailable.setAccessible(true);
         FmethodmakeUnavailable.setAccessible(true);
 
+        //Failed
+        FamethodmakeAvailable = TaskFailed.class.getDeclaredMethod("makeAvailable", Task.class);
+        FamethodmakeUnavailable = TaskFailed.class.getDeclaredMethod("makeUnavailable", Task.class);
+        FamethodmakeAvailable.setAccessible(true);
+        FamethodmakeUnavailable.setAccessible(true);
     }
 
 /////////////////////////// UNAVAILABLE___TO____ //////////////////////
@@ -289,5 +296,28 @@ public class TaskStatusTest {
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
+    @Test (expected = IllegalStateTransitionException.class)
+    public void failedToAvailable() throws Throwable {
+        task1.execute(LocalDateTime.now());
+        task1.fail(LocalDateTime.now());
+        TaskFailed state = (TaskFailed) task1.getStatus();
+        try {
+            FamethodmakeAvailable.invoke(state, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void failedToUnavailable() throws Throwable {
+        task1.execute(LocalDateTime.now());
+        task1.fail(LocalDateTime.now());
+        TaskFailed state = (TaskFailed) task1.getStatus();
+        try {
+            FamethodmakeUnavailable.invoke(state, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
 
 }
