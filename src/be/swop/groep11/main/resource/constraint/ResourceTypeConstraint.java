@@ -4,7 +4,7 @@ import be.swop.groep11.main.resource.AResourceType;
 import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
 
 /**
- * Created by Ronald on 9/04/2015.
+ * Abstracte klasse die als basis dient voor alle constraints.
  */
 public abstract class ResourceTypeConstraint {
     //Het type waarop de constraint van toepassing is.
@@ -25,7 +25,7 @@ public abstract class ResourceTypeConstraint {
      * @param max               Het maximum aantal toegelaten instances van IResourceType
      * @throws UnsatisfiableRequirementException
      *                          Gooi indien de gegeven ownerType || constrainingType niet ge?nitialiseerd zijn.
-     *                          TODO fix documentatie volgens recursive check
+     *                          Wordt gegooid als er dependencies zijn die niet kunnen.
      */
     protected ResourceTypeConstraint(AResourceType ownerType, AResourceType constrainingType, int min, int max) throws IllegalArgumentException{
         if(!areValidTypes(ownerType, constrainingType)){
@@ -51,6 +51,14 @@ public abstract class ResourceTypeConstraint {
         return ownerType != null && constrainingType != null;
     }
 
+    /**
+     * Controlleerd dat voor het ownerType het newConstrainingType geen onmogelijke dependencies opleverd.
+     * @param ownerType Het AResourceType dat de eigeneer is van deze constraint.
+     * @param newConstrainingType Het AResourceType waarvoor de dependency wordt toegevoegd.
+     * @param min Het minimun aantal instanties.
+     * @param max Het maximum aantal instanties.
+     * @return True als die kan, anders False.
+     */
     private boolean recursiveValidTypesCheck(AResourceType ownerType,AResourceType newConstrainingType,int min,int max) {
 
         boolean result = true;
