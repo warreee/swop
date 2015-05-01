@@ -1,5 +1,7 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.exception.IllegalStateTransitionException;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -29,6 +31,23 @@ public class TaskFailed extends TaskStatus {
     @Override
     public TaskStatus getTaskStatus() {
         return new TaskFailed();
+    }
+
+    /**
+     * Geeft een aparte exceptie indien er van FAILED naar AVAILABLE probeert gegaan te worden
+     * @param task de taak die aan het failed is
+     */
+    @Override
+    protected void makeAvailable(Task task) {
+        throw new IllegalStateTransitionException("De taak is FAILED, en kan dus niet naar AVAILABLE gaan!");
+    }
+    /**
+     * Geeft een aparte exceptie indien er van FAILED naar UNVAILABLE probeert gegaan te worden
+     * @param task de taak die aan het failed is
+     */
+    @Override
+    protected void makeUnavailable(Task task) {
+        throw new IllegalStateTransitionException("De taak is FAILED, en kan dus niet naar UNAVAILABLE gaan!");
     }
 
     /**

@@ -58,6 +58,23 @@ public class TaskExecuting extends TaskStatus {
     }
 
     /**
+     * Geeft een aparte exceptie indien er van EXECUTING naar AVAILABLE probeert gegaan te worden
+     * @param task de taak die aan het uitvoeren is
+     */
+    @Override
+    protected void makeAvailable(Task task) {
+        throw new IllegalStateTransitionException("De taak is aan het uitvoeren, en kan dus niet naar AVAILABLE gaan!");
+    }
+    /**
+     * Geeft een aparte exceptie indien er van EXECUTING naar UNAVAILABLE probeert gegaan te worden
+     * @param task de taak die aan het uitvoeren is
+     */
+    @Override
+    protected void makeUnavailable(Task task) {
+        throw new IllegalStateTransitionException("De taak is aan het uitvoeren, en kan dus niet naar UNAVAILABLE gaan!");
+    }
+
+    /**
      * Faalt de gegeven taak op het gegeven moment.
      * @param task De taak die moet falen.
      * @param endTime De tijd van het falen.

@@ -19,9 +19,17 @@ public class TaskStatusTest {
 
     Project project;
     Task task1, task2, task3;
-    Method methodMakeAvailable, methodMakeUnAvailable, TAmethodMakeAvailable;
+
     private SystemTime systemTime;
     private LocalDateTime now;
+    private Method TUmethodMakeUnAvailable;
+    private Method TUmethodMakeAvailable;
+    private Method TAmethodMakeAvailable;
+    private Method TAmethodMakeUnavailable;
+    private Method TEmethodmakeAvailable;
+    private Method TEmethodmakeUnavailable;
+    private Method FmethodmakeAvailable;
+    private Method FmethodmakeUnavailable;
 
     @Before
     public void setUp() throws NoSuchMethodException {
@@ -37,12 +45,29 @@ public class TaskStatusTest {
         task2 = project.getTasks().get(1);
         task3 = project.getTasks().get(2);
 
-        methodMakeAvailable = TaskUnavailable.class.getDeclaredMethod("makeAvailable", Task.class);
+        //Unavailable
+        TUmethodMakeUnAvailable = TaskUnavailable.class.getDeclaredMethod("makeUnavailable", Task.class);
+        TUmethodMakeAvailable = TaskUnavailable.class.getDeclaredMethod("makeAvailable", Task.class);
+        TUmethodMakeAvailable.setAccessible(true);
+        TUmethodMakeUnAvailable.setAccessible(true);
+
+        //Available
         TAmethodMakeAvailable = TaskAvailable.class.getDeclaredMethod("makeAvailable", Task.class);
-        methodMakeUnAvailable = TaskUnavailable.class.getDeclaredMethod("makeUnavailable", Task.class);
-        methodMakeAvailable.setAccessible(true);
-        methodMakeUnAvailable.setAccessible(true);
+        TAmethodMakeUnavailable = TaskAvailable.class.getDeclaredMethod("makeUnavailable", Task.class);
         TAmethodMakeAvailable.setAccessible(true);
+        TAmethodMakeUnavailable.setAccessible(true);
+
+        //Executing
+        TEmethodmakeAvailable = TaskExecuting.class.getDeclaredMethod("makeAvailable", Task.class);
+        TEmethodmakeUnavailable = TaskExecuting.class.getDeclaredMethod("makeUnavailable", Task.class);
+        TEmethodmakeAvailable.setAccessible(true);
+        TEmethodmakeUnavailable.setAccessible(true);
+
+        //Finished
+        FmethodmakeAvailable = TaskFailed.class.getDeclaredMethod("makeAvailable", Task.class);
+        FmethodmakeUnavailable = TaskFailed.class.getDeclaredMethod("makeUnavailable", Task.class);
+        FmethodmakeAvailable.setAccessible(true);
+        FmethodmakeUnavailable.setAccessible(true);
 
     }
 
@@ -90,7 +115,7 @@ public class TaskStatusTest {
         assertEquals(task2.getStatusString(), "UNAVAILABLE");
         TaskUnavailable test = (TaskUnavailable) task2.getStatus();
         try {
-            methodMakeUnAvailable.invoke(test, task2);
+            TUmethodMakeUnAvailable.invoke(test, task2);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -138,7 +163,6 @@ public class TaskStatusTest {
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
-
     }
 
     //////////////////////// EXECUTING___TO____ //////////////////////
@@ -164,6 +188,30 @@ public class TaskStatusTest {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.execute(LocalDateTime.of(2015, 3, 12, 18, 0));
     }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void executingToAvailable() throws Throwable {
+        task1.execute(LocalDateTime.now());
+        TaskExecuting state = (TaskExecuting) task1.getStatus();
+        try {
+            TEmethodmakeAvailable.invoke(state, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void executingToUnavailable() throws Throwable {
+        task1.execute(LocalDateTime.now());
+        TaskExecuting state = (TaskExecuting) task1.getStatus();
+        try {
+            TEmethodmakeUnavailable.invoke(state, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
+
+
 
     //////////////////////// FINISHED___TO____ //////////////////////
 
