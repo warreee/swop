@@ -103,6 +103,10 @@ public abstract class TaskStatus implements Cloneable {
         return true;
     }
 
+    protected boolean canSetAlternativeTask(Task task,Task alternative){
+        return false;
+    }
+
     /**
      * Plant de taak
      * @param task De te plannen taak

@@ -332,11 +332,10 @@ public class Task{
      *                   of (task is gefaald en alternativeTask != task en alternativeTask hangt niet af van task)
      */
     public static boolean canSetAlternativeTask(Task task, Task alternativeTask) {
-        return task != null
-                && ( (task.getStatus() instanceof TaskFailed && task != alternativeTask && (! alternativeTask.dependsOn(task))) || (alternativeTask == null) );
+        return task.status.canSetAlternativeTask(task,alternativeTask);
     }
 
-    private boolean dependsOn(Task other) {
+    protected boolean dependsOn(Task other) {
         return this.getDependingOnTasks().contains(other);
     }
 

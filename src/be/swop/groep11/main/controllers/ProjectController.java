@@ -2,10 +2,9 @@ package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.User;
-import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.exception.CancelException;
+import be.swop.groep11.main.exception.EmptyListException;
+import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 
@@ -16,19 +15,16 @@ import java.time.LocalDateTime;
  */
 public class ProjectController extends AbstractController {
 
-    private final User user;
     private ProjectRepository projectRepository;
 
     /**
      * Constructor om een nieuwe project controller te maken.
      * @param projectRepository Project repository om projecten aan toe te voegen
-     * @param user Gebruiker die projecten aanmaakt
      * @param userInterface
      */
-    public ProjectController(ProjectRepository projectRepository, User user,UserInterface userInterface){
+    public ProjectController(ProjectRepository projectRepository,UserInterface userInterface){
         super(userInterface);
         this.projectRepository = projectRepository;
-        this.user = user;
     }
 
 

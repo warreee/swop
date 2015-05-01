@@ -3,13 +3,12 @@ package be.swop.groep11.main;
 import be.swop.groep11.main.actions.Action;
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.controllers.*;
-import be.swop.groep11.main.util.InputParser;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.ui.CommandLineInterface;
+import be.swop.groep11.main.util.InputParser;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -37,8 +36,6 @@ public class App {
         initInputParser(readYamlFile);
         initControllers();
         initBehaviourMapping();
-
-        addTempDomainObjects();
     }
     private SystemTime systemTime;
     private CommandLineInterface cli;
@@ -75,13 +72,15 @@ public class App {
             } catch (FileNotFoundException e) {
                 System.out.println("Yaml file niet gevonden");
             }
+        }else{
+            addTempDomainObjects();
         }
     }
 
     private void initControllers(){
         //Aanmaken van controllers
         taskController = new TaskController(projectRepository, systemTime,cli, resourceManager );
-        projectController = new ProjectController(projectRepository, new User("ROOT"), cli );
+        projectController = new ProjectController(projectRepository, cli );
         advanceTimeController = new AdvanceTimeController( systemTime, cli);
         simulationController = new SimulationController(actionBehaviourMapping, projectRepository, cli);
         planningController = new PlanningController(projectRepository,resourceManager, systemTime, cli);
