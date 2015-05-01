@@ -6,43 +6,76 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
- * Created by warreee on 4/7/15.
+ * Stelt een taak status voor. Deze status is Finished.
  */
 public class TaskFinished extends TaskStatus {
 
+    /**
+     * Maakt een nieuw TaskFinished object aan.
+     */
     protected TaskFinished() {
         super(TaskStatusEnum.FINISHED);
     }
+
+    /**
+     * Haalt de status op.
+     */
     @Override
     public TaskStatusEnum getStatus() {
         return TaskStatusEnum.FINISHED;
     }
 
+    /**
+     * Haalt een nieuwe TaskFinishedStatus op.
+     */
     @Override
     public TaskStatus getTaskStatus() {
         return new TaskFinished();
     }
 
+    /**
+     * Start met de uitvoer van de gegeven taak op de gegeven moment. Dit mag niet dus gooit een exception.
+     * @param task De taak die moet uitgevoerd worden.
+     * @param time De starttijd van de uitvoer.
+     */
     @Override
     protected void execute(Task task,LocalDateTime time) {
         throw new IllegalStateTransitionException("Een gefinishste taak kan niet opnieuw worden uitgevoerd");
     }
 
+    /**
+     * Beeindigd de uitvoer van de gegeven taak op het gegeven moment. Dit mag niet dus gooit een exception.
+     * @param task De taak die moet beeindigd worden.
+     * @param time De eindtijd van de uitvoer.
+     */
     @Override
     protected void finish(Task task,LocalDateTime time) {
         throw new IllegalStateTransitionException("De taak was reeds gefinishd");
     }
 
+    /**
+     * Faalt de gegeven taak op het gegeven moment. Dit mag niet dus gooit een exception.
+     * @param task De taak die moet falen.
+     * @param time De tijd van het falen.
+     */
     @Override
     protected void fail(Task task,LocalDateTime time) {
         throw new IllegalStateTransitionException("Een gefinishste taak kan niet gefaild worden!");
     }
 
+    /**
+     * Maakt de gegeven taak opnieuw beschikbaar. Dit mag niet dus gooit een exception.
+     * @param task De taak die opnieuw beschikbaar moet komen.
+     */
     @Override
     protected void makeAvailable(Task task) {
         throw new IllegalStateTransitionException("Een gefinishste taak kan niet available worden!");
     }
 
+    /**
+     * Maakt de gegeven taak onbeschikbaar. Dit mag niet dus gooit een exception.
+     * @param task De taal die onbeschikbaar moet worden.
+     */
     @Override
     protected void makeUnavailable(Task task) {
         throw new IllegalStateTransitionException("Een gefinishste taak kan niet unavailable worden!");
