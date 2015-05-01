@@ -4,18 +4,24 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
- * Created by warreee on 4/7/15.
+ * Stelt een taak status voor. Deze status is Failed.
  */
 public class TaskFailed extends TaskStatus {
     protected TaskFailed() {
         super(TaskStatusEnum.FAILED);
     }
 
+    /**
+     * Haalt de status op.
+     */
     @Override
     public TaskStatusEnum getStatus() {
         return TaskStatusEnum.FAILED;
     }
 
+    /**
+     * Haalt een nieuwe TaskFailedStatus op.
+     */
     @Override
     public TaskStatus getTaskStatus() {
         return new TaskFailed();
@@ -52,6 +58,12 @@ public class TaskFailed extends TaskStatus {
         return false;
     }
 
+    /**
+     * Controleer of voor de gegeven taak een alternatieve taak gezet kan worden.
+     * @param task De taak die gefaald is.
+     * @param alternative De alternatieve taak.
+     * @return True als dit kan anders False.
+     */
     @Override
     protected boolean canSetAlternativeTask(Task task,Task alternative) {
         return  task != null &&( alternative == null || (alternative != null && task != alternative && (! alternative.dependsOn(task))));
