@@ -8,46 +8,81 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
- * Created by warreee on 4/7/15.
+ * Abstracte basisklasse voor alle TaskStatussen.
  */
 public abstract class TaskStatus implements Cloneable {
 
 
-
+    /**
+     * Maakt een nieuw TaskStatus object aan.
+     * @param statusEnum De statusEnum van deze status.
+     */
     protected TaskStatus(TaskStatusEnum statusEnum) {
         this.statusEnum = statusEnum;
     }
     private final TaskStatusEnum statusEnum;
 
 
+    /**
+     * Haalt de status op van deze TaskStatus.
+     * @return
+     */
     protected abstract TaskStatusEnum getStatus();
+
+    /**
+     * Haalt het status object op vand eze TaskStatus.
+     * @return
+     */
     protected abstract TaskStatus getTaskStatus();
 
+    /**
+     * Cloned deze task Status.
+     * @return De Clone.
+     * @throws CloneNotSupportedException
+     */
     @Override
     protected TaskStatus clone() throws CloneNotSupportedException {
         return (TaskStatus) super.clone();
     }
 
+    /**
+     * Voert een gegeven taak uit op de gegeven tijd.
+     */
     protected void execute(Task task, LocalDateTime startTime) {
         throw new IllegalStateTransitionException("De taak kan niet naar de status EXECUTING gaan vanuit de huidige status");
     }
 
+    /**
+     * finished een taak op de gegeven tijd.
+     */
     protected void finish(Task task, LocalDateTime endTime){
         throw new IllegalStateTransitionException("De taak kan niet naar de status FINISHED gaan vanuit de huidige status");
     }
 
+    /**
+     * Faalt een taak op de gegeven tijd.
+     */
     protected void fail(Task task, LocalDateTime endTime){
         throw new IllegalStateTransitionException("De taak kan niet naar de status FAIL gaan vanuit de huidige status");
     }
 
+    /**
+     * Maakt een gegeven taak available.
+     */
     protected void makeAvailable(Task task){
         throw new IllegalStateTransitionException("De taak kan niet naar de status AVAILABLE gaan vanuit de huidige status");
     }
 
+    /**
+     * Maakt een gegeven taak Unavailable.
+     */
     protected void makeUnavailable(Task task){
         throw new IllegalStateTransitionException("De taak kan niet naar de status UNAVAILABLE gaan vanuit de huidige status");
     }
 
+    /**
+     * Geeft de duratie van de gegeven taak terug adhv de systeemtijd.
+     */
     protected abstract Duration getDuration(Task task, LocalDateTime currentSystemTime);
 
 
@@ -103,6 +138,12 @@ public abstract class TaskStatus implements Cloneable {
         return true;
     }
 
+    /**
+     * Controleer of voor een gegeven taak een gegeven alternatieve taak gezet kan worden.
+     * @param task
+     * @param alternative
+     * @return
+     */
     protected boolean canSetAlternativeTask(Task task,Task alternative){
         return false;
     }
