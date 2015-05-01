@@ -10,13 +10,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Created by warreee on 4/20/15.
+ * Klasse om depencyConstraints bij te houden.
  */
 public class DependencyGraph {
 
     private HashMap<Task, ArrayList<Task>> dependingOnMap;
     private HashMap<Task, ArrayList<Task>> dependentMap;
 
+    /**
+     * DepencyGraph heeft 2 interne Maps
+     * depedingOnMap: K = taak die van de taken in V afhangt
+     * dependentMap: K = taak die taken in V heeft die van hem afhangen.
+     */
     public DependencyGraph() {
         dependingOnMap = new HashMap<>();
         dependentMap = new HashMap<>();
@@ -30,7 +35,7 @@ public class DependencyGraph {
      * @param dependingOn
      */
     public void addNewDependency(Task dependent, Task dependingOn) throws IllegalDependencyException {
-        isValidDependency(dependent, dependingOn);
+        isValidDependency(dependent, dependingOn); // gooit een exception indien de dependency niet valid is, daardoor wordt addDepency niet uitgevoerd.
         addDependency(dependent, dependingOn);
 
     }
@@ -180,6 +185,7 @@ public class DependencyGraph {
             undoAddDependency(dependent, dependingOn);
             return true;
         }
+        undoAddDependency(dependent, dependingOn);
         return false;
     }
 

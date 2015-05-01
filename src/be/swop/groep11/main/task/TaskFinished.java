@@ -19,7 +19,7 @@ public class TaskFinished extends TaskStatus {
     }
 
     @Override
-    public TaskStatus getTaskStatus(LocalDateTime systemTime) {
+    public TaskStatus getTaskStatus() {
         return new TaskFinished();
     }
 

@@ -257,7 +257,7 @@ public class Task{
      * Geeft de status van deze taak, er wordt telkens een nieuw object aangemaakt zodat de interne variabele niet wordt terugggeven.
      */
     public TaskStatus getStatus() {
-        return status.getTaskStatus(systemTime.getCurrentSystemTime());
+        return status.getTaskStatus();
     }
 
     /**
@@ -534,6 +534,10 @@ public class Task{
     protected void setPlan(Plan plan) {
         plan.apply();
         this.plan = plan;
+    }
+
+    protected Plan getPlan() {
+            return this.plan;
     }
 
     /**

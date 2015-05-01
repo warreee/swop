@@ -20,9 +20,16 @@ public class TaskUnavailable extends TaskStatus {
         throw new IllegalStateTransitionException("De taak kan niet naar de status UNAVAILABLE gaan want was dit reeds!");
     }
 
-    //@Override //TODO
-    protected void makeAvailable(Task task, LocalDateTime currenSystemTime) {
-        throw  new IllegalStateTransitionException("nog niet geimplementeerd");
+    @Override
+    protected void makeAvailable(Task task) {
+        // Indien de dependingOn taken van deze taak niet finished zijn, zijn ze nog niet gereed en mag deze taak
+        // niet worden op available worden gezet.
+        // We moeten hier niet checken op failed aangezien depencygraph garandeert dat er indien er een gefailde taak is
+        // er direct een alternatieve taak wordt gezet in dependingOnTasks
+        if (task.getDependingOnTasks().stream().filter((entry) -> (!entry.getStatusString().equals("FINISHED")  )).count() == 0) {
+            TaskStatus newStatus = new TaskAvailable();
+            task.setStatus(newStatus);
+        }
     }
 
     @Override
@@ -31,7 +38,7 @@ public class TaskUnavailable extends TaskStatus {
     }
 
     @Override
-    public TaskStatus getTaskStatus(LocalDateTime systemTime) {
+    public TaskStatus getTaskStatus() {
         return new TaskUnavailable();
     }
 
@@ -77,5 +84,4 @@ public class TaskUnavailable extends TaskStatus {
         task.setPlan(plan);
     }
 
-    //TODO make available
 }

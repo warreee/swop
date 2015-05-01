@@ -21,7 +21,7 @@ public class TaskAvailable extends TaskStatus {
     }
 
     @Override
-    public TaskStatus getTaskStatus(LocalDateTime systemTime) {
+    public TaskStatus getTaskStatus() {
         return new TaskAvailable();
     }
 
@@ -85,6 +85,12 @@ public class TaskAvailable extends TaskStatus {
     @Override
     public void plan(Task task, Plan plan) {
         task.setPlan(plan);
+    }
+
+    private boolean checkAvailableConstraints(Task task, LocalDateTime systemTime){
+
+
+        return true;
     }
 
 }

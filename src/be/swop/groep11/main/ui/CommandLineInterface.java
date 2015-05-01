@@ -501,7 +501,7 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public <T> List<T> selectMultipleFromList(String request, List<T> list, List<T> preselectedList, int maxSelected,boolean exactAmount, Function<T, String> listEntryPrinter) {
         if(list.isEmpty()){//Lijst is leeg, kan niet selecteren.
-            throw new EmptyListException("Lege lijst");
+            throw new EmptyListException("Lege lijst: er kan dus niet geselecteerd worden uit de lijst.");
         }else if (!list.containsAll(preselectedList)) {
             //Indien preselectedList niet in list zit, gooi cancelexception
             throw new CancelException("De voor geselecteerde lijst, komt niet helemaal voor in de totale lijst");
@@ -558,7 +558,7 @@ public class CommandLineInterface implements UserInterface {
     public <T> T selectFromList(List<T> tList, Function<T, String> listEntryPrinter) throws CancelException, EmptyListException {
         Function<List<T>, T> listSelector = list -> {
             if (list == null || list.isEmpty()) {
-                throw new CancelException("Lege lijst.");
+                throw new CancelException("Lege lijst: er kan dus niet geselecteerd worden uit de lijst.");
             }
             int max = list.size() - 1;
             int min = 0;
@@ -570,7 +570,7 @@ public class CommandLineInterface implements UserInterface {
             T selection = listSelector.apply(tList);
             return selection;
         } else {
-            throw new EmptyListException("Lege lijst");
+            throw new EmptyListException("Lege lijst: er kan dus niet geselecteerd worden uit de lijst.");
         }
     }
 

@@ -21,7 +21,7 @@ public abstract class TaskStatus implements Cloneable {
 
 
     protected abstract TaskStatusEnum getStatus();
-    protected abstract TaskStatus getTaskStatus(LocalDateTime systemTime);
+    protected abstract TaskStatus getTaskStatus();
 
     @Override
     protected TaskStatus clone() throws CloneNotSupportedException {
@@ -46,10 +46,6 @@ public abstract class TaskStatus implements Cloneable {
 
     protected void makeUnavailable(Task task){
         throw new IllegalStateTransitionException("De taak kan niet naar de status UNAVAILABLE gaan vanuit de huidige status");
-    }
-
-    protected boolean checkPlan () {
-        return true;
     }
 
     protected abstract Duration getDuration(Task task, LocalDateTime currentSystemTime);
