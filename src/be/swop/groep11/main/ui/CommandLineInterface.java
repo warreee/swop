@@ -234,7 +234,7 @@ public class CommandLineInterface implements UserInterface {
     }
 
     //    @Override
-    public <T> T requestUserInput(String request, UserInputTemp<T> userInput) throws CancelException {
+    public <T> T requestUserInput(String request, UserInput<T> userInput) throws CancelException {
         return userInput.getUserInput(request);
     }
 
@@ -302,7 +302,7 @@ public class CommandLineInterface implements UserInterface {
      * @return Een getal van Type <T> dat uit [min,max] komt.
      * @throws CancelException gooi indien de gebruiker het Command.CANCEL in geeft.
      */
-    public <T extends Number & Comparable<T>> T numberBetween(UserInputTemp<T> userInput, T min, T max) throws CancelException {
+    public <T extends Number & Comparable<T>> T numberBetween(UserInput<T> userInput, T min, T max) throws CancelException {
 //        getMultipleNumberBetween(request,userInput,min,max,1,true)
         boolean correct = false;
         T response = null;
@@ -333,7 +333,7 @@ public class CommandLineInterface implements UserInterface {
      *                  Anders bezit de lijst maximum "amount" nummers.
      * @throws CancelException gooi indien de gebruiker het Command.CANCEL in geeft.
      */
-    public <T extends Number & Comparable<T>> List<T> getMultipleNumberBetween(String request,UserInputTemp<List<T>> userInput, T min, T max,int amount,boolean exactAmount) throws CancelException {
+    public <T extends Number & Comparable<T>> List<T> getMultipleNumberBetween(String request,UserInput<List<T>> userInput, T min, T max,int amount,boolean exactAmount) throws CancelException {
         final boolean[] correct = {true};
         List<T> result = new ArrayList<>();
 
@@ -354,8 +354,8 @@ public class CommandLineInterface implements UserInterface {
         return result;
     }
 
-    private UserInputTemp<String> getStringFromUser(){
-        UserInputTemp<String> getStringFromUser = request -> {
+    private UserInput<String> getStringFromUser(){
+        UserInput<String> getStringFromUser = request -> {
             printMessage(request);
             String result = "";
             try {
@@ -370,8 +370,8 @@ public class CommandLineInterface implements UserInterface {
         return getStringFromUser;
     }
     
-    private UserInputTemp<Double> getDoubleFromUser(){
-        UserInputTemp<Double> getDoubleFromUser = request -> {
+    private UserInput<Double> getDoubleFromUser(){
+        UserInput<Double> getDoubleFromUser = request -> {
             boolean correct = false;
             Double result = null;
             do {
@@ -389,8 +389,8 @@ public class CommandLineInterface implements UserInterface {
         return getDoubleFromUser;
     }
 
-    private UserInputTemp<Integer> getIntFromUser(){
-        UserInputTemp<Integer> getIntFromUser = request -> {
+    private UserInput<Integer> getIntFromUser(){
+        UserInput<Integer> getIntFromUser = request -> {
 
             boolean correct = false;
             Integer result = null;
@@ -414,8 +414,8 @@ public class CommandLineInterface implements UserInterface {
      * @return userInput<List<Integer>> die meerdere int inputs vraag aan de gebruiker
      * Input gescheiden door een komma
      */
-    private UserInputTemp<List<Integer>> getMultipleIntFromUser(){
-        UserInputTemp<List<Integer>> getMultipleIntFromUser = request ->{
+    private UserInput<List<Integer>> getMultipleIntFromUser(){
+        UserInput<List<Integer>> getMultipleIntFromUser = request ->{
             boolean correct = false;
             ArrayList<Integer> result = new ArrayList<>();
             do {
@@ -435,8 +435,8 @@ public class CommandLineInterface implements UserInterface {
         };
         return getMultipleIntFromUser;
     }
-    private UserInputTemp<LocalDateTime> getDateFromUser() {
-        UserInputTemp<LocalDateTime> getDateFromUser = request -> {
+    private UserInput<LocalDateTime> getDateFromUser() {
+        UserInput<LocalDateTime> getDateFromUser = request -> {
             LocalDateTime result = null;
             boolean correct = false;
             do {
@@ -455,8 +455,8 @@ public class CommandLineInterface implements UserInterface {
         return getDateFromUser;
     }
 
-    private UserInputTemp<Boolean> getBooleanFromUser(){
-        UserInputTemp<Boolean> getBooleanFromUser = request -> {
+    private UserInput<Boolean> getBooleanFromUser(){
+        UserInput<Boolean> getBooleanFromUser = request -> {
             boolean result = false;
             boolean quit = false;
             do {

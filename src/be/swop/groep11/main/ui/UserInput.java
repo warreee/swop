@@ -6,7 +6,7 @@ import java.util.function.Function;
  * Stelt een functie voor om een invoer van de gebruiker te vragen.
  * @param <T> Het type van de gevraagde userInput.
  */
-public interface UserInputTemp<T> extends Function<String,T> {
+public interface UserInput<T> extends Function<String,T> {
     /**
      * Vraag input van de gebruiker.
      *
