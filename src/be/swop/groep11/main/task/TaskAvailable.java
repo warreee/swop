@@ -117,9 +117,5 @@ public class TaskAvailable extends TaskStatus {
         task.setPlan(plan);
     }
 
-    private boolean checkAvailableConstraints(Task task, LocalDateTime systemTime){
-
-        return true;
-    }
 
 }

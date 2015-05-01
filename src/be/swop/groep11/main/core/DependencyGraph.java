@@ -107,10 +107,6 @@ public class DependencyGraph {
         return new HashSet<>();
     }
 
-    protected Set<Task> getDependencyBranch(Task task) {
-        return null;
-        //Geeft empty list indien er geen branch is
-    }
 
     /**
      * Geeft alle taken die moeten gedaan worden voor de doorgegeven taak gedaan kan worden.
@@ -187,11 +183,11 @@ public class DependencyGraph {
      * @return True als dit een loop veroorzaakt anders False.
      */
     private boolean containsLoop(Task dependent, Task dependingOn) {
-        if (getAllTasks().size() == 0) { // er zitten nog geen depencies in
+        if (getAllTasksWithDependencies().size() == 0) { // er zitten nog geen depencies in
             return false;
         }
         ArrayList<Task> tempMarked = new ArrayList<>();
-        ArrayList<Task> allTasks = getAllTasks();
+        ArrayList<Task> allTasks = getAllTasksWithDependencies();
         ArrayList<Task> finalMarked = new ArrayList<>();
         ArrayList<Task> result = new ArrayList<>();
         addDependency(dependent, dependingOn);
@@ -224,15 +220,15 @@ public class DependencyGraph {
         }
     }
 
-    //TODO beter naam zoeken
-    protected ArrayList<Task> getAllTasks(){
+
+    protected ArrayList<Task> getAllTasksWithDependencies(){
         return new ArrayList<>(this.dependentMap.keySet());
     }
 
 
     public ArrayList<Task> getLeafs() {
         ArrayList<Task> leafs = new ArrayList<>();
-        getAllTasks().stream().filter(node -> dependentMap.get(node).size() == 0).forEach(leafs::add);
+        getAllTasksWithDependencies().stream().filter(node -> dependentMap.get(node).size() == 0).forEach(leafs::add);
         return leafs;
     }
 
