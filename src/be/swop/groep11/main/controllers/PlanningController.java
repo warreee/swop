@@ -60,7 +60,7 @@ public class PlanningController extends AbstractController {
 
         }
 
-        catch (EmptyListException|CancelException e) {
+        catch (EmptyListException|CancelException|IllegalStateException e) {
             getUserInterface().printException(e);
         }
     }

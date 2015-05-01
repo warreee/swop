@@ -60,7 +60,6 @@ public class App {
         actionBehaviourMapping = new ActionBehaviourMapping(() -> cli.printMessage("Ongeldige action"));
         cli.setActionBehaviourMapping(actionBehaviourMapping);
 
-
         //maak een nieuwe system aan
         systemTime = new SystemTime(LocalDateTime.MIN);
         resourceManager = new ResourceManager();
