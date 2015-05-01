@@ -299,7 +299,7 @@ public class Plan {
      * en de reservaties van het plan toe te voegen.
      * @throws IllegalStateException De reservaties voor dit plan kunnen niet gemaakt worden.
      */
-    public void apply() {
+    public void applyReservations() {
         try {
             resourceManager.endReservationsFromTask(this.getTask(), this.getStartTime());
             resourceManager.makeReservationsForPlan(this);

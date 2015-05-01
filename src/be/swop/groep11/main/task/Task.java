@@ -530,7 +530,7 @@ public class Task{
     private Plan plan;
 
     protected void setPlan(Plan plan) {
-        plan.apply();
+        plan.applyReservations();
         this.plan = plan;
     }
 

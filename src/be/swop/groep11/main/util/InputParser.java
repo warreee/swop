@@ -349,7 +349,7 @@ public class InputParser {
                 plan.addReservation(developer);
             }
 //            task.plan(plan);
-            plan.apply();
+            plan.applyReservations();
         }
 
         if(propertiesList.containsKey("prerequisiteTasks") && propertiesList.get("prerequisiteTasks") != null) {

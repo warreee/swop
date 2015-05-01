@@ -496,7 +496,7 @@ public class ResourceManagerTest {
         newReservations.add(type2.getResourceInstances().get(0));
         plan.changeReservations(newReservations);
 
-        plan.apply();
+        plan.applyReservations();
     }
 
     @Test
@@ -530,7 +530,7 @@ public class ResourceManagerTest {
         // plan maken vanaf t4
         Plan plan_t4 = resourceManager.getNextPlans(4, task, t4).get(0);
 
-        plan_t4.apply();
+        plan_t4.applyReservations();
 
         assertTrue(reservationForResourceInstanceExists(task, type1.getResourceInstances().get(0)));
         assertTrue(reservationForResourceInstanceExists(task, type1.getResourceInstances().get(1)));
