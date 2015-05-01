@@ -289,7 +289,6 @@ public class Task{
      */
     public void finish(LocalDateTime endTime) {
         status.finish(this, endTime);
-        makeDependentTasksAvailable();
     }
 
     protected void makeAvailable() {
@@ -470,7 +469,7 @@ public class Task{
      * indien dat mogelijk is.
      * Als deze taak een alternatieve taak voor een andere taak is.
      */
-    private void makeDependentTasksAvailable() {
+    protected void makeDependentTasksAvailable() {
         for (Task task : this.getDependentTasks()) {
             try {
                 task.makeAvailable();

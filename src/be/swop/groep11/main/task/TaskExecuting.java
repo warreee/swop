@@ -35,6 +35,7 @@ public class TaskExecuting extends TaskStatus {
         TaskStatus finished = new TaskFinished();
         task.setStatus(finished);
         task.releaseResources(endTime);
+        task.makeDependentTasksAvailable();
     }
 
     @Override
