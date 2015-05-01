@@ -19,7 +19,7 @@ public class TaskStatusTest {
 
     Project project;
     Task task1, task2, task3;
-    Method methodMakeAvailable, methodMakeUnAvailable;
+    Method methodMakeAvailable, methodMakeUnAvailable, TAmethodMakeAvailable;
     private SystemTime systemTime;
     private LocalDateTime now;
 
@@ -38,9 +38,11 @@ public class TaskStatusTest {
         task3 = project.getTasks().get(2);
 
         methodMakeAvailable = TaskUnavailable.class.getDeclaredMethod("makeAvailable", Task.class);
+        TAmethodMakeAvailable = TaskAvailable.class.getDeclaredMethod("makeAvailable", Task.class);
         methodMakeUnAvailable = TaskUnavailable.class.getDeclaredMethod("makeUnavailable", Task.class);
         methodMakeAvailable.setAccessible(true);
         methodMakeUnAvailable.setAccessible(true);
+        TAmethodMakeAvailable.setAccessible(true);
 
     }
 
@@ -125,6 +127,18 @@ public class TaskStatusTest {
     public void availableToFinishedTest() throws Exception {
         assertTrue(task1.getStatusString().equals("AVAILABLE"));
         task1.finish(now);
+    }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void availableToAvailable() throws Throwable {
+
+        TaskAvailable test = (TaskAvailable) task1.getStatus();
+        try {
+            TAmethodMakeAvailable.invoke(test, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+
     }
 
     //////////////////////// EXECUTING___TO____ //////////////////////
