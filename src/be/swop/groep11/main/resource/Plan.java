@@ -119,7 +119,7 @@ public class Plan {
         return result[0];
     }*/
 
-        /**
+    /**
      * Maakt voor elk resource type in de requirement list van de taak de nodige reservaties.
      */
     public void makeDefaultReservations() {
@@ -128,7 +128,6 @@ public class Plan {
 
     /**
      * Geeft de taak van het plan.
-
      */
     public Task getTask() {
         return task;
@@ -206,6 +205,10 @@ public class Plan {
         return ImmutableList.copyOf(reservations);
     }
 
+    /**
+     * Geeft de eindtijd van alle reservaties in dit plan die het verst in de toekomst ligt.
+     * @return De verste eindtijd.
+     */
     private LocalDateTime maxEndTime() {
         LocalDateTime maxEndTime = this.getStartTime();
         for (ResourceReservation reservation : this.reservations) {
@@ -306,6 +309,13 @@ public class Plan {
         }
     }
 
+    /**
+     * Berekend de reservaties die het systeem zou maken indien de gebruiker geen voorkeuren geeft.
+     * @param task De taak waarvoor we reservaties maken.
+     * @param startTime De starttijd vanaf wanneer de reservaties kunnen beginnen.
+     * @return Een lijst met ResourceReservations.
+     * @throws IllegalArgumentException Wordt gegooid indien er een fout optreed.
+     */
     private List<ResourceReservation> calculateDefaultReservations(Task task, LocalDateTime startTime) throws IllegalArgumentException {
         List<ResourceReservation> defaultReservations = new LinkedList<>();
 

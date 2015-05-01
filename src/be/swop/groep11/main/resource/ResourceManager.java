@@ -22,6 +22,10 @@ public class ResourceManager{
 
     }
 
+    /**
+     * Geeft het Type terug dat Developers voorsteld.
+     * @return Het DeveloperType.
+     */
     public AResourceType getDeveloperType() {
         if (this.developerType == null) {
             developerType =  new DeveloperType();
@@ -32,10 +36,12 @@ public class ResourceManager{
 
     private DeveloperType developerType;
 
-    //TODO documentatie
     /**
      * Voegt een nieuwe ResourceType toe zonder start en eindtijd voor de beschikbaarheid.
      * @param name De naam van de toe te voegen ResourceType
+     * @param availability De DailyAvailability van het toe te voegen ResourceType.
+     * @param requireTypes De ResourceTypes(lijst) waarvan het toe te voegen ResourceType afhangt.
+     * @param conflictingTypes De ResourceTypes(lijst) waarmee het toe te voegen ResourceType conflicteerd.
      *
      */
     public void addNewResourceType(String name, DailyAvailability availability, List<AResourceType> requireTypes, List<AResourceType> conflictingTypes) {
@@ -90,7 +96,7 @@ public class ResourceManager{
      *
      * @param name De naam van het op te vragen ResourceType
      * @throws NoSuchElementException   wordt gegooid als de naam niet in deze repository zit.
-     * @return
+     * @return Het gevonden AResourceType.
      */
     public AResourceType getResourceTypeByName(String name)throws NoSuchElementException{
         for(AResourceType type : resourceTypes){
@@ -101,6 +107,11 @@ public class ResourceManager{
         throw new NoSuchElementException("Resource type met de gegeven naam kon niet gevonden worden.");
     }
 
+    /**
+     * Controleert of de gegeven typeName bekend is bij deze ResourceManager.
+     * @param typeName De naam van het type.
+     * @return True indien dit zo is, anders False.
+     */
     public boolean containsType(String typeName){
         for(AResourceType type : resourceTypes){
             if(type.getName().equals(typeName)){
@@ -132,27 +143,27 @@ public class ResourceManager{
     }
 
     /**
-     *
-     * @param ownerType
-     * @param reqType
+     * Zet voor het ownerType een RequirementsConstraint met het reqType.
+     * @param ownerType Het superType dat niet kan bestaan zonder het kindtype.
+     * @param reqType Het kindtype.
      */
     public void withRequirementConstraint(AResourceType ownerType, AResourceType reqType) {
         ownerType.addRequirementConstraint(reqType);
     }
 
     /**
-     *
-     * @param ownerType
-     * @param conflictType
+     * zet voor het ownerType een ConflictsConstraint met het conflictType.
+     * @param ownerType Het superType dat conflicteerd met het kindType.
+     * @param conflictType Het kindType.
      */
     public void withConflictConstraint(AResourceType ownerType, AResourceType conflictType) {
         ownerType.addConflictConstraint(conflictType);
     }
 
     /**
-     *
-     * @param ownerType
-     * @param inst
+     * Voegt een ResourceInstance toe voor het gegeven AResourceType met de gegeven naam.
+     * @param ownerType Het type waarvoor we een instantie toevoegen.
+     * @param inst De naam van de toe te voegen instance.
      */
     public void addResourceInstance(AResourceType ownerType, String inst) {
         ownerType.addResourceInstance(inst);
@@ -297,6 +308,11 @@ public class ResourceManager{
         return conflictingReservations;
     }
 
+    /**
+     * Geeft het volgende volledig uur terug als dit al geen volledig uur is. Anders wordt gewoon het gegeven uur teruggegeven.
+     * @param dateTime De LocalDateTime die verder moet gezet worden.
+     * @return Een volledig uur.
+     */
     private LocalDateTime getNextHour(LocalDateTime dateTime) {
         if (dateTime.getMinute() == 0)
             return dateTime;

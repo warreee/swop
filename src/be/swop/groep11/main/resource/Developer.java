@@ -28,7 +28,7 @@ public class Developer extends User implements ResourceInstance {
      * Implementeert calculateEndTime in de interface ResourceInstance.
      * @param startTime De gegeven starttijd
      * @param duration  De gegeven duur
-     * @return TODO: uitleggen hoe dit voor Developer gedaan wordt
+     * @return De tijd wanneer deze developer terug vrij is.
      */
     public LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration) {
         LocalDateTime currentStartTime = this.getResourceType().getDailyAvailability().getNextTime(startTime);;
@@ -94,6 +94,10 @@ public class Developer extends User implements ResourceInstance {
     private static LocalTime endOfBreak    = LocalTime.of(14,0);
     private static Duration  breakDuration = Duration.ofHours(1);
 
+    /**
+     * Haalt het DeveloperType op van deze Developer.
+     * @return
+     */
     @Override
     public AResourceType getResourceType() {
         return resourceType;

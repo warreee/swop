@@ -71,10 +71,19 @@ public class DailyAvailability {
         return true;
     }
 
+    /**
+     * Haalt de duur van deze DailyAvailability op.
+     * @return De duur.
+     */
     public Duration getDuration() {
         return Duration.between(getStartTime(), getEndTime());
     }
 
+    /**
+     * Controleert of deze DailyAvailability overlapt met een andere DailyAvailability.
+     * @param other De andere DailyAvailability.
+     * @return True als deze overlapt anders False.
+     */
     private boolean overlapsWith(DailyAvailability other) {
         if (other == null)
             return false;
@@ -124,6 +133,11 @@ public class DailyAvailability {
             return this.getNextHour(this.getNextStartTime(dateTime));
     }
 
+    /**
+     * Haal het volgende volledige uur op van de gegeven tijd. Of de huidige tijd als dit al een volledig uur is.
+     * @param dateTime Te te controleren tijd.
+     * @return Het volledig uur.
+     */
     private LocalDateTime getNextHour(LocalDateTime dateTime) {
         if (dateTime.getMinute() == 0)
             return dateTime;
