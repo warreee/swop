@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * Created by Ronald on 22/04/2015.
+ * Bevat de stappen om de usecase planTask uit te voeren.
  */
 public class PlanningController extends AbstractController {
 
@@ -27,6 +27,13 @@ public class PlanningController extends AbstractController {
 
     private UserInterface ui;
 
+    /**
+     * Constructor om een nieuwe PlanningController aan te maken.
+     * @param projectRepository De ProjectRepository waarin gewerkt dient te worden.
+     * @param resourceManager De ResourceManager die alle resources bijhoudt waarmee gewerkt dient te worden.
+     * @param systemTime De SystemTime.
+     * @param userInterface De concrete implementatie van de UserInterface.
+     */
     public PlanningController(ProjectRepository projectRepository, ResourceManager resourceManager, SystemTime systemTime, UserInterface userInterface) {
         super(userInterface);
         this.projectRepository = projectRepository;
@@ -35,6 +42,9 @@ public class PlanningController extends AbstractController {
         this.ui = getUserInterface();
     }
 
+    /**
+     * Start met het plannen van een taak. Alle benodigde info wordt aan de gebruiker gevraagd via de UserInterface.
+     */
     public void planTask(){
 
         try {
@@ -65,6 +75,11 @@ public class PlanningController extends AbstractController {
         }
     }
 
+    /**
+     * Plant een taak.
+     * @param task De taak die gepland moet worden.
+     * @return Een lijst met plannen.
+     */
     private List<Plan> planTask(Task task) {
         List<Plan> plans = new ArrayList<>();
 
@@ -198,6 +213,11 @@ public class PlanningController extends AbstractController {
         return plans;
     }
 
+    /**
+     * Bepaald uit de gegeven IRequirementList hoeveel developers er nodig zijn.
+     * @param requirementList De te controlleren IRequirementList.
+     * @return Het aantal benodigde developers.
+     */
     private int getNbRequiredDevelopers(IRequirementList requirementList) {
         Iterator<ResourceRequirement> it = requirementList.iterator();
         while (it.hasNext()) {
@@ -210,6 +230,10 @@ public class PlanningController extends AbstractController {
         return 0;
     }
 
+    /**
+     * Haalt alle ongeplande taken op it de projectRepository.
+     * @return een ImmutableList met alle ongeplande taken in.
+     */
     private ImmutableList<Task> requestUnplannedTasks() {
         List<Task> tasks = new LinkedList<>();
         for (Project project : projectRepository.getProjects()) {
@@ -222,15 +246,27 @@ public class PlanningController extends AbstractController {
         return ImmutableList.copyOf(tasks);
     }
 
+    /**
+     * Haalt de volgende n mogelijke starttijden op uit de resourceManager.
+     * @param n Hoeveel tijden er moeten opgehaald worden.
+     * @param task De Task waarvoor er tijden opgehaald moeten worden.
+     * @return Een map met de starttijd en het plan.
+     */
     private Map<LocalDateTime,Plan> requestNextStartTimes(int n, Task task) {
         Map<LocalDateTime,Plan> map = new LinkedHashMap<>();
-        List<Plan> plans = resourceManager.getNextPlans(3, task, systemTime.getCurrentSystemTime());
+        List<Plan> plans = resourceManager.getNextPlans(n, task, systemTime.getCurrentSystemTime());
         for (Plan plan : plans) {
             map.put(plan.getStartTime(), plan);
         }
         return map;
     }
 
+    /**
+     * Voer de stappen uit voor de resolveConflict uitbreiding.
+     * @param task De taak waarvoor het conflict moet wordne opgelost.
+     * @param plan Het conflicterende plan.
+     * @return Een lijst met plannen.
+     */
     private List<Plan> resolveConflict(Task task, Plan plan) {
         List<Plan> plans = new ArrayList<>();
 
@@ -258,7 +294,5 @@ public class PlanningController extends AbstractController {
         plans.addAll(newPlansForTask);
 
         return plans;
-
     }
-
 }

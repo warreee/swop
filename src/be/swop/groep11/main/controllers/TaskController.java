@@ -137,6 +137,13 @@ public class TaskController extends AbstractController {
         }
     }
 
+    /**
+     * Voegt een AResourceType number keer toe aan de gegeven map.
+     * @param iResourceType Het AResourceType dat moet worden toegevoegd.
+     * @param number Het aantal keer dat AResourceType moet worden toegevoegd.
+     * @param map De map waaraan alles moet warden toegevoegd.
+     * @return Een geupdate versie van de doorgegeven map.
+     */
     private Map<AResourceType, Integer> addToResourceMap(AResourceType iResourceType, Integer number, Map<AResourceType, Integer> map){
         if(map.containsKey(iResourceType)){
             map.put(iResourceType, map.get(iResourceType) + number);
@@ -146,17 +153,31 @@ public class TaskController extends AbstractController {
         return map;
     }
 
+    /**
+     * Laat de huidige resourceMap zien aan de gebruiker via de UserInterface.
+     * @param map De map die dient afgedrukt te worden.
+     */
     private void printResourceMap(Map<AResourceType, Integer> map){
         getUserInterface().printMessage("De volgende resource zijn al geselecteerd:\n");
         map.forEach((x, y) -> getUserInterface().printMessage("\t" + x.getName() + ": " + y));
     }
 
+    /**
+     * Maakt gebruikt van een RequirementListBuilder om een IRequirementList aan te maken van de gegeven map.
+     * @param map De map waarvan de IRequirementList moet worden opgebouwd.
+     * @return De IRequirementList na het lezen van de gegeven map.
+     */
     private IRequirementList buildIRequirementList(Map<AResourceType, Integer> map){
         RequirementListBuilder builder = new RequirementListBuilder();
         map.forEach(builder::addNewRequirement);
         return builder.getRequirements();
     }
 
+    /**
+     * Vraagt de gebruiker wat de nieuwe status van een taak moet worden.
+     * @param task De taak waarvan de status moet geupdate worden.
+     * @throws CancelException Wordt gegooid als de gebruiker wil cancellen.
+     */
     private void updateTask(Task task) throws CancelException{
         try {
             ArrayList<String> options = new ArrayList<>(Arrays.asList("FAIL", "FINISH", "EXECUTE", "Niks doen"));
@@ -171,6 +192,12 @@ public class TaskController extends AbstractController {
         }
     }
 
+    /**
+     * Maakt de call naar de backend om van status te veranderen.
+     * @param status De status in String vorm naar waar veranderd moet worden.
+     * @param task De Task die de status overgang moet maken.
+     * @throws IllegalArgumentException Wordt gegooid indien de status overgang niet mag.
+     */
     private void doTransition(String status, Task task) throws IllegalArgumentException {
         status = status.toLowerCase();
         switch (status) {
