@@ -1,7 +1,7 @@
 <project default="all">
     <property name="handin-dir" location="group11"/>
     <property name="doc-dir" location="javadoc"/>
-    <property name="uml-dir" location="uml"/>
+    <property name="uml-dir" location="uml/it2"/>
 
     <property name="out-main" location="out\production"/>
     <property name="out-test" location="out\test"/>
@@ -9,7 +9,7 @@
     <property name="bin-dir" location="jar"/>
     <property name="base-src" location="src"/>
     <property name="src-dir" location="src/be/swop/groep11/main"/>
-    <property name="test-dir" location="tests/be/swop/groep11/test"/>
+    <property name="base-test-src" location="tests/"/>
     <property name="input-dir" location="input"/>
 
     <property name="test-report-dir" location="testreport" />
@@ -19,6 +19,8 @@
         <pathelement location="lib/hamcrest-core-1.3.jar" />
         <pathelement location="lib/guava-18.0.jar" />
         <pathelement location="lib/snakeyaml-1.13.jar" />
+        <pathelement location="lib/cloning-1.9.1.jar" />
+        <pathelement location="lib/mockito-all-1.10.19.jar" />
         <pathelement location="${out-main}" />
     </path>
 
@@ -41,7 +43,7 @@
         <javac srcdir="${src-dir}" destdir="${out-main}">
             <classpath refid="junit.class.path" />
         </javac>
-        <javac srcdir="${test-dir}" destdir="${out-test}">
+        <javac srcdir="${base-test-src}" destdir="${out-test}">
             <classpath refid="junit.class.path" />
         </javac>
     </target>
@@ -67,7 +69,7 @@
              basedir="${out-main}">
             <zipgroupfileset dir="lib" includes="*.jar" excludes=""/>
             <manifest>
-                <attribute name="Main-Class" value="be.swop.groep11.main.ui.CommandLineInterface"/>
+                <attribute name="Main-Class" value="be.swop.groep11.main.App"/>
             </manifest>
         </jar>
 
@@ -85,8 +87,11 @@
         <copy todir="${handin-dir}/src">
             <fileset dir="${base-src}"/>
         </copy>
-        <copy todir="${handin-dir}/docs">
+        <copy todir="${handin-dir}/doc">
             <fileset dir="${doc-dir}"/>
+        </copy>
+        <copy todir="${handin-dir}/src">
+            <fileset dir="${base-test-src}"/>
         </copy>
         <copy todir="${handin-dir}/input">
             <fileset dir="${input-dir}"/>
