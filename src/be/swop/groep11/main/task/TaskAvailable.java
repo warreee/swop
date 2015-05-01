@@ -32,8 +32,6 @@ public class TaskAvailable extends TaskStatus {
         task.setStatus(executing);
     }
 
-
-
     @Override
     protected void finish(Task task, LocalDateTime endTime) {
         throw new IllegalStateTransitionException("Een taak moet eerst worden uitgevoerd voor hij gefinish wordt");
@@ -88,7 +86,6 @@ public class TaskAvailable extends TaskStatus {
     }
 
     private boolean checkAvailableConstraints(Task task, LocalDateTime systemTime){
-
 
         return true;
     }
