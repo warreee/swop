@@ -7,24 +7,38 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
- * Created by warreee on 4/7/15.
+ * Stelt een taak status voor. Deze status is Available.
  */
 public class TaskAvailable extends TaskStatus {
 
+    /**
+     * Maakt een nieuw TaskAvailable object aan.
+     */
     protected TaskAvailable() {
         super(TaskStatusEnum.AVAILABLE);
     }
 
+    /**
+     * Haalt de status op.
+     */
     @Override
     public TaskStatusEnum getStatus() {
         return TaskStatusEnum.AVAILABLE;
     }
 
+    /**
+     * Haalt een nieuwe TaskAvailableStatus op.
+     */
     @Override
     public TaskStatus getTaskStatus() {
         return new TaskAvailable();
     }
 
+    /**
+     * Start met de uitvoer van de gegeven taak op de gegeven moment.
+     * @param task De taak die moet uitgevoerd worden.
+     * @param startTime De starttijd van de uitvoer.
+     */
     @Override
     protected void execute(Task task, LocalDateTime startTime) {
         task.setStartTime(startTime);
@@ -32,21 +46,39 @@ public class TaskAvailable extends TaskStatus {
         task.setStatus(executing);
     }
 
+    /**
+     * Probeert de gegeven taak te beeindigen. Dit mag niet een gooit een IllegalStateTransitionException
+     * @param task De taak die moet uitgevoerd worden.
+     * @param endTime De eidtijd van de uitvoer.
+     */
     @Override
     protected void finish(Task task, LocalDateTime endTime) {
         throw new IllegalStateTransitionException("Een taak moet eerst worden uitgevoerd voor hij gefinish wordt");
     }
 
+    /**
+     * Probeert de gegeven taak te failen. Dit mag niet een gooit een IllegalStateTransitionException
+     * @param task De taak die moet falen worden.
+     * @param endTime De eidtijd van het falen.
+     */
     @Override
     protected void fail(Task task, LocalDateTime endTime) {
         throw new IllegalStateTransitionException("Een taak kan niet van Available naar Fail gaan");
     }
 
+    /**
+     * Probeert de gegeven taak available te maken. Dit mag niet een gooit een IllegalStateTransitionException
+     * @param task De taak die available moet worden.
+     */
     @Override
     protected void makeAvailable(Task task) {
         throw new IllegalStateTransitionException("De taak was al available");
     }
 
+    /**
+     * Maakt de gegeven taak terug unavailable.
+     * @param task De taak die terug unavailable moet worden.
+     */
     @Override
     protected void makeUnavailable(Task task) {
         TaskStatus unavailable = new TaskUnavailable();
