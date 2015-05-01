@@ -47,10 +47,18 @@ public class TimeSpan {
         return startTime !=null && endTime != null && startTime.isBefore(endTime);
     }
 
+    /**
+     * Haalt de starttijd van deze TimeSpan op.
+     * @return De starttijd.
+     */
     public LocalDateTime getStartTime() {
         return this.startTime;
     }
 
+    /**
+     * Haalt de eindtijd van deze TimeSpan op.
+     * @return De eindtijd.
+     */
     public LocalDateTime getEndTime() {
         return this.endTime;
     }
