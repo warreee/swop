@@ -39,21 +39,34 @@ public class SimulationController extends AbstractController {
         ui.showHelp(this);
     }
 
+    /**
+     * Maakt de veranderingen die tijdens de simulatie gebeurd zijn defenitief.
+     */
     public void realize() {
         //projectRepository bezit all alle veranderingen ...
 
         deActivate(this);
     }
+
+    /**
+     * Maakt de veranderingen die tijdens de simulatie gebeurd zijn ongedaan.
+     */
     public void cancel() {
         restoreState();
         getUserInterface().printMessage("Canceled Simulation");
         deActivate(this);
     }
 
+    /**
+     * Slaat de huidige staat van de projectRepository op.
+     */
     private void storeState() {
         this.originalState = projectRepository.createMemento();
     }
 
+    /**
+     * Hersteld de oude staat van de projectRepository.
+     */
     private void restoreState() {
         IProjectRepositoryMemento memento = this.originalState;
         if (memento != null) {
