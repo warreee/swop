@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- * Created by Ronald on 22/04/2015.
+ * Klasse verantwoordelijk voor het bijhouden van ActionBehaviour's voor Action's, specifiek voor AbstractController's.
+ * Extra verantwoordelijkheid is het bijhouden van de ControllerStack (execution stack).
  */
 public class ActionBehaviourMapping {
     /**

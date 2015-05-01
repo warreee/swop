@@ -1,7 +1,7 @@
 package be.swop.groep11.main.exception;
 
 /**
- * Created by Ronald on 10/03/2015.
+ * Exception die gegooid wordt indien de gebruiker "cancel" ingeeft.
  */
 public class CancelException extends RuntimeException {
     /**
