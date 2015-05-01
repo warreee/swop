@@ -3,7 +3,7 @@ package be.swop.groep11.test.unit;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
-import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.task.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class TaskStatusTest {
 
     Project project;
-    Task task1, task2;
+    Task task1, task2, task3;
     Method methodMakeAvailable, methodMakeUnAvailable;
     private SystemTime systemTime;
     private LocalDateTime now;
@@ -31,52 +31,82 @@ public class TaskStatusTest {
 
         project.addNewTask("Taak1", 0.1, Duration.ofHours(1));
         project.addNewTask("Taak2", 0.1, Duration.ofHours(1));
+        project.addNewTask("Taak3", 0.1, Duration.ofHours(1));
+        project.addNewTask("Taak4", 0.1, Duration.ofHours(1));
         task1 = project.getTasks().get(0);
         task2 = project.getTasks().get(1);
+        task3 = project.getTasks().get(2);
 
-        methodMakeAvailable = Task.class.getDeclaredMethod("makeAvailable");
-        methodMakeUnAvailable = Task.class.getDeclaredMethod("makeUnAvailable");
+        methodMakeAvailable = TaskUnavailable.class.getDeclaredMethod("makeAvailable", Task.class);
+        methodMakeUnAvailable = TaskUnavailable.class.getDeclaredMethod("makeUnavailable", Task.class);
         methodMakeAvailable.setAccessible(true);
         methodMakeUnAvailable.setAccessible(true);
-    }
-    //TODO review testen, wordt alles getest dat getest moet worden?
-
-
-/*    *//**
-     * Taken zijn standaard geïnitialiseerd op available!
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     *//*
-    @Test(expected = IllegalStateTransition.class)
-    public void availableToAvailableTest() throws Exception {
-
-        methodMakeAvailable.invoke(task1);
 
     }
 
-    */
+/////////////////////////// UNAVAILABLE___TO____ //////////////////////
 
-    /**
-     * Maak een taak unavailable, daarna terug available en daarna nog is available TODO: huh?
-     *
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     *//*
-    @Test(expected = IllegalStateTransition.class)
-    public void availableToAvailableTest2() throws InvocationTargetException, IllegalAccessException {
-        methodMakeUnAvailable.invoke(task1);
-        methodMakeAvailable.invoke(task1);
-        methodMakeAvailable.invoke(task1);
+    @Test
+    public void unavailableToAvailable() {
+        task2.addNewDependencyConstraint(task1);
+        assertEquals(task1.getStatusString(), "AVAILABLE");
+        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        task1.execute(LocalDateTime.now());
+        task1.finish(LocalDateTime.now());
+        assertEquals(task1.getStatusString(), "FINISHED");
+        assertEquals(task2.getStatusString(), "AVAILABLE");
     }
 
-    @Test (expected = IllegalStateTransition.class)
-    public void availableToUnavailableTest() throws Exception {
-        methodMakeUnAvailable.invoke(task1);
-        task1.addNewDependencyConstraint(task2);
-        methodMakeAvailable.invoke(task1);
-    } */
+    @Test (expected = IllegalStateTransitionException.class)
+    public void unavailableToExecuting() {
+        task2.addNewDependencyConstraint(task1);
+        assertEquals(task1.getStatusString(), "AVAILABLE");
+        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        task2.execute(LocalDateTime.now());
+    }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void unavailableToFailed() {
+        task2.addNewDependencyConstraint(task1);
+        assertEquals(task1.getStatusString(), "AVAILABLE");
+        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        task2.fail(LocalDateTime.now());
+    }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void unavailableToFinished() {
+        task2.addNewDependencyConstraint(task1);
+        assertEquals(task1.getStatusString(), "AVAILABLE");
+        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        task2.finish(LocalDateTime.now());
+    }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void unavailableToUnavailable() throws Throwable {
+        task2.addNewDependencyConstraint(task1);
+        assertEquals(task1.getStatusString(), "AVAILABLE");
+        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        TaskUnavailable test = (TaskUnavailable) task2.getStatus();
+        try {
+            methodMakeUnAvailable.invoke(test, task2);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+    }
+
+
+
 
 //////////////////////// AVAILABLE___TO____ //////////////////////
+
+    @Test
+    public void availableToUnavailable() {
+        task2.addNewDependencyConstraint(task1);
+        assertEquals(task1.getStatusString(), "AVAILABLE");
+        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+    }
+
     @Test
     public void availableToExecuting() throws Exception {
         assertTrue(task1.getStatusString().equals("AVAILABLE"));
