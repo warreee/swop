@@ -31,8 +31,8 @@ public class DependencyGraph {
 
     /**
      * Dependent hangt af van de dependingOn. Dus dependingOn moet eerst worden uitgevoerd.
-     * @param dependent
-     * @param dependingOn
+     * @param dependent De supertaak.
+     * @param dependingOn de taak die moet moet gedaan worden voor de supertaak kan gedaan worden.
      */
     public void addNewDependency(Task dependent, Task dependingOn) throws IllegalDependencyException {
         isValidDependency(dependent, dependingOn); // gooit een exception indien de dependency niet valid is, daardoor wordt addDepency niet uitgevoerd.
@@ -40,6 +40,12 @@ public class DependencyGraph {
 
     }
 
+    /**
+     * Voegt een dependency toe aan deze dependency graph indien deze dependency nog niet bestaat. Indien deze al wel
+     * bestaat faalt het toevoegen zonder error.
+     * @param dependent De supertaak.
+     * @param dependingOn de taak die moet moet gedaan worden voor de supertaak kan gedaan worden.
+     */
     private void addDependency(Task dependent, Task dependingOn) {
         if (dependingOnMap.containsKey(dependent)) {
             if (!dependingOnMap.get(dependent).contains(dependingOn)) {
@@ -70,8 +76,8 @@ public class DependencyGraph {
 
     /**
      * Verwijdert de laatst toegevoegde dependency
-     * @param dependent
-     * @param dependingOn
+     * @param dependent De supertaak.
+     * @param dependingOn de taak die moet moet gedaan worden voor de supertaak kan gedaan worden.
      */
     private void undoAddDependency(Task dependent, Task dependingOn) {
 
@@ -106,7 +112,11 @@ public class DependencyGraph {
         //Geeft empty list indien er geen branch is
     }
 
-
+    /**
+     * Geeft alle taken die moeten gedaan worden voor de doorgegeven taak gedaan kan worden.
+     * @param task De taak waarvoor dit gecontrolleerd moet worden.
+     * @return De taken die gedaan moeten worden/zijn voor de doorgegeven taak.
+     */
     public Set<Task> getDependingOnTasks(Task task){
 
         if (dependingOnMap.containsKey(task)) {
@@ -117,8 +127,8 @@ public class DependencyGraph {
 
     /**
      * Verandert in de afhankelijke taken van failedTask de afhankelijkheden naar de alternativeTask
-     * @param failedTask
-     * @param alternativeTask
+     * @param failedTask De Task die gefailed is.
+     * @param alternativeTask De Task die de gefailde Task vervangt.
      */
     public void changeDependingOnAlternativeTask(Task failedTask, Task alternativeTask) {
         ArrayList<Task> dependentTasksFailedTask = dependentMap.get(failedTask);
@@ -133,7 +143,7 @@ public class DependencyGraph {
 
     /**
      * Verwijdert elk voorkomen van een bepaalde taak in de depencyGraph
-     * @param failedTask
+     * @param failedTask De taak waarvan de dependencies moeten verwijderd worden.
      */
     private void removeDependency(Task failedTask) {
         dependentMap.remove(failedTask);
@@ -143,6 +153,11 @@ public class DependencyGraph {
 
     }
 
+    /**
+     * Controlleert of voor de 2 gegeven taken er een dependency mogelijk is.
+     * @param dependent De supertaak.
+     * @param dependingOn De taak die gedaan moet worden voor de supertaak.
+     */
     private void isValidDependency(Task dependent, Task dependingOn) {
 
         if (dependent == dependingOn) {  // dependencies mogen niet gelijk zijn
@@ -165,7 +180,12 @@ public class DependencyGraph {
 
     }
 
-
+    /**
+     * Controlleert of de 2 taken geen loop veroorzaken.
+     * @param dependent De supertaak
+     * @param dependingOn de Task die moet uitgevoegd worden voor de supertaak.
+     * @return True als dit een loop veroorzaakt anders False.
+     */
     private boolean containsLoop(Task dependent, Task dependingOn) {
         if (getAllTasks().size() == 0) { // er zitten nog geen depencies in
             return false;
@@ -218,8 +238,8 @@ public class DependencyGraph {
 
     /**
      * Zoekt recursief een pad dat begint met een rootnode
-     * @param task
-     * @return
+     * @param task De Task waar het pad moet eindigen.
+     * @return Een lijst met een lijst van alle paden.
      */
     public ArrayList<ArrayList<Task>> getPathsTo(Task task) {
         ArrayList<Task> currentPath = new ArrayList<>();
