@@ -3,7 +3,7 @@ package be.swop.groep11.main.resource.constraint;
 import be.swop.groep11.main.resource.AResourceType;
 
 /**
- * Created by Ronald on 9/04/2015.
+ * Stelt een ResourceTypeRequiresConstraint voor.
  */
 public class RequiresConstraint extends ResourceTypeConstraint {
 

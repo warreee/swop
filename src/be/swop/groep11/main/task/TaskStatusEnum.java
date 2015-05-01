@@ -1,7 +1,7 @@
 package be.swop.groep11.main.task;
 
 /**
- * Created by Ronald on 23/04/2015.
+ * Enumeratie voorstelling van mogelijke staten voor een taak.
  */
 public enum TaskStatusEnum {
     FINISHED,
