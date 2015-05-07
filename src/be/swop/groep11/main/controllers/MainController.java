@@ -128,19 +128,4 @@ public class MainController extends AbstractController {
         actionBehaviourMapping.deActivateController(controller);
     }
 
-    private AdvanceTimeController getAdvanceTimeController() {
-        return advanceTimeController;
-    }
-    private ProjectController getProjectController() {
-        return projectController;
-    }
-    private SimulationController getSimulationController() {
-        return simulationController;
-    }
-    private TaskController getTaskController() {
-        return taskController;
-    }
-    private PlanningController getPlanningController() {
-        return planningController;
-    }
 }

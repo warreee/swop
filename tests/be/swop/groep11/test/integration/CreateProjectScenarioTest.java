@@ -126,4 +126,5 @@ public class CreateProjectScenarioTest {
         projectController = new ProjectController(projectRepository,mockedUI);
         projectController.createProject();
     }
+
 }

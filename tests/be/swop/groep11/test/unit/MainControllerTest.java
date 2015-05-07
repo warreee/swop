@@ -1,4 +1,4 @@
-package be.swop.groep11.test.integration;
+package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.controllers.*;
@@ -8,11 +8,12 @@ import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.ui.UserInterface;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.time.LocalDateTime;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Ronald on 1/05/2015.
@@ -41,64 +42,94 @@ public class MainControllerTest {
         mockedUI.setActionBehaviourMapping(abmMock);
 
 
-        taskController = new TaskController(projectRepository, systemTime,mockedUI, resourceManager );
-        projectController = new ProjectController(projectRepository, mockedUI );
-        advanceTimeController = new AdvanceTimeController( systemTime, mockedUI);
-        simulationController = new SimulationController(abmMock, projectRepository, mockedUI);
-        planningController = new PlanningController(projectRepository,resourceManager, systemTime, mockedUI);
+        taskController = mock(TaskController.class);
+        projectController = mock(ProjectController.class);
+
+        advanceTimeController = mock(AdvanceTimeController.class);
+
+        simulationController = mock(SimulationController.class);
+        planningController = mock(PlanningController.class);
         main = new MainController(abmMock, advanceTimeController,simulationController,projectController,taskController,planningController,mockedUI );
     }
 
     @Test
     public void advanceTime() throws Exception {
         //stubbing
-//        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
-//        when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
+        main.advanceTime();
+
         verify(abmMock).activateController(advanceTimeController);
+        verify(advanceTimeController).advanceTime();
         verify(abmMock).deActivateController(advanceTimeController);
 
     }
 
     @Test
     public void createTask() throws Exception {
+        main.createTask();
+
         verify(abmMock).activateController(taskController);
+        verify(taskController).createTask();
         verify(abmMock).deActivateController(taskController);
 
     }
 
     @Test
     public void planTask() throws Exception {
-        verify(abmMock).activateController(taskController);
-        verify(abmMock).deActivateController(taskController);
+        main.planTask();
+
+        verify(abmMock).activateController(planningController);
+        verify(planningController).planTask();
+        verify(abmMock).deActivateController(planningController);
 
     }
 
     @Test
     public void createProject() throws Exception {
+        main.createProject();
+
 
         verify(abmMock).activateController(projectController);
+        verify(projectController).createProject();
         verify(abmMock).deActivateController(projectController);
 
     }
 
     @Test
     public void showProjects() throws Exception {
+        main.showProjects();
+
         verify(abmMock).activateController(projectController);
+        verify(projectController).showProjects();
         verify(abmMock).deActivateController(projectController);
 
     }
 
     @Test
     public void updateTask() throws Exception {
+        main.updateTask();
+
         verify(abmMock).activateController(taskController);
+        verify(taskController).updateTask();
         verify(abmMock).deActivateController(taskController);
 
     }
 
     @Test
     public void startSimulation() throws Exception {
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                abmMock.deActivateController(simulationController);
+                return null;
+            }
+        }).when(simulationController).cancel();
+
+        main.startSimulation();
+        simulationController.cancel();
+
         verify(abmMock).activateController(simulationController);
-//        verify(abmMock).deActivateController(taskController);
+        verify(simulationController).startSimulation();
+        verify(abmMock).deActivateController(simulationController);
 
     }
 }
