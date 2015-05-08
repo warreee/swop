@@ -116,7 +116,7 @@ public class App {
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.PLANTASK, planningController::planTask);
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.SHOWPROJECTS, projectController::showProjects);
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.REALIZESIMULATION, simulationController::realize);
-        actionBehaviourMapping.addActionBehaviour(simulationController, Action.CANCEL, simulationController::cancel); //Cancel Simulation
+        actionBehaviourMapping.addActionBehaviour(simulationController, Action.CANCEL, simulationController::cancel);//Cancel Simulation
     }
 
     private void runApp(){
