@@ -232,7 +232,7 @@ public class Project {
             DayOfWeek currentDay = currentWorkingDay.getDayOfWeek();
             long add = 1;
             switch (currentDay) {
-//                case MONDAY:
+//                  case MONDAY:
 //                    add = 1;
 //                    break;
                 case SATURDAY:
