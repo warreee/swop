@@ -14,6 +14,7 @@ public class MainController extends AbstractController {
     private final AdvanceTimeController advanceTimeController;
     private final TaskController taskController;
     private final PlanningController planningController;
+    private final LogonController logonController;
 
     /**
      * Maakt een nieuwe instantie aan van deze controller.
@@ -25,8 +26,10 @@ public class MainController extends AbstractController {
      * @param planningController De controller voor de usecase planning.
      * @param userInterface Een concrete implementatie van de UserInterfaceInterface.
      */
-    public MainController(ActionBehaviourMapping actionBehaviourMapping, AdvanceTimeController advanceTimeController, SimulationController simulationController,
-                          ProjectController projectController, TaskController taskController, PlanningController planningController, UserInterface userInterface) {
+    public MainController(ActionBehaviourMapping actionBehaviourMapping, AdvanceTimeController advanceTimeController,
+                          SimulationController simulationController, ProjectController projectController,
+                          TaskController taskController, PlanningController planningController,
+                          LogonController logonController, UserInterface userInterface) {
         super(userInterface);
         this.actionBehaviourMapping = actionBehaviourMapping;
         this.advanceTimeController = advanceTimeController;
@@ -34,6 +37,7 @@ public class MainController extends AbstractController {
         this.projectController = projectController;
         this.taskController = taskController;
         this.planningController = planningController;
+        this.logonController = logonController;
     }
 
     /**
@@ -112,6 +116,13 @@ public class MainController extends AbstractController {
         simulationController.startSimulation();
         //Mag niet deActivaten omdat de simulatie controller nog actief moet zijn, totdat end simulation is opgeroepen
         //simulationController.deActivate();
+    }
+
+    @Override
+    public void logon() throws IllegalArgumentException {
+        activate(logonController);
+        logonController.logon();
+        deActivate(logonController);
     }
 
     /**

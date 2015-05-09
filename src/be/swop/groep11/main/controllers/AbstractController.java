@@ -47,4 +47,8 @@ public abstract class AbstractController {
     public void startSimulation() throws IllegalArgumentException {
         throw new IllegalArgumentException("Niet ondersteund");
     }
+
+    public void logon() throws IllegalArgumentException {
+        throw new IllegalArgumentException("Niet ondersteund");
+    }
 }

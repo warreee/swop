@@ -25,6 +25,7 @@ public class MainControllerTest {
     private AdvanceTimeController advanceTimeController;
     private SimulationController simulationController;
     private PlanningController planningController;
+    private LogonController logonController;
     private UserInterface mockedUI;
     private MainController main;
     private ActionBehaviourMapping abmMock;
@@ -44,12 +45,14 @@ public class MainControllerTest {
 
         taskController = mock(TaskController.class);
         projectController = mock(ProjectController.class);
+        logonController = mock(LogonController.class);
 
         advanceTimeController = mock(AdvanceTimeController.class);
 
         simulationController = mock(SimulationController.class);
         planningController = mock(PlanningController.class);
-        main = new MainController(abmMock, advanceTimeController,simulationController,projectController,taskController,planningController,mockedUI );
+        main = new MainController(abmMock, advanceTimeController,simulationController,projectController,taskController,
+                planningController, logonController, mockedUI );
     }
 
     @Test

@@ -49,6 +49,7 @@ public class App {
     private AdvanceTimeController advanceTimeController;
     private SimulationController simulationController;
     private PlanningController planningController;
+    private LogonController logonController;
 
     private void initDomainObjects(){
         // maak een nieuwe CommandLineInterface aan
@@ -84,8 +85,9 @@ public class App {
         advanceTimeController = new AdvanceTimeController( systemTime, cli);
         simulationController = new SimulationController(actionBehaviourMapping, projectRepository, cli);
         planningController = new PlanningController(projectRepository,resourceManager, systemTime, cli);
-        main = new MainController(actionBehaviourMapping, advanceTimeController,simulationController,projectController,taskController,planningController,cli );
-
+        logonController = new LogonController(cli);
+        main = new MainController(actionBehaviourMapping, advanceTimeController,simulationController,projectController,
+                taskController, planningController, logonController, cli);
     }
 
     private void initBehaviourMapping(){
