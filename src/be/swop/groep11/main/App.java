@@ -105,6 +105,7 @@ public class App {
         actionBehaviourMapping.addActionBehaviour(main, Action.SHOWPROJECTS, main::showProjects);
         actionBehaviourMapping.addActionBehaviour(main, Action.ADVANCETIME, main::advanceTime);
         actionBehaviourMapping.addActionBehaviour(main, Action.STARTSIMULATION, main::startSimulation);
+        actionBehaviourMapping.addActionBehaviour(main, Action.LOGON, main::logon);
         //ProjectController
         actionBehaviourMapping.addActionBehaviour(projectController, Action.SHOWPROJECTS, projectController::showProjects);
         actionBehaviourMapping.addActionBehaviour(projectController, Action.CREATEPROJECT, projectController::createProject);
