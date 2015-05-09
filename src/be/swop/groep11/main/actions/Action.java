@@ -19,6 +19,7 @@ public enum Action {
     PLANTASK("Plan Task"),
     STARTSIMULATION("Start Simulation"),
     REALIZESIMULATION("Realize simulation"),
+    LOGON("Logon"),
     INVALIDACTION("");
 
     /**

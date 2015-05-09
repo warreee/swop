@@ -119,6 +119,8 @@ public class App {
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.SHOWPROJECTS, projectController::showProjects);
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.REALIZESIMULATION, simulationController::realize);
         actionBehaviourMapping.addActionBehaviour(simulationController, Action.CANCEL, simulationController::cancel);//Cancel Simulation
+        //LogonController
+        actionBehaviourMapping.addActionBehaviour(logonController, Action.LOGON, logonController::logon);
     }
 
     private void runApp(){

@@ -10,4 +10,9 @@ public class LogonController extends AbstractController {
     public LogonController(UserInterface userInterface) {
         super(userInterface);
     }
+
+    @Override
+    public void logon() throws IllegalArgumentException {
+        System.out.println("porno");
+    }
 }

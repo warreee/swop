@@ -118,6 +118,10 @@ public class MainController extends AbstractController {
         //simulationController.deActivate();
     }
 
+    /**
+     * Voert de usecase logon uit.
+     * @throws IllegalArgumentException Wordt gegooid als er ergens een fout optreed die niet herstelbaar is.
+     */
     @Override
     public void logon() throws IllegalArgumentException {
         activate(logonController);
