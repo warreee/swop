@@ -13,6 +13,8 @@ public class LogonController extends AbstractController {
 
     @Override
     public void logon() throws IllegalArgumentException {
-        System.out.println("Porno, is een dorp in afrika");
+        System.out.println("Porno, is een dorp in afrika!");
     }
+
+
 }
