@@ -80,7 +80,7 @@ public class App {
 
     private void initControllers(){
         //Aanmaken van controllers
-        taskController = new TaskController(projectRepository, systemTime,cli, resourceManager );
+        taskController = new TaskController(projectRepository, systemTime,cli);
         projectController = new ProjectController(projectRepository, cli );
         advanceTimeController = new AdvanceTimeController( systemTime, cli);
         simulationController = new SimulationController(actionBehaviourMapping, projectRepository, cli);
@@ -130,7 +130,9 @@ public class App {
         cli.run();
     }
 
+
     private void addTempDomainObjects() {
+        /* TODO dit werkt niet meer want ResourceManager > ResourceTypeRepository + ... (en hier moeten nu ook branch offices worden aangemaakt)
 
         resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevA");
         resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevB");
@@ -147,5 +149,8 @@ public class App {
         resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("CarWash"), "car wash A");
         resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("CarWash"), "car wash B");
 
+        */
+
     }
+
 }

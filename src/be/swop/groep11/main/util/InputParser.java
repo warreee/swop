@@ -224,10 +224,12 @@ public class InputParser {
      * @param propertiesList
      */
     private void addDeveloper(Map<String, String> propertiesList){
+        /* TODO dit werkt niet meer, maar de input parser moet toch aangepast worden...
         String name = propertiesList.get("name");
         AResourceType resourceType = resourceManager.getDeveloperType();
         resourceManager.addResourceInstance(resourceType, name);
         developerList.add(resourceManager.getDeveloperType().getResourceInstances().get(resourceManager.getDeveloperType().getResourceInstances().size() - 1));
+        */
     }
 
     /**
@@ -265,6 +267,7 @@ public class InputParser {
      * @param propertiesList
      */
     private void addResourceType(int number, Map<String, Object> propertiesList){
+        /* TODO dit werkt niet meer, maar de input parser moet toch aangepast worden...
         // Lees alle info uit de map.
         String name = (String) propertiesList.get("name");
         ArrayList requires = (ArrayList) propertiesList.get("requires");
@@ -298,6 +301,7 @@ public class InputParser {
         }
 
         resourceTypeList.add(resourceManager.getResourceTypeByName(name));
+        */
     }
 
     /**
@@ -307,6 +311,7 @@ public class InputParser {
      * @param propertiesList
      */
     private void addTask(Map<String, Object> propertiesList) {
+        /* TODO dit werkt niet meer, maar de input parser moet toch aangepast worden...
         String description = (String) propertiesList.get("description");
         Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
         Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation"))) / 100;
@@ -386,6 +391,7 @@ public class InputParser {
                 //debug
             }
         }
+        */
     }
 
     /**

@@ -92,7 +92,7 @@ public class Plan {
         while (it.hasNext()) {
             ResourceRequirement requirement = it.next();
 
-            if (requirement.getType() != resourceManager.getDeveloperType()) {
+            if (requirement.getType() != resourceManager.getDeveloperType()) { // TODO
 
                 ImmutableList<ResourceReservation> reservations = this.getReservations(requirement.getType());
 

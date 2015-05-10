@@ -1,5 +1,6 @@
 package be.swop.groep11.main.core;
 
+import be.swop.groep11.main.resource.ResourceTypeRepository;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
@@ -7,24 +8,33 @@ import java.util.List;
 
 /**
  * Deze klasse stelt een company voor,
- * Een company heeft een naam en bestaat uit verschillende branch offices.
+ * Een company heeft een naam, heeft een resource type repository
+ * en bestaat uit verschillende branch offices.
  */
 public class Company {
 
     private final String name;
     private final List<BranchOffice> branchOffices;
 
+    private final ResourceTypeRepository resourceTypeRepository;
+
     /**
      * Constructor om een nieuwe company te maken.
-     * @param name          Naam van de company
-     * @param branchOffices Branch offices van de company
-     * @throws IllegalArgumentException Ongeldige naam of branch offices
+     * @param name                   Naam van de company
+     * @param resourceTypeRepository Resource type repository van de company
+     * @param branchOffices          Branch offices van de company
+     * @throws IllegalArgumentException Ongeldige naam, resource type repository of branch offices
      */
-    public Company(String name, BranchOffice... branchOffices) throws IllegalArgumentException {
+    public Company(String name, ResourceTypeRepository resourceTypeRepository, BranchOffice... branchOffices) throws IllegalArgumentException {
         if (! isValidName(name)) {
             throw new IllegalArgumentException("Ongeldige naam");
         }
         this.name = name;
+
+        if (resourceTypeRepository == null) {
+            throw new IllegalArgumentException("Ongeldige resource type repository");
+        }
+        this.resourceTypeRepository = resourceTypeRepository;
 
         this.branchOffices = new ArrayList<>();
         for (BranchOffice branchOffice : branchOffices) {
@@ -55,6 +65,13 @@ public class Company {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Geeft de resource type repository van deze company.
+     */
+    public ResourceTypeRepository getResourceTypeRepository() {
+        return resourceTypeRepository;
     }
 
     /**
