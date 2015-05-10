@@ -1,6 +1,5 @@
 package be.swop.groep11.test.integration;
 
-import be.swop.groep11.test.unit.MainControllerTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -10,7 +9,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({AdvanceTimeScenarioTest.class,CreateProjectScenarioTest.class,
         CreateTaskScenarioTest.class,UpdateTaskStatusScenarioTest.class,
         ShowProjectsScenarioTest.class,PlanTaskScenarioTest.class,
-        SimulationScenarioTest.class})
+        LogonScenarioTest.class,SimulationScenarioTest.class})
 /**
  * Dit functioneert als verzameling voor alle IntegrationTests.
  */
