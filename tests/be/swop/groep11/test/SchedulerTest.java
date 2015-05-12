@@ -19,19 +19,23 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by Ronald on 12/05/2015.
  */
-public class ResourceSchedulerTest {
+public class SchedulerTest {
 
+
+    //TODO: Scheduler Work in progress, deze test klasse wordt gebruikt als verkenning van de nodige methodes. Onderstaande testen hebben voorlopig weinig belang.
     private Task task;
-    private ResourceScheduler resourceScheduler;
+    private Scheduler scheduler;
 
     @Before
     public void setUp() throws Exception {
         SystemTime systemTime = new SystemTime();
         IRequirementList requirementList = mock(IRequirementList.class);
 
-        task = new Task("test", Duration.ofMinutes(100), 10,systemTime,new DependencyGraph(),requirementList);
+        task = new Task("test", Duration.ofMinutes(100), 10, systemTime, new DependencyGraph(), requirementList);
 
-        resourceScheduler = new ResourceScheduler();
+        ResourceRepository rr = mock(ResourceRepository.class);
+        scheduler = new Scheduler();
+        scheduler.setResourceRepository(rr);
     }
 
 
@@ -39,27 +43,27 @@ public class ResourceSchedulerTest {
     @Test
     public void test() throws Exception {
 
-        List<ResourceReservation> reservationList = resourceScheduler.getReservations(task);
+        List<ResourceReservation> reservationList = scheduler.getReservations(task);
 
 
         AResourceType type = new ResourceType("TestType");
         TimeSpan ts = new TimeSpan(LocalDateTime.now(),LocalDateTime.now().plusDays(3));
 
-        List<ResourceInstance> resourceList = resourceScheduler.getAvailableResources(type, ts);
+        List<ResourceInstance> resourceList = scheduler.getAvailableResources(type, ts);
 
         List<ResourceRequirement> resourceRequirements = new ArrayList<>();
         ResourceRequirement req = new ResourceRequirement(type, 3);
 
-        List<ResourceInstance> resourceListB = resourceScheduler.getAvailableResources(resourceRequirements, task.getEstimatedDuration());
+        List<ResourceInstance> resourceListB = scheduler.getAvailableResources(resourceRequirements, task.getEstimatedDuration());
 
-        List<LocalDateTime> startTimes = resourceScheduler.getNextStartTimes(task.getRequirementList(), task.getEstimatedDuration(), 3);
+        List<LocalDateTime> startTimes = scheduler.getNextStartTimes(task.getRequirementList(), task.getEstimatedDuration(), 3);
 
 
         List<ResourceInstance> selectedResources = new ArrayList<>();
 
 //        resourceScheduler.makeReservations(task, selectedResources, selectedDevelopers, ts);
 
-        resourceScheduler.canMakeReservations(task, selectedResources, ts);
+        scheduler.canMakeReservations(task, selectedResources, ts);
 
         fail("todo");
 
@@ -73,7 +77,7 @@ public class ResourceSchedulerTest {
         IRequirementList requirementList = task.getRequirementList();
 
         //Step 4
-        List<LocalDateTime> startTimes = resourceScheduler.getNextStartTimes(task.getRequirementList(), task.getEstimatedDuration(), 3);
+        List<LocalDateTime> startTimes = scheduler.getNextStartTimes(task.getRequirementList(), task.getEstimatedDuration(), 3);
         //ui show list
         //ui select or enter alternative
         LocalDateTime selectedStartTime = LocalDateTime.now();
@@ -82,7 +86,7 @@ public class ResourceSchedulerTest {
 
         List<ResourceInstance> propesedResources = null;
         try {
-            propesedResources = resourceScheduler.proposeResources(task.getRequirementList(), timeSpan);
+            propesedResources = scheduler.proposeResources(task.getRequirementList(), timeSpan);
             //Melden indien er geen resources beschikbaar zijn, ...
             //User selects alternative resources
             //
@@ -92,7 +96,7 @@ public class ResourceSchedulerTest {
             List<Developer> selectedDevelopers = null;
 
             //Maak reservaties
-            resourceScheduler.makeReservations(task,propesedResources,selectedDevelopers, timeSpan);
+            scheduler.makeReservations(task,propesedResources,selectedDevelopers, timeSpan);
 
         } catch (ConflictException e) {
             //vraag conflicting task op
@@ -104,8 +108,10 @@ public class ResourceSchedulerTest {
 
     }
 
-    private class ResourceScheduler {
+    private class Scheduler {
 
+
+        private ResourceRepository resourceRepository;
 
         public List<ResourceReservation> getReservations(Task task) {
 
@@ -134,6 +140,21 @@ public class ResourceSchedulerTest {
 
         public List<ResourceInstance> proposeResources(IRequirementList requirementList, TimeSpan timeSpan) {
             return null;
+        }
+
+        public void setResourceRepository(ResourceRepository resourceRepository) throws IllegalArgumentException {
+            if (!canHaveAsResourceRepository(resourceRepository)) {
+                throw new IllegalArgumentException("Ongeldige resourceRepository");
+            }
+            this.resourceRepository = resourceRepository;
+        }
+
+        public boolean canHaveAsResourceRepository(ResourceRepository resourceRepository) {
+            return resourceRepository != null && getResourceRepository() == null;
+        }
+
+        public ResourceRepository getResourceRepository() {
+            return resourceRepository;
         }
     }
 }
