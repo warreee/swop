@@ -55,31 +55,31 @@ public class CommandLineInterface implements UserInterface {
 
     private boolean exit;
     private BufferedReader bufferedReader;
-    private ActionBehaviourMapping actionBehaviourMapping;
+    private ControllerStack controllerStack;
 
     @Override
     public void wantsToExit() {
         this.exit = true;
     }
 
-    private boolean canHaveAsActionMapping(ActionBehaviourMapping actionBehaviourMapping) {
-        return actionBehaviourMapping != null && this.actionBehaviourMapping == null;
+    private boolean canHaveAsActionMapping(ControllerStack controllerStack) {
+        return controllerStack != null && this.controllerStack == null;
     }
 
-    public void setActionBehaviourMapping(ActionBehaviourMapping actionBehaviourMapping) {
-        if (!canHaveAsActionMapping(actionBehaviourMapping)) {
+    public void setControllerStack(ControllerStack controllerStack) {
+        if (!canHaveAsActionMapping(controllerStack)) {
             throw new IllegalArgumentException("Gegeven actionMapping is geen geldige voor deze UI.");
         }
-        this.actionBehaviourMapping = actionBehaviourMapping;
+        this.controllerStack = controllerStack;
     }
 
     @Override
-    public ActionBehaviourMapping getActionBehaviourMapping() {
-        return actionBehaviourMapping;
+    public ControllerStack getControllerStack() {
+        return controllerStack;
     }
 
     private void executeCommand(Action action) {
-        actionBehaviourMapping.executeAction(action);
+        controllerStack.executeAction(action);
     }
 
     @Override
@@ -576,7 +576,7 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public void showHelp(AbstractController abstractController) throws IllegalArgumentException {
         ArrayList<Action> list = new ArrayList<>();
-        for (Map.Entry<Action, ActionBehaviour> entry : actionBehaviourMapping.getMappingFor(abstractController).entrySet()) {
+        for (Map.Entry<Action, ActionBehaviour> entry : controllerStack.getMappingFor(abstractController).entrySet()) {
             list.add(entry.getKey());
         }
         StringBuilder sb = new StringBuilder();

@@ -1,13 +1,11 @@
 package be.swop.groep11.test.integration;
 
 
-import be.swop.groep11.main.actions.ActionBehaviourMapping;
+import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.SimulationController;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.resource.ResourceManager;
-import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
@@ -37,7 +35,7 @@ public class SimulationScenarioTest {
         repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
 
         this.mockedUI = mock(UserInterface.class);
-        this.simulationController = new SimulationController(mock(ActionBehaviourMapping.class), repository, mockedUI);
+        this.simulationController = new SimulationController(mock(ControllerStack.class), repository, mockedUI);
     }
 
     @Test
