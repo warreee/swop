@@ -30,7 +30,7 @@ public class ResourceRepository {
     }
 
     public boolean canHaveAsResourceTypeRepository(ResourceTypeRepository resourceTypeRepository) {
-        return resourceTypeRepository != null && getResourceTypeRepository() == null || resourceTypeRepository == null && getResourceTypeRepository() != null;
+        return resourceTypeRepository != null && getResourceTypeRepository() == null ;
     }
 
     public ResourceTypeRepository getResourceTypeRepository() {

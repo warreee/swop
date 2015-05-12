@@ -28,7 +28,8 @@ public class ResourceRepositoryTest {
         resRepo.setResourceTypeRepository(rtr);
         assertEquals(rtr, resRepo.getResourceTypeRepository());
         assertFalse(resRepo.canHaveAsResourceTypeRepository(rtr));
-        assertTrue(resRepo.canHaveAsResourceTypeRepository(null));
+        assertFalse(resRepo.canHaveAsResourceTypeRepository(null));
+
 
     }
     @Test (expected = IllegalArgumentException.class)
