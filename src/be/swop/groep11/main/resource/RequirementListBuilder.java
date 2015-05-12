@@ -116,18 +116,23 @@ public class RequirementListBuilder {
             return this.requirements.values().iterator();
         }
 
+
         @Override
         public DailyAvailability getShortestDailyAvailability() {
+            //TODO getShortestDailyAvailability
+
             return null;
         }
 
         @Override
         public Duration calculateRequiredDuration(Duration estimatedDuration) {
+            //TODO calculateRequiredDuration
             return null;
         }
 
         @Override
         public TimeSpan calculateReservationTimeSpan(LocalDateTime selectedStartTime, Duration estimatedDuration) {
+            //TODO calculateReservationTimeSpan
             return null;
         }
 
