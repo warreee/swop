@@ -1,12 +1,13 @@
 package be.swop.groep11.main.resource;
 
+import be.swop.groep11.main.exception.IllegalInputException;
 import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequiresConstraint;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
-import be.swop.groep11.main.exception.IllegalInputException;
 import com.google.common.collect.ImmutableList;
 
-import java.time.LocalTime;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -28,7 +29,6 @@ public abstract class AResourceType {
             throw new IllegalArgumentException("Ongeldige naam voor ResourceType");
         }
         this.name = typeName;
-        setDailyAvailability(new DailyAvailability(LocalTime.MIN, LocalTime.MAX));
     }
 
     /**
@@ -36,20 +36,21 @@ public abstract class AResourceType {
      * @param availability De dagelijkse beschikbaarheid.
      * @throws IllegalArgumentException Wordt gegooid indien die DailyAvailability ongeldig is.
      */
-    protected void setDailyAvailability(DailyAvailability availability) throws IllegalArgumentException {
-        if (!isValidDailyAvailability(availability)) {
+    public void setDailyAvailability(DailyAvailability availability) throws IllegalArgumentException {
+        if (!canHaveAsDailyAvailability(availability)) {
             throw new IllegalArgumentException("Ongeldige DailyAvailability");
         }
         this.dailyAvailability = availability;
     }
 
     /**
-     * Controleerd of de gegeven DailyAvailability een geldige DailyAvailability is.
+     * Controleert of de gegeven DailyAvailability een geldige DailyAvailability is.
      * @param availability De te controleren DailyAvailability.
-     * @return True als de gegeven DailyAvailability geldig is, anders False.
+     * @return  True als de gegeven DailyAvailability geldig is en de huidige
+     *          dailyAvailability voor deze ResourceType is null, anders False.
      */
-    private boolean isValidDailyAvailability(DailyAvailability availability) {
-        return availability != null;
+    private boolean canHaveAsDailyAvailability(DailyAvailability availability) {
+        return availability != null && this.getDailyAvailability() == null;
     }
 
     /**
@@ -168,7 +169,11 @@ public abstract class AResourceType {
         return instances.size();
     }
 
-    @Override
+    public abstract LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration);
+
+
+
+        @Override
     public String toString() {
         return "AResourceType{" +
                 "name='" + name + '\'' +

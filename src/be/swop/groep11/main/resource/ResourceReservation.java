@@ -6,7 +6,7 @@ import be.swop.groep11.main.task.Task;
 /**
  * Stelt de reservatie van een resource instantie voor een taak gedurende een bepaalde tijdsspanne voor.
  */
-public class ResourceReservation {
+public class ResourceReservation{
 
     /**
      * Constructor om een nieuwe reservatie van een resource instantie voor een taak
@@ -26,7 +26,7 @@ public class ResourceReservation {
             throw new IllegalArgumentException("Tijdsspanne mag niet null zijn");
         this.task = task;
         this.resourceInstance = resourceInstance;
-        this.timeSpan = timeSpan;
+        this.TimeSpan = timeSpan;
         this.isSpecific = isSpecific;
     }
 
@@ -39,13 +39,13 @@ public class ResourceReservation {
         return task;
     }
 
-    private final TimeSpan timeSpan;
+    private final TimeSpan TimeSpan;
 
     /**
      * Geeft de tijdsspanne van deze resource allocatie.
      */
     public TimeSpan getTimeSpan() {
-        return timeSpan;
+        return TimeSpan;
     }
 
     private final ResourceInstance resourceInstance;
@@ -64,5 +64,10 @@ public class ResourceReservation {
      */
     public boolean isSpecific() {
         return isSpecific;
+    }
+
+    @Override
+    public String toString() {
+        return getTimeSpan().getStartTime().toString() + "  -  " + getTimeSpan().getEndTime().toString();
     }
 }

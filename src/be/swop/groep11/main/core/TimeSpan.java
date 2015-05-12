@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 /**
  * Een TimeSpan stelt een tijdsspanne voor met een starttijd en een eindtijd.
  */
-public class TimeSpan {
+public class TimeSpan{
 
     /**
      * Constructor om een nieuwe timespan aan te maken met een starttijd en eindtijd.
@@ -19,6 +19,36 @@ public class TimeSpan {
         this.startTime = startTime;
         this.endTime = endTime;
     }
+
+    /**
+     * Controleert of een starttijd en een eindtijd geldig zijn.
+     * @param startTime De starttijd die gecontroleerd moet worden.
+     * @param endTime   De eindtijd die gecontroleerd moet worden.
+     * @return          Waar indien startTime, endTime niet null zijn. En bovendien startTime.isBefore(endTime)
+     */
+    private static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime){
+        return startTime !=null && endTime != null && startTime.isBefore(endTime);
+    }
+
+    /**
+     * Haalt de starttijd van deze TimeSpan op.
+     * @return De starttijd.
+     */
+
+    public LocalDateTime getStartTime() {
+        return this.startTime;
+    }
+
+    /**
+     * Haalt de eindtijd van deze TimeSpan op.
+     * @return De eindtijd.
+     */
+    public LocalDateTime getEndTime() {
+        return this.endTime;
+    }
+
+    private final LocalDateTime startTime, endTime;
+
 
     /**
      * Controleert of deze tijdsspanne *strikt* overlapt met een andere tijdsspanne.
@@ -38,32 +68,50 @@ public class TimeSpan {
     }
 
     /**
-     * Controleert of een starttijd en een eindtijd geldig zijn.
-     * @param startTime De starttijd die gecontroleerd moet worden.
-     * @param endTime   De eindtijd die gecontroleerd moet worden.
-     * @return          Waar indien startTime, endTime niet null zijn. En bovendien startTime.isBefore(endTime)
+     * Controleer of deze TimeSpan voor een andere TimeSpan valt
+     * @param other De andere TimeSpan
+     * @return      Niet waar indien other niet ge?nitialiseerd is.
+     *              Waar indien de EndTime van deze TimeSpan voor de EndTime van other is.
      */
-    private static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime){
-        return startTime !=null && endTime != null && startTime.isBefore(endTime);
+    public boolean isBefore(TimeSpan other) {
+        return other != null && this.getEndTime().isBefore(other.getStartTime());
     }
 
     /**
-     * Haalt de starttijd van deze TimeSpan op.
-     * @return De starttijd.
+     * Controleer of deze TimeSpan na een andere TimeSpan valt
+     * @param other De andere TimeSpan
+     * @return      Niet waar indien other niet ge?nitialiseerd is.
+     *              Waar indien de StartTime van deze TimeSpan na de EndTime van other is.
      */
-    public LocalDateTime getStartTime() {
-        return this.startTime;
+    public boolean isAfter(TimeSpan other) {
+        return other != null && this.getStartTime().isAfter(other.getEndTime());
     }
 
     /**
-     * Haalt de eindtijd van deze TimeSpan op.
-     * @return De eindtijd.
+     * Bereken een ITimeSpan die de tijdsperiode voorstelt die tussen deze en de gegeven ITimeSpan zit.
+     * @param other De andere ITimeSpan
+     * @return      null indien other overlapt met deze ITimeSpan.
+     *              indien deze ITimeSpan niet overlapt met other geeft het een nieuwe ITimeSpan met
+     *              StartTime het EndTime van de vroegste ITimeSpan en als EndTime de StartTime van de latere ITimeSpan
      */
-    public LocalDateTime getEndTime() {
-        return this.endTime;
+    public TimeSpan timeBetween(TimeSpan other) {
+        if (other == null) {
+            return null;
+        }else if (!this.overlapsWith(other)) {
+            return this.isBefore(other) ? new TimeSpan(this.getEndTime(), other.getStartTime()) : new TimeSpan(other.getEndTime(), this.getStartTime());
+        }else{
+            return null;
+        }
     }
 
-    private final LocalDateTime startTime, endTime;
+    /**
+     * Controle of dat de gegeven localDateTime aanwezig is in de ITimeSpan
+     * @param dateTime De te controleren LocalDateTime
+     * @return  Waar indien getStartTime.isBefore(dateTime) && getEndTime.isAfter(dateTime)
+     */
+    public boolean containsLocalDateTime(LocalDateTime dateTime) {
+        return dateTime!= null && getStartTime().isBefore(dateTime) && getEndTime().isAfter(dateTime);
+    }
 
     /**
      * @param other De andere tijdsspanne
@@ -78,4 +126,10 @@ public class TimeSpan {
         return this.getStartTime().equals(((TimeSpan) other).getStartTime()) && this.getEndTime().equals(((TimeSpan) other).getEndTime());
     }
 
+    @Override
+    public String toString() {
+        return getStartTime().toString() + "  -  " + getEndTime().toString();
+    }
+
+    //TODO override hashCode
 }

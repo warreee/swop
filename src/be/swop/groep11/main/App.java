@@ -5,7 +5,6 @@ import be.swop.groep11.main.actions.ActionBehaviourMapping;
 import be.swop.groep11.main.controllers.*;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.ui.CommandLineInterface;
 import be.swop.groep11.main.util.InputParser;
@@ -14,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * Klasse verantwoordelijk voor BootStrapping.
@@ -80,7 +78,7 @@ public class App {
 
     private void initControllers(){
         //Aanmaken van controllers
-        taskController = new TaskController(projectRepository, systemTime,cli);
+        taskController = new TaskController(projectRepository, systemTime,cli,resourceManager);
         projectController = new ProjectController(projectRepository, cli );
         advanceTimeController = new AdvanceTimeController( systemTime, cli);
         simulationController = new SimulationController(actionBehaviourMapping, projectRepository, cli);

@@ -1,5 +1,9 @@
 package be.swop.groep11.main.resource;
 
+import be.swop.groep11.main.core.TimeSpan;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 
 /**
@@ -46,4 +50,24 @@ public interface IRequirementList{
      */
     Iterator<ResourceRequirement> iterator();
 
+    /**
+     * @return  De dailyAvailability met de kleinste duratie.
+     */
+    DailyAvailability getShortestDailyAvailability();
+
+    /**
+     * Bereken hoe lang de uiteindelijke resources in gebruik zullen zijn. Op basis van de geschatte werkDuration
+     * @param estimatedDuration     De geschatte werk tijd te gebruiken in de berekening
+     * @return                      TODO voltooi documentatie calculateRequiredDuration
+     */
+    Duration calculateRequiredDuration(Duration estimatedDuration);
+
+    /**
+     * Bereken voor de gegeven StartTijd & geschatte werk duration hoe lang een resource in gebruik zal zijn
+     * @param selectedStartTime De gegeven startTijd.
+     * @param estimatedDuration De gegeven geschatte werk duration
+     * @return  Een nieuwe TimeSpan berekent a.d.h.v. de getShortestDailyAvailability() en de estimatedDuration,
+     *          eerst berekenen we de RequiredDuration dewelke men optelt met de gegeven startTijd om de eindTijd te vormen.
+     */
+    TimeSpan calculateReservationTimeSpan(LocalDateTime selectedStartTime, Duration estimatedDuration);
 }

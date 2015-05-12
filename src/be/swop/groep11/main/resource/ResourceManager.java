@@ -132,18 +132,6 @@ public class ResourceManager{
         return ImmutableList.copyOf(resourceTypes);
     }
 
-
-    /**
-     * Zet voor het gegeven IResourceType de DailyAvailability op de gegeven DailyAvailability.
-     * @param ownerType     Het IResourceType waarvan de DailyAvailability zal veranderen.
-     * @param availability  De nieuwe DailyAvailability voor ownerType.
-     * @throws IllegalArgumentException
-     *                      Gooi indien availability null is
-     */
-    public void withDailyAvailability(AResourceType ownerType, DailyAvailability availability) throws IllegalArgumentException{
-        ownerType.setDailyAvailability(availability);
-    }
-
     /**
      * Zet voor het ownerType een RequirementsConstraint met het reqType.
      * @param ownerType Het superType dat niet kan bestaan zonder het kindtype.
@@ -224,7 +212,7 @@ public class ResourceManager{
         }
 
         // bereken de eindtijd van een reservatie vanaf realStartTime voor duration: vraag dit aan de resourceInstance!
-        LocalDateTime realEndTime = resourceInstance.calculateEndTime(realStartTime, duration);
+        LocalDateTime realEndTime = resourceType.calculateEndTime(realStartTime, duration);
 
         // maak van de start- en eindtijd een tijdsspanne
         TimeSpan timeSpan = new TimeSpan(startTime, realEndTime);
