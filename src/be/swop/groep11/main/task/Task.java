@@ -1,5 +1,6 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
@@ -14,7 +15,7 @@ import java.util.Set;
 
 /**
  * Stelt een taak voor met een beschrijving, starttijd, eindtijd, verwachte duur en een aanvaardbare marge.
- * Een taak behoort heeft een lijst van dependency constraints.
+ * Een taak heeft ook een dependency graph en een lijst van resource requirements.
  */
 public class Task{
 
@@ -331,7 +332,7 @@ public class Task{
      *                   of (task is gefaald en alternativeTask != task en alternativeTask hangt niet af van task)
      */
     public static boolean canSetAlternativeTask(Task task, Task alternativeTask) {
-        return task.status.canSetAlternativeTask(task,alternativeTask);
+        return task.status.canSetAlternativeTask(task, alternativeTask);
     }
 
     protected boolean dependsOn(Task other) {
@@ -533,5 +534,76 @@ public class Task{
             plan.releaseResources(endTime);
         }
     }
+
+    /**
+     * Delegeert deze taak naar een andere branch office.
+     * @param other De andere branch office. Deze mag niet de huidige branch office zijn waarin de taak
+     *              moet gepland worden.
+     * @throws IllegalArgumentException De taak kan niet naar de andere branch office gedelegeerd worden.
+     */
+    public void delegateTo(BranchOffice other) {
+        if (! canBeDelegatedTo(other)) {
+            throw new IllegalArgumentException("De taak kan niet naar de andere branch office gedelegeerd worden");
+        }
+
+        if (isDelegated() && other.getProperTasks().contains(this)) {
+            // delegatie naar branch office waar taak in gemaakt is
+            BranchOffice previousDelegatedTo = this.getDelegatedTo();
+            this.isDelegated = false;
+            this.delegatedTo = null;
+            previousDelegatedTo.removeDelegatedTask(this);
+        }
+
+        else if (isDelegated()) {
+            // delegatie naar andere branch office, wanneer er al een delegatie gedaan is
+            BranchOffice previousDelegatedTo = this.getDelegatedTo();
+            this.isDelegated = true;
+            this.delegatedTo = other;
+            previousDelegatedTo.removeDelegatedTask(this);
+            other.addDelegatedTask(this);
+        }
+
+        else {
+            // delegatie vanuit branch office waar taak in gemaakt is
+            this.isDelegated = true;
+            this.delegatedTo = other;
+            other.addDelegatedTask(this);
+        }
+    }
+
+    /**
+     * Controleert of deze taak naar een gegeven branch office kan gedelegeerd worden.
+     * @param other De gegeven branch office.
+     * @return True als de gegeven branch office niet dezelfde is als die waar de taak op dit moment moet
+     *         gepland worden.
+     */
+    public boolean canBeDelegatedTo(BranchOffice other) {
+        if (! isDelegated()) {
+            return ! other.getProperTasks().contains(this);
+        }
+        else {
+            return other != getDelegatedTo();
+        }
+    }
+
+    /**
+     * Controleert of deze taak naar een andere branch office gedelegeerd is.
+     */
+    public boolean isDelegated() {
+        return isDelegated;
+    }
+
+    /**
+     * Geeft de branch office waar deze taak naar gedelegeerd is,
+     * of null wanneer deze taak niet gedelegeerd is.
+     */
+    public BranchOffice getDelegatedTo() {
+        return delegatedTo;
+    }
+
+    private boolean isDelegated = false;
+    private BranchOffice delegatedTo = null;
+
+    // TODO: testen schrijven
 
 }
