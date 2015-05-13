@@ -1,8 +1,5 @@
 package be.swop.groep11.main.resource;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-
 /**
  * Stelt een resource voor met een naam en resource type.
  */
@@ -23,37 +20,9 @@ public class Resource implements ResourceInstance {
         this.resourceType = resourceType;
     }
 
-    /**
-     * Implementeert calculateEndTime in de interface ResourceInstance.
-     * @param startTime De gegeven starttijd
-     * @param duration  De gegeven duur
-     * @return TODO: uitleggen hoe dit voor Resource gedaan wordt
-     */
-    public LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration) {
-
-        if (this.getResourceType().getDailyAvailability() == null) {
-            return startTime.plus(duration);
-        }
-        else {
-            LocalDateTime currentStartTime = this.getResourceType().getDailyAvailability().getNextTime(startTime);
-            LocalDateTime currentEndTime   = null;
-            Duration      currentDuration  = duration;
-
-            while (!currentDuration.isZero()) {
-                Duration durationUntilNextEndTime = this.getResourceType().getDailyAvailability().getDurationUntilNextEndTime(currentStartTime);
-                if (currentDuration.compareTo(durationUntilNextEndTime) <= 0) {
-                    currentEndTime = currentStartTime.plus(currentDuration);
-                    currentDuration = Duration.ZERO;
-                }
-                else {
-                    currentEndTime = currentStartTime.plus(durationUntilNextEndTime);
-                    currentDuration = currentDuration.minus(durationUntilNextEndTime);
-                    currentStartTime = this.getResourceType().getDailyAvailability().getNextStartTime(currentEndTime);
-                }
-            }
-
-            return currentEndTime;
-        }
+    @Override
+    public ResourceSchedule getResourceSchedule() {
+        return null;
     }
 
     private final AResourceType resourceType;

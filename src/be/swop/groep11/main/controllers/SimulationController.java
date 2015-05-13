@@ -2,7 +2,7 @@ package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.IProjectRepositoryMemento;
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.actions.ActionBehaviourMapping;
+import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.ui.UserInterface;
 
 /**
@@ -17,15 +17,15 @@ public class SimulationController extends AbstractController {
     * Resolve Conflict
     * Show Projects
     * */
-    public SimulationController(ActionBehaviourMapping actionBehaviourMapping, ProjectRepository projectRepository, UserInterface userInterface) {
+    public SimulationController(ControllerStack controllerStack, ProjectRepository projectRepository, UserInterface userInterface) {
         super(userInterface);
-        this.actionBehaviourMapping = actionBehaviourMapping;
+        this.controllerStack = controllerStack;
         this.projectRepository = projectRepository;
         //Zelfde project repository als alle andere controllers, geen nood om actions(commands) te deligeren via simulatiecontroller.
     }
     //Store initial state
     private IProjectRepositoryMemento originalState;
-    private ActionBehaviourMapping actionBehaviourMapping;
+    private ControllerStack controllerStack;
     private ProjectRepository projectRepository;
 
 
@@ -78,13 +78,13 @@ public class SimulationController extends AbstractController {
      * Set's this controller on top of stack in UI.
      */
     protected void activate(AbstractController controller) {
-        actionBehaviourMapping.activateController(controller);
+        controllerStack.activateController(controller);
     }
 
     /**
      * Removes this controller from the stack in UI.
      */
     protected void deActivate(AbstractController controller) {
-        actionBehaviourMapping.deActivateController(controller);
+        controllerStack.deActivateController(controller);
     }
 }

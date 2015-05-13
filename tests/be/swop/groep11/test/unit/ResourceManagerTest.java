@@ -59,9 +59,11 @@ public class ResourceManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testWithDailyAvailability_invalid() throws Exception {
-        resourceManager.addNewResourceType("A");
-        AResourceType typeA = resourceManager.getResourceTypeByName("A");
-        resourceManager.withDailyAvailability(typeA,null);
+        DailyAvailability a = null;
+        resourceManager.addNewResourceType("A",a);
+
+//        AResourceType typeA = resourceManager.getResourceTypeByName("A");
+//        resourceManager.withDailyAvailability(typeA,null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -102,9 +104,9 @@ public class ResourceManagerTest {
     public void testWithDailyAvailability() throws Exception {
         LocalTime start = LocalTime.of(10, 10), end = LocalTime.of(15, 10);
         DailyAvailability availability = new DailyAvailability(start,end);
-        resourceManager.addNewResourceType("A");
+        resourceManager.addNewResourceType("A",availability);
         AResourceType typeA = resourceManager.getResourceTypeByName("A");
-        resourceManager.withDailyAvailability(typeA, availability);
+//        resourceManager.withDailyAvailability(typeA, availability);
 
         assertEquals(end,typeA.getDailyAvailability().getEndTime());
         assertEquals(start, typeA.getDailyAvailability().getStartTime());
@@ -283,14 +285,14 @@ public class ResourceManagerTest {
         LocalDateTime time1 = LocalDateTime.of(2015, 3, 10, 12, 0);
         LocalDateTime time2 = LocalDateTime.of(2015, 3, 10, 13, 0);
 
-        TimeSpan timeSpan = resourceManager.getNextAvailableTimeSpan(type1.getResourceInstances().get(0), time1, Duration.ofHours(1));
-        assertEquals(time1, timeSpan.getStartTime());
-        assertEquals(time2, timeSpan.getEndTime());
+        TimeSpan TimeSpan = resourceManager.getNextAvailableTimeSpan(type1.getResourceInstances().get(0), time1, Duration.ofHours(1));
+        assertEquals(time1, TimeSpan.getStartTime());
+        assertEquals(time2, TimeSpan.getEndTime());
 
         resourceManager.makeReservation(mockedTask, type1.getResourceInstances().get(0), new TimeSpan(time1, time2), false);
-        timeSpan = resourceManager.getNextAvailableTimeSpan(type1.getResourceInstances().get(0), time1, Duration.ofHours(1));
-        assertEquals(time1.plusHours(1), timeSpan.getStartTime());
-        assertEquals(time2.plusHours(1), timeSpan.getEndTime());
+        TimeSpan = resourceManager.getNextAvailableTimeSpan(type1.getResourceInstances().get(0), time1, Duration.ofHours(1));
+        assertEquals(time1.plusHours(1), TimeSpan.getStartTime());
+        assertEquals(time2.plusHours(1), TimeSpan.getEndTime());
     }
 
     @Test
@@ -302,9 +304,9 @@ public class ResourceManagerTest {
         LocalDateTime time1 = LocalDateTime.of(2015, 3, 10, 11, 0);
         LocalDateTime time2 = LocalDateTime.of(2015, 3, 10, 13, 0);
 
-        TimeSpan timeSpan = resourceManager.getNextAvailableTimeSpan(type1.getResourceInstances().get(0), time1, Duration.ofHours(1));
-        assertEquals(time1, timeSpan.getStartTime());
-        assertEquals(time2, timeSpan.getEndTime());
+        TimeSpan TimeSpan = resourceManager.getNextAvailableTimeSpan(type1.getResourceInstances().get(0), time1, Duration.ofHours(1));
+        assertEquals(time1, TimeSpan.getStartTime());
+        assertEquals(time2, TimeSpan.getEndTime());
     }
 
     @Test

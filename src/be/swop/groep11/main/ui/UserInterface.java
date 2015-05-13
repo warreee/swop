@@ -1,6 +1,6 @@
 package be.swop.groep11.main.ui;
 
-import be.swop.groep11.main.actions.ActionBehaviourMapping;
+import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.core.Project;
@@ -128,12 +128,12 @@ public interface UserInterface {
     /**
      * Geeft de action behaviour mapping van de gebruikersinterface.
      */
-    ActionBehaviourMapping getActionBehaviourMapping();
+    ControllerStack getControllerStack();
 
     /**
      * Zet de action behaviour mapping van de gebruikersinterface.
      */
-    void setActionBehaviourMapping(ActionBehaviourMapping actionBehaviourMapping);
+    void setControllerStack(ControllerStack controllerStack);
 
     /**
      * Laat de gebruiker een element kiezen uit de gegeven lijst.

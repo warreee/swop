@@ -1,9 +1,12 @@
 package be.swop.groep11.main.resource;
 
+import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.IllegalRequirementAmountException;
 import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -111,6 +114,26 @@ public class RequirementListBuilder {
         @Override
         public Iterator<ResourceRequirement> iterator() {
             return this.requirements.values().iterator();
+        }
+
+
+        @Override
+        public DailyAvailability getShortestDailyAvailability() {
+            //TODO getShortestDailyAvailability
+
+            return null;
+        }
+
+        @Override
+        public Duration calculateRequiredDuration(Duration estimatedDuration) {
+            //TODO calculateRequiredDuration
+            return null;
+        }
+
+        @Override
+        public TimeSpan calculateReservationTimeSpan(LocalDateTime selectedStartTime, Duration estimatedDuration) {
+            //TODO calculateReservationTimeSpan
+            return null;
         }
 
         /**

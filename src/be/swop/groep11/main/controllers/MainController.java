@@ -1,6 +1,6 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.actions.ActionBehaviourMapping;
+import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.ui.UserInterface;
 
 /**
@@ -10,7 +10,7 @@ public class MainController extends AbstractController {
 
     private final SimulationController simulationController;
     private final ProjectController projectController;
-    private ActionBehaviourMapping actionBehaviourMapping;
+    private ControllerStack controllerStack;
     private final AdvanceTimeController advanceTimeController;
     private final TaskController taskController;
     private final PlanningController planningController;
@@ -18,7 +18,7 @@ public class MainController extends AbstractController {
 
     /**
      * Maakt een nieuwe instantie aan van deze controller.
-     * @param actionBehaviourMapping Mapt per controller de beschikbare acties op de juiste actie.
+     * @param controllerStack Mapt per controller de beschikbare acties op de juiste actie.
      * @param advanceTimeController De controller voor de usecase advance time.
      * @param simulationController De controller voor de usecase simulate.
      * @param projectController De controller voor de usecase new project.
@@ -26,12 +26,12 @@ public class MainController extends AbstractController {
      * @param planningController De controller voor de usecase planning.
      * @param userInterface Een concrete implementatie van de UserInterfaceInterface.
      */
-    public MainController(ActionBehaviourMapping actionBehaviourMapping, AdvanceTimeController advanceTimeController,
+    public MainController(ControllerStack controllerStack, AdvanceTimeController advanceTimeController,
                           SimulationController simulationController, ProjectController projectController,
                           TaskController taskController, PlanningController planningController,
                           LogonController logonController, UserInterface userInterface) {
         super(userInterface);
-        this.actionBehaviourMapping = actionBehaviourMapping;
+        this.controllerStack = controllerStack;
         this.advanceTimeController = advanceTimeController;
         this.simulationController = simulationController;
         this.projectController = projectController;
@@ -133,14 +133,14 @@ public class MainController extends AbstractController {
      * Positioneerd deze controller boven op de stack in de UI.
      */
     protected void activate(AbstractController controller) {
-        actionBehaviourMapping.activateController(controller);
+        controllerStack.activateController(controller);
     }
 
     /**
      * Verwijderd deze controller van de stack in de UI.
      */
     protected void deActivate(AbstractController controller) {
-        actionBehaviourMapping.deActivateController(controller);
+        controllerStack.deActivateController(controller);
     }
 
 }

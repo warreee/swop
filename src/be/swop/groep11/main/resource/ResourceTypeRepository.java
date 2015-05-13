@@ -120,18 +120,6 @@ public class ResourceTypeRepository {
         return ImmutableList.copyOf(resourceTypes);
     }
 
-
-    /**
-     * Zet voor het gegeven IResourceType de DailyAvailability op de gegeven DailyAvailability.
-     * @param ownerType     Het IResourceType waarvan de DailyAvailability zal veranderen.
-     * @param availability  De nieuwe DailyAvailability voor ownerType.
-     * @throws IllegalArgumentException
-     *                      Gooi indien availability null is
-     */
-    public void withDailyAvailability(AResourceType ownerType, DailyAvailability availability) throws IllegalArgumentException{
-        ownerType.setDailyAvailability(availability);
-    }
-
     /**
      * Zet voor het ownerType een RequirementsConstraint met het reqType.
      * @param ownerType Het superType dat niet kan bestaan zonder het kindtype.
@@ -148,6 +136,10 @@ public class ResourceTypeRepository {
      */
     public void withConflictConstraint(AResourceType ownerType, AResourceType conflictType) {
         ownerType.addConflictConstraint(conflictType);
+    }
+
+    public boolean containsType(AResourceType resourceType) {
+        return resourceTypes.contains(resourceType);
     }
 
 }

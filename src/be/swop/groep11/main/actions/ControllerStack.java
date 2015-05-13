@@ -9,29 +9,29 @@ import java.util.LinkedList;
  * Klasse verantwoordelijk voor het bijhouden van ActionBehaviour's voor Action's, specifiek voor AbstractController's.
  * Extra verantwoordelijkheid is het bijhouden van de ControllerStack (execution stack).
  */
-public class ActionBehaviourMapping {
+public class ControllerStack {
     /**
      *  Constructor voor aanmaken van een ActionBehaviourMapping
-     * @param invalidStrategy   De ActionStrategy(gedrag) uit te voeren, indien een action niet geldig is.
+     * @param invalidBehaviour   De ActionStrategy(gedrag) uit te voeren, indien een action niet geldig is.
      * @throws IllegalArgumentException
      *                          Gooi indien de gegeven invalidStrategy niet geinitialiseerd is.
      */
-    public ActionBehaviourMapping( ActionBehaviour invalidStrategy) {
+    public ControllerStack(ActionBehaviour invalidBehaviour) {
 
-        if (!canHaveAsInvalidStrategy(invalidStrategy)) {
+        if (!canHaveAsInvalidStrategy(invalidBehaviour)) {
             throw new IllegalArgumentException("Ongeldige invalidBehaviour strategy");
         }
-        this.invalidBehaviour = invalidStrategy;
+        this.invalidBehaviour = invalidBehaviour;
     }
 
     /**
      * Check of voor deze ActionBehaviourMapping de gegeven ActionStrategy een geldige invalidStrategy kan zijn.
      * InvalidStrategy is degene die wordt uitgevoerd indien er geen mapping bestaat.
-     * @param invalidStrategy   De te controleren ActionStrategy
+     * @param invalidBehaviour   De te controleren ActionStrategy
      * @return                  Waar indien de invalidStrategy geinitialiseerd is.
      */
-    private boolean canHaveAsInvalidStrategy(ActionBehaviour invalidStrategy) {
-        return invalidStrategy != null;
+    private boolean canHaveAsInvalidStrategy(ActionBehaviour invalidBehaviour) {
+        return invalidBehaviour != null;
     }
 
     private ActionBehaviour invalidBehaviour;

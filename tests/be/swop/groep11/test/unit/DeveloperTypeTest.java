@@ -1,20 +1,18 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.core.DependencyGraph;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.TimeSpan;
-import be.swop.groep11.main.resource.*;
+import be.swop.groep11.main.resource.AResourceType;
+import be.swop.groep11.main.resource.Developer;
+import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-public class DeveloperTest {
+public class DeveloperTypeTest {
 
     /**
      * Developer "Jos" van het resource type "Developer"
@@ -25,13 +23,13 @@ public class DeveloperTest {
      */
     private Developer developer;
     private Task taskA;
+    private AResourceType developerType;
 
     @Before
     public void setUp() throws Exception {
         ResourceManager repo = new ResourceManager();
-        repo.addNewResourceType("dev",new DailyAvailability(LocalTime.of(8,0),LocalTime.of(17,0)));
-        AResourceType developerType = repo.getResourceTypeByName("dev");
-        developer = new Developer("Jos", developerType);
+        developerType = repo.getDeveloperType();
+/*        developer = new Developer("Jos", developerType);
 
         String description = "description";
         Duration duration = Duration.ofDays(1);
@@ -45,31 +43,31 @@ public class DeveloperTest {
         ResourceReservation reservation1 = new ResourceReservation(taskA,developer, new TimeSpan(LocalDateTime.of(2015,4,8,8,0), LocalDateTime.of(2015,4,10,14,0)),false);
         ResourceReservation reservation2 = new ResourceReservation(taskA,developer, new TimeSpan(LocalDateTime.of(2015,4,13,8,0), LocalDateTime.of(2015,4,13,12,30)),false);
         ResourceReservation reservation3 = new ResourceReservation(taskA,developer, new TimeSpan(LocalDateTime.of(2015,4,14,13,0), LocalDateTime.of(2015,4,14,13,30)),false);
-        ResourceReservation reservation4 = new ResourceReservation(taskA,developer, new TimeSpan(LocalDateTime.of(2015,4,15,12,0), LocalDateTime.of(2015,4,15,13,0)),false);
+        ResourceReservation reservation4 = new ResourceReservation(taskA,developer, new TimeSpan(LocalDateTime.of(2015,4,15,12,0), LocalDateTime.of(2015,4,15,13,0)),false);*/
     }
 
     @Test
-     public void calculateEndTime_EndsOnSameDayTest() {
+     public void developerType_calculateEndTime_EndsOnSameDayTest() {
         LocalDateTime startTime = LocalDateTime.of(2015,4,14,10,30);
         Duration duration = Duration.ofMinutes(90);
         LocalDateTime expectedEndTime = LocalDateTime.of(2015,4,14,13,30);
-        assertEquals(expectedEndTime, developer.calculateEndTime(startTime, duration));
+        assertEquals(expectedEndTime, developerType.calculateEndTime(startTime, duration));
     }
 
     @Test
-    public void calculateEndTime_EndsOnDifferentDay_AddBreakTest() {
+    public void developerType_calculateEndTime_EndsOnDifferentDay_AddBreakTest() {
         LocalDateTime startTime = LocalDateTime.of(2015,4,14,12,0);
         Duration duration = Duration.ofHours(6);
         LocalDateTime expectedEndTime = LocalDateTime.of(2015,4,15,10,0);
-        assertEquals(expectedEndTime, developer.calculateEndTime(startTime, duration));
+        assertEquals(expectedEndTime, developerType.calculateEndTime(startTime, duration));
     }
 
     @Test
-    public void calculateEndTime_addBreakTest() {
+    public void developerType_calculateEndTime_addBreakTest() {
         LocalDateTime startTime = LocalDateTime.of(2015,4, 14, 11, 0);
         Duration duration = Duration.ofMinutes(60);
         LocalDateTime expectedEndTime = LocalDateTime.of(2015,4,14,13,0);
-        assertEquals(expectedEndTime, developer.calculateEndTime(startTime, duration));
+        assertEquals(expectedEndTime, developerType.calculateEndTime(startTime, duration));
     }
 
 

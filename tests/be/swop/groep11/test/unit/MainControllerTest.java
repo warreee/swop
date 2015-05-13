@@ -1,6 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.actions.ActionBehaviourMapping;
+import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.*;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
@@ -28,7 +28,7 @@ public class MainControllerTest {
     private LogonController logonController;
     private UserInterface mockedUI;
     private MainController main;
-    private ActionBehaviourMapping abmMock;
+    private ControllerStack abmMock;
 
     @Before
     public void setUp() throws Exception {
@@ -38,9 +38,9 @@ public class MainControllerTest {
         ResourceManager resourceManager = new ResourceManager();
         ProjectRepository projectRepository = new ProjectRepository(systemTime);
 
-        abmMock = mock(ActionBehaviourMapping.class);
+        abmMock = mock(ControllerStack.class);
         this.mockedUI = mock(UserInterface.class);
-        mockedUI.setActionBehaviourMapping(abmMock);
+        mockedUI.setControllerStack(abmMock);
 
 
         taskController = mock(TaskController.class);

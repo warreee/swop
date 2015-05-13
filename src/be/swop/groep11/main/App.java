@@ -1,11 +1,10 @@
 package be.swop.groep11.main;
 
 import be.swop.groep11.main.actions.Action;
-import be.swop.groep11.main.actions.ActionBehaviourMapping;
+import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.*;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.ui.CommandLineInterface;
 import be.swop.groep11.main.util.InputParser;
@@ -14,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * Klasse verantwoordelijk voor BootStrapping.
@@ -41,7 +39,7 @@ public class App {
     private CommandLineInterface cli;
     private ResourceManager resourceManager;
     private ProjectRepository projectRepository;
-    private ActionBehaviourMapping actionBehaviourMapping;
+    private ControllerStack controllerStack;
 
     private MainController main;
     private TaskController taskController;
@@ -55,8 +53,8 @@ public class App {
         // maak een nieuwe CommandLineInterface aan
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(java.lang.System.in));
         cli = new CommandLineInterface(bufferedReader);
-        actionBehaviourMapping = new ActionBehaviourMapping(() -> cli.printMessage("Ongeldige action"));
-        cli.setActionBehaviourMapping(actionBehaviourMapping);
+        controllerStack = new ControllerStack(() -> cli.printMessage("Ongeldige action"));
+        cli.setControllerStack(controllerStack);
 
         //maak een nieuwe system aan
         systemTime = new SystemTime(LocalDateTime.MIN);
@@ -80,52 +78,52 @@ public class App {
 
     private void initControllers(){
         //Aanmaken van controllers
-        taskController = new TaskController(projectRepository, systemTime,cli);
+        taskController = new TaskController(projectRepository, systemTime,cli,resourceManager);
         projectController = new ProjectController(projectRepository, cli );
         advanceTimeController = new AdvanceTimeController( systemTime, cli);
-        simulationController = new SimulationController(actionBehaviourMapping, projectRepository, cli);
+        simulationController = new SimulationController(controllerStack, projectRepository, cli);
         planningController = new PlanningController(projectRepository,resourceManager, systemTime, cli);
         logonController = new LogonController(cli);
-        main = new MainController(actionBehaviourMapping, advanceTimeController,simulationController,projectController,
+        main = new MainController(controllerStack, advanceTimeController,simulationController,projectController,
                 taskController, planningController, logonController, cli);
     }
 
     private void initBehaviourMapping(){
         //Default strategies
-        actionBehaviourMapping.addDefaultBehaviour(Action.EXIT, () -> {
+        controllerStack.addDefaultBehaviour(Action.EXIT, () -> {
             cli.printMessage("wants to exit");
             cli.wantsToExit();
         });
-        actionBehaviourMapping.addDefaultBehaviour(Action.HELP, () -> cli.showHelp(actionBehaviourMapping.getActiveController()));
+        controllerStack.addDefaultBehaviour(Action.HELP, () -> cli.showHelp(controllerStack.getActiveController()));
         //MainController
-        actionBehaviourMapping.addActionBehaviour(main, Action.CREATETASK, main::createTask);
-        actionBehaviourMapping.addActionBehaviour(main, Action.UPDATETASK, main::updateTask);
-        actionBehaviourMapping.addActionBehaviour(main, Action.PLANTASK, main::planTask);
-        actionBehaviourMapping.addActionBehaviour(main, Action.CREATEPROJECT, main::createProject);
-        actionBehaviourMapping.addActionBehaviour(main, Action.SHOWPROJECTS, main::showProjects);
-        actionBehaviourMapping.addActionBehaviour(main, Action.ADVANCETIME, main::advanceTime);
-        actionBehaviourMapping.addActionBehaviour(main, Action.STARTSIMULATION, main::startSimulation);
-        actionBehaviourMapping.addActionBehaviour(main, Action.LOGON, main::logon);
+        controllerStack.addActionBehaviour(main, Action.CREATETASK, main::createTask);
+        controllerStack.addActionBehaviour(main, Action.UPDATETASK, main::updateTask);
+        controllerStack.addActionBehaviour(main, Action.PLANTASK, main::planTask);
+        controllerStack.addActionBehaviour(main, Action.CREATEPROJECT, main::createProject);
+        controllerStack.addActionBehaviour(main, Action.SHOWPROJECTS, main::showProjects);
+        controllerStack.addActionBehaviour(main, Action.ADVANCETIME, main::advanceTime);
+        controllerStack.addActionBehaviour(main, Action.STARTSIMULATION, main::startSimulation);
+        controllerStack.addActionBehaviour(main, Action.LOGON, main::logon);
         //ProjectController
-        actionBehaviourMapping.addActionBehaviour(projectController, Action.SHOWPROJECTS, projectController::showProjects);
-        actionBehaviourMapping.addActionBehaviour(projectController, Action.CREATEPROJECT, projectController::createProject);
+        controllerStack.addActionBehaviour(projectController, Action.SHOWPROJECTS, projectController::showProjects);
+        controllerStack.addActionBehaviour(projectController, Action.CREATEPROJECT, projectController::createProject);
         //TaskController
-        actionBehaviourMapping.addActionBehaviour(taskController, Action.CREATETASK, taskController::createTask);
-        actionBehaviourMapping.addActionBehaviour(taskController, Action.UPDATETASK, taskController::updateTask);
+        controllerStack.addActionBehaviour(taskController, Action.CREATETASK, taskController::createTask);
+        controllerStack.addActionBehaviour(taskController, Action.UPDATETASK, taskController::updateTask);
         //AdvanceTimeController
-        actionBehaviourMapping.addActionBehaviour(advanceTimeController, Action.ADVANCETIME, advanceTimeController::advanceTime);
+        controllerStack.addActionBehaviour(advanceTimeController, Action.ADVANCETIME, advanceTimeController::advanceTime);
         //SimulationController
-        actionBehaviourMapping.addActionBehaviour(simulationController, Action.CREATETASK, taskController::createTask);
-        actionBehaviourMapping.addActionBehaviour(simulationController, Action.PLANTASK, planningController::planTask);
-        actionBehaviourMapping.addActionBehaviour(simulationController, Action.SHOWPROJECTS, projectController::showProjects);
-        actionBehaviourMapping.addActionBehaviour(simulationController, Action.REALIZESIMULATION, simulationController::realize);
-        actionBehaviourMapping.addActionBehaviour(simulationController, Action.CANCEL, simulationController::cancel);//Cancel Simulation
+        controllerStack.addActionBehaviour(simulationController, Action.CREATETASK, taskController::createTask);
+        controllerStack.addActionBehaviour(simulationController, Action.PLANTASK, planningController::planTask);
+        controllerStack.addActionBehaviour(simulationController, Action.SHOWPROJECTS, projectController::showProjects);
+        controllerStack.addActionBehaviour(simulationController, Action.REALIZESIMULATION, simulationController::realize);
+        controllerStack.addActionBehaviour(simulationController, Action.CANCEL, simulationController::cancel);//Cancel Simulation
         //LogonController
-        actionBehaviourMapping.addActionBehaviour(logonController, Action.LOGON, logonController::logon);
+        controllerStack.addActionBehaviour(logonController, Action.LOGON, logonController::logon);
     }
 
     private void runApp(){
-        actionBehaviourMapping.activateController(main);
+        controllerStack.activateController(main);
         // lees commando's
         cli.run();
     }
