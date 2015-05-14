@@ -1,5 +1,6 @@
 package be.swop.groep11.main.core;
 
+import be.swop.groep11.main.resource.ResourcePlanner;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 
@@ -105,6 +106,11 @@ public class BranchOffice {
 
     private List<Task> delegatedTasks = new ArrayList<>();
 
+    public ResourcePlanner getResourcePlanner(){
+        return resourcePlanner;
+    }
+
+    private ResourcePlanner resourcePlanner;
     /**
      * Delegeert een taak van deze branch office naar een andere branch office.
      * @param task  De te delegeren taak. Deze moet in de ongeplande taken van deze branch office zitten.
@@ -150,10 +156,8 @@ public class BranchOffice {
 
         // controleren of de taak in de andere branch office kan gepland worden
 
-        /* TODO: wanneer ResourcePlanner gemaakt is, dit un-commenten!
         ResourcePlanner otherPlanner = other.getResourcePlanner();
         return otherPlanner.canPlan(task);
-        */ return true;
     }
 
 }
