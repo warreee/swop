@@ -33,11 +33,20 @@ public class TaskFinished extends TaskStatus {
         return new TaskFinished();
     }
 
+    @Override
+    protected boolean isFinished(Task task) {
+        return true;
+    }
+
     /**
      * Start met de uitvoer van de gegeven taak op de gegeven moment. Dit mag niet dus gooit een exception.
      * @param task De taak die moet uitgevoerd worden.
      * @param time De starttijd van de uitvoer.
      */
+
+
+
+
     @Override
     protected void execute(Task task,LocalDateTime time) {
         throw new IllegalStateTransitionException("Een gefinishste taak kan niet opnieuw worden uitgevoerd");
