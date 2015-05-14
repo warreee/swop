@@ -82,6 +82,8 @@ public class TaskStatusTest {
 
 /////////////////////////// UNAVAILABLE___TO____ //////////////////////
 
+    // TODO: alle testen waar er gebruik gemaakt wordt van de string aanpassen
+
     @Test
     public void unavailableToAvailable() {
         task2.addNewDependencyConstraint(task1);
@@ -89,8 +91,8 @@ public class TaskStatusTest {
         assertTrue(task2.isUnavailable());
         task1.execute(LocalDateTime.now());
         task1.finish(LocalDateTime.now());
-        assertEquals(task1.getStatusString(), "FINISHED");
-        assertEquals(task2.getStatusString(), "AVAILABLE");
+        assertTrue(task1.isFinished());
+        assertTrue(task2.isAvailable());
     }
 
     @Test (expected = IllegalStateTransitionException.class)

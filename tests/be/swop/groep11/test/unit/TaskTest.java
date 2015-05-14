@@ -26,9 +26,10 @@ public class TaskTest {
     public void setUp() throws Exception {
         now = LocalDateTime.now();
         this.systemTime = new SystemTime(now);
+        BranchOffice branchOffice = mock(BranchOffice.class);
         project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
-                systemTime, mock(BranchOffice.class));
+                systemTime, branchOffice);
 
         project.addNewTask("Test taak 1", 0.1, Duration.ofHours(8));
         project.addNewTask("Test taak 2", 0, Duration.ofMinutes(120));

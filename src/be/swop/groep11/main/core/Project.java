@@ -46,7 +46,7 @@ public class Project {
     public Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, SystemTime systemTime, BranchOffice branchOffice) throws IllegalArgumentException{
         if (systemTime == null)
             throw new IllegalArgumentException("Systeemtijd mag niet null zijn");
-        if (this.branchOffice == null)
+        if (branchOffice == null)
             throw new IllegalArgumentException("Branch office mag niet null zijn");
 
         setProjectName(name);
@@ -54,7 +54,7 @@ public class Project {
         setDescription(description);
         this.systemTime = systemTime;
         this.dependencyGraph = new DependencyGraph();
-        this.branchOffice = this.branchOffice;
+        this.branchOffice = branchOffice;
     }
 
     /**
