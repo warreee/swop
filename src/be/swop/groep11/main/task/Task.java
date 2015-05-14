@@ -2,6 +2,7 @@ package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.DependencyGraph;
+import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.resource.IRequirementList;
@@ -28,11 +29,12 @@ public class Task{
      * @param systemTime            De systeemtijd die de nieuwe taak moet gebruiken
      * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
      * @param requirementList       De lijst van resource requirements voor de nieuwe taak
-     * @throws java.lang.IllegalArgumentException
-     *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
-     *                                            of ongeldig project
+     * @throws java.lang.IllegalArgumentException Ongeldige beschrijving, ongeldige verwachte duur, ongeldige aanvaardbare marge,
+     *                                            ongeldige requirement lijst of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph, IRequirementList requirementList) throws IllegalArgumentException {
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph, IRequirementList requirementList, Project project) throws IllegalArgumentException {
+        if (project == null)
+            throw  new IllegalArgumentException("Project mag niet null zijn");
         this.setStatus(new TaskAvailable());
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
@@ -40,6 +42,7 @@ public class Task{
         setRequirementList(requirementList);
         this.systemTime = systemTime;
         this.dependencyGraph = dependencyGraph;
+        this.project = project;
     }
 
     /**
@@ -50,12 +53,11 @@ public class Task{
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
      * @param systemTime            De systeemtijd die de nieuwe taak moet gebruiken
      * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
-     * @throws java.lang.IllegalArgumentException
-     *                              Ongeldige taskID, ongeldige verwachte duur, ongeldige aanvaardbare marge
+     * @throws java.lang.IllegalArgumentException Ongeldige beschrijving, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph) throws IllegalArgumentException {
-        this(description, estimatedDuration, acceptableDeviation, systemTime, dependencyGraph, new RequirementListBuilder().getRequirements());
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph, Project project) throws IllegalArgumentException {
+        this(description, estimatedDuration, acceptableDeviation, systemTime, dependencyGraph, new RequirementListBuilder().getRequirements(), project);
     }
 
     private SystemTime systemTime;
@@ -233,6 +235,15 @@ public class Task{
     public Set<Task> getDependingOnTasks() {
         return dependencyGraph.getDependingOnTasks(this);
     }
+
+    /**
+     * Geeft het project waarin deze taak zit.
+     */
+    public Project getProject() {
+        return project;
+    }
+
+    private Project project;
 
     /**
      * Voegt een dependency constraint toe voor deze taak.
@@ -536,61 +547,10 @@ public class Task{
     }
 
     /**
-     * Delegeert deze taak naar een andere branch office.
-     * @param other De andere branch office. Deze mag niet de huidige branch office zijn waarin de taak
-     *              moet gepland worden.
-     * @throws IllegalArgumentException De taak kan niet naar de andere branch office gedelegeerd worden.
-     */
-    public void delegateTo(BranchOffice other) {
-        if (! canBeDelegatedTo(other)) {
-            throw new IllegalArgumentException("De taak kan niet naar de andere branch office gedelegeerd worden");
-        }
-
-        if (isDelegated() && other.getProperTasks().contains(this)) {
-            // delegatie naar branch office waar taak in gemaakt is
-            BranchOffice previousDelegatedTo = this.getDelegatedTo();
-            this.isDelegated = false;
-            this.delegatedTo = null;
-            previousDelegatedTo.removeDelegatedTask(this);
-        }
-
-        else if (isDelegated()) {
-            // delegatie naar andere branch office, wanneer er al een delegatie gedaan is
-            BranchOffice previousDelegatedTo = this.getDelegatedTo();
-            this.isDelegated = true;
-            this.delegatedTo = other;
-            previousDelegatedTo.removeDelegatedTask(this);
-            other.addDelegatedTask(this);
-        }
-
-        else {
-            // delegatie vanuit branch office waar taak in gemaakt is
-            this.isDelegated = true;
-            this.delegatedTo = other;
-            other.addDelegatedTask(this);
-        }
-    }
-
-    /**
-     * Controleert of deze taak naar een gegeven branch office kan gedelegeerd worden.
-     * @param other De gegeven branch office.
-     * @return True als de gegeven branch office niet dezelfde is als die waar de taak op dit moment moet
-     *         gepland worden.
-     */
-    public boolean canBeDelegatedTo(BranchOffice other) {
-        if (! isDelegated()) {
-            return ! other.getProperTasks().contains(this);
-        }
-        else {
-            return other != getDelegatedTo();
-        }
-    }
-
-    /**
      * Controleert of deze taak naar een andere branch office gedelegeerd is.
      */
     public boolean isDelegated() {
-        return isDelegated;
+        return delegatedTo != null;
     }
 
     /**
@@ -601,9 +561,26 @@ public class Task{
         return delegatedTo;
     }
 
-    private boolean isDelegated = false;
-    private BranchOffice delegatedTo = null;
+    /**
+     * Zet de branch office waar deze taak naar gedelegeerd is.
+     * @param delegatedTo
+     */
+    public void setDelegatedTo(BranchOffice delegatedTo) {
+        if (! delegatedTo.getUnplannedTasks().contains(this)) {
+            throw new IllegalArgumentException("Taak zit niet in de taken die door delegatedTo moeten uitgevoerd worden.");
+        }
+        this.delegatedTo = delegatedTo;
+    }
 
-    // TODO: testen schrijven
+    public boolean canHaveAsDelegatedTo(BranchOffice delegatedTo) {
+        if (delegatedTo == null) {
+            return true;
+        }
+        else {
+            return delegatedTo.getUnplannedTasks().contains(this);
+        }
+    }
+
+    private BranchOffice delegatedTo = null;
 
 }

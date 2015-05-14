@@ -34,19 +34,27 @@ public class Project {
      * @param description   Omschrijving van het project
      * @param creationTime  Creation time voor het project
      * @param dueTime       Due time voor het project
-     * @param systemTime
+     * @param systemTime    De systeemtijd
+     * @param branchOffice  De branch office waar het project in zit
      * @throws IllegalArgumentException
      *                      | !isValidDescription(description)
      *                      | !isValidProjectName(name)
      *                      | !isValidStartTimeEndTime(creationTime,dueTime)
-     *                      | !isValidUser(creator)
-     *                      | !isValidProjectID(projectID)
+     *                      | systemtime == null
+     *                      | branchoffice == null
      */
-    public Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, SystemTime systemTime) throws IllegalArgumentException{
+    public Project(String name, String description, LocalDateTime creationTime, LocalDateTime dueTime, SystemTime systemTime, BranchOffice branchOffice) throws IllegalArgumentException{
+        if (systemTime == null)
+            throw new IllegalArgumentException("Systeemtijd mag niet null zijn");
+        if (branchOffice == null)
+            throw new IllegalArgumentException("Branch office mag niet null zijn");
+
         setProjectName(name);
-        setCreationAndDueTime(creationTime, dueTime);setDescription(description);
+        setCreationAndDueTime(creationTime, dueTime);
+        setDescription(description);
         this.systemTime = systemTime;
         this.dependencyGraph = new DependencyGraph();
+        this.branchOffice = branchOffice;
     }
 
     /**
@@ -176,7 +184,7 @@ public class Project {
      *                              Gooi indien één of meerdere van de parameters niet geldig zijn.
      */
     public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) throws IllegalArgumentException {
-        Task task = new Task(description, estimatedDuration, acceptableDeviation, systemTime, this.dependencyGraph);
+        Task task = new Task(description, estimatedDuration, acceptableDeviation, systemTime, this.dependencyGraph, this);
         tasks.add(task);
     }
 
@@ -190,7 +198,7 @@ public class Project {
      *                              Gooi indien één of meerdere van de parameters niet geldig zijn.
      */
     public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration, IRequirementList requirementList) throws IllegalArgumentException {
-        Task task = new Task(description, estimatedDuration, acceptableDeviation, systemTime, this.dependencyGraph, requirementList);
+        Task task = new Task(description, estimatedDuration, acceptableDeviation, systemTime, this.dependencyGraph, requirementList, this);
         tasks.add(task);
     }
 
@@ -289,4 +297,14 @@ public class Project {
         }
         return ImmutableList.copyOf(tasks);
     }
+
+
+    /**
+     * Geeft de branch office waarin dit project zit.
+     */
+    public BranchOffice getBranchOffice() {
+        return branchOffice;
+    }
+
+    private BranchOffice branchOffice;
 }

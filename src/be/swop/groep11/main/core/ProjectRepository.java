@@ -47,7 +47,7 @@ public class ProjectRepository {
      * @throws IllegalArgumentException De opgegeven parameters voor het project zijn ongeldig.
      */
     public void addNewProject(String name, String description, LocalDateTime creationTime, LocalDateTime duetime) throws IllegalArgumentException{
-        Project proj = new Project(name, description, creationTime, duetime, systemTime);
+        Project proj = new Project(name, description, creationTime, duetime, systemTime, this.getBranchOffice());
         projects.add(proj);
     }
 
@@ -84,6 +84,22 @@ public class ProjectRepository {
         }
         return ImmutableList.copyOf(tasks);
     }
+
+    /**
+     * Geeft de branch office die deze project repository gebruikt.
+     */
+    public BranchOffice getBranchOffice() {
+        return branchOffice;
+    }
+
+    /**
+     * Zet de branch office die deze project repository gebruikt.
+     */
+    protected void setBranchOffice(BranchOffice branchOffice) {
+        this.branchOffice = branchOffice;
+    }
+
+    private BranchOffice branchOffice;
 
     /**
      * Geeft een ProjectRepositoryMemento object die de status van deze project repository bevat.
