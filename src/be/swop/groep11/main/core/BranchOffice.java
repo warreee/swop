@@ -2,11 +2,9 @@ package be.swop.groep11.main.core;
 
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
