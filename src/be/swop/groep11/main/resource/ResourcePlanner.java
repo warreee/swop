@@ -19,6 +19,7 @@ public class ResourcePlanner {
     /**
      * Maakt een nieuwe ResourcePlanner object aan. Dit ResourcePlanner object gebruikt de gegeven ResourceRepository om
      * alle resources in te plannen.
+     *
      * @param resourceRepository
      */
     public ResourcePlanner(ResourceRepository resourceRepository){
@@ -28,6 +29,7 @@ public class ResourcePlanner {
 
     /**
      * Bepaalt of deze ResourcePlanner in staat is om de gegeven taak in de toekomst mogelijks te plannen is.
+     *
      * @param task De taak die gepland moet worden.
      * @return true als het mogelijk is, anders false.
      */
@@ -44,7 +46,40 @@ public class ResourcePlanner {
     }
 
     /**
+     * Controlleer of er het gegeven aantal ResourceTypes beschikbaar is gedurende de TimeSpan.
+     *
+     * @param resourceType De ResourceType die beschikbaar moet zijn.
+     * @param timeSpan De TimeSpan wanneer de ResourceType beschikbaar moet zijn.
+     * @param amount De hoeveelheid ResourceTypes die beschikbaar moet zijn.
+     * @return true als er voldoende ResourceTypes beschikbaar zijn, anders false.
+     */
+    public boolean isAvailable(AResourceType resourceType, TimeSpan timeSpan, int amount){
+        int count = 0;
+        for(ResourceInstance resourceInstance: resourceType.getResourceInstances()){
+            if(isAvailable(resourceInstance, timeSpan)){
+                count++;
+            }
+            if(count == amount){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Controlleer of er een ResourceInstance beschikbaar is voor het ResourceType gedurende de gegeven TimeSpan.
+     *
+     * @param resourceType De ResourceType die beschikbaar moet zijn.
+     * @param timeSpan De TimeSpan wanneer de ResourceType beschikbaar moet zijn.
+     * @return true als er 1 beschikbaar, anders false
+     */
+    public boolean isAvailable(AResourceType resourceType, TimeSpan timeSpan){
+        return isAvailable(resourceType, timeSpan, 1);
+    }
+
+    /**
      * Controlleer of de gegeven ResourceInstance beschikbaar is gedurende de gegeven TimeSpan.
+     *
      * @param resourceInstance De ResourceInstance die beschikbaar moet zijn.
      * @param timeSpan Wanneer de ResourceInstance beschikbaar moet zijn.
      * @return true als de ResourceInstance beschikbaar is. false indien dit niet zo is.
@@ -66,6 +101,7 @@ public class ResourcePlanner {
     /**
      * Controlleer of een ResourceInstance in een TimeSpan voorkomt in een gegeven Plan. Dit gebeurt door alle reservaties
      * van een plan op te halen wanneer de TimeSpan van het plan overlapt met de gegeven TimeSpan.
+     *
      * @param resourceInstance De ResourceInstance die nog niet in het plan mag zitten.
      * @param timeSpan Wanneer de ResourceInstance niet in het plan mag zitten.
      * @param plan Het plan waar de ResourceInstance niet in mag zitten.
