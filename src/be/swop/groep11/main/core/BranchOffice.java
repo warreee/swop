@@ -17,10 +17,11 @@ public class BranchOffice {
     private String location;
     private ProjectRepository projectRepository;
 
-    public BranchOffice(String name, String location, ProjectRepository projectRepository) {
+    public BranchOffice(String name, String location, ProjectRepository projectRepository, ResourcePlanner resourcePlanner) {
         this.setName(name);
         this.setLocation(location);
         this.setProjectRepository(projectRepository);
+        this.resourcePlanner = resourcePlanner;
     }
 
     public String getName() {
@@ -72,21 +73,18 @@ public class BranchOffice {
      * een lijst van de taken die nog niet gepland zijn.
      */
     public List<Task> getUnplannedTasks() {
-        List<Task> allTasks = getProperTasks();
+        List<Task> allTasks = getAllTasks().stream().filter(task -> (! task.isDelegated()) ).collect(Collectors.toList());
         allTasks.addAll(getDelegatedTasks());
         return allTasks.stream().filter(task -> (! task.isPlanned()) ).collect(Collectors.toList());
     }
 
     /**
-     * Geeft een lijst van alle taken die in deze branch office aangemaakt zijn
-     * en niet gedelegeerd zijn.
+     * Geeft een lijst van alle taken die in deze branch office aangemaakt zijn.
+     * Deze lijst bevat ook de taken die naar een andere branch office gedelegeerd zijn.
      */
-    public List<Task> getProperTasks() {
-        List<Task> tasks = new ArrayList<>();
-        for (Project project : this.getProjectRepository().getProjects()) {
-            tasks.addAll(project.getTasks());
-        }
-        return tasks.stream().filter(task -> (! task.isDelegated()) ).collect(Collectors.toList());
+    public List<Task> getAllTasks() {
+        List<Task> tasks = this.getProjectRepository().getAllTasks();
+        return tasks;
     }
 
     /**
@@ -122,13 +120,13 @@ public class BranchOffice {
             throw new IllegalArgumentException("De taak kan niet naar de andere branch office gedelegeerd worden");
         }
 
-        if (other.getProperTasks().contains(task)) {
+        if (other.getAllTasks().contains(task)) {
             // delegatie van (branch office die taak niet gemaakt heeft) naar (branch office die taak wel gemaakt heeft)
-            other.removeDelegatedTask(task);
+            this.removeDelegatedTask(task);
             task.setDelegatedTo(other);
         }
 
-        else if (this.getProperTasks().contains(task)) {
+        else if (this.getAllTasks().contains(task)) {
             // delegatie van (branch office die taak wel gemaakt heeft) naar (branch office die taak niet gemaakt heeft)
             other.addDelegatedTask(task);
             task.setDelegatedTo(other);
