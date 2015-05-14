@@ -131,7 +131,7 @@ public class BranchOffice {
         if (other.getProperTasks().contains(task)) {
             // delegatie van (branch office die taak niet gemaakt heeft) naar (branch office die taak wel gemaakt heeft)
             other.removeDelegatedTask(task);
-            task.setDelegatedTo(null);
+            task.setDelegatedTo(other);
         }
 
         else if (this.getProperTasks().contains(task)) {
@@ -152,22 +152,20 @@ public class BranchOffice {
      * Controleert of een taak naar een gegeven branch office kan gedelegeerd worden.
      * @param task  De te delegeren taak.
      * @param other De gegeven branch office.
-     * @return True als de gegeven branch office niet dezelfde is als die waar de taak op dit moment moet
-     *         gepland worden en de taak.
+     * @return True als de taak niet al naar other is gedelegeerd
+     *         en deze taak in other kan gepland worden.
      */
     public boolean canBeDelegatedTo(Task task, BranchOffice other) {
-        if (! task.isDelegated() &&  other.getProperTasks().contains(this)) {
-            // taak nog niet gedelegeerd, dan mag die niet gedelegeerd worden naar de branch office waar de taak gemaakt is
-            return false;
-        }
-        if (task.isDelegated() && other != task.getDelegatedTo()) {
-            // taak al gedelegeerd, dan mag die niet gedelegeerd worden naar dezelfde branch office
+        if (task.getDelegatedTo() == other) {
             return false;
         }
 
-        return false; // TODO: controleren of de taak in de andere branch office kan gepland worden
+        // controleren of de taak in de andere branch office kan gepland worden
+
+        /* TODO: wanneer ResourcePlanner gemaakt is, dit un-commenten!
+        ResourcePlanner otherPlanner = other.getResourcePlanner();
+        return otherPlanner.canPlan(task);
+        */ return true;
     }
-
-    // TODO: testen schrijven
 
 }
