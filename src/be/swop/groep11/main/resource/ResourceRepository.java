@@ -11,7 +11,24 @@ import java.util.List;
  */
 public class ResourceRepository {
     private ResourceTypeRepository resourceTypeRepository;
-    private HashMap<AResourceType, ArrayList<ResourceInstance>> resources = new HashMap<>();
+    private HashMap<AResourceType, ArrayList<ResourceInstance>> resources;
+
+    /**
+     * Maakt een nieuwe ResourceRepository aan
+     */
+    public ResourceRepository(){
+        // TODO: Wrs privaat maken.
+
+        resources = new HashMap<>();
+    }
+
+    /**
+     * Maakt een nieuwe ResourceRepository aan.
+     * @param resourceTypeRepository De centrale ResourceTypeRepository waarin alle AResourceType beschikbaar zijn.
+     */
+    public ResourceRepository(ResourceTypeRepository resourceTypeRepository){
+        setResourceTypeRepository(resourceTypeRepository);
+    }
 
     public void addResourceInstance(ResourceInstance resource) {
         if (!canAddAsNewResourceInstance( resource)) {
