@@ -33,6 +33,12 @@ public class TaskExecuting extends TaskStatus {
         return new TaskExecuting();
     }
 
+
+    @Override
+    protected boolean isExecuting(Task task) {
+        return true;
+    }
+
     /**
      * Start met de uitvoer van de gegeven taak op de gegeven moment. Dit mag niet dus gooit een exception.
      * @param task De taak die moet uitgevoerd worden.

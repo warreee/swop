@@ -33,10 +33,19 @@ public class TaskFailed extends TaskStatus {
         return new TaskFailed();
     }
 
+    @Override
+    protected boolean isFailed(Task task) {
+        return true;
+    }
+
     /**
      * Geeft een aparte exceptie indien er van FAILED naar AVAILABLE probeert gegaan te worden
      * @param task de taak die aan het failed is
      */
+
+
+
+
     @Override
     protected void makeAvailable(Task task) {
         throw new IllegalStateTransitionException("De taak is FAILED, en kan dus niet naar AVAILABLE gaan!");
