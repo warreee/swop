@@ -36,6 +36,47 @@ public abstract class TaskStatus implements Cloneable {
     protected abstract TaskStatus getTaskStatus();
 
     /**
+     * Gaat na of de taak Available is
+     * @param task
+     * @return true als de taak available is
+     */
+    protected boolean isAvailable(Task task){
+        return false;
+    }
+    /**
+     * Gaat na of de taak unAvailable is
+     * @param task
+     * @return true als de taak unavailable is
+     */
+    protected boolean isUnavailable(Task task){
+        return false;
+    }
+    /**
+     * Gaat na of de taak executing is
+     * @param task
+     * @return true als de taak executing is
+     */
+    protected boolean isExecuting(Task task){
+        return false;
+    }
+    /**
+     * Gaat na of de taak failed is
+     * @param task
+     * @return true als de taak failed is
+     */
+    protected boolean isFailed(Task task){
+        return false;
+    }
+    /**
+     * Gaat na of de taak finished is
+     * @param task
+     * @return true als de taak finished is
+     */
+    protected boolean isFinished(Task task){
+        return false;
+    }
+
+    /**
      * Cloned deze task Status.
      * @return De Clone.
      * @throws CloneNotSupportedException
