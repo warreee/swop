@@ -203,7 +203,7 @@ public abstract class TaskStatus implements Cloneable {
      * @param task
      * @param systemTime
      */
-    public void updateStatus(Task task, LocalDateTime systemTime){
+    protected void updateStatus(Task task, LocalDateTime systemTime){
 
     }
 }
