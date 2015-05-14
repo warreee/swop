@@ -25,6 +25,7 @@ public class ProjectRepositoryMemento implements IProjectRepositoryMemento {
      */
     public void setProjects(List<Project> projects) {
         Cloner cloner = new Cloner();
+        cloner.dontCloneInstanceOf(BranchOffice.class);
         List<Project> projectsClone = cloner.deepClone(projects);
         this.projects = projectsClone;
     }

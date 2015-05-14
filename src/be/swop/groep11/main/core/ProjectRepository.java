@@ -15,18 +15,22 @@ import java.util.List;
 public class ProjectRepository {
 
     private ArrayList<Project> projects;
-
     private SystemTime systemTime;
-
+    private BranchOffice branchOffice;
 
     /**
      * Contstructor om een nieuwe project repository aan te maken.
-     * @param systemTime de systeemtijd
+     * @param systemTime De systeemtijd
+     * @throws IllegalArgumentException
+     *                      | systemTime == null
      */
     public ProjectRepository(SystemTime systemTime) {
+        if (systemTime == null)
+            throw new IllegalArgumentException("Systeemtijd mag niet null zijn");
+        if (branchOffice == null)
+            throw new IllegalArgumentException("Branch office mag niet null zijn");
         this.systemTime = systemTime;
         projects = new ArrayList<>();
-
     }
 
     /**
@@ -93,13 +97,15 @@ public class ProjectRepository {
     }
 
     /**
-     * Zet de branch office die deze project repository gebruikt.
+     * Zet de branch office die van deze project repository gebruik maakt.
+     * @throws IllegalArgumentException Branch office mag niet null zijn
      */
-    protected void setBranchOffice(BranchOffice branchOffice) {
+    public void setBranchOffice(BranchOffice branchOffice) {
+        if (branchOffice == null) {
+            throw new IllegalArgumentException("Branch office mag niet null zijn");
+        }
         this.branchOffice = branchOffice;
     }
-
-    private BranchOffice branchOffice;
 
     /**
      * Geeft een ProjectRepositoryMemento object die de status van deze project repository bevat.
