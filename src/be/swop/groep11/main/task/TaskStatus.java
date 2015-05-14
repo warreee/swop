@@ -198,6 +198,12 @@ public abstract class TaskStatus implements Cloneable {
         throw new IllegalStateException("De taak kan niet gepland worden.");
     }
 
+    /** TODO: mag dit, een lege methode?
+     * Methode wordt overscrheven in subclassen
+     * @param task
+     * @param systemTime
+     */
+    public void updateStatus(Task task, LocalDateTime systemTime){
 
-    public abstract void updateStatus(LocalDateTime systemTime);
+    }
 }

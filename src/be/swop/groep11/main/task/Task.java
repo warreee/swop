@@ -617,7 +617,7 @@ public class Task{
      * Dit kan bvb indien een andere taak vroegtijd is gestopt waardoor er resources zijn gereleased.
      */
     public void updateStatus(){
-        getStatus().updateStatus(this.systemTime.getCurrentSystemTime());
+        getStatus().updateStatus(this, this.systemTime.getCurrentSystemTime());
     }
 
 }
