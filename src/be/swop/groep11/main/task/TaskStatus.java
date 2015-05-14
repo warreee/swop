@@ -197,4 +197,7 @@ public abstract class TaskStatus implements Cloneable {
     protected void plan(Task task, Plan plan) throws IllegalArgumentException {
         throw new IllegalStateException("De taak kan niet gepland worden.");
     }
+
+
+    public abstract void updateStatus(LocalDateTime systemTime);
 }

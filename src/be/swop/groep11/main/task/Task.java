@@ -611,4 +611,13 @@ public class Task{
 
     private BranchOffice delegatedTo;
 
+
+    /**
+     * Methode die nagaat of zijn staat moet worden geupdated.
+     * Dit kan bvb indien een andere taak vroegtijd is gestopt waardoor er resources zijn gereleased.
+     */
+    public void updateStatus(){
+        getStatus().updateStatus(this.systemTime.getCurrentSystemTime());
+    }
+
 }
