@@ -1,6 +1,7 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.DependencyGraph;
+import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.exception.IllegalDependencyException;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.task.Task;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by warreee on 4/21/15.
@@ -38,14 +40,14 @@ public class DependencyGraphTest {
 
     @Before
     public void setUp() throws Exception {
-        taskA = new Task("Taak A", duration, deviation, systemTime, dependencyGraph);
-        taskB = new Task("Taak B", duration, deviation, systemTime, dependencyGraph);
-        taskC = new Task("Taak C", duration, deviation, systemTime, dependencyGraph);
-        taskD = new Task("Taak D", duration, deviation, systemTime, dependencyGraph);
-        taskE = new Task("Taak E", duration, deviation, systemTime, dependencyGraph);
-        taskF = new Task("Taak F", duration, deviation, systemTime, dependencyGraph);
-        taskG = new Task("Taak G", duration, deviation, systemTime, dependencyGraph);
-        taskH = new Task("Taak H", duration, deviation, systemTime, dependencyGraph);
+        taskA = new Task("Taak A", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
+        taskB = new Task("Taak B", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
+        taskC = new Task("Taak C", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
+        taskD = new Task("Taak D", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
+        taskE = new Task("Taak E", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
+        taskF = new Task("Taak F", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
+        taskG = new Task("Taak G", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
+        taskH = new Task("Taak H", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
 
         allTasks.add(taskA);
         allTasks.add(taskB);

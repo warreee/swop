@@ -123,4 +123,15 @@ public class ProjectRepository {
     public void setMemento(IProjectRepositoryMemento memento) {
         this.projects = (ArrayList<Project>) memento.getProjects();
     }
+
+    /**
+     * Geeft een lijst van alle taken van de projecten in deze project repository.
+     */
+    public List<Task> getAllTasks() {
+        List<Task> tasks = new ArrayList<>();
+        for (Project project : this.getProjects()) {
+            tasks.addAll(project.getTasks());
+        }
+        return tasks;
+    }
 }

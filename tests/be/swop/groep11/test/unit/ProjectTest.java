@@ -1,9 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.User;
+import be.swop.groep11.main.core.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,6 +9,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class ProjectTest {
 
@@ -35,8 +33,10 @@ public class ProjectTest {
         systemTime = new SystemTime(LocalDateTime.of(2015,1,1,0,0));
         repository = new ProjectRepository(systemTime);
 
-        project = new Project(name, description, create, due, systemTime );
+        project = new Project(name, description, create, due, systemTime, mock(BranchOffice.class));
     }
+
+
 
     //TODO change project status
 
@@ -62,7 +62,7 @@ public class ProjectTest {
 
     @Test
     public void isOverTime_OverTimeProject() {
-        Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0), systemTime );
+        Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0), systemTime, mock(BranchOffice.class));
         project1.addNewTask("Taak",0.1,Duration.ofHours(24));
         project1.addNewTask("Afhankelijke taak", 0, Duration.ofHours(16));
         project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
@@ -75,7 +75,7 @@ public class ProjectTest {
     @Test
     public void isOverTime_NotOverTimeProject() {
 
-        Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0), systemTime);
+        Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0), systemTime, mock(BranchOffice.class));
         project1.addNewTask("Taak",0.1,Duration.ofHours(8));
         project1.addNewTask("Afhankelijke taak", 0, Duration.ofHours(16));
         project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
@@ -85,56 +85,56 @@ public class ProjectTest {
 
     @Test
     public void NewProject_valid() throws Exception {
-        new Project(name, description, create,due, systemTime);
+        new Project(name, description, create,due, systemTime, mock(BranchOffice.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void NewProject_invalid_Name() throws Exception {
-        new Project("", description, create,due, systemTime );
+        new Project("", description, create,due, systemTime, mock(BranchOffice.class));
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_NameNull() throws Exception {
-        new Project(null,description, create,due, systemTime );
+        new Project(null,description, create,due, systemTime, mock(BranchOffice.class));
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_Description() throws Exception {
-        new Project(name, "", create, due, systemTime );
+        new Project(name, "", create, due, systemTime, mock(BranchOffice.class));
     }
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_DescriptionNull() throws Exception {
-        new Project(name, null, create,due, systemTime);
+        new Project(name, null, create,due, systemTime, mock(BranchOffice.class));
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationTimeAfterDueTime() throws Exception {
-        new Project(name, description, LocalDateTime.now().plusSeconds(3600),LocalDateTime.now(), systemTime );
+        new Project(name, description, LocalDateTime.now().plusSeconds(3600),LocalDateTime.now(), systemTime, mock(BranchOffice.class));
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationEqualDue() throws Exception {
-        new Project(name, description, LocalDateTime.now(), LocalDateTime.now(), systemTime );
+        new Project(name, description, LocalDateTime.now(), LocalDateTime.now(), systemTime, mock(BranchOffice.class));
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_DueTimeBeforeCreationTime() throws Exception {
         //DueTime mag niet voor creation time zijn.
-        new Project(name, description, LocalDateTime.now(),LocalDateTime.now().minusSeconds(60), systemTime);
+        new Project(name, description, LocalDateTime.now(),LocalDateTime.now().minusSeconds(60), systemTime, mock(BranchOffice.class));
     }
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationAndDueNull() throws Exception {
-        new  Project(name, description, null,null, systemTime);
+        new  Project(name, description, null,null, systemTime, mock(BranchOffice.class));
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_CreationTimeNull() throws Exception {
-        new Project(name, description, null,due, systemTime );
+        new Project(name, description, null,due, systemTime, mock(BranchOffice.class));
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void NewProject_invalid_DueTimeNull() throws Exception {
         //DueTime mag niet null zijn
-        new Project(name, description, create,null, systemTime);
+        new Project(name, description, create,null, systemTime, mock(BranchOffice.class));
     }
 }

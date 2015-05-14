@@ -31,7 +31,7 @@ public class SchedulerTest {
         SystemTime systemTime = new SystemTime();
         IRequirementList requirementList = mock(IRequirementList.class);
 
-        task = new Task("test", Duration.ofMinutes(100), 10, systemTime, new DependencyGraph(), requirementList);
+        task = new Task("test", Duration.ofMinutes(100), 10, systemTime, new DependencyGraph(), requirementList, mock(Project.class));
 
         ResourceRepository rr = mock(ResourceRepository.class);
         scheduler = new Scheduler();
@@ -71,7 +71,7 @@ public class SchedulerTest {
 
     @Test
     public void testB() throws Exception {
-        BranchOffice bo = new BranchOffice(); //Selected
+        BranchOffice bo = new BranchOffice("naam", "locatie", new ProjectRepository(new SystemTime())); //Selected
         //task is selected task;
 
         IRequirementList requirementList = task.getRequirementList();

@@ -1,6 +1,7 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.DependencyGraph;
+import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
@@ -441,7 +442,7 @@ public class ResourceManagerTest {
         requirementListBuilder.addNewRequirement(type1, 2);
         requirementListBuilder.addNewRequirement(type2, 1);
         IRequirementList requirementList = requirementListBuilder.getRequirements();
-        Task task = new Task("description",Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList);
+        Task task = new Task("description",Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList, mock(Project.class));
 
         // plannen maken vanaf t3
         List<Plan> plans_t3 = resourceManager.getNextPlans(3, task, t3);
@@ -489,7 +490,7 @@ public class ResourceManagerTest {
         requirementListBuilder.addNewRequirement(type1, 2);
         requirementListBuilder.addNewRequirement(type2, 1);
         IRequirementList requirementList = requirementListBuilder.getRequirements();
-        Task task = new Task("description",Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList);
+        Task task = new Task("description",Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList, mock(Project.class));
 
         // plan maken vanaf t1
         Plan plan = resourceManager.getNextPlans(1, task, t1).get(0);
@@ -527,7 +528,7 @@ public class ResourceManagerTest {
         requirementListBuilder.addNewRequirement(type1, 2);
         requirementListBuilder.addNewRequirement(type2, 1);
         IRequirementList requirementList = requirementListBuilder.getRequirements();
-        Task task = new Task("description", Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList);
+        Task task = new Task("description", Duration.ofHours(1), 0.1, new SystemTime(), new DependencyGraph(), requirementList, mock(Project.class));
 
         // plan maken vanaf t4
         Plan plan_t4 = resourceManager.getNextPlans(4, task, t4).get(0);

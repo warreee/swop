@@ -54,6 +54,7 @@ public class Task{
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
      * @param systemTime            De systeemtijd die de nieuwe taak moet gebruiken
      * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
+     * @param project
      * @throws java.lang.IllegalArgumentException Ongeldige beschrijving, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */

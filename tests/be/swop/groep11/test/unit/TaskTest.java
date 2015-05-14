@@ -1,5 +1,6 @@
 package be.swop.groep11.test.unit;
 
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
@@ -11,6 +12,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class TaskTest {
 
@@ -26,7 +28,7 @@ public class TaskTest {
         this.systemTime = new SystemTime(now);
         project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
-                systemTime );
+                systemTime, mock(BranchOffice.class));
 
         project.addNewTask("Test taak 1", 0.1, Duration.ofHours(8));
         project.addNewTask("Test taak 2", 0, Duration.ofMinutes(120));
@@ -44,22 +46,22 @@ public class TaskTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Null() throws Exception {
-        Task invalidTask = new Task(null, Duration.ofHours(8), 0.1, systemTime,dependencyGraph );
+        Task invalidTask = new Task(null, Duration.ofHours(8), 0.1, systemTime,dependencyGraph, mock(Project.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Empty() throws Exception {
-        Task invalidTask = new Task("", Duration.ofHours(8), 0.1, systemTime,dependencyGraph);
+        Task invalidTask = new Task("", Duration.ofHours(8), 0.1, systemTime,dependencyGraph, mock(Project.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDuration_Negative() throws Exception {
-        Task invalidTask = new Task("Test taak", Duration.ofHours(-1), 0.1, systemTime,dependencyGraph);
+        Task invalidTask = new Task("Test taak", Duration.ofHours(-1), 0.1, systemTime,dependencyGraph, mock(Project.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidAcceptableDeviation_Negative() throws Exception {
-        Task invalidTask = new Task("Test taak", Duration.ofHours(8), -0.1, systemTime,dependencyGraph );
+        Task invalidTask = new Task("Test taak", Duration.ofHours(8), -0.1, systemTime,dependencyGraph, mock(Project.class));
     }
 
     /*
