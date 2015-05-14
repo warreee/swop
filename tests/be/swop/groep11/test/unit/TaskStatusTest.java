@@ -83,8 +83,8 @@ public class TaskStatusTest {
     @Test
     public void unavailableToAvailable() {
         task2.addNewDependencyConstraint(task1);
-        assertEquals(task1.getStatusString(), "AVAILABLE");
-        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        assertTrue(task1.isAvailable());
+        assertTrue(task2.isUnavailable());
         task1.execute(LocalDateTime.now());
         task1.finish(LocalDateTime.now());
         assertEquals(task1.getStatusString(), "FINISHED");

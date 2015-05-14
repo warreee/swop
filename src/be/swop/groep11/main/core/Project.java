@@ -291,7 +291,7 @@ public class Project {
     public ImmutableList<Task> getFailedTasks(){
         List<Task> tasks = new ArrayList<>();
         for (Task task : getTasks()) {
-            if (task.getStatus() instanceof TaskFailed) {
+            if (task.isFailed()) {
                 tasks.add(task);
             }
         }

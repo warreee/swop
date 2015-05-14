@@ -37,7 +37,7 @@ public class TaskUnavailable extends TaskStatus {
         // niet worden op available worden gezet.
         // We moeten hier niet checken op failed aangezien depencygraph garandeert dat er indien er een gefailde taak is
         // er direct een alternatieve taak wordt gezet in dependingOnTasks
-        if (task.getDependingOnTasks().stream().filter((entry) -> (!entry.getStatusString().equals("FINISHED")  )).count() == 0) {
+        if (task.getDependingOnTasks().stream().filter((entry) -> (!entry.isFinished())).count() == 0) {
             TaskStatus newStatus = new TaskAvailable();
             task.setStatus(newStatus);
         }

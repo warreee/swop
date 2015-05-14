@@ -252,9 +252,9 @@ public class Task{
      */
     public void addNewDependencyConstraint(Task dependingOn) {
         dependencyGraph.addNewDependency(this, dependingOn);
-        if(!dependingOn.getStatus().getClass().equals(TaskFinished.class)
-                && !dependingOn.getStatus().getClass().equals(TaskFailed.class)) {
-            if (!this.getStatus().getClass().equals(TaskUnavailable.class)){
+        if(!dependingOn.isFinished()
+                && !dependingOn.isFailed()) {
+            if (!isUnavailable()){
                 this.makeUnAvailable();
             }
         }

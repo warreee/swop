@@ -64,7 +64,7 @@ public class ProjectRepository {
         for (Project project : projects) {
 
             for (Task task : project.getTasks()) {
-                if (task.getStatusString().equals("AVAILABLE")) {
+                if (task.isAvailable()) {
                     tasks.add(task);
                 }
             }
@@ -81,7 +81,7 @@ public class ProjectRepository {
         for (Project project : projects) {
 
             for (Task task : project.getTasks()) {
-                if (task.getStatusString().equals("EXECUTING")) {
+                if (task.isExecuting()) {
                     tasks.add(task);
                 }
             }
