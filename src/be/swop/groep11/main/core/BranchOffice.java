@@ -67,17 +67,6 @@ public class BranchOffice {
     }
 
     /**
-     * Geeft een lijst van alle taken die in deze branch office zijn aangemaakt.
-     */
-    public List<Task> getProperTasks() {
-        List<Task> tasks = new ArrayList<>();
-        for (Project project : this.getProjectRepository().getProjects()) {
-            tasks.addAll(project.getTasks()); // en niet gedelegeerd TODO
-        }
-        return tasks;
-    }
-
-    /**
      * Geeft van alle taken die door deze branch office gepland moeten worden,
      * een lijst van de taken die nog niet gepland zijn.
      */
@@ -88,30 +77,29 @@ public class BranchOffice {
     }
 
     /**
+     * Geeft een lijst van alle taken die in deze branch office aangemaakt zijn
+     * en niet gedelegeerd zijn.
+     */
+    public List<Task> getProperTasks() {
+        List<Task> tasks = new ArrayList<>();
+        for (Project project : this.getProjectRepository().getProjects()) {
+            tasks.addAll(project.getTasks());
+        }
+        return tasks.stream().filter(task -> (! task.isDelegated()) ).collect(Collectors.toList());
+    }
+
+    /**
      * Geeft een immutable lijst van alle taken die naar deze branch office gedelegeerd zijn.
      */
     public ImmutableList<Task> getDelegatedTasks() {
         return ImmutableList.copyOf(this.delegatedTasks);
     }
 
-    /**
-     * Voegt een taak toe aan de gedelegeerde taken van deze branch office.
-     * @throws IllegalArgumentException De taak is nog niet naar deze branch office gedelegeerd.
-     */
     private void addDelegatedTask(Task task) {
         this.delegatedTasks.add(task);
     }
 
-    /**
-     * Verwijdert een taak toe uit de gedelegeerde taken van deze branch office.
-     * @throws IllegalArgumentException De taak is wel naar deze branch office gedelegeerd.
-     */
     private void removeDelegatedTask(Task task) {
-        if (task.getDelegatedTo() == this) {
-            // dit is om ervoor te zorgen dat het delegeren alleen vanuit taak kan gebeuren
-            // daar wordt removeDelegatedTask(this) opgeroepen nadat de nieuwe delegatedTo branch office gezet is
-            throw new IllegalArgumentException("De taak is wel naar deze branch office gedelegeerd");
-        }
         this.delegatedTasks.remove(task);
     }
 
