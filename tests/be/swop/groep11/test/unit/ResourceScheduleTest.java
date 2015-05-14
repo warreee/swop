@@ -1,6 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.resource.ResourceSchedule;
+import be.swop.groep11.main.util.ResourceSchedule;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.UnavailableReservationException;
 import be.swop.groep11.main.resource.ResourceInstance;

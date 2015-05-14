@@ -1,5 +1,7 @@
 package be.swop.groep11.main.resource;
 
+import be.swop.groep11.main.util.ResourceSchedule;
+
 /**
  * Stelt een interface voor die elke instantie van een resource type moet implementeren.
  */
