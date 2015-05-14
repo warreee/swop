@@ -34,6 +34,11 @@ public class TaskAvailable extends TaskStatus {
         return new TaskAvailable();
     }
 
+    @Override
+    protected boolean isAvailable(Task task) {
+        return true;
+    }
+
     /**
      * Start met de uitvoer van de gegeven taak op de gegeven moment.
      * @param task De taak die moet uitgevoerd worden.

@@ -58,6 +58,11 @@ public class TaskUnavailable extends TaskStatus {
         return new TaskUnavailable();
     }
 
+    @Override
+    protected boolean isUnavailable(Task task) {
+        return true;
+    }
+
     /**
      * Geeft als duur, de geschatte duur van de taak terug.
      * @param task de taak waarvan de geschatte duur wordt teruggegeven.
