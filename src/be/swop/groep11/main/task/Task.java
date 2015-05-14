@@ -279,6 +279,27 @@ public class Task{
         return this.getStatus().getStatus().toString();
     }
 
+
+    public boolean isUnavailable() {
+        return this.getStatus().isUnavailable(this);
+    }
+
+    public boolean isAvailable() {
+        return this.getStatus().isAvailable(this);
+    }
+
+    public boolean isExecuting() {
+        return this.getStatus().isExecuting(this);
+    }
+
+    public boolean isFinished() {
+        return this.getStatus().isFinished(this);
+    }
+
+    public boolean isFailed() {
+        return this.getStatus().isFailed(this);
+    }
+
     /**
      * Voert deze Task uit vanaf de gegeven starttijd.
      * @param startTime
@@ -355,7 +376,7 @@ public class Task{
      * @return true als (deze taak is geëindigd) of (alternatieve taak != null en alternatieve taak is geëindigd)
      */
     public boolean getAlternativeFinished() {
-        if (this.getStatus() instanceof TaskFinished)
+        if (isFinished())
             return true;
         if (this.getAlternativeTask() != null)
             return getAlternativeTask().getAlternativeFinished();
@@ -381,7 +402,7 @@ public class Task{
      *     <br>FinishedStatus.OVERDUE als de taak te laat geëindigd is.
      */
     public FinishedStatus getFinishedStatus() {
-        if (getStatus() instanceof TaskExecuting || getStatus() instanceof TaskAvailable || getStatus() instanceof TaskUnavailable)
+        if (isExecuting() || isAvailable() || isUnavailable())
             return FinishedStatus.NOTFINISHED;
 
         long durationInSeconds = getDuration().getSeconds();
