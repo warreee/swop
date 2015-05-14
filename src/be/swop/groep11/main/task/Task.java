@@ -43,6 +43,7 @@ public class Task{
         this.systemTime = systemTime;
         this.dependencyGraph = dependencyGraph;
         this.project = project;
+        this.delegatedTo = project.getBranchOffice();
     }
 
     /**
@@ -571,37 +572,42 @@ public class Task{
      * Controleert of deze taak naar een andere branch office gedelegeerd is.
      */
     public boolean isDelegated() {
-        return delegatedTo != null;
+        return delegatedTo != project.getBranchOffice();
     }
 
     /**
-     * Geeft de branch office waar deze taak naar gedelegeerd is,
-     * of null wanneer deze taak niet gedelegeerd is.
+     * Geeft de branch office waarnaar deze taak gedelegeerd is.
      */
     public BranchOffice getDelegatedTo() {
         return delegatedTo;
     }
 
     /**
-     * Zet de branch office waar deze taak naar gedelegeerd is.
-     * @param delegatedTo
+     * Zet de branch office waarnaar deze taak gedelegeerd is.
+     * @param delegatedTo De branch office waarnaar deze taak gedelegeerd is.
+     * @throws IllegalArgumentException | ! canHaveAsDelegatedTo(delegatedTo)
      */
     public void setDelegatedTo(BranchOffice delegatedTo) {
-        if (! delegatedTo.getUnplannedTasks().contains(this)) {
-            throw new IllegalArgumentException("Taak zit niet in de taken die door delegatedTo moeten uitgevoerd worden.");
+        if (! canHaveAsDelegatedTo(delegatedTo)) {
+            throw new IllegalArgumentException("Ongeldige delegatedTo");
         }
         this.delegatedTo = delegatedTo;
     }
 
+    /**
+     * Controleert of deze taak een gegeven branch office als delegatedTo mag hebben.
+     * @param delegatedTo De te controleren branch office.
+     * @return True als deze taak nog niet gepland is,
+     *         en wanneer de ongeplande taken van delegatedTo deze taak bevatten.
+     */
     public boolean canHaveAsDelegatedTo(BranchOffice delegatedTo) {
-        if (delegatedTo == null) {
-            return true;
-        }
-        else {
-            return delegatedTo.getUnplannedTasks().contains(this);
-        }
+        if (this.isPlanned())
+            return false;
+        if (! delegatedTo.getUnplannedTasks().contains(this))
+            return false;
+        return true;
     }
 
-    private BranchOffice delegatedTo = null;
+    private BranchOffice delegatedTo;
 
 }
