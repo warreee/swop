@@ -161,6 +161,14 @@ public class Plan {
         }
     }
 
+    /**
+     * Geeft de timespan van dit plan terug.
+     * @return
+     */
+    public TimeSpan getTimeSpan(){
+        return new TimeSpan(getStartTime(), getEndTime());
+    }
+
     private List<ResourceReservation> reservations = new LinkedList<>();
 
     /**
