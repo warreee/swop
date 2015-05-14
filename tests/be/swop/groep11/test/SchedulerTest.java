@@ -71,7 +71,7 @@ public class SchedulerTest {
 
     @Test
     public void testB() throws Exception {
-        BranchOffice bo = new BranchOffice("naam", "locatie", new ProjectRepository(new SystemTime())); //Selected
+        BranchOffice bo = new BranchOffice("naam", "locatie", new ProjectRepository(new SystemTime()), new ResourcePlanner(new ResourceRepository())); //Selected
         //task is selected task;
 
         IRequirementList requirementList = task.getRequirementList();
