@@ -152,8 +152,7 @@ public class BranchOffice {
             return false;
         }
 
-        // controleren of de taak in de andere branch office kan gepland worden
-
+        // controleren of de taak in de andere branch office kan gepland worden:
         ResourcePlanner otherPlanner = other.getResourcePlanner();
         return otherPlanner.canPlan(task);
     }
