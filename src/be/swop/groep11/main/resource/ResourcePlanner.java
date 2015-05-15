@@ -5,9 +5,11 @@ import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.util.Util;
 
+import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Klasse die gebruikt wordt om resources te kunnen plannen. Deze klasse houdt ook een lijst bij van alle plannen die
@@ -136,27 +138,27 @@ public class ResourcePlanner {
     }
 
     /**
-     * Bepaald de n volgende mogelijke starttijden (alleen volledige uren vb 9:00 en 10:00) voor een gegeven
+     * Bepaald de n volgende mogelijke TimeSpans (die starten op volledige uren vb 9:00 en 10:00) voor een gegeven
      * requirementList.
      * @param requirementList De IRequirementList die voldaan moet zijn.
-     * @param firstPossibleStartTime De eerste mogelijke starttijd vanaf wanneer de starttijden kunnen beginnen.
+     * @param firstPossibleStartTime De eerste mogelijke starttijd vanaf wanneer de TimeSpans kunnen beginnen.
      * @param duration Hoelang alle elementen in de IRequirementList beschikbaar moeten zijn.
-     * @param amount Hoeveel mogelijke starttijden er moeten berekend worden.
-     * @return Een lijst met de gevraagde hoeveelheid mogelijke starttijden.
+     * @param amount Hoeveel mogelijke TimeSpans er moeten berekend worden.
+     * @return Een lijst met de gevraagde hoeveelheid mogelijke TimeSpans.
      */
-    public List<LocalDateTime> getNextStartTimes(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount){
+    public List<TimeSpan> getNextPossibleTimeSpans(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount){
         LocalDateTime fullHour = Util.getNextHour(firstPossibleStartTime);
         LocalDateTime furthest;
-        ArrayList<LocalDateTime> possibleStartTimes = new ArrayList<>();
+        ArrayList<TimeSpan> possibleTimeSpans = new ArrayList<>();
 
-        while(possibleStartTimes.size() < amount) {
+        while(possibleTimeSpans.size() < amount) {
             furthest = getFurthestTime(duration, fullHour, requirementList);
             if(resourceRequirementsSatisfiable(new TimeSpan(fullHour, furthest), requirementList)){
-                possibleStartTimes.add(fullHour);
+                possibleTimeSpans.add(new TimeSpan(fullHour, furthest));
             }
             fullHour = fullHour.plusHours(1);
         }
-        return possibleStartTimes;
+        return possibleTimeSpans;
     }
 
     /**
@@ -195,6 +197,19 @@ public class ResourcePlanner {
             }
         }
         return furthest;
+    }
+
+    /**
+     * Bepaald de n volgende mogelijke starttijden (die starten op volledige uren vb 9:00 en 10:00) voor een gegeven
+     * requirementList.
+     * @param requirementList De IRequirementList die voldaan moet zijn.
+     * @param firstPossibleStartTime De eerste mogelijke starttijd vanaf wanneer de starttijden kunnen beginnen.
+     * @param duration Hoelang alle elementen in de IRequirementList beschikbaar moeten zijn.
+     * @param amount Hoeveel mogelijke starttijden er moeten berekend worden.
+     * @return Een lijst met de gevraagde hoeveelheid mogelijke starttijden.
+     */
+    public List<LocalDateTime> getNextPossibleStartTimes(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount){
+        return getNextPossibleTimeSpans(requirementList, firstPossibleStartTime, duration, amount).stream().map(TimeSpan::getStartTime).collect(Collectors.toList());
     }
 
     /**
