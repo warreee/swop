@@ -24,6 +24,7 @@ public class ResourcePlannerTest {
 
     @Before
     public void setUp() throws Exception {
+        // TODO: al wat plannen met reservaties toevoegen.
         typeRepository = new ResourceTypeRepository();
         typeRepository.addNewResourceType("type a");
         typeRepository.addNewResourceType("type b");
@@ -50,7 +51,8 @@ public class ResourcePlannerTest {
         builder.addNewRequirement(typeRepository.getResourceTypeByName("type a"), 2);
         when(task1.getRequirementList()).thenReturn(builder.getRequirements());
         assertTrue(planner.canPlan(task1));
-        // TODO: afmaken
+        builder.addNewRequirement(typeRepository.getResourceTypeByName("type a"), 4);
+        assertFalse(planner.canPlan(task1));
     }
 
     @Test

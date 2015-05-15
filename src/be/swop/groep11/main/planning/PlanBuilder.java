@@ -104,6 +104,9 @@ public class PlanBuilder {
         if (resourceInstance == null) {
             throw new IllegalArgumentException("ResourceInstance mag niet null zijn.");
         }
+        if (task.getRequirementList().getRequirementFor(resourceInstance.getResourceType()) == null) {
+            throw new IllegalArgumentException("De taak heeft geen requirements voor de gegeven ResourceInstance.");
+        }
         int taskTypeAmount = task.getRequirementList().getRequirementFor(resourceInstance.getResourceType()).getAmount();
         if (taskTypeAmount <= 0) {
             throw new IllegalArgumentException("De taak heeft geen requirements voor de gegeven ResourceInstance.");
@@ -124,10 +127,10 @@ public class PlanBuilder {
         ResourcePlanner resourcePlanner = branchOffice.getResourcePlanner();
         for (ResourceInstance resourceInstance : this.getSelectedInstances()) {
             if (! resourcePlanner.isAvailable(resourceInstance, getTimeSpan())) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -206,6 +209,7 @@ public class PlanBuilder {
     }
 
     private void setEndTime() {
+        endTime = startTime.plus(task.getEstimatedDuration());
         for (ResourceRequirement resourceRequirement : resourceRequirements) {
             AResourceType resourceType = resourceRequirement.getType();
             LocalDateTime resourceTypeEndTime = resourceType.calculateEndTime(startTime, task.getEstimatedDuration());

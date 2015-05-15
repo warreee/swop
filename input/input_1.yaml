@@ -8,10 +8,13 @@ company: "Fluffy Unicorn Inc"
 branchOffice:
   - name: "Pink department"
     location: "Pinky Town"
+
   - name: "Purple department"
     location: "Purpy Town"
+
   - name: "Orange department"
     location: "Oranjy Town"
+
   - name: "Flashy Fluo Yellow department"
     location: "Flashy Fluoy Yellowy Town"
 
@@ -75,35 +78,55 @@ resources:
 
 developers:
   - name : "John Deere"
+    branchOffice: 0
+
   - name : "Tom Hawk"
+    branchOffice: 0
+
   - name : "Bob Grylls"
+    branchOffice: 1
+
+  - name: "Ward \"the coder\" Monkey"
+    branchOffice: 2
+
+  - name: "Kees \"the kaasbol\" Onderbroek"
+    branchOffice: 3
+
+projectManager:
+  - name: "Joske"
+    branchOffice: 0
+
+  - name: "Josefien"
+    branchOffice: 0
+
+  - name: "Caaaaaaaaaaaaas (afkomsting van Limburg)"
+    branchOffice: 1
+
+  - name: "Sydney \"the city\" kerkhove"
+    branchOffice: 2
+
+  - name: "Jappie gaper"
+    branchOffice: 3
+
 
 projects:
   - name         : "project x"
     description  : "a project description"
     creationTime : "2014-01-01 09:00" # YYYY-MM-DD HH:MM
     dueTime      : "2014-02-01 18:00"
+    branchOffice : 0
 
   - name         : "project y"
     description  : "another project description"
     creationTime : "2014-01-01 09:00"
     dueTime      : "2016-01-01 18:00"
+    branchOffice : 0
 
   - name         : "project z"
     description  : "yet another project description"
     creationTime : "2015-04-25 09:00"
     dueTime      : "2015-04-30 18:00"
-
-plannings:
-  - plannedStartTime : "2014-01-01 09:00"
-    developers       : [0, 1]
-    resources        : [{type: 0,  quantity: 2}, {type: 2,  quantity: 1}]
-  - plannedStartTime : "2014-01-02 17:00"
-    developers       : [1]
-    resources        : []
-  - plannedStartTime : "2014-03-01 09:00"
-    developers       : [2]
-    resources        : [{type: 5,  quantity: 1}]
+    branchOffice : 1
 
 tasks:
     # projects and tasks are incrementally numbered starting with the number 0
@@ -119,7 +142,9 @@ tasks:
     # These time stamps are only required if a task is finished of failed
     startTime          : "2014-01-01 10:00"
     endTime            : "2014-01-02 17:00"
-    resourceRequirements: [{type:0, amount:1}, {type:1, amount:2}]
+    resourceRequirements: [{type: 0, amount: 1}, {type: 1, amount: 2}]
+    amountDevelopers   : 1
+    plannedStartTime : "2014-01-01 09:00"
 
   - project            : 1
     description        : "another task description"
@@ -180,20 +205,17 @@ tasks:
     planning           :
     status             :
 
-reservations:
-  - resource:   0
-    task:       0
-    startTime:  "2014-01-01 10:00"
-    endTime:    "2014-01-02 17:00"
-  - resource:   1
-    task:       0
-    startTime:  "2014-01-01 10:00"
-    endTime:    "2014-01-02 17:00"
-  - resource:   6
-    task:       0
-    startTime:  "2014-01-01 10:00"
-    endTime:    "2014-01-02 17:00"
-  - resource:   11
-    task:       4
-    startTime:  "2014-03-01 09:00"
-    endTime:    "2014-05-01 09:00"
+plans:
+  - branchOffice       : 0
+    task               : 0
+    specificResources  : [3]
+    startTime          :
+
+  - branchOffice       : 0
+    task               : 0
+    specificResources  : [3]
+
+  - branchOffice       : 0
+    task               : 0
+    specificResources  : [3]
+
