@@ -102,6 +102,31 @@ public class ResourcePlanner {
     }
 
     /**
+     * Berekend alle taken die conflicteren met een lijst van ResourceInstances gedurende een TimeSpan.
+     * @param resourceInstances De lijst met ResourceInstances waarvan alle conflicterende taken gezocht moet worden.
+     * @param timeSpan Wanneer de ResourceInstances moeten conflicteren om in de lijst terecht te komen.
+     * @return Een lijst met alle conflicterende taken.
+     */
+    public List<Task> getConflictingTasks(List<ResourceInstance> resourceInstances, TimeSpan timeSpan){
+        NavigableMap<LocalDateTime, ArrayList<Plan>> map = planMap.headMap(timeSpan.getEndTime(), true);
+        Set<Task> conflictingTasks = new HashSet<>();
+
+        for(ArrayList<Plan> planList: map.values()){
+            for(Plan plan: planList){
+                for(ResourceInstance instance: resourceInstances){
+                    if (checkResourceInstanceOverlapsWithOtherPlan(instance, timeSpan, plan)) {
+                        conflictingTasks.add(plan.getTask());
+                    }
+                }
+            }
+        }
+
+        return new ArrayList<>(conflictingTasks);
+    }
+
+
+
+    /**
      * Voegt een nieuw plan toe aan deze ResourcePlanner.
      *
      * @param plan Het plan dat toegevoegd word.
@@ -285,4 +310,5 @@ public class ResourcePlanner {
     }
 
     private ResourceRepository resourceRepository;
+
 }

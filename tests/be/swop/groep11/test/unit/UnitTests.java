@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-        TaskTest.class, SystemTimeTest.class, TaskStatusTest.class,
+        TaskTest.class, SystemTimeTest.class, TaskStatusTest.class,ControllerStackTest.class,
         TimeSpanTest.class, ResourceTypeConstraintTest.class,AbstractControllerTest.class,
         ProjectTest.class, ProjectRepositoryTest.class,MainControllerTest.class,CompanyTest.class,BranchOfficeTest.class,
         ResourceTypeTest.class, DependencyGraphTest.class, DeveloperTypeTest.class, DailyAvailabilityTest.class, ResourceManagerTest.class,

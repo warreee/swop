@@ -1,6 +1,7 @@
 package be.swop.groep11.main.ui;
 
-import be.swop.groep11.main.actions.*;
+import be.swop.groep11.main.actions.Action;
+import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.exception.CancelException;
@@ -17,7 +18,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -42,7 +42,9 @@ public class CommandLineInterface implements UserInterface {
                 try {
                     String commandString = bufferedReader.readLine();
                     Action com = Action.getAction(commandString);
-                    executeCommand(com);
+//                    executeCommand(com);
+//                    controllerStack.executeAction(action)
+                    getControllerStack().executeAction(com);
                 } catch (IllegalActionException ec) {
                     printException(ec);
                 }
@@ -78,9 +80,9 @@ public class CommandLineInterface implements UserInterface {
         return controllerStack;
     }
 
-    private void executeCommand(Action action) {
-        controllerStack.executeAction(action);
-    }
+//    private void executeCommand(Action action) {
+//        controllerStack.executeAction(action);
+//    }
 
     @Override
     public void printMessage(String message) {
@@ -575,15 +577,13 @@ public class CommandLineInterface implements UserInterface {
 
     @Override
     public void showHelp(AbstractController abstractController) throws IllegalArgumentException {
-        ArrayList<Action> list = new ArrayList<>();
-        for (Map.Entry<Action, ActionBehaviour> entry : controllerStack.getMappingFor(abstractController).entrySet()) {
-            list.add(entry.getKey());
-        }
+        ArrayList<Action> list = new ArrayList<>(controllerStack.getAcceptableActions(abstractController));
+
         StringBuilder sb = new StringBuilder();
         for (Action cmd : list) {
             sb.append(String.format("%-2s%s%1s", "|", cmd.getActionStr(), " "));
         }
-        sb.append("|");
-        printMessage(sb.toString());
+        sb.append("| \n");
+        printMessage(abstractController.getClass().getSimpleName() + ">  " + sb.toString());
     }
 }

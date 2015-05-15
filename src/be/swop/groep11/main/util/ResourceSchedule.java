@@ -28,7 +28,7 @@ public class ResourceSchedule {
      */
     public ResourceSchedule(ResourceInstance resource) {
         if (!canHaveAsResourceInstance(resource)) {
-            throw new IllegalArgumentException("Invallid resource, needs to be initialized");
+            throw new IllegalArgumentException("Invalid resource, needs to be initialized");
         }
         this.resource = resource;
     }

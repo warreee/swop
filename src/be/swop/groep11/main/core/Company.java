@@ -25,7 +25,7 @@ public class Company {
      * @param branchOffices          Branch offices van de company
      * @throws IllegalArgumentException Ongeldige naam, resource type repository of branch offices
      */
-    public Company(String name, ResourceTypeRepository resourceTypeRepository, BranchOffice... branchOffices) throws IllegalArgumentException {
+    public Company(String name, ResourceTypeRepository resourceTypeRepository) throws IllegalArgumentException {
         if (! isValidName(name)) {
             throw new IllegalArgumentException("Ongeldige naam");
         }
@@ -37,9 +37,6 @@ public class Company {
         this.resourceTypeRepository = resourceTypeRepository;
 
         this.branchOffices = new ArrayList<>();
-        for (BranchOffice branchOffice : branchOffices) {
-            this.addBranchOffice(branchOffice);
-        }
     }
 
     /**
@@ -47,7 +44,7 @@ public class Company {
      * @throws IllegalArgumentException Ongeldige branch office
      */
     public void addBranchOffice(BranchOffice branchOffice) {
-        if (! isValidBranchOffice(branchOffice)) {
+        if (! canAddBranchOffice(branchOffice)) {
             throw new IllegalArgumentException("Ongeldige branch office");
         }
         this.branchOffices.add(branchOffice);
@@ -86,8 +83,8 @@ public class Company {
      * Controleert of een branch office geldig is.
      * @return True als de branchOffice niet null is.
      */
-    public static boolean isValidBranchOffice(BranchOffice branchOffice) {
-        return branchOffice != null;
+    public boolean canAddBranchOffice(BranchOffice branchOffice) {
+        return branchOffice != null && !getBranchOffices().contains(branchOffice);
     }
 
 
