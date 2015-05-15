@@ -78,12 +78,12 @@ public class LogonController extends AbstractController implements ILogin {
 
     @Override
     public ProjectManager getProjectManager() {
-        return null;
+        return this.projectManager;
     }
 
     @Override
     public Developer getDeveloper() {
-        return this.developper;
+        return this.developer;
     }
 
     @Override
