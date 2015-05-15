@@ -5,6 +5,7 @@ import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.exception.IllegalActionException;
@@ -253,8 +254,13 @@ public class CommandLineInterface implements UserInterface {
 
 
         branchOffices.forEach(entry ->
-                System.out.println(branchOffices.indexOf(entry) + 1 + entry.getName()));
+                System.out.println(branchOffices.indexOf(entry) + ". " + entry.getName()));
         // TODO: wordt dit altijd in de juiste volgorde afgeprint?
+    }
+
+    @Override
+    public void showEmployees(ImmutableList<User> users) {
+        users.forEach(entry -> System.out.println(users.indexOf(entry) + ". " + entry.getName()));
     }
 
     //    @Override

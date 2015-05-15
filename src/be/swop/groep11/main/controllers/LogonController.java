@@ -14,6 +14,8 @@ public class LogonController extends AbstractController implements ILogin {
     private boolean identifiedPM = false;
     private Company company;
     private BranchOffice branchOffice = null;
+    private Developer developer = null;
+    private ProjectManager projectManager = null;
 
     public LogonController(UserInterface userInterface, Company company) {
         super(userInterface);
@@ -30,7 +32,7 @@ public class LogonController extends AbstractController implements ILogin {
     public void logOut() throws IllegalArgumentException {
         System.out.println("log out");
         identifiedPM = false;
-
+        // remove all data
     }
 
     /**
@@ -50,7 +52,7 @@ public class LogonController extends AbstractController implements ILogin {
     }
 
     private void showEmployees() {
-        //getUserInterface().showEmployees(this.branchOffice.getEmployees());
+        getUserInterface().showEmployees(this.branchOffice.getEmployees());
     }
 
 
@@ -81,7 +83,7 @@ public class LogonController extends AbstractController implements ILogin {
 
     @Override
     public Developer getDeveloper() {
-        return null;
+        return this.developper;
     }
 
     @Override

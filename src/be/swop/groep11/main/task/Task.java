@@ -319,7 +319,7 @@ public class Task{
     }
 
     /**
-     *
+     * Zet de status van deze taak op finished.
      * @param endTime
      */
     public void finish(LocalDateTime endTime) {

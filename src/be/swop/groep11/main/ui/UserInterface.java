@@ -2,6 +2,7 @@ package be.swop.groep11.main.ui;
 
 import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.core.BranchOffice;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.core.Project;
@@ -44,6 +45,9 @@ public interface UserInterface {
      * Toont alle branchoffices
      */
     void showBranchOffices(ImmutableList<BranchOffice> branchOffices);
+
+
+    void showEmployees(ImmutableList<User> users);
 
     /**
      * Selecteert een project uit een lijst van projecten.

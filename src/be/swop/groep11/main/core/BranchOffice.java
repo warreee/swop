@@ -164,4 +164,13 @@ public class BranchOffice {
         this.projectRepository.getProjects().forEach(Project::updateAllStatus);
     }
 
+    ArrayList<User> employees;
+
+    /**
+     * Geeft een immutable list terug van alle employees in deze branch office.
+     * @return
+     */
+    public ImmutableList<User> getEmployees() {
+        return ImmutableList.copyOf(this.employees);
+    }
 }
