@@ -98,39 +98,39 @@ public class TaskStatusTest {
     @Test (expected = IllegalStateTransitionException.class)
     public void unavailableToExecuting() {
         task2.addNewDependencyConstraint(task1);
-        assertEquals(task1.getStatusString(), "AVAILABLE");
-        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        assertTrue(task1.isAvailable());
+        assertTrue(task2.isUnavailable());
         task2.execute(LocalDateTime.now());
     }
 
     @Test (expected = IllegalStateTransitionException.class)
     public void unavailableToFailed() {
         task2.addNewDependencyConstraint(task1);
-        assertEquals(task1.getStatusString(), "AVAILABLE");
-        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        assertTrue(task1.isAvailable());
+        assertTrue(task2.isUnavailable());
         task2.fail(LocalDateTime.now());
     }
 
     @Test (expected = IllegalStateTransitionException.class)
     public void unavailableToFinished() {
         task2.addNewDependencyConstraint(task1);
-        assertEquals(task1.getStatusString(), "AVAILABLE");
-        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        assertTrue(task1.isAvailable());
+        assertTrue(task2.isUnavailable());
         task2.finish(LocalDateTime.now());
     }
 
     @Test (expected = IllegalStateTransitionException.class)
     public void unavailableToUnavailable() throws Throwable {
         task2.addNewDependencyConstraint(task1);
-        assertEquals(task1.getStatusString(), "AVAILABLE");
-        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        assertTrue(task1.isAvailable());
+        assertTrue(task2.isUnavailable());
         TaskUnavailable test = (TaskUnavailable) task2.getStatus();
         try {
             TUmethodMakeUnAvailable.invoke(test, task2);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
-        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        assertTrue(task2.isUnavailable());
     }
 
 
@@ -141,27 +141,27 @@ public class TaskStatusTest {
     @Test
     public void availableToUnavailable() {
         task2.addNewDependencyConstraint(task1);
-        assertEquals(task1.getStatusString(), "AVAILABLE");
-        assertEquals(task2.getStatusString(), "UNAVAILABLE");
+        assertTrue(task1.isAvailable());
+        assertTrue(task2.isUnavailable());
     }
 
     @Test
     public void availableToExecuting() throws Exception {
-        assertTrue(task1.getStatusString().equals("AVAILABLE"));
+        assertTrue(task1.isAvailable());
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
-        assertTrue(task1.getStatusString().equals("EXECUTING"));
+        assertTrue(task1.isExecuting());
     }
 
     @Test(expected = IllegalStateTransitionException.class)
     public void availableToFailedTest() throws Exception {
-        assertTrue(task1.getStatusString().equals("AVAILABLE"));
+        assertTrue(task1.isAvailable());
         task1.fail(now);
     }
 
 
     @Test(expected = IllegalStateTransitionException.class)
     public void availableToFinishedTest() throws Exception {
-        assertTrue(task1.getStatusString().equals("AVAILABLE"));
+        assertTrue(task1.isAvailable());
         task1.finish(now);
     }
 
@@ -190,7 +190,7 @@ public class TaskStatusTest {
     public void executingToFailed() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(task1.getStatusString().equals("FAILED"));
+        assertTrue(task1.isFailed());
         assertEquals(LocalDateTime.of(2015, 3, 12, 10, 0), task1.getEndTime());
     }
 
@@ -230,7 +230,7 @@ public class TaskStatusTest {
     public void finishedToExecuting() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.finish(LocalDateTime.of(2015, 3, 12, 8, 0).plusHours(2));
-        assertTrue(task1.getStatusString().equals("FINISHED"));
+        assertTrue(task1.isFinished());
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0).plusHours(4));
     }
 
@@ -238,7 +238,7 @@ public class TaskStatusTest {
     public void finishedToFailed() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(task1.getStatusString().equals("FINISHED"));
+        assertTrue(task1.isFinished());
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
@@ -246,7 +246,7 @@ public class TaskStatusTest {
     public void finishedToFinished() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(task1.getStatusString().equals("FINISHED"));
+        assertTrue(task1.isFinished());
         task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
@@ -280,7 +280,7 @@ public class TaskStatusTest {
     public void failedToExecuting() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(task1.getStatusString().equals("FAILED"));
+        assertTrue(task1.isFailed());
         task1.execute(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
@@ -288,7 +288,7 @@ public class TaskStatusTest {
     public void failedToFinished() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(task1.getStatusString().equals("FAILED"));
+        assertTrue(task1.isFailed());
         task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
@@ -296,7 +296,7 @@ public class TaskStatusTest {
     public void failedToFailed() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(task1.getStatusString().equals("FAILED"));
+        assertTrue(task1.isFailed());
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 

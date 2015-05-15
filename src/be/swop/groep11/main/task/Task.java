@@ -5,11 +5,10 @@ import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
+import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.IRequirementList;
-import be.swop.groep11.main.resource.Plan;
+import be.swop.groep11.main.resource.OldPlan;
 import be.swop.groep11.main.resource.RequirementListBuilder;
-import be.swop.groep11.main.resource.ResourcePlanner;
-import be.swop.groep11.main.util.Observer;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -391,8 +390,6 @@ public class Task{
         this.status = status;
     }
 
-
-
     public enum FinishedStatus {
         EARLY,
         ONTIME,
@@ -535,7 +532,7 @@ public class Task{
      * @param plan Het plan voor deze taak
      * @throws IllegalStateException De taak kan niet gepland worden.
      */
-    public void plan(Plan plan) {
+    public void plan(OldPlan plan) {
         this.getStatus().plan(this, plan);
     }
 
@@ -553,15 +550,20 @@ public class Task{
         return plan.getStartTime();
     }
 
-    private Plan plan;
+    private OldPlan plan;
 
-    protected void setPlan(Plan plan) {
+    protected void setPlan(OldPlan plan) {
         plan.applyReservations();
         this.plan = plan;
     }
 
-    protected Plan getPlan() {
+    protected OldPlan getPlan() {
             return this.plan;
+    }
+
+    // TODO
+    protected Plan getPlan2() {
+        return null;
     }
 
     /**
@@ -616,30 +618,12 @@ public class Task{
     private BranchOffice delegatedTo;
 
 
-    public void update(SystemTime systemTime) {
-        //TODO temp experiment
-        systemTimeObserver.update(systemTime);
-    }
-
-    public void update(ResourcePlanner resourcePlanner) {
-        resourcePlannerObserver.update(resourcePlanner);
-    }
-
-    private Observer<ResourcePlanner> resourcePlannerObserver = resourcePlanner -> {
-        System.out.println(resourcePlanner.toString() + " ____ In task");
-
-    };
-
-    private Observer<SystemTime> systemTimeObserver = systemTime1 -> {
-        System.out.println(systemTime1.getCurrentSystemTime().toString() + " ____ In task");
-    };
-
-    public Observer<SystemTime> getSystemTimeObserver() {
-        return this.systemTimeObserver;
-    }
-
-    public Observer<ResourcePlanner> getResourcePlannerObserver() {
-        return this.resourcePlannerObserver;
+    /**
+     * Methode die nagaat of zijn staat moet worden geupdated.
+     * Dit kan bvb indien een andere taak vroegtijd is gestopt waardoor er resources zijn gereleased.
+     */
+    public void updateStatus(){
+        getStatus().updateStatus(this, this.systemTime.getCurrentSystemTime());
     }
 
 }

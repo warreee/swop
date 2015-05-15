@@ -346,7 +346,7 @@ public class InputParser {
             if(plannedStartTime == null){
                 throw new IllegalArgumentException("Om reservaties uit te voeren is een geplande starttijd nodig.");
             }
-            Plan plan = resourceManager.getNextPlans(1, task, plannedStartTime).get(0);
+            OldPlan plan = resourceManager.getNextPlans(1, task, plannedStartTime).get(0);
             plan.changeReservations(new ArrayList<>());
             Map<Integer, Map<String, LocalDateTime>> reservations = reservationsMap.get(taskList.size() - 1);
             for(Integer i: reservations.keySet()){

@@ -3,26 +3,27 @@ package be.swop.groep11.test.unit;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.TimeSpan;
-import be.swop.groep11.main.resource.*;
+import be.swop.groep11.main.planning.Plan;
+import be.swop.groep11.main.resource.DailyAvailability;
+import be.swop.groep11.main.resource.OldPlan;
+import be.swop.groep11.main.resource.RequirementListBuilder;
+import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.task.Task;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
-import static org.junit.Assert.*;
+import static junit.framework.TestCase.fail;
 import static org.mockito.Mockito.mock;
 
 /**
- * Created by Arne De Brabandere_3 on 30/04/2015.
+ * Testklasse voor de klasse Plan.
  */
 public class PlanTest {
-
-    private Plan plan;
+    private OldPlan plan1, plan2;
     private ResourceManager resourceManager;
     private LocalDateTime now;
 
@@ -31,105 +32,34 @@ public class PlanTest {
         now = LocalDateTime.of(2015,1,1,11,0);
         resourceManager = new ResourceManager();
         addTempDomainObjects();
-        RequirementListBuilder builder = new RequirementListBuilder();
-        builder.addNewRequirement(resourceManager.getDeveloperType(), 2);
-        builder.addNewRequirement(resourceManager.getResourceTypeByName("Auto"), 1);
-        Task task = new Task("test taak", Duration.ofHours(7), 0.1, new SystemTime(), new DependencyGraph(), builder.getRequirements(), mock(Project.class));
-        plan = new Plan(task, now, resourceManager);
+        RequirementListBuilder builder1 = new RequirementListBuilder();
+        RequirementListBuilder builder2 = new RequirementListBuilder();
+        builder1.addNewRequirement(resourceManager.getDeveloperType(), 4);
+        builder2.addNewRequirement(resourceManager.getDeveloperType(), 4);
+        Task task1 = new Task("test taak1", Duration.ofHours(7), 0.1, new SystemTime(), new DependencyGraph(), builder1.getRequirements(), mock(Project.class));
+        Task task2 = new Task("test taak2", Duration.ofHours(7), 0.1, new SystemTime(), new DependencyGraph(), builder2.getRequirements(), mock(Project.class));
+        plan1 = new OldPlan(task1, now, resourceManager);
+        //plan1.applyReservations();
+        plan2 = new OldPlan(task2, now, resourceManager);
+        //plan2.applyReservations(); TODO
     }
 
+    /**
+     * Test die nagaat of dat er bij niet overlappende resources een equivalent plan bestaat
+     * Dit moet zo zijn.
+     */
     @Test
-    public void isValid_ValidTest() {
-        List<ResourceInstance> developers = new ArrayList<>();
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(0));
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(1));
-        plan.addReservations(developers);
-        assertTrue(plan.isValid());
+    public void hasEquivalentPlanTrueTest() {
+        fail("Nog niet geimplenteerd");
     }
 
+    /**
+     * Test die nagaat of dat er bij overlappende resources een equivalent plan bestaat.
+     * Dit kan niet zo zijn want de resources zijn al nodig voor de andere taak.
+     */
     @Test
-    public void isValid_InvalidTest() {
-        assertFalse(plan.isValid());
-    }
-
-    @Test
-    public void isValidWithoutDevelopers_ValidTest() {
-        assertTrue(plan.isValidWithoutDevelopers());
-    }
-
-    @Test
-    public void isValidWithoutDevelopers_InvalidTest() {
-        plan.changeReservations(new ArrayList<>());
-        assertFalse(plan.isValidWithoutDevelopers());
-    }
-
-    @Test
-    public void getEndTimeTest() {
-        List<ResourceInstance> developers = new ArrayList<>();
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(0));
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(1));
-        plan.addReservations(developers);
-        assertEquals(LocalDateTime.of(2015, 1, 2, 10, 0), plan.getEndTime());
-    }
-
-    @Test
-    public void conflictingTasks_ConflictsTest() {
-        List<ResourceInstance> developers = new ArrayList<>();
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(0));
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(1));
-        plan.addReservations(developers);
-        Task otherTask = mock(Task.class);
-        resourceManager.makeReservation(otherTask, resourceManager.getDeveloperType().getResourceInstances().get(0),
-                new TimeSpan(now, now.plusHours(1)), false);
-        assertTrue(plan.getConflictingTasks().contains(otherTask));
-        assertTrue(plan.getConflictingTasks().size() == 1);
-    }
-
-    @Test
-    public void conflictingTasks_NoConflictsTest() {
-        List<ResourceInstance> developers = new ArrayList<>();
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(0));
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(1));
-        plan.addReservations(developers);
-        assertTrue(plan.getConflictingTasks().isEmpty());
-    }
-
-    @Test
-    public void applyPlan_ValidTest() {
-        List<ResourceInstance> developers = new ArrayList<>();
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(0));
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(1));
-        plan.addReservations(developers);
-        plan.applyReservations();
-        assertTrue(resourceManager.getReservations(plan.getTask()).size() == 3);
-        assertTrue(reservationsListContainsInstance(resourceManager.getReservations(plan.getTask()),
-                resourceManager.getDeveloperType().getResourceInstances().get(0)));
-        assertTrue(reservationsListContainsInstance(resourceManager.getReservations(plan.getTask()),
-                resourceManager.getDeveloperType().getResourceInstances().get(1)));
-        assertTrue(reservationsListContainsInstance(resourceManager.getReservations(plan.getTask()),
-                resourceManager.getResourceTypeByName("Auto").getResourceInstances().get(0)));
-    }
-
-    @Test
-    public void addReservationsTest() {
-        List<ResourceInstance> developers = new ArrayList<>();
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(0));
-        developers.add(resourceManager.getDeveloperType().getResourceInstances().get(1));
-        plan.addReservations(developers);
-        plan.applyReservations();
-        assertTrue(reservationsListContainsInstance(plan.getReservations(),
-                resourceManager.getDeveloperType().getResourceInstances().get(0)));
-        assertTrue(reservationsListContainsInstance(plan.getReservations(),
-                resourceManager.getDeveloperType().getResourceInstances().get(1)));
-    }
-
-    private boolean reservationsListContainsInstance(List<ResourceReservation> reservations, ResourceInstance resourceInstance) {
-        for (ResourceReservation reservation : reservations) {
-            if (reservation.getResourceInstance() == resourceInstance) {
-                return true;
-            }
-        }
-        return false;
+    public void hasEquivalentPlanFalseTest() {
+        fail("Nog niet geimplenteerd");
     }
 
 

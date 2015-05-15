@@ -1,7 +1,9 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
-import be.swop.groep11.main.resource.Plan;
+import be.swop.groep11.main.planning.Plan;
+import be.swop.groep11.main.resource.OldPlan;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -118,9 +120,19 @@ public class TaskAvailable extends TaskStatus {
      * @param task De te plannen taak
      */
     @Override
-    public void plan(Task task, Plan plan) {
+    public void plan(Task task, OldPlan plan) {
         task.setPlan(plan);
     }
 
+    @Override
+    public void updateStatus(Task task, LocalDateTime systemTime) {
+        Plan plan = task.getPlan2();
+        TimeSpan timespan = plan.getTimeSpan();
 
+        if (!timespan.containsLocalDateTime(systemTime)){
+            if (!plan.hasEquivalentPlan(systemTime)){
+                makeUnavailable(task);
+            }
+        }
+    }
 }

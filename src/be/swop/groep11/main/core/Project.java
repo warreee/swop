@@ -307,4 +307,11 @@ public class Project {
     }
 
     private BranchOffice branchOffice;
+
+    /** TODO: waar zijn de gedelegeerde taken, hoe kan ik er aan?
+     * update alle statussen na een bepaalde usecase
+     */
+    public void updateAllStatus() {
+        this.getTasks().forEach(Task::updateStatus);
+    }
 }

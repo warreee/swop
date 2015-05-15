@@ -13,7 +13,7 @@ public class SimulationController extends AbstractController {
     /*
     * De te ondersteunen Use Case's:
     * Create Task
-    * Plan Task
+    * OldPlan Task
     * Resolve Conflict
     * Show Projects
     * */

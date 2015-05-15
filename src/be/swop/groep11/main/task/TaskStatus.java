@@ -1,7 +1,7 @@
 package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
-import be.swop.groep11.main.resource.Plan;
+import be.swop.groep11.main.resource.OldPlan;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -194,7 +194,16 @@ public abstract class TaskStatus implements Cloneable {
      * @param task De te plannen taak
      * @throws IllegalStateException De taak kan niet gepland worden.
      */
-    protected void plan(Task task, Plan plan) throws IllegalArgumentException {
+    protected void plan(Task task, OldPlan plan) throws IllegalArgumentException {
         throw new IllegalStateException("De taak kan niet gepland worden.");
+    }
+
+    /** TODO: mag dit, een lege methode?
+     * Methode wordt overscrheven in subclassen
+     * @param task
+     * @param systemTime
+     */
+    protected void updateStatus(Task task, LocalDateTime systemTime){
+
     }
 }
