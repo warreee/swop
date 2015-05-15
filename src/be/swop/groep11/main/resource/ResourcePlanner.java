@@ -213,13 +213,43 @@ public class ResourcePlanner {
     }
 
     /**
-     * Berekend alle ResourceInstances die beschikbaar zijn van een bepaald type gedurende een TimeSpan.
+     * Geeft alle ResourceInstances die beschikbaar zijn van een bepaald type gedurende een TimeSpan.
      * @param type Het AResourceType dat beschikbaar moet zijn.
      * @param timeSpan Wanneer het AResourceType beschikbaar moet zijn.
      * @return Een lijst met alle ResourceInstances die beschikbaar zijn.
      */
     public List<ResourceInstance> getAvailableInstances(AResourceType type, TimeSpan timeSpan){
         return resourceRepository.getResources(type).stream().filter(x -> isAvailable(x, timeSpan)).collect(Collectors.toList());
+    }
+
+    /**
+     * Geeft alle ResourceInstances van een bepaald type.
+     * In deze lijst staan alle ResourceInstances die beschikbaar zijn gedurende een TimeSpan vooraan.
+     * @param type Het AResourceType.
+     * @param timeSpan Wanneer het AResourceType beschikbaar moet zijn.
+     * @return Een lijst met alle ResourceInstances van het type.
+     */
+    public List<ResourceInstance> getInstances(AResourceType type, TimeSpan timeSpan) {
+        List<ResourceInstance> instances = resourceRepository.getResources(type);
+
+        // sorteer de instances volgens beschikbaarheid (eerst beschikbaar, dan niet-beschikbaar)
+        class ResourceInstanceComparator implements Comparator<ResourceInstance> {
+            @Override
+            public int compare(ResourceInstance instance1, ResourceInstance instance2) {
+                if (isAvailable(instance1, timeSpan) == isAvailable(instance2, timeSpan)) {
+                    return 0;
+                }
+                else if (isAvailable(instance1, timeSpan)) {
+                    return -1;
+                }
+                else {
+                    return 1;
+                }
+            }
+        }
+        Collections.sort(instances, new ResourceInstanceComparator());
+
+        return instances;
     }
 
     /**
