@@ -1,10 +1,7 @@
 package be.swop.groep11.main.planning;
 
 import be.swop.groep11.main.core.TimeSpan;
-import be.swop.groep11.main.resource.ResourceInstance;
-import be.swop.groep11.main.resource.ResourcePlanner;
-import be.swop.groep11.main.resource.ResourceRequirement;
-import be.swop.groep11.main.resource.ResourceReservation;
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 
 import java.time.LocalDateTime;
@@ -52,6 +49,11 @@ public class Plan {
      */
     public List<ResourceReservation> getReservations() {
         // TODO
+        return null;
+    }
+
+    public List<ResourceReservation> getReservations(AResourceType type){
+        //TODO
         return null;
     }
 
