@@ -27,9 +27,14 @@ public class LogonController extends AbstractController implements ILogin {
         showEmployees();
     }
 
+    /**
+     * Bij het uitloggen worden alle gegevens op null gezet.
+     */
     @Override
-    public void logOut() throws IllegalArgumentException {
-
+    public void logOut() {
+        setBranchOffice(null);
+        setDeveloper(null);
+        setProjectManager(null);
     }
 
     /**
@@ -70,7 +75,7 @@ public class LogonController extends AbstractController implements ILogin {
 
     @Override
     public boolean hasIdentifiedUserAtBranchOffice() {
-        return false;
+        return hasIdentifiedDeveloper() || hasIdentifiedProjectManager();
     }
 
     @Override
