@@ -12,15 +12,15 @@ import be.swop.groep11.main.ui.UserInterface;
 public class LogonController extends AbstractController implements ILogin {
 
     private boolean identifiedPM = false;
+    private Company company;
 
     public LogonController(UserInterface userInterface, Company company) {
         super(userInterface);
+        this.company = company;
     }
-
     @Override
     public void logon() throws IllegalArgumentException {
-        System.out.println("log in");
-        identifiedPM = true;
+        showBranchOffices();
     }
 
     @Override
@@ -31,7 +31,8 @@ public class LogonController extends AbstractController implements ILogin {
     }
 
     public void showBranchOffices() {
-        getU
+        getUserInterface().printMessage("Kies een Branch Office uit onderstaande lijst.");
+        getUserInterface().showBranchOffices(this.company.getBranchOffices());
     }
 
 

@@ -242,7 +242,19 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showBranchOffices(ImmutableList<BranchOffice> branchOffices) {
+        System.out.println(
+                " _______  ______    _______  __    _  _______  __   __    _______  _______  _______  ___   _______  _______  _______ \n" +
+                "|  _    ||    _ |  |   _   ||  |  | ||       ||  | |  |  |       ||       ||       ||   | |       ||       ||       |\n" +
+                "| |_|   ||   | ||  |  |_|  ||   |_| ||       ||  |_|  |  |   _   ||    ___||    ___||   | |       ||    ___||  _____|\n" +
+                "|       ||   |_||_ |       ||       ||       ||       |  |  | |  ||   |___ |   |___ |   | |       ||   |___ | |_____ \n" +
+                "|  _   | |    __  ||       ||  _    ||      _||       |  |  |_|  ||    ___||    ___||   | |      _||    ___||_____  |\n" +
+                "| |_|   ||   |  | ||   _   || | |   ||     |_ |   _   |  |       ||   |    |   |    |   | |     |_ |   |___  _____| |\n" +
+                "|_______||___|  |_||__| |__||_|  |__||_______||__| |__|  |_______||___|    |___|    |___| |_______||_______||_______|\n");
 
+
+        branchOffices.forEach(entry ->
+                System.out.println(branchOffices.indexOf(entry) + 1 + entry.getName()));
+        // TODO: wordt dit altijd in de juiste volgorde afgeprint?
     }
 
     //    @Override
