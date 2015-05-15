@@ -349,4 +349,13 @@ public class Plan {
         }
         return defaultReservations;
     }
+
+
+    /** TODO: implementeren
+     * Deze methode gaat na of dat er voor de gegeven systemTime een equivalent plan bestaat voor de taak
+     * @return
+     */
+    public boolean hasEquivalentPlan(LocalDateTime systemTime) {
+        return false;
+    }
 }

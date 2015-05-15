@@ -129,7 +129,7 @@ public class TaskAvailable extends TaskStatus {
         TimeSpan timespan = plan.getTimeSpan();
 
         if (!timespan.containsLocalDateTime(systemTime)){
-            if (!plan.hasEquivalentPlan()){
+            if (!plan.hasEquivalentPlan(systemTime)){
                 makeUnavailable(task);
             }
         }
