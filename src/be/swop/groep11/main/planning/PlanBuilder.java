@@ -117,20 +117,32 @@ public class PlanBuilder {
 
     /**
      * Controleert of er conflicterende reservaties zijn voor het plan.
-     * @return
+     * @return True als elke geselecteerde resource instantie beschibaar is
+     *         gedurende de timespan van het plan.
      */
     public boolean hasConflictingReservations() {
-        // TODO
-        return false;
+        ResourcePlanner resourcePlanner = branchOffice.getResourcePlanner();
+        for (ResourceInstance resourceInstance : this.getSelectedInstances()) {
+            if (! resourcePlanner.isAvailable(resourceInstance, getTimeSpan())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
      * Controleert of aan alle resource requirements van de taak voldaan zijn.
-     * @return
+     * @return True als voor elke resource requirement het juiste aantal instanties zijn geselecteerd.
      */
     public boolean isSatisfied() {
-        // TODO
-        return false;
+        for (ResourceRequirement resourceRequirement : resourceRequirements) {
+            int amount = resourceRequirement.getAmount();
+            AResourceType resourceType = resourceRequirement.getType();
+            if (getSelectedInstances(resourceType).size() != amount) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -140,8 +152,14 @@ public class PlanBuilder {
      *                                  | hasConflictingReservations() || ! isSatisfied()
      */
     public Plan getPlan() {
-        // TODO
-        return null;
+        if (hasConflictingReservations()) {
+            throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat er conflicten zijn");
+        }
+        if (! isSatisfied()) {
+            throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat de requirements niet voldaan zijn");
+        }
+
+        return new Plan(task, branchOffice.getResourcePlanner(), getReservations());
     }
 
     private void setBranchOffice(BranchOffice branchOffice) {
@@ -206,18 +224,65 @@ public class PlanBuilder {
     }
 
     /**
+     * Geeft de timespan van het plan.
+     */
+    public TimeSpan getTimeSpan() {
+        return new TimeSpan(startTime, endTime);
+    }
+
+    /**
      * Geeft de geselecteerde resource instanties voor een gegeven resource type.
      * @param resourceType Het resource type
      * @return Alle instanties uit specificInstances en proposedInstances voor het type.
      */
-    private List<ResourceInstance> getSelectedInstances(AResourceType resourceType) {
+    public List<ResourceInstance> getSelectedInstances(AResourceType resourceType) {
         List<ResourceInstance> selectedInstances = new ArrayList<>();
         selectedInstances.addAll(specificInstances.get(resourceType));
         selectedInstances.addAll(proposedInstances.get(resourceType));
         return selectedInstances;
     }
 
-    private TimeSpan getTimeSpan() {
-        return new TimeSpan(startTime, endTime);
+    /**
+     * Geeft alle geselecteerde resource instanties.
+     * @return Alle instanties uit specificInstances en proposedInstances.
+     */
+    public List<ResourceInstance> getSelectedInstances() {
+        List<ResourceInstance> selectedInstances = new ArrayList<>();
+        selectedInstances.addAll(getAllSpecificInstances());
+        selectedInstances.addAll(getAllProposedInstances());
+        return selectedInstances;
+    }
+
+    /**
+     * Geeft de reservaties van het plan.
+     */
+    private List<ResourceReservation> getReservations() {
+        List<ResourceReservation> reservations = new ArrayList<>();
+        // niet-specifieke reservaties (proposed)
+        for (ResourceInstance resourceInstance : this.getAllProposedInstances()) {
+            reservations.add(new ResourceReservation(task, resourceInstance, getTimeSpan(), false));
+        }
+        // specifieke reservaties
+        for (ResourceInstance resourceInstance : this.getAllSpecificInstances()) {
+            reservations.add(new ResourceReservation(task, resourceInstance, getTimeSpan(), true));
+        }
+
+        return reservations;
+    }
+
+    private List<ResourceInstance> getAllSpecificInstances() {
+        List<ResourceInstance> instances = new ArrayList<>();
+        for (List<ResourceInstance> instancesOfType : this.specificInstances.values()) {
+            instances.addAll(instancesOfType);
+        }
+        return instances;
+    }
+
+    private List<ResourceInstance> getAllProposedInstances() {
+        List<ResourceInstance> instances = new ArrayList<>();
+        for (List<ResourceInstance> instancesOfType : this.proposedInstances.values()) {
+            instances.addAll(instancesOfType);
+        }
+        return instances;
     }
 }
