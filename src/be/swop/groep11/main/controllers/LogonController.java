@@ -32,6 +32,14 @@ public class LogonController extends AbstractController implements ILogin {
     private void identify() {
         int userIndex = getUserInterface().requestNumber("Kies een user uit bovenstaande lijst");
         User user = getBranchOffice().getEmployees().get(userIndex);
+        if (user.isDeveloper()){
+            setDeveloper((Developer) user);
+        }
+        if (user.isProjectManager()) {
+            setProjectManager((ProjectManager) user);
+        }
+
+        getUserInterface().printMessage("Je bent nu ingelogd als " + user.getName());
     }
 
     /**

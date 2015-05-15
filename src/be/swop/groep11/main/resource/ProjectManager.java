@@ -17,6 +17,10 @@ public class ProjectManager extends User{
         super(name);
     }
 
+    /**
+     * Gaat na of de user een project manager is.
+     * @return true
+     */
     @Override
     public boolean isProjectManager() {
         return true;
