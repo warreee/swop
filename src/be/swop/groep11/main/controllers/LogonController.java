@@ -58,12 +58,12 @@ public class LogonController extends AbstractController implements ILogin {
 
     @Override
     public boolean hasIdentifiedProjectManager() {
-        return identifiedPM;
+        return getProjectManager() != null;
     }
 
     @Override
     public boolean hasIdentifiedDeveloper() {
-        return false;
+        return getDeveloper() != null;
     }
 
     @Override
