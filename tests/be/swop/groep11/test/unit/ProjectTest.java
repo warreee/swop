@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class ProjectTest {
@@ -136,5 +137,10 @@ public class ProjectTest {
     public void NewProject_invalid_DueTimeNull() throws Exception {
         //DueTime mag niet null zijn
         new Project(name, description, create,null, systemTime, mock(BranchOffice.class));
+    }
+
+    @Test
+    public void updateAllStatusTest() {
+        fail("Nog niet geïmplementeerd!");
     }
 }

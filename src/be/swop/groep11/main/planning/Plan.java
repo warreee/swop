@@ -70,6 +70,7 @@ public class Plan {
 
     /** TODO: implementeren
      * Deze methode gaat na of dat er voor de gegeven systemTime een equivalent plan bestaat voor de taak
+     * Deze moet rekening houden met de resourcerepository waarnaar hij gedelegeerd is.
      * @return
      */
     public boolean hasEquivalentPlan(LocalDateTime systemTime) {

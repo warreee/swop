@@ -140,4 +140,10 @@ public class BranchOfficeTest {
         branchOffice1.delegateTask(task, branchOffice2);
     }
 
+
+    @Test
+    public void updateAllStatusTest() {
+        fail("Nog niet geïmplementeerd!");
+    }
+
 }
