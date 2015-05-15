@@ -1,4 +1,4 @@
-package be.swop.groep11.main.resource;
+package be.swop.groep11.main.util;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

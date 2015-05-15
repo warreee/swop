@@ -2,15 +2,15 @@ package be.swop.groep11.main.resource;
 
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.util.Util;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
- * Created by robin on 14/05/15.
+ * Klasse die gebruikt wordt om resources te kunnen plannen. Deze klasse houdt ook een lijst bij van alle plannen die
+ * al gemaakt zijn.
  */
 public class ResourcePlanner {
 
@@ -20,7 +20,7 @@ public class ResourcePlanner {
      * Maakt een nieuwe ResourcePlanner object aan. Dit ResourcePlanner object gebruikt de gegeven ResourceRepository om
      * alle resources in te plannen.
      *
-     * @param resourceRepository
+     * @param resourceRepository De ResourceRepository waaruit alle info over de resources wordt gehaald.
      */
     public ResourcePlanner(ResourceRepository resourceRepository){
         setResourceRepository(resourceRepository);
@@ -96,6 +96,68 @@ public class ResourcePlanner {
             }
         }
         return true;
+    }
+
+    /**
+     * Bepaald de n volgende mogelijke starttijden (alleen volledige uren vb 9:00 en 10:00) voor een gegeven
+     * requirementList.
+     * @param requirementList De IRequirementList die voldaan moet zijn.
+     * @param firstPossibleStartTime De eerste mogelijke starttijd vanaf wanneer de starttijden kunnen beginnen.
+     * @param duration Hoelang alle elementen in de IRequirementList beschikbaar moeten zijn.
+     * @param amount Hoeveel mogelijke starttijden er moeten berekend worden.
+     * @return Een lijst met de gevraagde hoeveelheid mogelijke starttijden.
+     */
+    public List<LocalDateTime> getNextStartTimes(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount){
+        LocalDateTime fullHour = Util.getNextHour(firstPossibleStartTime);
+        LocalDateTime furthest;
+        ArrayList<LocalDateTime> possibleStartTimes = new ArrayList<>();
+
+        while(possibleStartTimes.size() < amount) {
+            furthest = getFurthestTime(duration, fullHour, requirementList);
+            if(resourceRequirementsSatisfiable(new TimeSpan(fullHour, furthest), requirementList)){
+                possibleStartTimes.add(fullHour);
+            }
+            fullHour = fullHour.plusHours(1);
+        }
+        return possibleStartTimes;
+    }
+
+    /**
+     * Bepaald of voor een gegeven IRequirementList en TimeSpan alles beschikbaar is gedurende die TimeSpan.
+     * @param timeSpan De TimeSpan wanneer alles beschikbaar moet zijn.
+     * @param requirementList De IRequirementList die beschikbaar moet zijn.
+     * @return true als alles beschikbaar is, anders false.
+     */
+    private boolean resourceRequirementsSatisfiable(TimeSpan timeSpan, IRequirementList requirementList) {
+        Iterator<ResourceRequirement> it = requirementList.iterator();
+        while (it.hasNext()){
+            ResourceRequirement req = it.next();
+            if(!isAvailable(req.getType(), timeSpan, req.getAmount())){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Bepaald voor een IRequirementList de verste eindtijd vanaf een starttijd wanneer de IRequirementList een Duration
+     * beschikbaar moet zijn.
+     * @param duration Hoelang alle dingen in IRequirementList beschikbaar moeten zijn.
+     * @param startTime De starttijd vanaf wanneer de dingen in IRequirementList beschikbaar moeten zijn.
+     * @param requirementList De IRequirementList waarvan de verste eindtijd berekend moet worden.
+     * @return De verste eindtijd.
+     */
+    // TODO: information expert, hoort dit thuis in requirements list of waar?
+    private LocalDateTime getFurthestTime(Duration duration, LocalDateTime startTime, IRequirementList requirementList) {
+        LocalDateTime furthest = LocalDateTime.MIN;
+        Iterator<ResourceRequirement> it = requirementList.iterator();
+        while (it.hasNext()) {
+            LocalDateTime end = it.next().getType().calculateEndTime(startTime, duration);
+            if (end.isAfter(furthest)) {
+                furthest = end;
+            }
+        }
+        return furthest;
     }
 
     /**
