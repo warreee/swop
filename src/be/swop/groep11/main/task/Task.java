@@ -5,6 +5,7 @@ import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
+import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.OldPlan;
 import be.swop.groep11.main.resource.RequirementListBuilder;
@@ -558,6 +559,11 @@ public class Task{
 
     protected OldPlan getPlan() {
             return this.plan;
+    }
+
+    // TODO
+    protected Plan getPlan2() {
+        return null;
     }
 
     /**

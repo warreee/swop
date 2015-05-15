@@ -2,6 +2,7 @@ package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
+import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.OldPlan;
 
 import java.time.Duration;
@@ -125,7 +126,7 @@ public class TaskAvailable extends TaskStatus {
 
     @Override
     public void updateStatus(Task task, LocalDateTime systemTime) {
-        OldPlan plan = task.getPlan();
+        Plan plan = task.getPlan2();
         TimeSpan timespan = plan.getTimeSpan();
 
         if (!timespan.containsLocalDateTime(systemTime)){
