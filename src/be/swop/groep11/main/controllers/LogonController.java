@@ -13,6 +13,7 @@ public class LogonController extends AbstractController implements ILogin {
 
     private boolean identifiedPM = false;
     private Company company;
+    private BranchOffice branchOffice;
 
     public LogonController(UserInterface userInterface, Company company) {
         super(userInterface);
@@ -21,6 +22,7 @@ public class LogonController extends AbstractController implements ILogin {
     @Override
     public void logon() throws IllegalArgumentException {
         showBranchOffices();
+        selectBranchOffice();
     }
 
     @Override
@@ -30,9 +32,20 @@ public class LogonController extends AbstractController implements ILogin {
 
     }
 
-    public void showBranchOffices() {
-        getUserInterface().printMessage("Kies een Branch Office uit onderstaande lijst.");
+    /**
+     * Lijst weergave van de branchoffices.
+     */
+    private void showBranchOffices() {
         getUserInterface().showBranchOffices(this.company.getBranchOffices());
+
+    }
+
+    /**
+     * Vraagt aan de user op welke brancheoffice hij wilt inloggen.
+     */
+    private void selectBranchOffice() {
+        int branchOfficeIndex = getUserInterface().requestNumber("Kies een branchoffice uit bovenstaande lijst");
+        this.branchOffice = this.company.getBranchOffices().get(branchOfficeIndex);
     }
 
 
