@@ -59,20 +59,29 @@ public class PlanBuilder {
 
 
     /**
-     * Stelt resource instanties voor, door de huidige gekozen resource instanties aan te vullen
+     * Stelt resource instanties voor,
+     * door de huidige gekozen resource instanties aan te vullen
      * met andere resource instanties zodat aan de requirement lijst van de taak voldaan is.
      */
     public void proposeResources() {
         for (ResourceRequirement requirement : this.resourceRequirements) {
+
             AResourceType type = requirement.getType();
             int nbRequiredInstances = requirement.getAmount();
             int nbSelectedInstances = getSelectedInstances(requirement.getType()).size();
+
+            // welke instances kunnen nog gekozen worden?
+            List<ResourceInstance> instancesLeft = branchOffice.getResourcePlanner()
+                    .getInstances(type, getTimeSpan()).stream()
+                    .filter(x -> !getSelectedInstances(type).contains(x))
+                    .collect(Collectors.toList());
+
             for (int i=0; i<nbRequiredInstances-nbSelectedInstances; i++) {
-                // welke instances kunnen nog gekozen worden?
-                List<ResourceInstance> instancesLeft = branchOffice.getResourcePlanner().getInstances(
-                        type, getTimeSpan()).stream().filter(x -> !getSelectedInstances(type).contains(x)).collect(Collectors.toList());
                 if (instancesLeft.size() > 0) {
-                    addResourceInstance(instancesLeft.get(0));
+                    // voeg telkens 1 instantie toe
+                    ResourceInstance instance = instancesLeft.get(0);
+                    addResourceInstance(instance);
+                    instancesLeft.remove(instance);
                 }
             }
         }
