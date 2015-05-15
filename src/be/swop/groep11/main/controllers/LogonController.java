@@ -1,6 +1,7 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.BranchOffice;
+import be.swop.groep11.main.core.Company;
 import be.swop.groep11.main.resource.Developer;
 import be.swop.groep11.main.resource.ProjectManager;
 import be.swop.groep11.main.ui.UserInterface;
@@ -12,7 +13,7 @@ public class LogonController extends AbstractController implements ILogin {
 
     private boolean identifiedPM = false;
 
-    public LogonController(UserInterface userInterface) {
+    public LogonController(UserInterface userInterface, Company company) {
         super(userInterface);
     }
 
@@ -28,6 +29,11 @@ public class LogonController extends AbstractController implements ILogin {
         identifiedPM = false;
 
     }
+
+    public void showBranchOffices() {
+        getU
+    }
+
 
     @Override
     public boolean hasIdentifiedProjectManager() {

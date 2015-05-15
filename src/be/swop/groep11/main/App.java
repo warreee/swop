@@ -47,6 +47,7 @@ public class App {
     private ResourceManager resourceManager;
     private ProjectRepository projectRepository;
     private ControllerStack controllerStack;
+    private Company company;
 
     private MainController main;
     private TaskController taskController;
@@ -67,7 +68,7 @@ public class App {
         systemTime = new SystemTime(LocalDateTime.MIN);
 
         ResourceTypeRepository typeRepository = new ResourceTypeRepository();
-        Company company = new Company("company",typeRepository);
+        company = new Company("company",typeRepository);
 
         projectRepository = new ProjectRepository(systemTime);
         ResourceRepository resourceRepository = new ResourceRepository(typeRepository);
@@ -99,7 +100,7 @@ public class App {
         advanceTimeController = new AdvanceTimeController( systemTime, cli);
         simulationController = new SimulationController(controllerStack, projectRepository, cli);
         planningController = new PlanningController(projectRepository,resourceManager, systemTime, cli);
-        logonController = new LogonController(cli);
+        logonController = new LogonController(cli, company);
         main = new MainController(controllerStack, advanceTimeController,simulationController,projectController,
                 taskController, planningController, logonController, cli);
     }

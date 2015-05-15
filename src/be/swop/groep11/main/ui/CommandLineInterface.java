@@ -3,6 +3,7 @@ package be.swop.groep11.main.ui;
 import be.swop.groep11.main.actions.Action;
 import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.AbstractController;
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.EmptyListException;
@@ -233,6 +234,15 @@ public class CommandLineInterface implements UserInterface {
         if (task.getAlternativeTask() != null) {
             java.lang.System.out.printf(format, "Alternatieve taak: ", task.getAlternativeTask().getDescription());
         }
+    }
+
+    /**
+     * Geeft de teksweergave weer van alle branchoffices.
+     * @param branchOffices de lijst van branchoffices die in teksweergave moet weergeven worden.
+     */
+    @Override
+    public void showBranchOffices(ImmutableList<BranchOffice> branchOffices) {
+
     }
 
     //    @Override
