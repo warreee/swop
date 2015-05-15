@@ -40,7 +40,7 @@ public class Plan {
         return null;
     }
 
-    public boolean hasReservationFor(ResourceRequirement resourceRequirement) {
+    public boolean hasReservationsFor(ResourceRequirement resourceRequirement) {
         // TODO
         return false;
     }
