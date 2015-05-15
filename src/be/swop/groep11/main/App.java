@@ -40,7 +40,7 @@ public class App {
         initDomainObjects();
         initInputParser(readYamlFile);
         initControllers();
-        initBehaviourMapping();
+        initActionProcedures();
     }
     private SystemTime systemTime;
     private CommandLineInterface cli;
@@ -60,7 +60,7 @@ public class App {
         // maak een nieuwe CommandLineInterface aan
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(java.lang.System.in));
         cli = new CommandLineInterface(bufferedReader);
-        controllerStack = new ControllerStack(new ActionProcedure(() -> cli.printMessage("Ongeldige action"),() -> true));
+        controllerStack = new ControllerStack();
         cli.setControllerStack(controllerStack);
 
         //maak een nieuwe system aan
@@ -104,7 +104,9 @@ public class App {
                 taskController, planningController, logonController, cli);
     }
 
-    private void initBehaviourMapping(){
+    private void initActionProcedures() {
+
+        controllerStack.setInvalidActionProcedure(new ActionProcedure(() -> cli.printMessage("Ongeldige action"), () -> true));
 
         ActionCondition returnsTrue = () -> true;
 
@@ -115,29 +117,29 @@ public class App {
         ActionProcedure defaultHelp = new ActionProcedure(() -> cli.showHelp(controllerStack.getActiveController()), returnsTrue);
 
 
-        ActionProcedure createTask = new ActionProcedure(taskController,taskController::createTask, logonController::hasIdentifiedProjectManager);
-        ActionProcedure updateTask = new ActionProcedure(taskController,taskController::updateTask, logonController::hasIdentifiedDeveloper);
-        ActionProcedure planTask = new ActionProcedure(planningController,planningController::planTask, logonController::hasIdentifiedProjectManager);
+        ActionProcedure createTask = new ActionProcedure(taskController, taskController::createTask, logonController::hasIdentifiedProjectManager);
+        ActionProcedure updateTask = new ActionProcedure(taskController, taskController::updateTask, logonController::hasIdentifiedDeveloper);
+        ActionProcedure planTask = new ActionProcedure(planningController, planningController::planTask, logonController::hasIdentifiedProjectManager);
         ActionProcedure delegateTask = null;
 
-        ActionProcedure createProject = new ActionProcedure(projectController,projectController::createProject, logonController::hasIdentifiedProjectManager);
-        ActionProcedure showProjects = new ActionProcedure(projectController,projectController::showProjects, returnsTrue);
+        ActionProcedure createProject = new ActionProcedure(projectController, projectController::createProject, logonController::hasIdentifiedProjectManager);
+        ActionProcedure showProjects = new ActionProcedure(projectController, projectController::showProjects, returnsTrue);
 
-        ActionProcedure advanceTime = new ActionProcedure(advanceTimeController,advanceTimeController::advanceTime, returnsTrue);
+        ActionProcedure advanceTime = new ActionProcedure(advanceTimeController, advanceTimeController::advanceTime, returnsTrue);
 
-        ActionProcedure logon = new ActionProcedure(logonController,logonController::logon, () -> !logonController.hasIdentifiedProjectManager(),false);
-        ActionProcedure logout = new ActionProcedure(logonController,logonController::logOut, () -> logonController.hasIdentifiedUserAtBranchOffice(),true);
+        ActionProcedure logon = new ActionProcedure(logonController, logonController::logon, () -> !logonController.hasIdentifiedProjectManager(), false);
+        ActionProcedure logout = new ActionProcedure(logonController, logonController::logOut, () -> logonController.hasIdentifiedUserAtBranchOffice(), true);
 
-        ActionProcedure startSimulation = new ActionProcedure(simulationController,simulationController::startSimulation, logonController::hasIdentifiedProjectManager,false);
-        ActionProcedure cancelSim =new ActionProcedure(simulationController,simulationController::cancel, logonController::hasIdentifiedProjectManager,true);
-        ActionProcedure realizeSim = new ActionProcedure(simulationController,simulationController::realize, logonController::hasIdentifiedProjectManager,true);
+        ActionProcedure startSimulation = new ActionProcedure(simulationController, simulationController::startSimulation, logonController::hasIdentifiedProjectManager, false);
+        ActionProcedure cancelSim = new ActionProcedure(simulationController, simulationController::cancel, logonController::hasIdentifiedProjectManager, true);
+        ActionProcedure realizeSim = new ActionProcedure(simulationController, simulationController::realize, logonController::hasIdentifiedProjectManager, true);
 
 
-        //set default behaviours
+        //set default ActionProcedures
         controllerStack.addDefaultActionProcedure(Action.EXIT, defaultExit);
         controllerStack.addDefaultActionProcedure(Action.HELP, defaultHelp);
 
-
+        //set action procedure
         controllerStack.addActionProcedure(main, Action.LOGON, logon);
         controllerStack.addActionProcedure(main, Action.SHOWPROJECTS, showProjects);
 
@@ -145,7 +147,7 @@ public class App {
         controllerStack.addActionProcedure(logonController, Action.UPDATETASK, updateTask);
         controllerStack.addActionProcedure(logonController, Action.PLANTASK, planTask);
         controllerStack.addActionProcedure(logonController, Action.CREATEPROJECT, createProject);
-        controllerStack.addActionProcedure(logonController, Action.DELEGATETASK, delegateTask);
+//        controllerStack.addActionProcedure(logonController, Action.DELEGATETASK, delegateTask);
         controllerStack.addActionProcedure(logonController, Action.ADVANCETIME, advanceTime);
         controllerStack.addActionProcedure(logonController, Action.STARTSIMULATION, startSimulation);
 
@@ -154,13 +156,11 @@ public class App {
 
         controllerStack.addActionProcedure(simulationController, Action.CREATETASK, createTask);
         controllerStack.addActionProcedure(simulationController, Action.PLANTASK, planTask);
-        controllerStack.addActionProcedure(simulationController, Action.DELEGATETASK, delegateTask);
+//        controllerStack.addActionProcedure(simulationController, Action.DELEGATETASK, delegateTask);
         controllerStack.addActionProcedure(simulationController, Action.REALIZESIMULATION, realizeSim);
         controllerStack.addActionProcedure(simulationController, Action.CANCEL, cancelSim);
 
         controllerStack.addActionProcedure(simulationController, Action.SHOWPROJECTS, showProjects);
-
-
     }
 
     private void runApp(){

@@ -12,31 +12,31 @@ import java.util.LinkedList;
  */
 public class ControllerStack {
 
-    // Houdt lijst van Controllers bij die "actief zijn". De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit. Soort van execution stack
-    private LinkedList<AbstractController> controllerStack = new LinkedList<>();
+    /**
+     *  Constructor voor aanmaken van een ControllerStack
+     */
+    public ControllerStack() {
+    }
 
-    private ActionProcedure invalidProcedure;
-
-
+    /**
+     * Vraag de verzameling Actions die voor de gegeven AbstractController een corresponderende ActionProcedure bezitten die uitvoerbaar zijn.
+     * @param controller    De gegeven AbstractController
+     * @return              Een HashSet<Action> die alle Actions bevat die een uitvoerbare procedure bezitten voor de gegeven controller.
+     */
     public HashSet<Action> getAcceptableActions(AbstractController controller) {
         HashSet<Action> actions = new HashSet<>();
         HashMap<Action, ActionProcedure> actionProcedureHashMap = getControllerToActionMap().get(controller);
         actionProcedureHashMap.keySet().forEach(action -> actions.add(action));
-        System.out.println(actions);
+//        System.out.println(actions);
         return actions;
     }
 
-
     /**
-     *  Constructor voor aanmaken van een ActionBehaviourMapping
-     * @throws IllegalArgumentException
-     *                          Gooi indien de gegeven invalidStrategy niet geinitialiseerd is.
+     * Voor de gegeven Action, vraag de ActionProcedure op, en voer deze uit.
+     * @param action    De action waarvoor een ActionProcedure wordt uitgevoerd indien er één is.
+     *                  Anders wordt getInvalidProcedure() uitgevoerd.
      */
-    public ControllerStack(ActionProcedure invalidProcedure) {
-        this.invalidProcedure = invalidProcedure;
-    }
-
-    public void execute(Action action) {
+    public void executeAction(Action action) {
         //step 1 determine action to ActionProcedure map based on current Active Controller.
         HashMap<Action, ActionProcedure> actionMap = getControllerToActionMap().get(getActiveController());
         //step 2 get the corresponding ActionProcedure
@@ -58,7 +58,7 @@ public class ControllerStack {
     }
 
     private void printStack(String message) {
-        StringBuilder sb = new StringBuilder("\n" + message + "\n");
+        StringBuilder sb = new StringBuilder(message + "\n");
         for (int i = controllerStack.size() -1 ; i>=0; i--) {
             AbstractController controller = controllerStack.get(i);
             sb.append(i + ". " + controller.getClass().getSimpleName() + "\n");
@@ -73,16 +73,15 @@ public class ControllerStack {
         return controllerStack.getLast();
     }
     /**
-     * Voeg de gegeven AbstractController toe aan de executionStack.
-     * De laatste AbstractController op de stack is de actieve AbstractController.
-     * @param abstractController    De toe te voegen AbstractController, dewelke dus ook de actieve wordt.
+     * Voeg de gegeven AbstractController toe aan deze controllerStack.
+     * @param abstractController    De toe te voegen AbstractController.
      */
     public void activateController(AbstractController abstractController){
         controllerStack.addLast(abstractController);
     }
 
     /**
-     * Verwijder de gegeven AbstractController van de executionStack.
+     * Verwijder de gegeven AbstractController van deze controllerStack.
      * @param controller    De te verwijderen AbstractController
      */
     public void deActivateController(AbstractController controller){
@@ -91,27 +90,53 @@ public class ControllerStack {
             controllerStack.remove(controller);
         }
     }
+
+    // Houdt lijst van Controllers bij die "actief zijn". De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit. Soort van execution stack
+    private LinkedList<AbstractController> controllerStack = new LinkedList<>();
+
+    /**
+     * Controleer of de gegeven ActionProcedure een geldige ActionProcedure is.
+     * @param actionProcedure   De te controleren ActionProcedure
+     * @return                  Waar indien actionProcedure geïnitialiseerd is, anders niet waar.
+     */
     private boolean isValidActionProcedure(ActionProcedure actionProcedure) {
-        return true;
+        return actionProcedure != null;
     }
 
+    /**
+     * Geeft de ActionProcedure die wordt uitgevoerd indien men een Action heeft proberen uitvoeren waarvoor er geen corresponderende ActionProcedure is.
+     */
     public ActionProcedure getInvalidProcedure() {
         return invalidProcedure;
     }
 
-    public void addActionProcedure(AbstractController topStackController, Action action, ActionProcedure actionProcedure) {
+    private ActionProcedure invalidProcedure;
+
+    /**
+     * Toevoegen van een ActionProcedure aan deze ControllerStack.
+     * @param topStackController    De AbstractController waarvoor deze ActionProcedure uitvoerbaar moet zijn.
+     * @param action                De Action waarmee de ActionProcedure wordt opgeroepen.
+     * @param actionProcedure       De toe te voegen ActionProcedure.
+     * @throws IllegalArgumentException Gooi indien de gegeven actionProcedure niet geïnitialiseerd is.
+     */
+    public void addActionProcedure(AbstractController topStackController, Action action, ActionProcedure actionProcedure) throws IllegalArgumentException{
         if(!isValidActionProcedure(actionProcedure)) {
             throw new IllegalArgumentException("Invalid actionProcedure");
         }
 
-        HashMap<Action,ActionProcedure> m = controllerToActionMap.getOrDefault(topStackController, new HashMap<>(getDefaultActionProcedureMap()));
-        m.put(action, actionProcedure);
-        controllerToActionMap.put(topStackController, m);
-
+        HashMap<Action,ActionProcedure> actionToProcedureMap = controllerToActionMap.getOrDefault(topStackController, new HashMap<>(getDefaultActionProcedureMap()));
+        actionToProcedureMap.put(action, actionProcedure);
+        controllerToActionMap.put(topStackController, actionToProcedureMap);
     }
 
     private HashMap<AbstractController, HashMap<Action, ActionProcedure>> controllerToActionMap = new HashMap<>();
 
+    /**
+     * Toevoegen van een Default ActionProcedure, die voor alle AbstractControllers uitvoerbaar is.
+     * @param action            De Action waarmee de ActionProcedure wordt opgeroepen.
+     * @param actionProcedure    De toe te voegen ActionProcedure.
+     * @throws IllegalArgumentException Gooi indien de gegeven actionProcedure niet geïnitialiseerd is.
+     */
     public void addDefaultActionProcedure(Action action, ActionProcedure actionProcedure) {
         if(!isValidActionProcedure(actionProcedure)) {
             throw new IllegalArgumentException("Invalid actionProcedure");
@@ -119,13 +144,30 @@ public class ControllerStack {
         this.defaultActionProcedureMap.put(action, actionProcedure);
     }
 
-    public HashMap<Action, ActionProcedure> getDefaultActionProcedureMap() {
+    /**
+     * Geeft de DefaultActionProcedureMap terug.
+     */
+    private HashMap<Action, ActionProcedure> getDefaultActionProcedureMap() {
         return defaultActionProcedureMap;
     }
 
     private HashMap<Action, ActionProcedure> defaultActionProcedureMap = new HashMap<>();
 
+    /**
+     * Geeft de ControllerToActionMap terug.
+     */
     private  HashMap<AbstractController, HashMap<Action, ActionProcedure>> getControllerToActionMap() {
         return controllerToActionMap;
+    }
+    /**
+     * Definieer de ActionProcedure die wordt uitgevoerd indien er een onverwachte Action ontvangen werd.
+    *  @param invalidActionProcedure        De toe te voegen actionProcedure.
+    *  @throws IllegalArgumentException     Gooi indien de gegeven ActionProcedure niet geinitialiseerd is.
+    */
+    public void setInvalidActionProcedure(ActionProcedure invalidActionProcedure) {
+        if(!isValidActionProcedure(invalidActionProcedure)) {
+            throw new IllegalArgumentException("Invalid actionProcedure");
+        }
+        this.invalidProcedure = invalidActionProcedure;
     }
 }

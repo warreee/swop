@@ -5,5 +5,8 @@ package be.swop.groep11.main.actions;
  */
 public interface ActionCondition {
 
+    /**
+     * Geef terug of deze test slaagt of niet.
+     */
     boolean test();
 }

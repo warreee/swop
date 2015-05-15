@@ -6,6 +6,7 @@ import be.swop.groep11.main.controllers.AbstractController;
  * Created by Ronald on 14/05/2015.
  */
 public class ActionProcedure {
+
     private ActionCondition condition;
     private boolean deleteFromStack;
     private AbstractController controller;
@@ -27,6 +28,10 @@ public class ActionProcedure {
         this.deleteFromStack = deleteFromStack;
     }
 
+    /**
+     * Voer de ActionProcedure uit.
+     * @throws IllegalArgumentException
+     */
     public void perform() throws IllegalArgumentException {
         if (!condition.test()) {
             throw new IllegalArgumentException("Condition test failed"); //TODO bepaal nieuwe exception

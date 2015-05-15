@@ -44,7 +44,7 @@ public class CommandLineInterface implements UserInterface {
                     Action com = Action.getAction(commandString);
 //                    executeCommand(com);
 //                    controllerStack.executeAction(action)
-                    getControllerStack().execute(com);
+                    getControllerStack().executeAction(com);
                 } catch (IllegalActionException ec) {
                     printException(ec);
                 }
@@ -577,15 +577,13 @@ public class CommandLineInterface implements UserInterface {
 
     @Override
     public void showHelp(AbstractController abstractController) throws IllegalArgumentException {
-        ArrayList<Action> list = new ArrayList<>();
-        for (Action action : controllerStack.getAcceptableActions(abstractController)) {
-            list.add(action);
-        }
+        ArrayList<Action> list = new ArrayList<>(controllerStack.getAcceptableActions(abstractController));
+
         StringBuilder sb = new StringBuilder();
         for (Action cmd : list) {
             sb.append(String.format("%-2s%s%1s", "|", cmd.getActionStr(), " "));
         }
-        sb.append("|");
+        sb.append("| \n");
         printMessage(abstractController.getClass().getSimpleName() + ">  " + sb.toString());
     }
 }

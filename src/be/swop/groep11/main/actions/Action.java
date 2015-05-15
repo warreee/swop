@@ -16,7 +16,7 @@ public enum Action {
     UPDATETASK("Update Task"),
     CREATETASK("Create Task"),
     SHOWPROJECTS("Show Projects"),
-    PLANTASK("OldPlan Task"),
+    PLANTASK("Plan Task"),
     STARTSIMULATION("Start Simulation"),
     REALIZESIMULATION("Realize simulation"),
     LOGON("Logon"),

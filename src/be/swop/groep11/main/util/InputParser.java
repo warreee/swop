@@ -366,7 +366,7 @@ public class InputParser {
         }
 
         if(propertiesList.containsKey("startTime")){
-            task.execute(parseTime((String) propertiesList.get("startTime")));
+            task.executeAction(parseTime((String) propertiesList.get("startTime")));
         }
 
         if(propertiesList.containsKey("endTime")){
