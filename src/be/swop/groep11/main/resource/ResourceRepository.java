@@ -28,6 +28,7 @@ public class ResourceRepository {
      */
     public ResourceRepository(ResourceTypeRepository resourceTypeRepository){
         setResourceTypeRepository(resourceTypeRepository);
+        resources = new HashMap<>();
     }
 
     public void addResourceInstance(ResourceInstance resource) {
