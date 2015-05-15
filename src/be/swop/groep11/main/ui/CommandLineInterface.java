@@ -245,10 +245,6 @@ public class CommandLineInterface implements UserInterface {
         return selectFromList(branchOffices, showBranchOfficeEntry);
     }
 
-    @Override
-    public void showEmployees(ImmutableList<User> users) {
-        users.forEach(entry -> System.out.println(users.indexOf(entry) + ". " + entry.getName()));
-    }
 
     @Override
     public User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException {

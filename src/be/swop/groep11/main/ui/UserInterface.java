@@ -45,11 +45,11 @@ public interface UserInterface {
     /**
      * Toont alle branchoffices
      */
-    void showBranchOffices(ImmutableList<BranchOffice> branchOffices);
+    //void showBranchOffices(ImmutableList<BranchOffice> branchOffices);
 
     BranchOffice selectBranchOfficeFromList(ImmutableList<BranchOffice> branchOffices) throws EmptyListException, CancelException;
 
-    void showEmployees(ImmutableList<User> users);
+    //void showEmployees(ImmutableList<User> users);
 
     User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException;
 

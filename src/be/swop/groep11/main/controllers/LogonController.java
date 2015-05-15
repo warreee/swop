@@ -25,9 +25,8 @@ public class LogonController extends AbstractController implements ILogin {
     @Override
     public void logon() throws IllegalArgumentException {
         try {
-            showBranchOffices();
             selectBranchOffice();
-            showEmployees();
+
             identify();
         } catch (CancelException e) {
             getUserInterface().printException(e);
@@ -35,8 +34,7 @@ public class LogonController extends AbstractController implements ILogin {
     }
 
     private void identify() {
-        int userIndex = getUserInterface().requestNumber("Kies een user uit bovenstaande lijst");
-        User user = getBranchOffice().getEmployees().get(userIndex);
+        User user = getUserInterface().selectEmployeeFromList(getBranchOffice().getEmployees());
         if (user.isDeveloper()){
             setDeveloper((Developer) user);
         }
@@ -57,26 +55,16 @@ public class LogonController extends AbstractController implements ILogin {
         setProjectManager(null);
     }
 
-    /**
-     * Lijst weergave van de branchoffices.
-     */
-    private void showBranchOffices() {
-        getUserInterface().showBranchOffices(this.company.getBranchOffices());
 
-    }
 
     /**
      * Vraagt aan de user op welke brancheoffice hij wilt inloggen.
      */
     private void selectBranchOffice() {
-        int branchOfficeIndex = getUserInterface().requestNumber("Kies een branchoffice uit bovenstaande lijst");
-        this.branchOffice = this.company.getBranchOffices().get(branchOfficeIndex);
-        getUserInterface().selectTaskFromList()
+        this.branchOffice = getUserInterface().selectBranchOfficeFromList(this.company.getBranchOffices());
     }
 
-    private void showEmployees() {
-        getUserInterface().showEmployees(this.branchOffice.getEmployees());
-    }
+
 
 
     @Override
