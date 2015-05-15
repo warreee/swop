@@ -3,6 +3,7 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Company;
 import be.swop.groep11.main.core.User;
+import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.resource.Developer;
 import be.swop.groep11.main.resource.ProjectManager;
 import be.swop.groep11.main.ui.UserInterface;
@@ -23,10 +24,14 @@ public class LogonController extends AbstractController implements ILogin {
     }
     @Override
     public void logon() throws IllegalArgumentException {
-        showBranchOffices();
-        selectBranchOffice();
-        showEmployees();
-        identify();
+        try {
+            showBranchOffices();
+            selectBranchOffice();
+            showEmployees();
+            identify();
+        } catch (CancelException e) {
+            getUserInterface().printException(e);
+        }
     }
 
     private void identify() {
@@ -36,7 +41,7 @@ public class LogonController extends AbstractController implements ILogin {
             setDeveloper((Developer) user);
         }
         if (user.isProjectManager()) {
-            setProjectManager((ProjectManager) user);
+            setProjectManager((ProjectManager) user); //TODO waarom is hier een warning en bij vorige ifstatement niet?
         }
 
         getUserInterface().printMessage("Je bent nu ingelogd als " + user.getName());
