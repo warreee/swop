@@ -240,26 +240,19 @@ public class CommandLineInterface implements UserInterface {
      * Geeft de teksweergave weer van alle branchoffices.
      * @param branchOffices de lijst van branchoffices die in teksweergave moet weergeven worden.
      */
-    @Override
-    public void showBranchOffices(ImmutableList<BranchOffice> branchOffices) {
-        System.out.println(
-                " _______  ______    _______  __    _  _______  __   __    _______  _______  _______  ___   _______  _______  _______ \n" +
-                "|  _    ||    _ |  |   _   ||  |  | ||       ||  | |  |  |       ||       ||       ||   | |       ||       ||       |\n" +
-                "| |_|   ||   | ||  |  |_|  ||   |_| ||       ||  |_|  |  |   _   ||    ___||    ___||   | |       ||    ___||  _____|\n" +
-                "|       ||   |_||_ |       ||       ||       ||       |  |  | |  ||   |___ |   |___ |   | |       ||   |___ | |_____ \n" +
-                "|  _   | |    __  ||       ||  _    ||      _||       |  |  |_|  ||    ___||    ___||   | |      _||    ___||_____  |\n" +
-                "| |_|   ||   |  | ||   _   || | |   ||     |_ |   _   |  |       ||   |    |   |    |   | |     |_ |   |___  _____| |\n" +
-                "|_______||___|  |_||__| |__||_|  |__||_______||__| |__|  |_______||___|    |___|    |___| |_______||_______||_______|\n");
-
-
-        branchOffices.forEach(entry ->
-                System.out.println(branchOffices.indexOf(entry) + ". " + entry.getName()));
-        // TODO: wordt dit altijd in de juiste volgorde afgeprint?
+   @Override
+    public BranchOffice selectBranchOfficeFromList(ImmutableList<BranchOffice> branchOffices) throws EmptyListException, CancelException {
+        return selectFromList(branchOffices, showBranchOfficeEntry);
     }
 
     @Override
     public void showEmployees(ImmutableList<User> users) {
         users.forEach(entry -> System.out.println(users.indexOf(entry) + ". " + entry.getName()));
+    }
+
+    @Override
+    public User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException {
+        return null;
     }
 
     //    @Override

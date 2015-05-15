@@ -9,6 +9,7 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
+import com.sun.org.apache.bcel.internal.generic.IMUL;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,6 +50,8 @@ public interface UserInterface {
     BranchOffice selectBranchOfficeFromList(ImmutableList<BranchOffice> branchOffices) throws EmptyListException, CancelException;
 
     void showEmployees(ImmutableList<User> users);
+
+    User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException;
 
     /**
      * Selecteert een project uit een lijst van projecten.
