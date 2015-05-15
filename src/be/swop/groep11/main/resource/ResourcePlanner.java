@@ -1,12 +1,15 @@
 package be.swop.groep11.main.resource;
 
 import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.util.Util;
 
+import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Klasse die gebruikt wordt om resources te kunnen plannen. Deze klasse houdt ook een lijst bij van alle plannen die
@@ -14,7 +17,7 @@ import java.util.*;
  */
 public class ResourcePlanner {
 
-    private TreeMap<LocalDateTime, ArrayList<OldPlan>> planMap;
+    private TreeMap<LocalDateTime, ArrayList<Plan>> planMap;
 
     /**
      * Maakt een nieuwe ResourcePlanner object aan. Dit ResourcePlanner object gebruikt de gegeven ResourceRepository om
@@ -86,10 +89,10 @@ public class ResourcePlanner {
      */
     public boolean isAvailable(ResourceInstance resourceInstance, TimeSpan timeSpan){
         // Haal alle plannen op die beginnen voor de eindtijd van de gegeven timeSpan.
-        NavigableMap<LocalDateTime, ArrayList<OldPlan>> map = planMap.headMap(timeSpan.getEndTime(), true);
+        NavigableMap<LocalDateTime, ArrayList<Plan>> map = planMap.headMap(timeSpan.getEndTime(), true);
 
-        for(ArrayList<OldPlan> planList: map.values()){
-            for(OldPlan plan: planList){
+        for(ArrayList<Plan> planList: map.values()){
+            for(Plan plan: planList){
                 if (checkResourceInstanceOverlapsWithOtherPlan(resourceInstance, timeSpan, plan)) {
                     return false;
                 }
@@ -99,27 +102,63 @@ public class ResourcePlanner {
     }
 
     /**
-     * Bepaald de n volgende mogelijke starttijden (alleen volledige uren vb 9:00 en 10:00) voor een gegeven
+     * Voegt een nieuw plan toe aan deze ResourcePlanner.
+     *
+     * @param plan Het plan dat toegevoegd word.
+     */
+    public void addPlan(Plan plan){
+        checkPlan(plan);
+        if(planMap.containsKey(plan.getTimeSpan().getStartTime())){
+            planMap.get(plan.getTimeSpan().getStartTime()).add(plan);
+        } else {
+            ArrayList<Plan> list = new ArrayList<>();
+            list.add(plan);
+            planMap.put(plan.getTimeSpan().getStartTime(), list);
+        }
+    }
+
+    /**
+     * Controlleert of een plan niet null is en of dat het geen reservaties bevat voor ResourceInstances die op het
+     * moment van die reservatie al gereserveerd zijn.
+     *
+     * @param plan Het plan dat gecontrolleert moet worden.
+     * @throws IllegalArgumentException Wordt gegooid wanneer er een fout is.
+     */
+    // TODO: controlleert deze alles genoeg?
+    private void checkPlan(Plan plan){
+        if(plan == null){
+            throw new IllegalArgumentException("Plan mag niet 'null' zijn.");
+        }
+        for(ResourceReservation reservation: plan.getReservations()){
+            if(!isAvailable(reservation.getResourceInstance(), reservation.getTimeSpan())){
+                throw new IllegalArgumentException("Plan bevat een reservatie voor een ResourceInstance die al " +
+                        "gereserveerd is gedurende de tijdsduur van die reservatie.");
+            }
+        }
+    }
+
+    /**
+     * Bepaald de n volgende mogelijke TimeSpans (die starten op volledige uren vb 9:00 en 10:00) voor een gegeven
      * requirementList.
      * @param requirementList De IRequirementList die voldaan moet zijn.
-     * @param firstPossibleStartTime De eerste mogelijke starttijd vanaf wanneer de starttijden kunnen beginnen.
+     * @param firstPossibleStartTime De eerste mogelijke starttijd vanaf wanneer de TimeSpans kunnen beginnen.
      * @param duration Hoelang alle elementen in de IRequirementList beschikbaar moeten zijn.
-     * @param amount Hoeveel mogelijke starttijden er moeten berekend worden.
-     * @return Een lijst met de gevraagde hoeveelheid mogelijke starttijden.
+     * @param amount Hoeveel mogelijke TimeSpans er moeten berekend worden.
+     * @return Een lijst met de gevraagde hoeveelheid mogelijke TimeSpans.
      */
-    public List<LocalDateTime> getNextStartTimes(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount){
+    public List<TimeSpan> getNextPossibleTimeSpans(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount){
         LocalDateTime fullHour = Util.getNextHour(firstPossibleStartTime);
         LocalDateTime furthest;
-        ArrayList<LocalDateTime> possibleStartTimes = new ArrayList<>();
+        ArrayList<TimeSpan> possibleTimeSpans = new ArrayList<>();
 
-        while(possibleStartTimes.size() < amount) {
+        while(possibleTimeSpans.size() < amount) {
             furthest = getFurthestTime(duration, fullHour, requirementList);
             if(resourceRequirementsSatisfiable(new TimeSpan(fullHour, furthest), requirementList)){
-                possibleStartTimes.add(fullHour);
+                possibleTimeSpans.add(new TimeSpan(fullHour, furthest));
             }
             fullHour = fullHour.plusHours(1);
         }
-        return possibleStartTimes;
+        return possibleTimeSpans;
     }
 
     /**
@@ -161,6 +200,29 @@ public class ResourcePlanner {
     }
 
     /**
+     * Bepaald de n volgende mogelijke starttijden (die starten op volledige uren vb 9:00 en 10:00) voor een gegeven
+     * requirementList.
+     * @param requirementList De IRequirementList die voldaan moet zijn.
+     * @param firstPossibleStartTime De eerste mogelijke starttijd vanaf wanneer de starttijden kunnen beginnen.
+     * @param duration Hoelang alle elementen in de IRequirementList beschikbaar moeten zijn.
+     * @param amount Hoeveel mogelijke starttijden er moeten berekend worden.
+     * @return Een lijst met de gevraagde hoeveelheid mogelijke starttijden.
+     */
+    public List<LocalDateTime> getNextPossibleStartTimes(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount){
+        return getNextPossibleTimeSpans(requirementList, firstPossibleStartTime, duration, amount).stream().map(TimeSpan::getStartTime).collect(Collectors.toList());
+    }
+
+    /**
+     * Berekend alle ResourceInstances die beschikbaar zijn van een bepaald type gedurende een TimeSpan.
+     * @param type Het AResourceType dat beschikbaar moet zijn.
+     * @param timeSpan Wanneer het AResourceType beschikbaar moet zijn.
+     * @return Een lijst met alle ResourceInstances die beschikbaar zijn.
+     */
+    public List<ResourceInstance> getAvailableInstances(AResourceType type, TimeSpan timeSpan){
+        return resourceRepository.getResources(type).stream().filter(x -> isAvailable(x, timeSpan)).collect(Collectors.toList());
+    }
+
+    /**
      * Controlleer of een ResourceInstance in een TimeSpan voorkomt in een gegeven OldPlan. Dit gebeurt door alle reservaties
      * van een plan op te halen wanneer de TimeSpan van het plan overlapt met de gegeven TimeSpan.
      *
@@ -169,7 +231,7 @@ public class ResourcePlanner {
      * @param plan Het plan waar de ResourceInstance niet in mag zitten.
      * @return true als de ResourceInstance er in voorkomt, anders false.
      */
-    private boolean checkResourceInstanceOverlapsWithOtherPlan(ResourceInstance resourceInstance, TimeSpan timeSpan, OldPlan plan) {
+    private boolean checkResourceInstanceOverlapsWithOtherPlan(ResourceInstance resourceInstance, TimeSpan timeSpan, Plan plan) {
         // Controleer eerst of het plan wel overlapt met de timeSpan. Alleen dan zijn verdere berekeningen nuttig.
         if(plan.getTimeSpan().overlapsWith(timeSpan)) {
             for (ResourceReservation reservation : plan.getReservations(resourceInstance.getResourceType())) {
