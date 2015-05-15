@@ -11,8 +11,7 @@ import be.swop.groep11.main.ui.UserInterface;
  */
 public class LogonController extends AbstractController implements ILogin {
 
-    private boolean identifiedPM = false;
-    private Company company;
+    private Company company = null;
     private BranchOffice branchOffice = null;
     private Developer developer = null;
     private ProjectManager projectManager = null;
@@ -30,9 +29,7 @@ public class LogonController extends AbstractController implements ILogin {
 
     @Override
     public void logOut() throws IllegalArgumentException {
-        System.out.println("log out");
-        identifiedPM = false;
-        // remove all data
+
     }
 
     /**
@@ -89,5 +86,17 @@ public class LogonController extends AbstractController implements ILogin {
     @Override
     public BranchOffice getBranchOffice(){
         return this.branchOffice;
+    }
+
+    private void setBranchOffice(BranchOffice branchOffice) {
+        this.branchOffice = branchOffice;
+    }
+
+    private void setDeveloper(Developer developer) {
+        this.developer = developer;
+    }
+
+    private void setProjectManager(ProjectManager projectManager) {
+        this.projectManager = projectManager;
     }
 }
