@@ -16,4 +16,9 @@ public class ProjectManager extends User{
     public ProjectManager(String name) {
         super(name);
     }
+
+    @Override
+    public boolean isProjectManager() {
+        return true;
+    }
 }
