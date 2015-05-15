@@ -20,9 +20,9 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by Arne De Brabandere_3 on 30/04/2015.
  */
-public class PlanTest {
+public class OldPlanTest {
 
-    private Plan plan;
+    private OldPlan plan;
     private ResourceManager resourceManager;
     private LocalDateTime now;
 
@@ -35,7 +35,7 @@ public class PlanTest {
         builder.addNewRequirement(resourceManager.getDeveloperType(), 2);
         builder.addNewRequirement(resourceManager.getResourceTypeByName("Auto"), 1);
         Task task = new Task("test taak", Duration.ofHours(7), 0.1, new SystemTime(), new DependencyGraph(), builder.getRequirements(), mock(Project.class));
-        plan = new Plan(task, now, resourceManager);
+        plan = new OldPlan(task, now, resourceManager);
     }
 
     @Test

@@ -1,6 +1,9 @@
-package be.swop.groep11.main.resource;
+package be.swop.groep11.main.planning;
 
 import be.swop.groep11.main.core.BranchOffice;
+import be.swop.groep11.main.resource.AResourceType;
+import be.swop.groep11.main.resource.OldPlan;
+import be.swop.groep11.main.resource.ResourceInstance;
 import be.swop.groep11.main.task.Task;
 
 import java.time.LocalDateTime;
@@ -67,7 +70,7 @@ public class PlanBuilder {
         return false;
     }
 
-    public Plan getPlan() {
+    public OldPlan getPlan() {
         return null;
     }
 

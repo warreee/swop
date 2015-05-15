@@ -14,7 +14,7 @@ import java.util.TreeMap;
  */
 public class ResourcePlanner {
 
-    private TreeMap<LocalDateTime, ArrayList<Plan>> planMap;
+    private TreeMap<LocalDateTime, ArrayList<OldPlan>> planMap;
 
     /**
      * Maakt een nieuwe ResourcePlanner object aan. Dit ResourcePlanner object gebruikt de gegeven ResourceRepository om
@@ -86,10 +86,10 @@ public class ResourcePlanner {
      */
     public boolean isAvailable(ResourceInstance resourceInstance, TimeSpan timeSpan){
         // Haal alle plannen op die beginnen voor de eindtijd van de gegeven timeSpan.
-        NavigableMap<LocalDateTime, ArrayList<Plan>> map = planMap.headMap(timeSpan.getEndTime(), true);
+        NavigableMap<LocalDateTime, ArrayList<OldPlan>> map = planMap.headMap(timeSpan.getEndTime(), true);
 
-        for(ArrayList<Plan> planList: map.values()){
-            for(Plan plan: planList){
+        for(ArrayList<OldPlan> planList: map.values()){
+            for(OldPlan plan: planList){
                 if (checkResourceInstanceOverlapsWithOtherPlan(resourceInstance, timeSpan, plan)) {
                     return false;
                 }
@@ -99,7 +99,7 @@ public class ResourcePlanner {
     }
 
     /**
-     * Controlleer of een ResourceInstance in een TimeSpan voorkomt in een gegeven Plan. Dit gebeurt door alle reservaties
+     * Controlleer of een ResourceInstance in een TimeSpan voorkomt in een gegeven OldPlan. Dit gebeurt door alle reservaties
      * van een plan op te halen wanneer de TimeSpan van het plan overlapt met de gegeven TimeSpan.
      *
      * @param resourceInstance De ResourceInstance die nog niet in het plan mag zitten.
@@ -107,7 +107,7 @@ public class ResourcePlanner {
      * @param plan Het plan waar de ResourceInstance niet in mag zitten.
      * @return true als de ResourceInstance er in voorkomt, anders false.
      */
-    private boolean checkResourceInstanceOverlapsWithOtherPlan(ResourceInstance resourceInstance, TimeSpan timeSpan, Plan plan) {
+    private boolean checkResourceInstanceOverlapsWithOtherPlan(ResourceInstance resourceInstance, TimeSpan timeSpan, OldPlan plan) {
         // Controleer eerst of het plan wel overlapt met de timeSpan. Alleen dan zijn verdere berekeningen nuttig.
         if(plan.getTimeSpan().overlapsWith(timeSpan)) {
             for (ResourceReservation reservation : plan.getReservations(resourceInstance.getResourceType())) {

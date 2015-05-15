@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Stelt een plan voor om reservaties te maken voor een taak.
  */
-public class Plan {
+public class OldPlan {
 
     private ResourceManager resourceManager;
 
@@ -22,7 +22,7 @@ public class Plan {
      * @param startTime       De starttijd van het plan: moet op een uur vallen (zonder minuten)
      * @param resourceManager De resource manager die het plan moet gebruiken
      */
-    public Plan(Task task, LocalDateTime startTime,ResourceManager resourceManager) {
+    public OldPlan(Task task, LocalDateTime startTime, ResourceManager resourceManager) {
         if (resourceManager == null) {
             throw new IllegalArgumentException("resourceManager mag niet null zijn");
         }

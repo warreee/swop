@@ -104,7 +104,7 @@ public class PlanTaskScenarioTest {
 
     @Test (expected = IllegalStateException.class)
     public void PlanTask_ConflictTest() throws Exception {
-        Plan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
+        OldPlan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
         tasks.get(1).plan(plan);
 
         // selecteer de juiste taak:
@@ -134,7 +134,7 @@ public class PlanTaskScenarioTest {
 
     @Test
     public void PlanTask_ResolveConflict_MoveCurrentTaskTest() throws Exception {
-        Plan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
+        OldPlan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
         List<ResourceInstance> developers = new ArrayList<>();
         developers.add(resourceManager.getDeveloperType().getResourceInstances().get(3));
         plan.addReservations(developers);
@@ -178,7 +178,7 @@ public class PlanTaskScenarioTest {
 
     @Test
     public void PlanTask_ResolveConflict_MoveOtherTasksTest() throws Exception {
-        Plan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
+        OldPlan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
         List<ResourceInstance> developers = new ArrayList<>();
         developers.add(resourceManager.getDeveloperType().getResourceInstances().get(3));
         plan.addReservations(developers);

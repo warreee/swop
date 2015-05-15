@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class ResourceManager{
 
-    // TODO: methodes voor resource types hier uit halen + andere klassen aanpassen (controllers en Plan)
+    // TODO: methodes voor resource types hier uit halen + andere klassen aanpassen (controllers en OldPlan)
 
     /**
      * Constructor om een nieuwe resource manager aan te maken.
@@ -239,7 +239,7 @@ public class ResourceManager{
      * @param plan Het gegeven plan
      * @throws IllegalArgumentException Het plan is niet geldig.
      */
-    protected void makeReservationsForPlan(Plan plan) throws IllegalArgumentException {
+    protected void makeReservationsForPlan(OldPlan plan) throws IllegalArgumentException {
         if (! plan.isValid()) {
             throw new IllegalArgumentException("Ongeldig plan");
         }
@@ -421,14 +421,14 @@ public class ResourceManager{
      * @param dateTime Het gegeven tijdstip waarna de plannen moeten starten
      * @return Een lijst van lengte n van de eerstvolgende mogelijke plannen
      */
-    public List<Plan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
+    public List<OldPlan> getNextPlans(int n, Task task, LocalDateTime dateTime) {
         // TODO: dit is misschien nog niet effici�nt genoeg?
 
-        List<Plan> plans = new LinkedList<>();
+        List<OldPlan> plans = new LinkedList<>();
 
         LocalDateTime startTime = getNextHour(dateTime);
         while (plans.size() < n) {
-            Plan nextPlan = new Plan(task, startTime,this);
+            OldPlan nextPlan = new OldPlan(task, startTime,this);
             if (nextPlan.isValidWithoutDevelopers()) {
                 plans.add(nextPlan);
             }
@@ -444,7 +444,7 @@ public class ResourceManager{
      * @param task     De te plannen taak
      * @param dateTime De starttijd
      */
-    public Plan getCustomPlan(Task task, LocalDateTime dateTime) {
-        return new Plan(task, dateTime,this);
+    public OldPlan getCustomPlan(Task task, LocalDateTime dateTime) {
+        return new OldPlan(task, dateTime,this);
     }
 }

@@ -56,7 +56,7 @@ public class PlanningController extends AbstractController {
 
             Task task = ui.selectTaskFromList(this.requestUnplannedTasks());
 
-            List<Plan> plans = planTask(task);
+            List<OldPlan> plans = planTask(task);
 
             /* 10. The system makes the required reservations and assigns the selected
                 developers. */
@@ -64,7 +64,7 @@ public class PlanningController extends AbstractController {
             // op dit moment zouden er geen conflicten in de plannen mogen zitten
             // hopelijk is dit ook zo...
 
-            for (Plan plan : plans) {
+            for (OldPlan plan : plans) {
                 plan.getTask().plan(plan);
                 ui.printMessage("Taak gepland ("+task.getDescription()+")");
             }
@@ -81,8 +81,8 @@ public class PlanningController extends AbstractController {
      * @param task De taak die gepland moet worden.
      * @return Een lijst met plannen.
      */
-    private List<Plan> planTask(Task task) {
-        List<Plan> plans = new ArrayList<>();
+    private List<OldPlan> planTask(Task task) {
+        List<OldPlan> plans = new ArrayList<>();
 
         ui.printMessage("Maak een plan voor de taak: " + task.getDescription());
 
@@ -91,7 +91,7 @@ public class PlanningController extends AbstractController {
             time) that a task can be planned (i.e. enough resource instances and
             developers are available) */
 
-        Map<LocalDateTime, Plan> plansMap = requestNextStartTimes(3, task);
+        Map<LocalDateTime, OldPlan> plansMap = requestNextStartTimes(3, task);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             String msgTimes = "De eerste 3 mogelijke starttijden zijn:\n";
@@ -117,7 +117,7 @@ public class PlanningController extends AbstractController {
             type instance to perform the task, the system proposes a resource instance
             to make a reservation for. */
 
-            Plan plan = resourceManager.getCustomPlan(task, startTime);
+            OldPlan plan = resourceManager.getCustomPlan(task, startTime);
 
         try {
 
@@ -253,10 +253,10 @@ public class PlanningController extends AbstractController {
      * @param task De Task waarvoor er tijden opgehaald moeten worden.
      * @return Een map met de starttijd en het plan.
      */
-    private Map<LocalDateTime,Plan> requestNextStartTimes(int n, Task task) {
-        Map<LocalDateTime,Plan> map = new LinkedHashMap<>();
-        List<Plan> plans = resourceManager.getNextPlans(n, task, systemTime.getCurrentSystemTime());
-        for (Plan plan : plans) {
+    private Map<LocalDateTime,OldPlan> requestNextStartTimes(int n, Task task) {
+        Map<LocalDateTime,OldPlan> map = new LinkedHashMap<>();
+        List<OldPlan> plans = resourceManager.getNextPlans(n, task, systemTime.getCurrentSystemTime());
+        for (OldPlan plan : plans) {
             map.put(plan.getStartTime(), plan);
         }
         return map;
@@ -268,8 +268,8 @@ public class PlanningController extends AbstractController {
      * @param plan Het conflicterende plan.
      * @return Een lijst met plannen.
      */
-    private List<Plan> resolveConflict(Task task, Plan plan) {
-        List<Plan> plans = new ArrayList<>();
+    private List<OldPlan> resolveConflict(Task task, OldPlan plan) {
+        List<OldPlan> plans = new ArrayList<>();
 
         String msgConflictingTasks = "De planning voor de taak "+task.getDescription()+" conflicteert met de volgende taken:";
         for (Task conflictingTask : plan.getConflictingTasks()) {
@@ -291,7 +291,7 @@ public class PlanningController extends AbstractController {
             }
         }
 
-        List<Plan> newPlansForTask = planTask(task);
+        List<OldPlan> newPlansForTask = planTask(task);
         plans.addAll(newPlansForTask);
 
         return plans;

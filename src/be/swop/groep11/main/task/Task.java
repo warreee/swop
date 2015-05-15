@@ -6,7 +6,7 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.resource.IRequirementList;
-import be.swop.groep11.main.resource.Plan;
+import be.swop.groep11.main.resource.OldPlan;
 import be.swop.groep11.main.resource.RequirementListBuilder;
 
 import java.time.Duration;
@@ -531,7 +531,7 @@ public class Task{
      * @param plan Het plan voor deze taak
      * @throws IllegalStateException De taak kan niet gepland worden.
      */
-    public void plan(Plan plan) {
+    public void plan(OldPlan plan) {
         this.getStatus().plan(this, plan);
     }
 
@@ -549,14 +549,14 @@ public class Task{
         return plan.getStartTime();
     }
 
-    private Plan plan;
+    private OldPlan plan;
 
-    protected void setPlan(Plan plan) {
+    protected void setPlan(OldPlan plan) {
         plan.applyReservations();
         this.plan = plan;
     }
 
-    protected Plan getPlan() {
+    protected OldPlan getPlan() {
             return this.plan;
     }
 
