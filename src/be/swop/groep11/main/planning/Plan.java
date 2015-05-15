@@ -1,6 +1,7 @@
 package be.swop.groep11.main.planning;
 
 import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.resource.ResourceInstance;
 import be.swop.groep11.main.resource.ResourcePlanner;
 import be.swop.groep11.main.resource.ResourceRequirement;
 import be.swop.groep11.main.resource.ResourceReservation;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public class Plan {
 
-    protected Plan(Task task, ResourcePlanner resourcePlanner) {
+    protected Plan(Task task, ResourcePlanner resourcePlanner, List<ResourceReservation> reservations) {
         // TODO
     }
 
