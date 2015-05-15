@@ -3,14 +3,14 @@ package be.swop.groep11.main.resource;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.util.Util;
-import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
 /**
- * Created by robin on 14/05/15.
+ * Klasse die gebruikt wordt om resources te kunnen plannen. Deze klasse houdt ook een lijst bij van alle plannen die
+ * al gemaakt zijn.
  */
 public class ResourcePlanner {
 
@@ -20,7 +20,7 @@ public class ResourcePlanner {
      * Maakt een nieuwe ResourcePlanner object aan. Dit ResourcePlanner object gebruikt de gegeven ResourceRepository om
      * alle resources in te plannen.
      *
-     * @param resourceRepository
+     * @param resourceRepository De ResourceRepository waaruit alle info over de resources wordt gehaald.
      */
     public ResourcePlanner(ResourceRepository resourceRepository){
         setResourceRepository(resourceRepository);
@@ -147,6 +147,7 @@ public class ResourcePlanner {
      * @param requirementList De IRequirementList waarvan de verste eindtijd berekend moet worden.
      * @return De verste eindtijd.
      */
+    // TODO: information expert, hoort dit thuis in requirements list of waar?
     private LocalDateTime getFurthestTime(Duration duration, LocalDateTime startTime, IRequirementList requirementList) {
         LocalDateTime furthest = LocalDateTime.MIN;
         Iterator<ResourceRequirement> it = requirementList.iterator();
