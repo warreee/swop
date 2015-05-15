@@ -1,11 +1,13 @@
 package be.swop.groep11.main.core;
 
+import be.swop.groep11.main.util.Observable;
+
 import java.time.LocalDateTime;
 
 /**
  * Houdt een systeemtijd bij.
  */
-public class SystemTime {
+public class SystemTime extends Observable<SystemTime>{
 
 
     /**
@@ -14,6 +16,8 @@ public class SystemTime {
     public SystemTime() {
         this.currentSystemTime = LocalDateTime.now();
     }
+
+
 
     /**
      * Initialiseerd deze SystemTime met de doorgegeven tijd.
@@ -61,6 +65,7 @@ public class SystemTime {
      */
     public void updateSystemTime(LocalDateTime newTime)throws IllegalArgumentException {
         setCurrentSystemTime(newTime);
+//        updateObservers();
     }
 
 }

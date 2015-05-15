@@ -201,7 +201,7 @@ public class TaskController extends AbstractController {
     private void doTransition(String status, Task task) throws IllegalArgumentException {
         status = status.toLowerCase();
         switch (status) {
-            case "execute":
+            case "executeAction":
                 task.execute(getUserInterface().requestDatum("Starttijd:"));
                 // TODO: planned of unplanned execution? (unplanned => extra reservaties maken = mogelijk)
                 break;

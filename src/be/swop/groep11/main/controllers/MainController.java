@@ -62,6 +62,27 @@ public class MainController extends AbstractController {
         deActivate(projectController);
     }
 
+
+//    public void createTask(){
+//        preCreateTask();
+//        preformCreateTask();
+//        postCreateTask();
+//    }
+//
+//    public void preCreateTask(){
+//        activate(taskController);
+//    }
+//
+//    public void preformCreateTask()throws IllegalArgumentException {
+//        throw new IllegalArgumentException("Niet ondersteund");
+//
+//    }
+//
+//    public void postCreateTask(){
+//        deActivate(taskController);
+//    }
+
+
     /**
      * Voert de usecase createTask uit.
      * @throws IllegalArgumentException Wordt gegooid als er ergens een fout optreed die niet herstelbaar is.

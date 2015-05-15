@@ -30,7 +30,7 @@ public class Task{
      * @param systemTime            De systeemtijd die de nieuwe taak moet gebruiken
      * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
      * @param requirementList       De lijst van resource requirements voor de nieuwe taak
-     * @throws java.lang.IllegalArgumentException Ongeldige beschrijving, ongeldige verwachte duur, ongeldige aanvaardbare marge,
+     * @throws IllegalArgumentException Ongeldige beschrijving, ongeldige verwachte duur, ongeldige aanvaardbare marge,
      *                                            ongeldige requirement lijst of ongeldig project
      */
     public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph, IRequirementList requirementList, Project project) throws IllegalArgumentException {

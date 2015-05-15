@@ -16,11 +16,13 @@ public enum Action {
     UPDATETASK("Update Task"),
     CREATETASK("Create Task"),
     SHOWPROJECTS("Show Projects"),
-    PLANTASK("OldPlan Task"),
+    PLANTASK("Plan Task"),
     STARTSIMULATION("Start Simulation"),
     REALIZESIMULATION("Realize simulation"),
     LOGON("Logon"),
-    INVALIDACTION("");
+    LOGOUT("Logout"),
+    INVALIDACTION(""),
+    DELEGATETASK("Delegate task");
 
     /**
      * Constructor voor een Action, met een stringRepresentatie die.

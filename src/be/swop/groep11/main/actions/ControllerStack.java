@@ -3,6 +3,7 @@ package be.swop.groep11.main.actions;
 import be.swop.groep11.main.controllers.AbstractController;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 /**
@@ -10,78 +11,77 @@ import java.util.LinkedList;
  * Extra verantwoordelijkheid is het bijhouden van de ControllerStack (execution stack).
  */
 public class ControllerStack {
-    /**
-     *  Constructor voor aanmaken van een ActionBehaviourMapping
-     * @param invalidBehaviour   De ActionStrategy(gedrag) uit te voeren, indien een action niet geldig is.
-     * @throws IllegalArgumentException
-     *                          Gooi indien de gegeven invalidStrategy niet geinitialiseerd is.
-     */
-    public ControllerStack(ActionBehaviour invalidBehaviour) {
 
-        if (!canHaveAsInvalidStrategy(invalidBehaviour)) {
-            throw new IllegalArgumentException("Ongeldige invalidBehaviour strategy");
+    /**
+     *  Constructor voor aanmaken van een ControllerStack
+     */
+    public ControllerStack() {
+    }
+
+    /**
+     * Vraag de verzameling Actions die voor de gegeven AbstractController een corresponderende ActionProcedure bezitten die uitvoerbaar zijn.
+     * @param controller    De gegeven AbstractController
+     * @return              Een HashSet<Action> die alle Actions bevat die een uitvoerbare procedure bezitten voor de gegeven controller.
+     */
+    public HashSet<Action> getAcceptableActions(AbstractController controller) {
+        HashSet<Action> actions = new HashSet<>();
+        HashMap<Action, ActionProcedure> actionProcedureHashMap = getControllerToActionMap().get(controller);
+        actionProcedureHashMap.keySet().forEach(action -> actions.add(action));
+//        System.out.println(actions);
+        return actions;
+    }
+
+    /**
+     * Voor de gegeven Action, vraag de ActionProcedure op, en voer deze uit.
+     * @param action    De action waarvoor een ActionProcedure wordt uitgevoerd indien er één is.
+     *                  Anders wordt getInvalidProcedure() uitgevoerd.
+     */
+    public void executeAction(Action action) {
+        //step 1 determine action to ActionProcedure map based on current Active Controller.
+        HashMap<Action, ActionProcedure> actionMap = getControllerToActionMap().get(getActiveController());
+        //step 2 get the corresponding ActionProcedure
+        ActionProcedure procedure = actionMap.getOrDefault(action, getInvalidProcedure());
+        printStack("before");
+        //Step 2 activate controller
+        if (procedure.hasNewPreController()) {
+            activateController(procedure.getNewPreController());
         }
-        this.invalidBehaviour = invalidBehaviour;
-    }
+        //step 4 uitvoeren
+        printStack("during");
+        procedure.perform();
 
-    /**
-     * Check of voor deze ActionBehaviourMapping de gegeven ActionStrategy een geldige invalidStrategy kan zijn.
-     * InvalidStrategy is degene die wordt uitgevoerd indien er geen mapping bestaat.
-     * @param invalidBehaviour   De te controleren ActionStrategy
-     * @return                  Waar indien de invalidStrategy geinitialiseerd is.
-     */
-    private boolean canHaveAsInvalidStrategy(ActionBehaviour invalidBehaviour) {
-        return invalidBehaviour != null;
-    }
-
-    private ActionBehaviour invalidBehaviour;
-    // Houdt lijst van Controllers bij die "actief zijn". De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit. Soort van execution stack
-    private LinkedList<AbstractController> controllerStack = new LinkedList<>();
-    //Gegeven een controller verkrijg de corresponderende ActionBehaviours voor de aanvaarde commands in die controller.
-    private HashMap<AbstractController,HashMap<Action,ActionBehaviour>> controllerActionBehavioursMap = new HashMap<>();
-    //Een Map die voor een action een standaard ActionStrategy bepaald. Zodat iedere nieuwe controller die gemapt wordt reeds enkele standaard behaviours bevat
-    private HashMap<Action,ActionBehaviour> defaultActionBehavioursMap = new HashMap<>();
-
-    /**
-     * Het toevoegen an een ActionBehaviour voor de gegeven Action voor een specifieke AbstractController.
-     * @param controller    De AbstractController waarvoor de nieuwe ActionBehaviour wordt gedefinieerd
-     * @param action        De Action geassocieerd met de nieuwe ActionBehaviour
-     * @param behaviour     De toe te voegen ActionBehaviour
-     */
-    public void addActionBehaviour(AbstractController controller, Action action, ActionBehaviour behaviour) {
-        HashMap<Action,ActionBehaviour> map = controllerActionBehavioursMap.get(controller);
-        if(map == null){  //Niets te vinden, geen mapping voor gegeven controller
-            map = new HashMap<>(getDefaultMap()); //Start van default Map<Action,ActionBehaviour>
+        //Step 5 deactivateAfter
+        if (procedure.toDeleteFromStack()) {
+            deActivateController(getActiveController());
         }
-        map.put(action,behaviour);
-        controllerActionBehavioursMap.put(controller, map);
+        printStack("after");
     }
 
-    /**
-     * Het verwijderen van een ActionBehaviour geassocieerd met de Gegeven Action voor de gegeven AbstractController.
-     * @param controller    De AbstractController waarvoor men de ActionBehaviour geassocieerd met de Action wilt verwijderen
-     * @param action        De Action geassocieerd met de ActionBehaviour, dewelke men wil verwijderen
-     */
-    private void removeActionBehaviour(AbstractController controller, Action action) {
-        HashMap<Action,ActionBehaviour> map = controllerActionBehavioursMap.get(controller);
-        if(map == null){
-            //Niets te vinden
-            throw new IllegalArgumentException("Geen mapping aanwezig voor de gegeven controller");
+    private void printStack(String message) {
+        StringBuilder sb = new StringBuilder(message + "\n");
+        for (int i = controllerStack.size() -1 ; i>=0; i--) {
+            AbstractController controller = controllerStack.get(i);
+            sb.append(i + ". " + controller.getClass().getSimpleName() + "\n");
         }
-        map.remove(action);
+        System.out.println(sb.toString());
     }
 
     /**
-     * Voeg de gegeven AbstractController toe aan de executionStack.
-     * De laatste AbstractController op de stack is de actieve AbstractController.
-     * @param abstractController    De toe te voegen AbstractController, dewelke dus ook de actieve wordt.
+     * @return  De laatste toegevoegde AbstractController aan de ExecutionStack
+     */
+    public AbstractController getActiveController(){
+        return controllerStack.getLast();
+    }
+    /**
+     * Voeg de gegeven AbstractController toe aan deze controllerStack.
+     * @param abstractController    De toe te voegen AbstractController.
      */
     public void activateController(AbstractController abstractController){
         controllerStack.addLast(abstractController);
     }
 
     /**
-     * Verwijder de gegeven AbstractController van de executionStack.
+     * Verwijder de gegeven AbstractController van deze controllerStack.
      * @param controller    De te verwijderen AbstractController
      */
     public void deActivateController(AbstractController controller){
@@ -91,84 +91,83 @@ public class ControllerStack {
         }
     }
 
-    /**
-     * Voor de gepaste ActionBehaviour uit voor de gegeven Action.
-     * Verkrijg de Map<Action,ActionBehaviour> voor de huidige Actieve Controller.
-     * Verkrijg ui die map de gepaste ActionBehaviour en voer deze uit.
-     * Indien er geen ActionBehaviour bestaat voor de gegeven Action, voor de InvalidBehaviour uit.
-     * @param action    De Action waarvoor men het gepaste ActionBehaviour wil uitvoeren.
-     */
-    public void executeAction(Action action){
-        HashMap<Action,ActionBehaviour> map = getMappingFor(getActiveController());
+    // Houdt lijst van Controllers bij die "actief zijn". De laatst toegevoegde Controller stelt het use case voor waarin de gebruiker zit. Soort van execution stack
+    private LinkedList<AbstractController> controllerStack = new LinkedList<>();
 
-        ActionBehaviour behaviour = map.get(action);
-        if(behaviour != null){
-            behaviour.execute();
-        }else{
-            //Action niet herkend!
-            getInvalidBehaviour().execute();
+    /**
+     * Controleer of de gegeven ActionProcedure een geldige ActionProcedure is.
+     * @param actionProcedure   De te controleren ActionProcedure
+     * @return                  Waar indien actionProcedure geïnitialiseerd is, anders niet waar.
+     */
+    private boolean isValidActionProcedure(ActionProcedure actionProcedure) {
+        return actionProcedure != null;
+    }
+
+    /**
+     * Geeft de ActionProcedure die wordt uitgevoerd indien men een Action heeft proberen uitvoeren waarvoor er geen corresponderende ActionProcedure is.
+     */
+    public ActionProcedure getInvalidProcedure() {
+        return invalidProcedure;
+    }
+
+    private ActionProcedure invalidProcedure;
+
+    /**
+     * Toevoegen van een ActionProcedure aan deze ControllerStack.
+     * @param topStackController    De AbstractController waarvoor deze ActionProcedure uitvoerbaar moet zijn.
+     * @param action                De Action waarmee de ActionProcedure wordt opgeroepen.
+     * @param actionProcedure       De toe te voegen ActionProcedure.
+     * @throws IllegalArgumentException Gooi indien de gegeven actionProcedure niet geïnitialiseerd is.
+     */
+    public void addActionProcedure(AbstractController topStackController, Action action, ActionProcedure actionProcedure) throws IllegalArgumentException{
+        if(!isValidActionProcedure(actionProcedure)) {
+            throw new IllegalArgumentException("Invalid actionProcedure");
         }
+
+        HashMap<Action,ActionProcedure> actionToProcedureMap = controllerToActionMap.getOrDefault(topStackController, new HashMap<>(getDefaultActionProcedureMap()));
+        actionToProcedureMap.put(action, actionProcedure);
+        controllerToActionMap.put(topStackController, actionToProcedureMap);
     }
 
+    private HashMap<AbstractController, HashMap<Action, ActionProcedure>> controllerToActionMap = new HashMap<>();
+
     /**
-     * Geeft een Map<Action,ActionBehaviour> voor de gegeven AbstractController.
-     * Dewelke de associaties tussen Action en ActionBehaviour bevat.
-     * @param controller    De AbstractController waarvoor men de Map wilt opvragen.
-     * @return              HashMap<Action,ActionBehaviour>
-     * @throws IllegalArgumentException
-     *                      Gooi exception indien er geen mapping bestaat voor de gegeven AbstractController
+     * Toevoegen van een Default ActionProcedure, die voor alle AbstractControllers uitvoerbaar is.
+     * @param action            De Action waarmee de ActionProcedure wordt opgeroepen.
+     * @param actionProcedure    De toe te voegen ActionProcedure.
+     * @throws IllegalArgumentException Gooi indien de gegeven actionProcedure niet geïnitialiseerd is.
      */
-    public HashMap<Action,ActionBehaviour> getMappingFor(AbstractController controller)throws IllegalArgumentException{
-        HashMap<Action,ActionBehaviour> map = controllerActionBehavioursMap.get(controller);
-        if(map == null){//Niets te vinden
-            throw new IllegalArgumentException("Geen mapping aanwezig voor de gegeven controller");
+    public void addDefaultActionProcedure(Action action, ActionProcedure actionProcedure) {
+        if(!isValidActionProcedure(actionProcedure)) {
+            throw new IllegalArgumentException("Invalid actionProcedure");
         }
-        return map;
+        this.defaultActionProcedureMap.put(action, actionProcedure);
     }
 
     /**
-     * Toevoegen van een standaard behaviour die voor alle aanwezig AbstractController's aanwezig zal zijn.
-     * @param action        De Action waarvoor men het standaard gedrag wil bepalen.
-     * @param behaviour     Het nieuwe standaard gedrag voor de gegeven Action.
-     * @throws IllegalArgumentException
-     *                      Gooi exception indien de gegeven Action en ActionBehaviour niet geldig zijn.
-     *                      Deze zijn niet geldig indien ze niet geinitialiseerd zijn.
+     * Geeft de DefaultActionProcedureMap terug.
      */
-    public void addDefaultBehaviour(Action action, ActionBehaviour behaviour) throws IllegalArgumentException{
-        if(!isValidActionBehaviour(action, behaviour)) {
-            throw new IllegalArgumentException("Invalid action & ActionBehaviour");
+    private HashMap<Action, ActionProcedure> getDefaultActionProcedureMap() {
+        return defaultActionProcedureMap;
+    }
+
+    private HashMap<Action, ActionProcedure> defaultActionProcedureMap = new HashMap<>();
+
+    /**
+     * Geeft de ControllerToActionMap terug.
+     */
+    private  HashMap<AbstractController, HashMap<Action, ActionProcedure>> getControllerToActionMap() {
+        return controllerToActionMap;
+    }
+    /**
+     * Definieer de ActionProcedure die wordt uitgevoerd indien er een onverwachte Action ontvangen werd.
+    *  @param invalidActionProcedure        De toe te voegen actionProcedure.
+    *  @throws IllegalArgumentException     Gooi indien de gegeven ActionProcedure niet geinitialiseerd is.
+    */
+    public void setInvalidActionProcedure(ActionProcedure invalidActionProcedure) {
+        if(!isValidActionProcedure(invalidActionProcedure)) {
+            throw new IllegalArgumentException("Invalid actionProcedure");
         }
-        getDefaultMap().put(action, behaviour);
-    }
-
-    /**
-     * Controleer of de gegeven Action & ActionBehaviour geldig zijn.
-     * @param action        De te controleren Action.
-     * @param behaviour      De te controleren ActionBehaviour
-     * @return      Waar indien action & behaviour geinitialiseerd zijn.
-     */
-    private boolean isValidActionBehaviour(Action action, ActionBehaviour behaviour) {
-        return action != null & behaviour != null;
-    }
-
-    /**
-     * @return  De HashMap<Action,ActionBehaviour> met de standaard ActionBehaviour's.
-     */
-    private HashMap<Action,ActionBehaviour> getDefaultMap(){
-        return defaultActionBehavioursMap;
-    }
-
-    /**
-     * @return  De laatste toegevoegde AbstractController aan de ExecutionStack
-     */
-    public AbstractController getActiveController(){
-        return controllerStack.getLast();
-    }
-
-    /**
-     * @return Standaard ActionBehavior indien een Action niet ondersteund is.
-     */
-    private ActionBehaviour getInvalidBehaviour() {
-        return this.invalidBehaviour;
+        this.invalidProcedure = invalidActionProcedure;
     }
 }
