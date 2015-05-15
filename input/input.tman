@@ -3,6 +3,19 @@
 
 systemTime: "2014-04-01 09:00"
 
+company: "Fluffy Unicorn Inc"
+
+branchOffice:
+  - name: "Pink department"
+    location: "Pinky Town"
+  - name: "Purple department"
+    location: "Purpy Town"
+  - name: "Orange department"
+    location: "Oranjy Town"
+  - name: "Flashy Fluo Yellow department"
+    location: "Flashy Fluoy Yellowy Town"
+
+
 dailyAvailability :
   - startTime : "12:00"
     endTime   : "17:00"
