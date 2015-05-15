@@ -46,6 +46,7 @@ public interface UserInterface {
      */
     void showBranchOffices(ImmutableList<BranchOffice> branchOffices);
 
+    BranchOffice selectBranchOfficeFromList(ImmutableList<BranchOffice> branchOffices) throws EmptyListException, CancelException;
 
     void showEmployees(ImmutableList<User> users);
 
@@ -67,7 +68,14 @@ public interface UserInterface {
      */
     Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
 
-    LocalDateTime selectLocalDateTimeFromList(List<LocalDateTime> dateTimes)throws EmptyListException, CancelException;
+    /**
+     * Selecteerd een localdatetime uit een lijst van localdatetimes
+     * @param dateTimes lijst van datetimes
+     * @return nummer van de geselecteerde datime uit de lijst
+     * @throws EmptyListException De lijst van datetimes is leeg
+     * @throws CancelException de gebruiker heeft aangegeven dat hij de usecase wilt stoppen
+     */
+    LocalDateTime selectLocalDateTimeFromList(List<LocalDateTime> dateTimes) throws EmptyListException, CancelException;
 
     /**
      * Vraagt een invoer van de gebruiker.

@@ -128,9 +128,8 @@ public class CommandLineInterface implements UserInterface {
         // TODO: project overtime Method?
         return String.format(projectFormatStr, project.getName(), project.getProjectStatus().name(), "(" + overTime + ")");
     });
-    Function<LocalDateTime, String> showLocalDateTimeEntry = (dateTime -> {
-        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-    });
+    Function<LocalDateTime, String> showLocalDateTimeEntry = (dateTime -> dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+    Function<BranchOffice, String> showBranchOfficeEntry = (BranchOffice::getName);
 
     /**
      * Laat de gebruiker een taak selecteren uit een lijst van taken

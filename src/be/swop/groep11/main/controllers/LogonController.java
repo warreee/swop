@@ -71,6 +71,7 @@ public class LogonController extends AbstractController implements ILogin {
     private void selectBranchOffice() {
         int branchOfficeIndex = getUserInterface().requestNumber("Kies een branchoffice uit bovenstaande lijst");
         this.branchOffice = this.company.getBranchOffices().get(branchOfficeIndex);
+        getUserInterface().selectTaskFromList()
     }
 
     private void showEmployees() {
