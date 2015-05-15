@@ -4,6 +4,7 @@ import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Company;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.exception.CancelException;
+import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.resource.Developer;
 import be.swop.groep11.main.resource.ProjectManager;
 import be.swop.groep11.main.ui.UserInterface;
@@ -26,9 +27,8 @@ public class LogonController extends AbstractController implements ILogin {
     public void logon() throws IllegalArgumentException {
         try {
             selectBranchOffice();
-
             identify();
-        } catch (CancelException e) {
+        } catch (CancelException | EmptyListException e) {
             getUserInterface().printException(e);
         }
     }
