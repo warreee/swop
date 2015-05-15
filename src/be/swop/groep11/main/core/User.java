@@ -29,4 +29,12 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
+    public boolean isDeveloper(){
+        return false;
+    }
+
+    public boolean isProjectManager() {
+        return false;
+    }
 }

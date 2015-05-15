@@ -2,6 +2,7 @@ package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Company;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.resource.Developer;
 import be.swop.groep11.main.resource.ProjectManager;
 import be.swop.groep11.main.ui.UserInterface;
@@ -25,6 +26,12 @@ public class LogonController extends AbstractController implements ILogin {
         showBranchOffices();
         selectBranchOffice();
         showEmployees();
+        identify();
+    }
+
+    private void identify() {
+        int userIndex = getUserInterface().requestNumber("Kies een user uit bovenstaande lijst");
+        User user = getBranchOffice().getEmployees().get(userIndex);
     }
 
     /**
