@@ -280,7 +280,7 @@ public class TaskStatusTest {
     public void failedToExecuting() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(task1.getStatusString().equals("FAILED"));
+        assertTrue(task1.isFailed());
         task1.execute(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
@@ -288,7 +288,7 @@ public class TaskStatusTest {
     public void failedToFinished() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(task1.getStatusString().equals("FAILED"));
+        assertTrue(task1.isFailed());
         task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
@@ -296,7 +296,7 @@ public class TaskStatusTest {
     public void failedToFailed() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(task1.getStatusString().equals("FAILED"));
+        assertTrue(task1.isFailed());
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
