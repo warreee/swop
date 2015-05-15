@@ -13,7 +13,7 @@ public class LogonController extends AbstractController implements ILogin {
 
     private boolean identifiedPM = false;
     private Company company;
-    private BranchOffice branchOffice;
+    private BranchOffice branchOffice = null;
 
     public LogonController(UserInterface userInterface, Company company) {
         super(userInterface);
@@ -23,6 +23,7 @@ public class LogonController extends AbstractController implements ILogin {
     public void logon() throws IllegalArgumentException {
         showBranchOffices();
         selectBranchOffice();
+        showEmployees();
     }
 
     @Override
@@ -48,6 +49,10 @@ public class LogonController extends AbstractController implements ILogin {
         this.branchOffice = this.company.getBranchOffices().get(branchOfficeIndex);
     }
 
+    private void showEmployees() {
+        //getUserInterface().showEmployees(this.branchOffice.getEmployees());
+    }
+
 
     @Override
     public boolean hasIdentifiedProjectManager() {
@@ -61,7 +66,7 @@ public class LogonController extends AbstractController implements ILogin {
 
     @Override
     public boolean hasIdentifiedBranchOffice() {
-        return false;
+        return getBranchOffice() != null;
     }
 
     @Override
@@ -81,6 +86,6 @@ public class LogonController extends AbstractController implements ILogin {
 
     @Override
     public BranchOffice getBranchOffice(){
-        return null;
+        return this.branchOffice;
     }
 }
