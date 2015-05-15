@@ -213,6 +213,16 @@ public class ResourcePlanner {
     }
 
     /**
+     * Berekend alle ResourceInstances die beschikbaar zijn van een bepaald type gedurende een TimeSpan.
+     * @param type Het AResourceType dat beschikbaar moet zijn.
+     * @param timeSpan Wanneer het AResourceType beschikbaar moet zijn.
+     * @return Een lijst met alle ResourceInstances die beschikbaar zijn.
+     */
+    public List<ResourceInstance> getAvailableInstances(AResourceType type, TimeSpan timeSpan){
+        return resourceRepository.getResources(type).stream().filter(x -> isAvailable(x, timeSpan)).collect(Collectors.toList());
+    }
+
+    /**
      * Controlleer of een ResourceInstance in een TimeSpan voorkomt in een gegeven OldPlan. Dit gebeurt door alle reservaties
      * van een plan op te halen wanneer de TimeSpan van het plan overlapt met de gegeven TimeSpan.
      *
