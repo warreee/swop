@@ -1,7 +1,6 @@
 package be.swop.groep11.main.util;
 
 import be.swop.groep11.main.core.*;
-import be.swop.groep11.main.exception.IllegalDependencyException;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import org.yaml.snakeyaml.Yaml;
@@ -10,7 +9,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;

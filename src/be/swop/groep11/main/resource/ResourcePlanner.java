@@ -2,6 +2,7 @@ package be.swop.groep11.main.resource;
 
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.util.Observable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.TreeMap;
 /**
  * Created by robin on 14/05/15.
  */
-public class ResourcePlanner {
+public class ResourcePlanner extends Observable<ResourcePlanner>{
 
     private TreeMap<LocalDateTime, ArrayList<Plan>> planMap;
 
@@ -131,4 +132,5 @@ public class ResourcePlanner {
     }
 
     private ResourceRepository resourceRepository;
+
 }

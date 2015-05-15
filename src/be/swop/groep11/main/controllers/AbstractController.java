@@ -18,6 +18,7 @@ public abstract class AbstractController {
         return userInterface;
     }
 
+
     public void createTask() throws IllegalArgumentException {
         throw new IllegalArgumentException("Niet ondersteund");
     }
@@ -55,6 +56,9 @@ public abstract class AbstractController {
     }
 
     //TODO finish associatie AbstractController & ControllerStack Plus nieuwe Testen
+    public void logOut() throws IllegalArgumentException  {
+        throw new IllegalArgumentException("Niet ondersteund");
+    }
 
     public void setControllerStack(ControllerStack controllerStack)throws IllegalArgumentException {
         if (!canHaveAsControllerStack(controllerStack)) {
@@ -70,4 +74,7 @@ public abstract class AbstractController {
     public ControllerStack getControllerStack(){
         return this.controllerStack;
     }
+
+
+
 }

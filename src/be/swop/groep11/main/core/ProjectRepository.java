@@ -20,6 +20,7 @@ public class ProjectRepository {
 
     /**
      * Contstructor om een nieuwe project repository aan te maken.
+     * @param branchOffice
      * @param systemTime De systeemtijd
      * @throws IllegalArgumentException
      *                      | systemTime == null
@@ -27,8 +28,6 @@ public class ProjectRepository {
     public ProjectRepository(SystemTime systemTime) {
         if (systemTime == null)
             throw new IllegalArgumentException("Systeemtijd mag niet null zijn");
-        if (branchOffice == null)
-            throw new IllegalArgumentException("Branch office mag niet null zijn");
         this.systemTime = systemTime;
         projects = new ArrayList<>();
     }
@@ -101,10 +100,14 @@ public class ProjectRepository {
      * @throws IllegalArgumentException Branch office mag niet null zijn
      */
     public void setBranchOffice(BranchOffice branchOffice) {
-        if (branchOffice == null) {
+        if (!canHaveAsBranchOffice(branchOffice)) {
             throw new IllegalArgumentException("Branch office mag niet null zijn");
         }
         this.branchOffice = branchOffice;
+    }
+
+    private boolean canHaveAsBranchOffice(BranchOffice branchOffice) {
+        return branchOffice != null;
     }
 
     /**

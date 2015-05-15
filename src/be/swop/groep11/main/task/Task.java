@@ -8,6 +8,8 @@ import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.Plan;
 import be.swop.groep11.main.resource.RequirementListBuilder;
+import be.swop.groep11.main.resource.ResourcePlanner;
+import be.swop.groep11.main.util.Observer;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -29,7 +31,7 @@ public class Task{
      * @param systemTime            De systeemtijd die de nieuwe taak moet gebruiken
      * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
      * @param requirementList       De lijst van resource requirements voor de nieuwe taak
-     * @throws java.lang.IllegalArgumentException Ongeldige beschrijving, ongeldige verwachte duur, ongeldige aanvaardbare marge,
+     * @throws IllegalArgumentException Ongeldige beschrijving, ongeldige verwachte duur, ongeldige aanvaardbare marge,
      *                                            ongeldige requirement lijst of ongeldig project
      */
     public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph, IRequirementList requirementList, Project project) throws IllegalArgumentException {
@@ -389,6 +391,8 @@ public class Task{
         this.status = status;
     }
 
+
+
     public enum FinishedStatus {
         EARLY,
         ONTIME,
@@ -610,5 +614,32 @@ public class Task{
     }
 
     private BranchOffice delegatedTo;
+
+
+    public void update(SystemTime systemTime) {
+        //TODO temp experiment
+        systemTimeObserver.update(systemTime);
+    }
+
+    public void update(ResourcePlanner resourcePlanner) {
+        resourcePlannerObserver.update(resourcePlanner);
+    }
+
+    private Observer<ResourcePlanner> resourcePlannerObserver = resourcePlanner -> {
+        System.out.println(resourcePlanner.toString() + " ____ In task");
+
+    };
+
+    private Observer<SystemTime> systemTimeObserver = systemTime1 -> {
+        System.out.println(systemTime1.getCurrentSystemTime().toString() + " ____ In task");
+    };
+
+    public Observer<SystemTime> getSystemTimeObserver() {
+        return this.systemTimeObserver;
+    }
+
+    public Observer<ResourcePlanner> getResourcePlannerObserver() {
+        return this.resourcePlannerObserver;
+    }
 
 }

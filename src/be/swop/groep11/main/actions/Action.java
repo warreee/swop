@@ -20,7 +20,9 @@ public enum Action {
     STARTSIMULATION("Start Simulation"),
     REALIZESIMULATION("Realize simulation"),
     LOGON("Logon"),
-    INVALIDACTION("");
+    LOGOUT("Logout"),
+    INVALIDACTION(""),
+    DELEGATETASK("Delegate task");
 
     /**
      * Constructor voor een Action, met een stringRepresentatie die.

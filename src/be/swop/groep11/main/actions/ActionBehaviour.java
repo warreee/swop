@@ -8,4 +8,7 @@ public interface ActionBehaviour {
      * Voer het gedrag uit.
      */
     void execute();
+
+    //Return boolean, true indien verwijderen van stack, false indien niet verwijderen
+
 }
