@@ -1,6 +1,7 @@
 package be.swop.groep11.main.resource;
 
 import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.util.Util;
 
@@ -14,7 +15,7 @@ import java.util.*;
  */
 public class ResourcePlanner {
 
-    private TreeMap<LocalDateTime, ArrayList<OldPlan>> planMap;
+    private TreeMap<LocalDateTime, ArrayList<Plan>> planMap;
 
     /**
      * Maakt een nieuwe ResourcePlanner object aan. Dit ResourcePlanner object gebruikt de gegeven ResourceRepository om
@@ -86,16 +87,52 @@ public class ResourcePlanner {
      */
     public boolean isAvailable(ResourceInstance resourceInstance, TimeSpan timeSpan){
         // Haal alle plannen op die beginnen voor de eindtijd van de gegeven timeSpan.
-        NavigableMap<LocalDateTime, ArrayList<OldPlan>> map = planMap.headMap(timeSpan.getEndTime(), true);
+        NavigableMap<LocalDateTime, ArrayList<Plan>> map = planMap.headMap(timeSpan.getEndTime(), true);
 
-        for(ArrayList<OldPlan> planList: map.values()){
-            for(OldPlan plan: planList){
+        for(ArrayList<Plan> planList: map.values()){
+            for(Plan plan: planList){
                 if (checkResourceInstanceOverlapsWithOtherPlan(resourceInstance, timeSpan, plan)) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    /**
+     * Voegt een nieuw plan toe aan deze ResourcePlanner.
+     *
+     * @param plan Het plan dat toegevoegd word.
+     */
+    public void addPlan(Plan plan){
+        checkPlan(plan);
+        if(planMap.containsKey(plan.getTimeSpan().getStartTime())){
+            planMap.get(plan.getTimeSpan().getStartTime()).add(plan);
+        } else {
+            ArrayList<Plan> list = new ArrayList<>();
+            list.add(plan);
+            planMap.put(plan.getTimeSpan().getStartTime(), list);
+        }
+    }
+
+    /**
+     * Controlleert of een plan niet null is en of dat het geen reservaties bevat voor ResourceInstances die op het
+     * moment van die reservatie al gereserveerd zijn.
+     *
+     * @param plan Het plan dat gecontrolleert moet worden.
+     * @throws IllegalArgumentException Wordt gegooid wanneer er een fout is.
+     */
+    // TODO: controlleert deze alles genoeg?
+    private void checkPlan(Plan plan){
+        if(plan == null){
+            throw new IllegalArgumentException("Plan mag niet 'null' zijn.");
+        }
+        for(ResourceReservation reservation: plan.getReservations()){
+            if(!isAvailable(reservation.getResourceInstance(), reservation.getTimeSpan())){
+                throw new IllegalArgumentException("Plan bevat een reservatie voor een ResourceInstance die al " +
+                        "gereserveerd is gedurende de tijdsduur van die reservatie.");
+            }
+        }
     }
 
     /**
@@ -169,7 +206,7 @@ public class ResourcePlanner {
      * @param plan Het plan waar de ResourceInstance niet in mag zitten.
      * @return true als de ResourceInstance er in voorkomt, anders false.
      */
-    private boolean checkResourceInstanceOverlapsWithOtherPlan(ResourceInstance resourceInstance, TimeSpan timeSpan, OldPlan plan) {
+    private boolean checkResourceInstanceOverlapsWithOtherPlan(ResourceInstance resourceInstance, TimeSpan timeSpan, Plan plan) {
         // Controleer eerst of het plan wel overlapt met de timeSpan. Alleen dan zijn verdere berekeningen nuttig.
         if(plan.getTimeSpan().overlapsWith(timeSpan)) {
             for (ResourceReservation reservation : plan.getReservations(resourceInstance.getResourceType())) {
