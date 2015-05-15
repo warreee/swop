@@ -307,4 +307,11 @@ public class Project {
     }
 
     private BranchOffice branchOffice;
+
+    /**
+     * update alle statussen na een bepaalde usecase
+     */
+    public void updateAllStatus() {
+        this.getTasks().forEach(be.swop.groep11.main.task.Task::updateStatus);
+    }
 }
