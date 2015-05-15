@@ -1,5 +1,6 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.resource.Plan;
 
@@ -103,6 +104,21 @@ public class TaskUnavailable extends TaskStatus {
     @Override
     public void plan(Task task, Plan plan) {
         task.setPlan(plan);
+    }
+
+    @Override
+    protected void updateStatus(Task task, LocalDateTime systemTime) {
+
+        if (task.isPlanned()){
+            Plan plan = task.getPlan();
+            TimeSpan timespan = plan.getTimeSpan();
+
+            if (!timespan.containsLocalDateTime(systemTime)){
+                if (plan.hasEquivalentPlan(systemTime)) {
+                    makeAvailable(task);
+                }
+            }
+        }
     }
 
 }
