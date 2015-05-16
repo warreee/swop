@@ -33,7 +33,7 @@ public class ProjectTest {
         description = "description";
         systemTime = new SystemTime(LocalDateTime.of(2015,1,1,0,0));
         BranchOffice branchOffice = mock(BranchOffice.class);
-        repository = new ProjectRepository(systemTime, branchOffice);
+        repository = new ProjectRepository(systemTime);
 
         project = new Project(name, description, create, due, systemTime, mock(BranchOffice.class));
     }

@@ -25,7 +25,7 @@ public class ProjectRepositoryTest {
     @Before
     public void setUp() throws Exception {
         BranchOffice branchOffice = mock(BranchOffice.class);
-        projRep = new ProjectRepository(new SystemTime(), branchOffice);
+        projRep = new ProjectRepository(new SystemTime());
 
         create = LocalDateTime.now();
         due = LocalDateTime.now().plusSeconds(3600);
@@ -98,7 +98,7 @@ public class ProjectRepositoryTest {
         IProjectRepositoryMemento memento = projRep.createMemento();
 
         BranchOffice branchOffice = mock(BranchOffice.class); //TODO: branchoffice testen
-        ProjectRepository projRep2 = new ProjectRepository(new SystemTime(), branchOffice);
+        ProjectRepository projRep2 = new ProjectRepository(new SystemTime());
         projRep2.setMemento(memento);
         assertTrue(repositoryContainsProject(projRep2, "project 1"));
         assertTrue(repositoryContainsProject(projRep2, "project 2"));

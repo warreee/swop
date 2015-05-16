@@ -50,7 +50,7 @@ public class InputParser {
         SystemTime systemTime = new SystemTime(LocalDateTime.MIN);
         ResourceManager typeRepo = new ResourceManager();
         BranchOffice branchOffice = mock(BranchOffice.class); // TODO: echte branchoffice erinsteken!
-        ProjectRepository projectRepository = new ProjectRepository(systemTime, branchOffice);
+        ProjectRepository projectRepository = new ProjectRepository(systemTime);
 
         InputParser parser = new InputParser(projectRepository, typeRepo, systemTime);
         parser.parseInputFile();

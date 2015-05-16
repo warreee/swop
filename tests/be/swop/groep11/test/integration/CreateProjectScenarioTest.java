@@ -32,7 +32,7 @@ public class CreateProjectScenarioTest {
         now = LocalDateTime.now();
         SystemTime systemTime = new SystemTime(now);
         BranchOffice branchOffice = mock(BranchOffice.class);
-        projectRepository = new ProjectRepository(systemTime, branchOffice);
+        projectRepository = new ProjectRepository(systemTime);
         user = new User("Test");
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));

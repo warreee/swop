@@ -46,7 +46,7 @@ public class PlanTaskScenarioTest {
 
         systemTime = new SystemTime(now);
         BranchOffice branchOffice = mock(BranchOffice.class);
-        projectRepository = new ProjectRepository(systemTime, branchOffice);
+        projectRepository = new ProjectRepository(systemTime);
         resourceManager = new ResourceManager();
 
         addTempDomainObjects();

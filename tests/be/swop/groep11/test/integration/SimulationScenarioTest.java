@@ -32,7 +32,7 @@ public class SimulationScenarioTest {
         now = LocalDateTime.now();
         systemTime = new SystemTime(now);
         BranchOffice branchOffice = mock(BranchOffice.class);
-        repository = new ProjectRepository(systemTime, branchOffice);
+        repository = new ProjectRepository(systemTime);
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
         repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
 

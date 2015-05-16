@@ -38,7 +38,7 @@ public class MainControllerTest {
         SystemTime systemTime = new SystemTime(now);
         ResourceManager resourceManager = new ResourceManager();
         BranchOffice branchOffice = mock(BranchOffice.class);
-        ProjectRepository projectRepository = new ProjectRepository(systemTime, branchOffice);
+        ProjectRepository projectRepository = new ProjectRepository(systemTime);
 
         abmMock = mock(ControllerStack.class);
         this.mockedUI = mock(UserInterface.class);

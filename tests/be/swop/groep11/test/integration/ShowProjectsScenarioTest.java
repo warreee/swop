@@ -37,12 +37,12 @@ public class ShowProjectsScenarioTest {
         this.mockedUI = mock(UserInterface.class);
         this.branchOffice = mock(BranchOffice.class);
 
-        projectRepository = new ProjectRepository(systemTime, branchOffice);
+        projectRepository = new ProjectRepository(systemTime);
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10));
         projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8));
 
-        this.projectController = new ProjectController(projectRepository,mockedUI );
+        this.projectController = new ProjectController(projectRepository, mockedUI);
         this.projects = projectRepository.getProjects();
         this.tasks = projects.get(0).getTasks();
     }
