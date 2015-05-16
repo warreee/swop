@@ -49,11 +49,10 @@ public class LogonScenarioTest {
     }
 
     /**
-     *
-     * @throws Exception
+     * Controleert een valabele logon in het systeem als developer
      */
     @Test
-    public void logonValidTest() throws Exception {
+    public void logonDeveloperValidTest() {
         // stubbing
         when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenReturn(branchOffices.get(0));
         when(mockedUI.selectEmployeeFromList(employees)).thenReturn(employees.get(0));
@@ -65,4 +64,23 @@ public class LogonScenarioTest {
         assertTrue(logonController.hasIdentifiedDeveloper());
         assertFalse(logonController.hasIdentifiedProjectManager());
     }
+
+    /**
+     * Controleert een valabele logon in het systeem als projectmanager
+     */
+    @Test
+    public void logonProjectManagerValidTest() {
+        // stubbing
+        when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenReturn(branchOffices.get(0));
+        when(mockedUI.selectEmployeeFromList(employees)).thenReturn(employees.get(2));
+
+        logonController.logon();
+
+        assertTrue(logonController.hasIdentifiedBranchOffice());
+        assertTrue(logonController.hasIdentifiedUserAtBranchOffice());
+        assertFalse(logonController.hasIdentifiedDeveloper());
+        assertTrue(logonController.hasIdentifiedProjectManager());
+    }
+
+
 }
