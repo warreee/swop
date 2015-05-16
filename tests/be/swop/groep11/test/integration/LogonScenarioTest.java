@@ -103,4 +103,23 @@ public class LogonScenarioTest {
 
         logonController.logon();
     }
+
+    @Test
+    public void logoutTest() {
+        when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenReturn(branchOffices.get(0));
+        when(mockedUI.selectEmployeeFromList(employees)).thenReturn(employees.get(0));
+
+        logonController.logon();
+        assertTrue(logonController.hasIdentifiedBranchOffice());
+        assertTrue(logonController.hasIdentifiedUserAtBranchOffice());
+        assertTrue(logonController.hasIdentifiedDeveloper());
+        assertFalse(logonController.hasIdentifiedProjectManager());
+
+        logonController.logOut();
+        assertFalse(logonController.hasIdentifiedBranchOffice());
+        assertFalse(logonController.hasIdentifiedUserAtBranchOffice());
+        assertFalse(logonController.hasIdentifiedDeveloper());
+        assertFalse(logonController.hasIdentifiedProjectManager());
+
+    }
 }
