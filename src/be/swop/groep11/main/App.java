@@ -103,7 +103,7 @@ public class App {
         simulationController = new SimulationController(controllerStack, projectRepository, cli);
         planningController = new PlanningController(projectRepository,resourceManager, systemTime, cli);
         logonController = new LogonController(cli, company);
-        delegateTaskController = new DelegateTaskController(cli, company, logonController.getBranchOffice());
+        delegateTaskController = new DelegateTaskController(cli, company, logonController.getBranchOffice()); // TODO WARD: Ronald is dit correct zo?
         main = new MainController(controllerStack, advanceTimeController,simulationController,projectController,
                 taskController, planningController, logonController, delegateTaskController, cli);
     }
