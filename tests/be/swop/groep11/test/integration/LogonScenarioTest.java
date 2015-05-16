@@ -2,6 +2,7 @@ package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.controllers.LogonController;
 import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -13,6 +14,8 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -80,6 +83,16 @@ public class LogonScenarioTest {
         assertTrue(logonController.hasIdentifiedUserAtBranchOffice());
         assertFalse(logonController.hasIdentifiedDeveloper());
         assertTrue(logonController.hasIdentifiedProjectManager());
+    }
+
+
+    @Test(expected = StopTestException.class)
+    public void logon_CancelSelectBranchofficeTest() {
+        when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenThrow(new CancelException("Cancel in Test"));
+        when(mockedUI.selectEmployeeFromList(employees)).thenReturn(employees.get(0));
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
+
+        logonController.logon();
     }
 
 
