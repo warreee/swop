@@ -48,6 +48,7 @@ public class App {
     private ProjectRepository projectRepository;
     private ControllerStack controllerStack;
     private Company company;
+    private BranchOffice branchoffice;
 
     private MainController main;
     private TaskController taskController;
@@ -56,6 +57,7 @@ public class App {
     private SimulationController simulationController;
     private PlanningController planningController;
     private LogonController logonController;
+    private DelegateTaskController delegateTaskController;
 
     private void initDomainObjects(){
         // maak een nieuwe CommandLineInterface aan
@@ -73,9 +75,9 @@ public class App {
 
         ResourceRepository resourceRepository = new ResourceRepository(typeRepository);
         ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository);
-
-        BranchOffice bo = new BranchOffice("bo1","leuven",projectRepository,resourcePlanner);
         projectRepository = new ProjectRepository(systemTime);
+        branchoffice = new BranchOffice("bo1","leuven",projectRepository,resourcePlanner);
+
         resourceManager = new ResourceManager();
     }
 
@@ -101,8 +103,9 @@ public class App {
         simulationController = new SimulationController(controllerStack, projectRepository, cli);
         planningController = new PlanningController(projectRepository,resourceManager, systemTime, cli);
         logonController = new LogonController(cli, company);
+        delegateTaskController = new DelegateTaskController(cli, company, logonController.getBranchOffice());
         main = new MainController(controllerStack, advanceTimeController,simulationController,projectController,
-                taskController, planningController, logonController, cli);
+                taskController, planningController, logonController, delegateTaskController, cli);
     }
 
     private void initActionProcedures() {
@@ -121,7 +124,7 @@ public class App {
         ActionProcedure createTask = new ActionProcedure(taskController, taskController::createTask, logonController::hasIdentifiedProjectManager);
         ActionProcedure updateTask = new ActionProcedure(taskController, taskController::updateTask, logonController::hasIdentifiedDeveloper);
         ActionProcedure planTask = new ActionProcedure(planningController, planningController::planTask, logonController::hasIdentifiedProjectManager);
-        ActionProcedure delegateTask = null;
+        ActionProcedure delegateTask = new ActionProcedure(delegateTaskController, delegateTaskController::delegateTask, logonController::hasIdentifiedProjectManager, true);
 
         ActionProcedure createProject = new ActionProcedure(projectController, projectController::createProject, logonController::hasIdentifiedProjectManager);
         ActionProcedure showProjects = new ActionProcedure(projectController, projectController::showProjects, returnsTrue);
@@ -129,7 +132,7 @@ public class App {
         ActionProcedure advanceTime = new ActionProcedure(advanceTimeController, advanceTimeController::advanceTime, returnsTrue);
 
         ActionProcedure logon = new ActionProcedure(logonController, logonController::logon, () -> !logonController.hasIdentifiedProjectManager(), false);
-        ActionProcedure logout = new ActionProcedure(logonController, logonController::logOut, () -> logonController.hasIdentifiedUserAtBranchOffice(), true);
+        ActionProcedure logout = new ActionProcedure(logonController, logonController::logOut, logonController::hasIdentifiedUserAtBranchOffice, true);
 
         ActionProcedure startSimulation = new ActionProcedure(simulationController, simulationController::startSimulation, logonController::hasIdentifiedProjectManager, false);
         ActionProcedure cancelSim = new ActionProcedure(simulationController, simulationController::cancel, logonController::hasIdentifiedProjectManager, true);
@@ -148,7 +151,7 @@ public class App {
         controllerStack.addActionProcedure(logonController, Action.UPDATETASK, updateTask);
         controllerStack.addActionProcedure(logonController, Action.PLANTASK, planTask);
         controllerStack.addActionProcedure(logonController, Action.CREATEPROJECT, createProject);
-//        controllerStack.addActionProcedure(logonController, Action.DELEGATETASK, delegateTask);
+        controllerStack.addActionProcedure(logonController, Action.DELEGATETASK, delegateTask);
         controllerStack.addActionProcedure(logonController, Action.ADVANCETIME, advanceTime);
         controllerStack.addActionProcedure(logonController, Action.STARTSIMULATION, startSimulation);
 

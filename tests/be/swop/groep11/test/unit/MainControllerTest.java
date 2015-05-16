@@ -30,6 +30,7 @@ public class MainControllerTest {
     private UserInterface mockedUI;
     private MainController main;
     private ControllerStack abmMock;
+    private DelegateTaskController delegateTaskController;
 
     @Before
     public void setUp() throws Exception {
@@ -48,13 +49,13 @@ public class MainControllerTest {
         taskController = mock(TaskController.class);
         projectController = mock(ProjectController.class);
         logonController = mock(LogonController.class);
-
+        delegateTaskController = mock(DelegateTaskController.class);
         advanceTimeController = mock(AdvanceTimeController.class);
 
         simulationController = mock(SimulationController.class);
         planningController = mock(PlanningController.class);
         main = new MainController(abmMock, advanceTimeController,simulationController,projectController,taskController,
-                planningController, logonController, mockedUI );
+                planningController, logonController, delegateTaskController, mockedUI );
     }
 
     @Test

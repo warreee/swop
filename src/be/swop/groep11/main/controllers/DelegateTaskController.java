@@ -19,5 +19,8 @@ public class DelegateTaskController  extends AbstractController {
         this.branchOffice = branchOffice;
     }
 
-
+    @Override
+    public void delegateTask() {
+        super.delegateTask();
+    }
 }
