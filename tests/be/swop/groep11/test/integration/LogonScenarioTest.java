@@ -1,7 +1,9 @@
 package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.core.BranchOffice;
+import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.resource.ResourcePlanner;
 import be.swop.groep11.main.ui.UserInterface;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,10 +23,13 @@ public class LogonScenarioTest {
 
     @Before
     public void setUp() throws Exception {
-        LocalDateTime now = LocalDateTime.now();
-        SystemTime systemTime = new SystemTime(now);
+        SystemTime systemTime = mock(SystemTime.class);
         this.mockedUI = mock(UserInterface.class);
+        ProjectRepository projectRepository = mock(ProjectRepository.class);
+        ResourcePlanner resourcePlanner = mock(ResourcePlanner.class);
         this.branchOffice = new BranchOffice("Branchoffice 1", "Leuven", projectRepository, resourcePlanner);
+
+
     }
 
     @Test
