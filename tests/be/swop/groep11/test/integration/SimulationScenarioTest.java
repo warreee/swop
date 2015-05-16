@@ -3,6 +3,7 @@ package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.SimulationController;
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
@@ -30,7 +31,8 @@ public class SimulationScenarioTest {
     public void setUp() throws Exception {
         now = LocalDateTime.now();
         systemTime = new SystemTime(now);
-        repository = new ProjectRepository(systemTime);
+        BranchOffice branchOffice = mock(BranchOffice.class);
+        repository = new ProjectRepository(systemTime, branchOffice);
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
         repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
 

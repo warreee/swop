@@ -1,5 +1,6 @@
 package be.swop.groep11.test.integration;
 
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.controllers.ProjectController;
 import be.swop.groep11.main.core.ProjectRepository;
@@ -30,7 +31,8 @@ public class CreateProjectScenarioTest {
     public void setUp() throws Exception {
         now = LocalDateTime.now();
         SystemTime systemTime = new SystemTime(now);
-        projectRepository = new ProjectRepository(systemTime);
+        BranchOffice branchOffice = mock(BranchOffice.class);
+        projectRepository = new ProjectRepository(systemTime, branchOffice);
         user = new User("Test");
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));

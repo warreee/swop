@@ -70,12 +70,12 @@ public class App {
         ResourceTypeRepository typeRepository = new ResourceTypeRepository();
         company = new Company("company",typeRepository);
 
-        projectRepository = new ProjectRepository(systemTime);
+
         ResourceRepository resourceRepository = new ResourceRepository(typeRepository);
         ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository);
 
         BranchOffice bo = new BranchOffice("bo1","leuven",projectRepository,resourcePlanner);
-
+        projectRepository = new ProjectRepository(systemTime, bo);
         resourceManager = new ResourceManager();
     }
 

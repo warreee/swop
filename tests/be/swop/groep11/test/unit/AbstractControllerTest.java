@@ -2,6 +2,7 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.controllers.AdvanceTimeController;
 import be.swop.groep11.main.controllers.ProjectController;
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.User;
@@ -30,7 +31,8 @@ public class AbstractControllerTest {
     public void setUp() throws Exception {
         now = LocalDateTime.now();
         this.systemTime = new SystemTime(now);
-        projectRepository = new ProjectRepository(systemTime);
+        BranchOffice branchOffice = mock(BranchOffice.class);
+        projectRepository = new ProjectRepository(systemTime, branchOffice);
         user = new User("Test");
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));

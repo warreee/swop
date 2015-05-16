@@ -20,14 +20,17 @@ public class ProjectRepository {
 
     /**
      * Contstructor om een nieuwe project repository aan te maken.
-     * @param branchOffice
      * @param systemTime De systeemtijd
+     * @param branchOffice
      * @throws IllegalArgumentException
      *                      | systemTime == null
      */
-    public ProjectRepository(SystemTime systemTime) {
+    public ProjectRepository(SystemTime systemTime, BranchOffice branchOffice) {
         if (systemTime == null)
             throw new IllegalArgumentException("Systeemtijd mag niet null zijn");
+        if (branchOffice == null)
+            throw  new IllegalArgumentException("Branchoffice mag niet null zijn");
+        this.branchOffice = branchOffice;
         this.systemTime = systemTime;
         projects = new ArrayList<>();
     }

@@ -16,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * Klasse voor het inlezen van de de input file, deze moet staan in /input met de naam input.tman
  */
@@ -47,7 +49,8 @@ public class InputParser {
     public static void main(String[] args) throws FileNotFoundException {
         SystemTime systemTime = new SystemTime(LocalDateTime.MIN);
         ResourceManager typeRepo = new ResourceManager();
-        ProjectRepository projectRepository = new ProjectRepository(systemTime);
+        BranchOffice branchOffice = mock(BranchOffice.class); // TODO: echte branchoffice erinsteken!
+        ProjectRepository projectRepository = new ProjectRepository(systemTime, branchOffice);
 
         InputParser parser = new InputParser(projectRepository, typeRepo, systemTime);
         parser.parseInputFile();

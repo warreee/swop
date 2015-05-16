@@ -2,6 +2,7 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.*;
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.resource.ResourceManager;
@@ -36,7 +37,8 @@ public class MainControllerTest {
         LocalDateTime now = LocalDateTime.now();
         SystemTime systemTime = new SystemTime(now);
         ResourceManager resourceManager = new ResourceManager();
-        ProjectRepository projectRepository = new ProjectRepository(systemTime);
+        BranchOffice branchOffice = mock(BranchOffice.class);
+        ProjectRepository projectRepository = new ProjectRepository(systemTime, branchOffice);
 
         abmMock = mock(ControllerStack.class);
         this.mockedUI = mock(UserInterface.class);
