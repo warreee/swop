@@ -173,4 +173,14 @@ public class BranchOffice {
     public ImmutableList<User> getEmployees() {
         return ImmutableList.copyOf(this.employees);
     }
+
+    public void addEmployee(User employee) {
+        if (isValidEmployee(employee)){
+            employees.add(employee);
+        }
+    }
+
+    private boolean isValidEmployee(User employee) {
+        return employee != null;
+    }
 }

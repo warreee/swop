@@ -23,7 +23,6 @@ public class LogonScenarioTest {
 
     @Before
     public void setUp() throws Exception {
-        SystemTime systemTime = mock(SystemTime.class);
         this.mockedUI = mock(UserInterface.class);
         ProjectRepository projectRepository = mock(ProjectRepository.class);
         ResourcePlanner resourcePlanner = mock(ResourcePlanner.class);
