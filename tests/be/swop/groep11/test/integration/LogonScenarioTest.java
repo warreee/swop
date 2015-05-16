@@ -95,5 +95,12 @@ public class LogonScenarioTest {
         logonController.logon();
     }
 
+    @Test(expected = StopTestException.class)
+    public void logon_CancelSelectEmployeeTest() {
+        when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenReturn(branchOffices.get(0));
+        when(mockedUI.selectEmployeeFromList(employees)).thenThrow(new CancelException("Cancel in Test"));
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
+        logonController.logon();
+    }
 }
