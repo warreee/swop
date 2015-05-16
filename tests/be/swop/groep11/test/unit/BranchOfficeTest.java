@@ -2,6 +2,7 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.resource.ResourcePlanner;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
@@ -22,6 +23,7 @@ public class BranchOfficeTest {
     ProjectRepository projectRepository1, projectRepository2, projectRepository3;
     ResourcePlanner resourcePlanner1, resourcePlanner2, resourcePlanner3;
     Task task;
+    User user1, user2, user3;
 
     @Before
     public void setUp() throws Exception {
@@ -48,6 +50,10 @@ public class BranchOfficeTest {
         when(projectRepository1.getAllTasks()).thenReturn(tasks);
         when(projectRepository2.getAllTasks()).thenReturn(new ArrayList<>());
         when(projectRepository3.getAllTasks()).thenReturn(new ArrayList<>());
+
+        user1 = mock(User.class);
+        user2 = mock(User.class);
+        user3 = mock(User.class);
     }
 
     @Test
@@ -144,6 +150,15 @@ public class BranchOfficeTest {
     @Test
     public void updateAllStatusTest() {
         fail("Nog niet geïmplementeerd!");
+    }
+
+    @Test
+    public void addEmployeeTest() {
+        branchOffice1.addEmployee(user1);
+        branchOffice1.addEmployee(user2);
+        branchOffice1.addEmployee(user3);
+
+        assertTrue(branchOffice1.getEmployees().size() == 3);
     }
 
 }
