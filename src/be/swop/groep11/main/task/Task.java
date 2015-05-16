@@ -347,7 +347,7 @@ public class Task{
         return alternativeTask;
     }
 
-    /**
+    /** TODO: dit is niet correct!!!
      * Wjizigt de alternatieve taak van deze taak.
      * Zorgt ervoor dat de dependencies van deze taak overgebracht worden naar de alternatieve taak.
      * @throws java.lang.Exception alternativeTask kan niet als alternatieve taak voor deze taak gezet worden.

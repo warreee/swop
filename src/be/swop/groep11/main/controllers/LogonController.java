@@ -30,6 +30,7 @@ public class LogonController extends AbstractController implements ILogin {
             identify();
         } catch (CancelException | EmptyListException e) {
             getUserInterface().printException(e);
+            logOut();
         }
     }
 

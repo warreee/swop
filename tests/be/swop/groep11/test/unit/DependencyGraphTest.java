@@ -94,7 +94,7 @@ public class DependencyGraphTest {
         assertFalse(taskB.getDependentTasks().contains(taskA));
         assertTrue(taskB.getDependingOnTasks().contains(taskA));
 
-        helpPrint();
+        //helpPrint();
 
     }
 
@@ -104,14 +104,17 @@ public class DependencyGraphTest {
         taskA.addNewDependencyConstraint(taskB);
     }
 
+    /**
+     * A -> B -> C
+     */
     @Test
     public void removeDependencyTest() {
         dependencyGraph.addNewDependency(taskB, taskA);
         dependencyGraph.addNewDependency(taskC, taskB);
-        //helpPrint();
+        helpPrint();
         dependencyGraph.changeDependingOnAlternativeTask(taskA, taskD);
         System.out.println("");
-        //helpPrint();
+        helpPrint();
         dependencyGraph.getDependentTasks(taskA);
         assertFalse(dependencyGraph.getDependentTasks(taskB).contains(taskA));
     }
