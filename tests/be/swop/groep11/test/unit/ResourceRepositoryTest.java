@@ -17,15 +17,14 @@ public class ResourceRepositoryTest {
     @Before
     public void setUp() throws Exception {
         rtr = new ResourceTypeRepository();
-        resRepo = new ResourceRepository();
-        resRepo.setResourceTypeRepository(rtr);
+        resRepo = new ResourceRepository(rtr);
+//        resRepo.setResourceTypeRepository(rtr);
 
     }
 
     @Test
-    public void setResourceTypeRepository() throws Exception {
-        ResourceRepository resRepo = new ResourceRepository();
-        resRepo.setResourceTypeRepository(rtr);
+    public void constructor_valid() throws Exception {
+        ResourceRepository resRepo = new ResourceRepository(rtr);
         assertEquals(rtr, resRepo.getResourceTypeRepository());
         assertFalse(resRepo.canHaveAsResourceTypeRepository(rtr));
         assertFalse(resRepo.canHaveAsResourceTypeRepository(null));
@@ -34,14 +33,14 @@ public class ResourceRepositoryTest {
     }
     @Test (expected = IllegalArgumentException.class)
     public void setResourceTypeRepository_invalid() throws Exception {
-        ResourceRepository resRepo = new ResourceRepository();
+        ResourceRepository resRepo = new ResourceRepository(rtr);
         resRepo.setResourceTypeRepository(rtr);
         resRepo.setResourceTypeRepository(rtr);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void setResourceTypeRepository_null_invalid() throws Exception {
-        ResourceRepository resRepo = new ResourceRepository();
+        ResourceRepository resRepo = new ResourceRepository(rtr);
         resRepo.setResourceTypeRepository(null);
     }
 

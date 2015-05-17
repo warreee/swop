@@ -13,7 +13,7 @@ import be.swop.groep11.main.ui.UserInterface;
 /**
  * Created by warreee on 9/05/15.
  */
-public class LogonController extends AbstractController implements ILogin {
+public class LogonController extends AbstractController{
 
     private Company company = null;
     private BranchOffice branchOffice = null;
@@ -37,8 +37,9 @@ public class LogonController extends AbstractController implements ILogin {
     }
 
     private void identify() {
+
         User user = getUserInterface().selectEmployeeFromList(getBranchOffice().getEmployees());
-        if (user.isDeveloper()){
+        if (user.isDeveloper()) {
             setDeveloper((Developer) user);
         }
         if (user.isProjectManager()) {
@@ -58,8 +59,6 @@ public class LogonController extends AbstractController implements ILogin {
         setProjectManager(null);
     }
 
-
-
     /**
      * Vraagt aan de user op welke brancheoffice hij wilt inloggen.
      */
@@ -67,40 +66,32 @@ public class LogonController extends AbstractController implements ILogin {
         this.branchOffice = getUserInterface().selectBranchOfficeFromList(this.company.getBranchOffices());
     }
 
+    //Note getters exception laten gooien indien er geen gekozen BO of User is.
 
-
-
-    @Override
     public boolean hasIdentifiedProjectManager() {
         return getProjectManager() != null;
     }
 
-    @Override
     public boolean hasIdentifiedDeveloper() {
         return getDeveloper() != null;
     }
 
-    @Override
     public boolean hasIdentifiedBranchOffice() {
         return getBranchOffice() != null;
     }
 
-    @Override
     public boolean hasIdentifiedUserAtBranchOffice() {
         return hasIdentifiedDeveloper() || hasIdentifiedProjectManager();
     }
 
-    @Override
     public ProjectManager getProjectManager() {
         return this.projectManager;
     }
 
-    @Override
     public Developer getDeveloper() {
         return this.developer;
     }
 
-    @Override
     public BranchOffice getBranchOffice(){
         return this.branchOffice;
     }

@@ -19,6 +19,6 @@ public class DelegateTaskController  extends AbstractController {
 
     @Override
     public void delegateTask() {
-        super.delegateTask();
+        System.out.println("nog te implementeren");
     }
 }

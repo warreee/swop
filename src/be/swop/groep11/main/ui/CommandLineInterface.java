@@ -5,7 +5,6 @@ import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.exception.IllegalActionException;
@@ -239,10 +238,7 @@ public class CommandLineInterface implements UserInterface {
     }
 
 
-    @Override
-    public User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException {
-        return null;
-    }
+
 
     //    @Override
     public <T> T requestUserInput(String request, UserInput<T> userInput) throws CancelException {
@@ -313,7 +309,7 @@ public class CommandLineInterface implements UserInterface {
      * @return Een getal van Type <T> dat uit [min,max] komt.
      * @throws CancelException gooi indien de gebruiker het Command.CANCEL in geeft.
      */
-    public <T extends Number & Comparable<T>> T numberBetween(UserInput<T> userInput, T min, T max) throws CancelException {
+    private <T extends Number & Comparable<T>> T numberBetween(UserInput<T> userInput, T min, T max) throws CancelException {
 //        getMultipleNumberBetween(request,userInput,min,max,1,true)
         boolean correct = false;
         T response = null;

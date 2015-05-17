@@ -72,7 +72,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     }
 
     /**
-     * Controlleer of er het gegeven aantal ResourceTypes beschikbaar is gedurende de TimeSpan.
+     * Controleer of er het gegeven aantal ResourceTypes beschikbaar is gedurende de TimeSpan.
      *
      * @param resourceType De ResourceType die beschikbaar moet zijn.
      * @param timeSpan     De TimeSpan wanneer de ResourceType beschikbaar moet zijn.
@@ -154,7 +154,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      *
      * @param plan Het plan dat toegevoegd word.
      */
-    public void addPlan(Plan plan) {
+    public void addPlan(Plan plan) throws IllegalArgumentException {
         checkPlan(plan);
         if (planMap.containsKey(plan.getTimeSpan().getStartTime())) {
             planMap.get(plan.getTimeSpan().getStartTime()).add(plan);
@@ -163,17 +163,26 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
             list.add(plan);
             planMap.put(plan.getTimeSpan().getStartTime(), list);
         }
+
+        //
+        addObserver(plan.getTask().getResourcePlannerObserver());
+    }
+
+    protected void removePlan(Plan plan) {
+        //TODO implement remove Plan
+        //plan.clear() roept dit op?
+        removeObserver(plan.getTask().getResourcePlannerObserver());
     }
 
     /**
-     * Controlleert of een plan niet null is en of dat het geen reservaties bevat voor ResourceInstances die op het
+     * Controleert of een plan niet null is en of dat het geen reservaties bevat voor ResourceInstances die op het
      * moment van die reservatie al gereserveerd zijn.
      *
      * @param plan Het plan dat gecontrolleert moet worden.
      * @throws IllegalArgumentException Wordt gegooid wanneer er een fout is.
      */
-    // TODO: controlleert deze alles genoeg?
-    private void checkPlan(Plan plan) {
+    // TODO: controleert deze alles genoeg?
+    private void checkPlan(Plan plan) throws IllegalArgumentException {
         if (plan == null) {
             throw new IllegalArgumentException("Plan mag niet 'null' zijn.");
         }

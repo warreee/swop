@@ -198,6 +198,7 @@ public class Project {
      */
     public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration, IRequirementList requirementList) throws IllegalArgumentException {
         Task task = new Task(description, estimatedDuration, acceptableDeviation, this.dependencyGraph, requirementList, this);
+        systemTime.addObserver(task.getSystemTimeObserver());
         tasks.add(task);
     }
 

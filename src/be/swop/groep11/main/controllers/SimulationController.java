@@ -1,8 +1,8 @@
 package be.swop.groep11.main.controllers;
 
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.IProjectRepositoryMemento;
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.ui.UserInterface;
 
 /**
@@ -10,23 +10,23 @@ import be.swop.groep11.main.ui.UserInterface;
  * Dit wordt gedaan door de commando's "Start Simulation" en "End Simulation" af te handelen.
  */
 public class SimulationController extends AbstractController {
+    private LogonController logonController;
+
     /*
-    * De te ondersteunen Use Case's:
-    * Create Task
-    * OldPlan Task
-    * Resolve Conflict
-    * Show Projects
-    * */
-    public SimulationController(ControllerStack controllerStack, ProjectRepository projectRepository, UserInterface userInterface) {
+        * De te ondersteunen Use Case's:
+        * Create Task
+        * Plan Task
+        * Delegate Task
+        * Resolve Conflict
+        * Show Projects
+        * */
+    public SimulationController (LogonController logonController, UserInterface userInterface) {
         super(userInterface);
-        this.controllerStack = controllerStack;
-        this.projectRepository = projectRepository;
+        this.logonController = logonController;
         //Zelfde project repository als alle andere controllers, geen nood om actions(commands) te deligeren via simulatiecontroller.
     }
     //Store initial state
     private IProjectRepositoryMemento originalState;
-    private ControllerStack controllerStack;
-    private ProjectRepository projectRepository;
 
 
     /**
@@ -34,7 +34,10 @@ public class SimulationController extends AbstractController {
      */
     public void startSimulation() {
         // hou de huidige state van projectRepository bij
-        storeState();
+        BranchOffice bo = logonController.getBranchOffice();
+        ProjectRepository projectRepository = bo.getProjectRepository();
+
+        storeState(projectRepository);
         UserInterface ui = this.getUserInterface();
         ui.showHelp(this);
     }
@@ -52,7 +55,9 @@ public class SimulationController extends AbstractController {
      * Maakt de veranderingen die tijdens de simulatie gebeurd zijn ongedaan.
      */
     public void cancel() {
-        restoreState();
+        BranchOffice bo = logonController.getBranchOffice();
+        ProjectRepository projectRepository = bo.getProjectRepository();
+        restoreState(projectRepository);
         getUserInterface().printMessage("Canceled Simulation");
         deActivate(this);
     }
@@ -60,17 +65,17 @@ public class SimulationController extends AbstractController {
     /**
      * Slaat de huidige staat van de projectRepository op.
      */
-    private void storeState() {
+    private void storeState(ProjectRepository projectRepository) {
         this.originalState = projectRepository.createMemento();
     }
 
     /**
      * Hersteld de oude staat van de projectRepository.
      */
-    private void restoreState() {
+    private void restoreState(ProjectRepository projectRepository) {
         IProjectRepositoryMemento memento = this.originalState;
         if (memento != null) {
-            this.projectRepository.setMemento(memento);
+            projectRepository.setMemento(memento);
         }
     }
 
@@ -78,13 +83,13 @@ public class SimulationController extends AbstractController {
      * Set's this controller on top of stack in UI.
      */
     protected void activate(AbstractController controller) {
-        controllerStack.activateController(controller);
+//        controllerStack.activateController(controller);
     }
 
     /**
      * Removes this controller from the stack in UI.
      */
     protected void deActivate(AbstractController controller) {
-        controllerStack.deActivateController(controller);
+//        controllerStack.deActivateController(controller);
     }
 }

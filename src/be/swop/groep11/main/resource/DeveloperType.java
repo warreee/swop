@@ -23,7 +23,7 @@ public class DeveloperType extends AResourceType{
      */
     @Override
     protected void addResourceInstance(String name) throws IllegalArgumentException {
-        Developer dev = new Developer(name,this);
+        Developer dev = new Developer(name);
         addResourceInstance(dev);
     }
 

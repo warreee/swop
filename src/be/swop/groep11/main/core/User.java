@@ -37,4 +37,12 @@ public class User {
     public boolean isProjectManager() {
         return false;
     }
+
+    protected String getUserFuction(){
+        return "";
+    }
+
+    public String getDescription() {
+        return "Naam: " + name + " Functie: " + getUserFuction();
+    }
 }

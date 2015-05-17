@@ -1,5 +1,6 @@
 package be.swop.groep11.main.controllers;
 
+import be.swop.groep11.main.core.Company;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.exception.CancelException;
@@ -13,36 +14,19 @@ import java.time.LocalDateTime;
 /**
  * Bevat de stappen om de use cases "Show Projects" en "Create Project" uit te voeren.
  */
-public class ProjectController extends AbstractController {
+public class CreateProjectController extends AbstractController {
 
-    private ProjectRepository projectRepository;
+
+    private LogonController logonController;
 
     /**
      * Constructor om een nieuwe project controller te maken.
      * @param projectRepository Project repository om projecten aan toe te voegen
      * @param userInterface
      */
-    public ProjectController(ProjectRepository projectRepository,UserInterface userInterface){
+    public CreateProjectController(LogonController logonController, UserInterface userInterface){
         super(userInterface);
-        this.projectRepository = projectRepository;
-    }
-
-
-    /**
-     * Voert de stappen voor de use case "Show Projects" uit.
-     */
-    public void showProjects() {
-        try {
-            ImmutableList<Project> projects = projectRepository.getProjects();
-            Project project =  getUserInterface().selectProjectFromList(projects);
-            getUserInterface().showProjectDetails(project);
-
-            ImmutableList<Task> tasks = project.getTasks();
-            Task task =  getUserInterface().selectTaskFromList(tasks);
-            getUserInterface().showTaskDetails(task);
-        } catch (CancelException | EmptyListException e) {
-            getUserInterface().printException(e);
-        }
+        this.logonController = logonController;
     }
 
     /**
@@ -50,6 +34,7 @@ public class ProjectController extends AbstractController {
      */
     public void createProject(){
         try {
+            ProjectRepository projectRepository = logonController.getBranchOffice().getProjectRepository();
             String projectName =  getUserInterface().requestString("Project naam");
             String description =  getUserInterface().requestString("Project beschrijving");
             LocalDateTime creationTime =  getUserInterface().requestDatum("Creation time");

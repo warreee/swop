@@ -13,14 +13,6 @@ public class ResourceRepository {
     private ResourceTypeRepository resourceTypeRepository;
     private HashMap<AResourceType, ArrayList<ResourceInstance>> resources;
 
-    /**
-     * Maakt een nieuwe ResourceRepository aan
-     */
-    public ResourceRepository(){
-        // TODO: Wrs privaat maken.
-
-        resources = new HashMap<>();
-    }
 
     /**
      * Maakt een nieuwe ResourceRepository aan.
@@ -70,4 +62,11 @@ public class ResourceRepository {
     public boolean canAddAsNewResourceInstance(ResourceInstance resource) {
         return getResourceTypeRepository().containsType(resource.getResourceType()) && !containsResourceInstance(resource);
     }
+
+    public ImmutableList<AResourceType> getPresentResourceTypes() {
+        //TODO zonder developers?
+        return null;
+    }
+
+    //TODO methode request present resource types / resources
 }

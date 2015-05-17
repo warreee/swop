@@ -10,8 +10,6 @@ import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.RequirementListBuilder;
 import be.swop.groep11.main.resource.ResourcePlanner;
 import be.swop.groep11.main.util.Observer;
-import be.swop.groep11.main.util.ResourcePlannerObserver;
-import be.swop.groep11.main.util.SystemTimeObserver;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -22,7 +20,7 @@ import java.util.Set;
  * Stelt een taak voor met een beschrijving, starttijd, eindtijd, verwachte duur en een aanvaardbare marge.
  * Een taak heeft ook een dependency graph en een lijst van resource requirements.
  */
-public class Task implements SystemTimeObserver,ResourcePlannerObserver{
+public class Task{
 
     /**
      * Constructor om een nieuwe taak te maken.
@@ -502,6 +500,17 @@ public class Task implements SystemTimeObserver,ResourcePlannerObserver{
 
     private BranchOffice delegatedTo;
 
+//    @Override
+//    public void update(ResourcePlanner resourcePlanner) {
+//        getStatus().updateStatus(this);
+//    }
+//
+//    @Override
+//    public void update(SystemTime systemTime) {
+//        getStatus().updateStatus(this);
+//        evaluateTask(systemTime.getCurrentSystemTime());
+//    }
+
     private Observer<SystemTime> systemTimeObserver = sysTime -> {
         getStatus().updateStatus(this);
         evaluateTask(sysTime.getCurrentSystemTime());
@@ -519,6 +528,8 @@ public class Task implements SystemTimeObserver,ResourcePlannerObserver{
     public Observer<ResourcePlanner> getResourcePlannerObserver() {
         return resourcePlannerObserver;
     }
+
+
 
 
     public enum TaskEvaluation {

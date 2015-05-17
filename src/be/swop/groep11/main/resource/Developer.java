@@ -8,17 +8,16 @@ import be.swop.groep11.main.util.ResourceSchedule;
  */
 public class Developer extends User implements ResourceInstance {
 
+    private static AResourceType developerType = new DeveloperType();
+
     /**
      * Constructor om een nieuwe developer aan te maken met een naam en een resource type.
      * @param name         Naam van de developer
-     * @param resourceType Resource type van de developer
-     * @throws java.lang.IllegalArgumentException Ongeldige resource type
+     * @throws IllegalArgumentException Ongeldige developer naam.
      */
-    public Developer(String name, AResourceType resourceType) throws IllegalArgumentException {
+    public Developer(String name) throws IllegalArgumentException {
         super(name);
-        if (resourceType == null)
-            throw new IllegalArgumentException("Resource type mag niet null zijn");
-        this.resourceType = resourceType;
+        this.resourceType = developerType;
     }
 
     @Override
@@ -44,5 +43,10 @@ public class Developer extends User implements ResourceInstance {
     @Override
     public boolean isDeveloper() {
         return true;
+    }
+
+    @Override
+    protected String getUserFuction() {
+        return "DEV";
     }
 }

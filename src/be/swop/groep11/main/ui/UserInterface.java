@@ -51,7 +51,9 @@ public interface UserInterface {
 
     //void showEmployees(ImmutableList<User> users);
 
-    User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException;
+    default User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException {
+        return selectFromList(users, usr -> usr.getDescription());
+    }
 
     /**
      * Selecteert een project uit een lijst van projecten.

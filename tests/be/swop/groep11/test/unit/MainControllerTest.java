@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class MainControllerTest {
 
     private TaskController taskController;
-    private ProjectController projectController;
+    private ShowProjectsController showProjectsController;
     private AdvanceTimeController advanceTimeController;
     private SimulationController simulationController;
     private PlanningController planningController;
@@ -47,14 +47,14 @@ public class MainControllerTest {
 
 
         taskController = mock(TaskController.class);
-        projectController = mock(ProjectController.class);
+        showProjectsController = mock(ShowProjectsController.class);
         logonController = mock(LogonController.class);
         delegateTaskController = mock(DelegateTaskController.class);
         advanceTimeController = mock(AdvanceTimeController.class);
 
         simulationController = mock(SimulationController.class);
         planningController = mock(PlanningController.class);
-        main = new MainController(abmMock, advanceTimeController,simulationController,projectController,taskController,
+        main = new MainController(abmMock, advanceTimeController,simulationController, showProjectsController,taskController,
                 planningController, logonController, delegateTaskController, mockedUI );
     }
 
@@ -94,9 +94,9 @@ public class MainControllerTest {
         main.createProject();
 
 
-        verify(abmMock).activateController(projectController);
-        verify(projectController).createProject();
-        verify(abmMock).deActivateController(projectController);
+        verify(abmMock).activateController(showProjectsController);
+        verify(showProjectsController).createProject();
+        verify(abmMock).deActivateController(showProjectsController);
 
     }
 
@@ -104,9 +104,9 @@ public class MainControllerTest {
     public void showProjects() throws Exception {
         main.showProjects();
 
-        verify(abmMock).activateController(projectController);
-        verify(projectController).showProjects();
-        verify(abmMock).deActivateController(projectController);
+        verify(abmMock).activateController(showProjectsController);
+        verify(showProjectsController).showProjects();
+        verify(abmMock).deActivateController(showProjectsController);
 
     }
 

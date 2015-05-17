@@ -1,6 +1,6 @@
 package be.swop.groep11.main.core;
 
-import be.swop.groep11.main.resource.ResourcePlanner;
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 
@@ -10,12 +10,18 @@ import java.util.stream.Collectors;
 
 /**
  * Deze klasse stelt een branch office voor met een naam, locatie en project repository.
+ *
+ * Verantwoordelijkheden:
+ * ...
+ * Bijhouden & aanmaken van Developers.
+ * Bijhouden & aanmaken van ProjectManagers.
  */
 public class BranchOffice {
 
     private String name;
     private String location;
     private ProjectRepository projectRepository;
+    private ResourceRepository resourceRepository;
 
     public BranchOffice(String name, String location, ProjectRepository projectRepository, ResourcePlanner resourcePlanner) {
         this.setName(name);
@@ -68,12 +74,21 @@ public class BranchOffice {
         return location != null && !location.isEmpty();
     }
 
+
+
+    public ResourcePlanner getResourcePlanner(){
+        return resourcePlanner;
+    }
+
+    private ResourcePlanner resourcePlanner;
+
+
     /**
      * Geeft van alle taken die door deze branch office gepland moeten worden,
      * een lijst van de taken die nog niet gepland zijn.
      */
     public List<Task> getUnplannedTasks() {
-        List<Task> allTasks = getAllTasks().stream().filter(task -> (! task.isDelegated()) ).collect(Collectors.toList());
+        List<Task> allTasks = getAllTasks().stream().filter(task -> (!task.isDelegated())).collect(Collectors.toList());
         allTasks.addAll(getDelegatedTasks());
         return allTasks.stream().filter(task -> (! task.isPlanned()) ).collect(Collectors.toList());
     }
@@ -102,13 +117,6 @@ public class BranchOffice {
         this.delegatedTasks.remove(task);
     }
 
-    private List<Task> delegatedTasks = new ArrayList<>();
-
-    public ResourcePlanner getResourcePlanner(){
-        return resourcePlanner;
-    }
-
-    private ResourcePlanner resourcePlanner;
     /**
      * Delegeert een taak van deze branch office naar een andere branch office.
      * @param task  De te delegeren taak. Deze moet in de ongeplande taken van deze branch office zitten.
@@ -157,8 +165,8 @@ public class BranchOffice {
         return otherPlanner.canPlan(task);
     }
 
+    private List<Task> delegatedTasks = new ArrayList<>();
 
-    ArrayList<User> employees = new ArrayList<>();
 
     /**
      * Geeft een immutable list terug van alle employees in deze branch office.
@@ -166,6 +174,19 @@ public class BranchOffice {
      */
     public ImmutableList<User> getEmployees() {
         return ImmutableList.copyOf(this.employees);
+    }
+
+    public int amountOfEmployees() {
+        return Long.valueOf(getEmployees().stream().count()).intValue();
+    }
+
+    public int amountOfDevelopers(){
+        return Long.valueOf(getEmployees().stream().filter(user -> user instanceof Developer).count()).intValue();
+    }
+
+    public int amountOfProjectManagers(){
+        return Long.valueOf(getEmployees().stream().filter(user -> user instanceof ProjectManager).count()).intValue();
+
     }
 
     public void addEmployee(User employee) {
@@ -176,5 +197,16 @@ public class BranchOffice {
 
     private boolean isValidEmployee(User employee) {
         return employee != null;
+    }
+
+    private ArrayList<User> employees = new ArrayList<>();
+
+
+    public ImmutableList<Project> getProjects() {
+        return null;
+    }
+
+    public ResourceRepository getResourceRepository() {
+        return resourceRepository;
     }
 }

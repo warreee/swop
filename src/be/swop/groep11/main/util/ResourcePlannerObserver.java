@@ -7,5 +7,9 @@ import be.swop.groep11.main.resource.ResourcePlanner;
  */
 public interface ResourcePlannerObserver {
 
-    Observer<ResourcePlanner> getResourcePlannerObserver();
+    /**
+     * Notify/update deze Observer.
+     * @param resourcePlanner
+     */
+    void update(ResourcePlanner resourcePlanner);
 }

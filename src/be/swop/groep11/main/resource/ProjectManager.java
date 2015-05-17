@@ -25,4 +25,9 @@ public class ProjectManager extends User{
     public boolean isProjectManager() {
         return true;
     }
+
+    @Override
+    protected String getUserFuction() {
+        return "PM";
+    }
 }

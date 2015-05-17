@@ -1,5 +1,6 @@
 package be.swop.groep11.test.integration;
 
+import be.swop.groep11.main.controllers.LogonController;
 import be.swop.groep11.main.controllers.PlanningController;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
@@ -52,7 +53,10 @@ public class PlanTaskScenarioTest {
         addTempDomainObjects();
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", now, now.plusDays(10));
-        this.planningController = new PlanningController(projectRepository,resourceManager,systemTime,mockedUI);
+        LogonController logonController = mock(LogonController.class);
+        when(logonController.hasIdentifiedProjectManager()).thenReturn(true);
+
+        this.planningController = new PlanningController(logonController,systemTime,mockedUI);
 
         this.projects = projectRepository.getProjects();
 

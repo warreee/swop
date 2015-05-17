@@ -1,7 +1,7 @@
 package be.swop.groep11.test.integration;
 
 
-import be.swop.groep11.main.actions.ControllerStack;
+import be.swop.groep11.main.controllers.LogonController;
 import be.swop.groep11.main.controllers.SimulationController;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
@@ -15,8 +15,10 @@ import org.junit.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SimulationScenarioTest {
 
@@ -26,6 +28,7 @@ public class SimulationScenarioTest {
     private SimulationController simulationController;
     private UserInterface mockedUI;
     private ImmutableList<Project> projects;
+    private LogonController logonController;
 
     @Before
     public void setUp() throws Exception {
@@ -36,8 +39,11 @@ public class SimulationScenarioTest {
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
         repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
 
+        this.logonController = mock(LogonController.class);
+        when(logonController.hasIdentifiedProjectManager()).thenReturn(true);
+
         this.mockedUI = mock(UserInterface.class);
-        this.simulationController = new SimulationController(mock(ControllerStack.class), repository, mockedUI);
+        this.simulationController = new SimulationController(logonController, mockedUI);
     }
 
     @Test

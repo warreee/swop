@@ -1,10 +1,7 @@
 package be.swop.groep11.test.integration;
 
-import be.swop.groep11.main.controllers.ProjectController;
-import be.swop.groep11.main.core.BranchOffice;
-import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.controllers.ShowProjectsController;
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
@@ -27,8 +24,9 @@ public class ShowProjectsScenarioTest {
     private ImmutableList<Project> projects;
     private ImmutableList<Task> tasks;
     private UserInterface mockedUI;
-    private ProjectController projectController;
+    private ShowProjectsController showProjectsController;
     private BranchOffice branchOffice;
+    private Company company;
 
     @Before
     public void setUp() throws Exception {
@@ -42,7 +40,7 @@ public class ShowProjectsScenarioTest {
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10));
         projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8));
 
-        this.projectController = new ProjectController(projectRepository, mockedUI);
+        this.showProjectsController = new ShowProjectsController(company, mockedUI);
         this.projects = projectRepository.getProjects();
         this.tasks = projects.get(0).getTasks();
     }
@@ -53,7 +51,7 @@ public class ShowProjectsScenarioTest {
         when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
         when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
 
-        projectController.showProjects();
+        showProjectsController.showProjects();
     }
 
     @Test(expected = StopTestException.class)
@@ -64,7 +62,7 @@ public class ShowProjectsScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         //Cancel exception wordt opgevangen in de controller.
-        projectController.showProjects();
+        showProjectsController.showProjects();
     }
 
     @Test(expected = StopTestException.class)
@@ -75,6 +73,6 @@ public class ShowProjectsScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         //Cancel exception wordt opgevangen in de controller.
-        projectController.showProjects();
+        showProjectsController.showProjects();
     }
 }

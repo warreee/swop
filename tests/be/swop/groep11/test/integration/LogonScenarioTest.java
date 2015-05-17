@@ -9,15 +9,10 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Testklasse om de usecase logon te testen.
@@ -33,13 +28,14 @@ public class LogonScenarioTest {
 
     @Before
     public void setUp() throws Exception {
-        company = new Company("company", mock(ResourceTypeRepository.class));
+        SystemTime systemTime = new SystemTime();
+        company = new Company("company", mock(ResourceTypeRepository.class),systemTime);
         this.mockedUI = mock(UserInterface.class);
         ProjectRepository projectRepository = mock(ProjectRepository.class);
         ResourcePlanner resourcePlanner = mock(ResourcePlanner.class);
-        this.branchOffice = new BranchOffice("Branchoffice 1", "Leuven", projectRepository, resourcePlanner);
-        Developer developer1 = new Developer("dev1", mock(ResourceType.class)); // TODO: moet er echt telkends een resourcetype worden meegegeven
-        Developer developer2 = new Developer("dev2", mock(ResourceType.class)); // TODO: kunnen we geen standaard constructor in devloper aanmaken?
+        this.branchOffice = new BranchOffice("BranchOffice 1", "Leuven", projectRepository, resourcePlanner);
+        Developer developer1 = new Developer("dev1"); // TODO: moet er echt telkends een resourcetype worden meegegeven
+        Developer developer2 = new Developer("dev2"); // TODO: kunnen we geen standaard constructor in devloper aanmaken?
         ProjectManager projectManager = new ProjectManager("projectmanager1");
         company.addBranchOffice(branchOffice);
         branchOffice.addEmployee(developer1);

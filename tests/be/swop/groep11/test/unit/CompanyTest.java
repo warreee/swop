@@ -2,6 +2,7 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Company;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.resource.ResourceTypeRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,11 +19,13 @@ public class CompanyTest {
     private ResourceTypeRepository resourceTypeRepository;
     private Company company1;
     private BranchOffice branchOffice1, branchOffice2, branchOffice3;
+    private SystemTime systemTime;
 
     @Before
     public void setUp() throws Exception {
         this.resourceTypeRepository = new ResourceTypeRepository();
-        this.company1 = new Company("comp1", resourceTypeRepository);
+        this.systemTime = new SystemTime();
+        this.company1 = new Company("comp1", resourceTypeRepository,systemTime);
         this.branchOffice1 = mock(BranchOffice.class);
         this.branchOffice2 = mock(BranchOffice.class);
         this.branchOffice3 = mock(BranchOffice.class);

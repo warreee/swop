@@ -9,17 +9,13 @@ import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Company;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.resource.ResourceManager;
-import be.swop.groep11.main.resource.ResourcePlanner;
-import be.swop.groep11.main.resource.ResourceRepository;
-import be.swop.groep11.main.resource.ResourceTypeRepository;
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.ui.CommandLineInterface;
-import be.swop.groep11.main.util.InputParser;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * Klasse verantwoordelijk voor BootStrapping.
@@ -44,15 +40,13 @@ public class App {
     }
     private SystemTime systemTime;
     private CommandLineInterface cli;
-    private ResourceManager resourceManager;
-    private ProjectRepository projectRepository;
     private ControllerStack controllerStack;
     private Company company;
-    private BranchOffice branchoffice;
 
     private MainController main;
     private TaskController taskController;
-    private ProjectController projectController;
+    private ShowProjectsController showProjectsController;
+    private CreateProjectController createProjectController;
     private AdvanceTimeController advanceTimeController;
     private SimulationController simulationController;
     private PlanningController planningController;
@@ -70,41 +64,36 @@ public class App {
         systemTime = new SystemTime(LocalDateTime.MIN);
 
         ResourceTypeRepository typeRepository = new ResourceTypeRepository();
-        company = new Company("company",typeRepository);
-
-
-        ResourceRepository resourceRepository = new ResourceRepository(typeRepository);
-        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository,systemTime );
-        projectRepository = new ProjectRepository(systemTime);
-        branchoffice = new BranchOffice("bo1","leuven",projectRepository,resourcePlanner);
-
-        resourceManager = new ResourceManager();
+        company = new Company("company",typeRepository,systemTime);
     }
 
     private void initInputParser(boolean readYamlFile){
-        if (readYamlFile) {
-            // run inputreader
-            InputParser inputParser = new InputParser(projectRepository, resourceManager, systemTime);
-            try {
-                inputParser.parseInputFile();
-            } catch (FileNotFoundException e) {
-                System.out.println("Yaml file niet gevonden");
-            }
-        }else{
-            addTempDomainObjects();
-        }
+//        if (readYamlFile) {
+//            // run inputreader
+//            InputParser inputParser = new InputParser(projectRepository, resourceManager, systemTime);
+//            try {
+//                inputParser.parseInputFile();
+//            } catch (FileNotFoundException e) {
+//                System.out.println("Yaml file niet gevonden");
+//            }
+//        }else{
+//            addTempDomainObjects();
+//        }
+        addTempDomainObjects();
     }
 
     private void initControllers(){
         //Aanmaken van controllers
-        taskController = new TaskController(projectRepository, systemTime,cli,resourceManager);
-        projectController = new ProjectController(projectRepository, cli );
-        advanceTimeController = new AdvanceTimeController( systemTime, cli);
-        simulationController = new SimulationController(controllerStack, projectRepository, cli);
-        planningController = new PlanningController(projectRepository,resourceManager, systemTime, cli);
         logonController = new LogonController(cli, company);
+
+        taskController = new TaskController(logonController, systemTime,cli);
+        showProjectsController = new ShowProjectsController(company, cli );
+        createProjectController = new CreateProjectController(logonController, cli);
+        advanceTimeController = new AdvanceTimeController( systemTime, cli);
+        simulationController = new SimulationController(logonController, cli);
+        planningController = new PlanningController(logonController, systemTime, cli);
         delegateTaskController = new DelegateTaskController(cli, company, logonController);
-        main = new MainController(controllerStack, advanceTimeController,simulationController,projectController,
+        main = new MainController(controllerStack, advanceTimeController,simulationController, showProjectsController,
                 taskController, planningController, logonController, delegateTaskController, cli);
     }
 
@@ -126,8 +115,8 @@ public class App {
         ActionProcedure planTask = new ActionProcedure(planningController, planningController::planTask, logonController::hasIdentifiedProjectManager);
         ActionProcedure delegateTask = new ActionProcedure(delegateTaskController, delegateTaskController::delegateTask, logonController::hasIdentifiedProjectManager, true);
 
-        ActionProcedure createProject = new ActionProcedure(projectController, projectController::createProject, logonController::hasIdentifiedProjectManager);
-        ActionProcedure showProjects = new ActionProcedure(projectController, projectController::showProjects, returnsTrue);
+        ActionProcedure createProject = new ActionProcedure(showProjectsController, showProjectsController::createProject, logonController::hasIdentifiedProjectManager);
+        ActionProcedure showProjects = new ActionProcedure(showProjectsController, showProjectsController::showProjects, returnsTrue);
 
         ActionProcedure advanceTime = new ActionProcedure(advanceTimeController, advanceTimeController::advanceTime, returnsTrue);
 
@@ -160,7 +149,7 @@ public class App {
 
         controllerStack.addActionProcedure(simulationController, Action.CREATETASK, createTask);
         controllerStack.addActionProcedure(simulationController, Action.PLANTASK, planTask);
-//        controllerStack.addActionProcedure(simulationController, Action.DELEGATETASK, delegateTask);
+        controllerStack.addActionProcedure(simulationController, Action.DELEGATETASK, delegateTask);
         controllerStack.addActionProcedure(simulationController, Action.REALIZESIMULATION, realizeSim);
         controllerStack.addActionProcedure(simulationController, Action.CANCEL, cancelSim);
 
@@ -175,24 +164,32 @@ public class App {
 
 
     private void addTempDomainObjects() {
-        /* TODO dit werkt niet meer want ResourceManager > ResourceTypeRepository + ... (en hier moeten nu ook branch offices worden aangemaakt)
+        ProjectRepository projectRepository = new ProjectRepository(systemTime);
+        ResourceTypeRepository resourceTypeRepository = company.getResourceTypeRepository();
+        ResourceRepository resourceRepository = new ResourceRepository(resourceTypeRepository);
+        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository, systemTime);
 
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevA");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevB");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevC");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevD");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "DevE");
+        BranchOffice bo1 = new BranchOffice("bo1", "leuven", projectRepository,resourcePlanner);
+        company.addBranchOffice(bo1);
 
-        resourceManager.addNewResourceType("Auto");
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Aston Martin Rapide");
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Toyota Auris");
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Rolls Royce Phantom");
+        bo1.addEmployee(new Developer("DevA"));
+        bo1.addEmployee(new Developer("DevB"));
+        bo1.addEmployee(new Developer("DevC"));
+        bo1.addEmployee(new Developer("DevD"));
+        bo1.addEmployee(new Developer("DevE"));
 
-        resourceManager.addNewResourceType("CarWash", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(14, 0)));
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("CarWash"), "car wash A");
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("CarWash"), "car wash B");
+        resourceTypeRepository.addNewResourceType("Auto");
+        AResourceType auto = resourceTypeRepository.getResourceTypeByName("Auto");
 
-        */
+        resourceRepository.addResourceInstance(new Resource("Aston Martin Rapide",auto));
+        resourceRepository.addResourceInstance(new Resource("Toyota Auris",auto));
+        resourceRepository.addResourceInstance(new Resource("Rolls Royce Phantom",auto));
+
+        resourceTypeRepository.addNewResourceType("CarWash", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(14, 0)));
+        AResourceType carWash = resourceTypeRepository.getResourceTypeByName("CarWash");
+
+        resourceRepository.addResourceInstance(new Resource("car wash A",carWash));
+        resourceRepository.addResourceInstance(new Resource("car wash B",carWash));
 
     }
 

@@ -9,7 +9,7 @@ import be.swop.groep11.main.ui.UserInterface;
 public class MainController extends AbstractController {
 
     private final SimulationController simulationController;
-    private final ProjectController projectController;
+    private final ShowProjectsController showProjectsController;
     private ControllerStack controllerStack;
     private final AdvanceTimeController advanceTimeController;
     private final TaskController taskController;
@@ -22,20 +22,20 @@ public class MainController extends AbstractController {
      * @param controllerStack Mapt per controller de beschikbare acties op de juiste actie.
      * @param advanceTimeController De controller voor de usecase advance time.
      * @param simulationController De controller voor de usecase simulate.
-     * @param projectController De controller voor de usecase new project.
+     * @param showProjectsController De controller voor de usecase new project.
      * @param taskController De controller voor de usecases new task en update task.
      * @param planningController De controller voor de usecase planning.
      * @param userInterface Een concrete implementatie van de UserInterfaceInterface.
      */
     public MainController(ControllerStack controllerStack, AdvanceTimeController advanceTimeController,
-                          SimulationController simulationController, ProjectController projectController,
+                          SimulationController simulationController, ShowProjectsController showProjectsController,
                           TaskController taskController, PlanningController planningController,
                           LogonController logonController, DelegateTaskController delegateTaskController, UserInterface userInterface) {
         super(userInterface);
         this.controllerStack = controllerStack;
         this.advanceTimeController = advanceTimeController;
         this.simulationController = simulationController;
-        this.projectController = projectController;
+        this.showProjectsController = showProjectsController;
         this.taskController = taskController;
         this.planningController = planningController;
         this.logonController = logonController;
@@ -59,31 +59,10 @@ public class MainController extends AbstractController {
      */
     @Override
     public void createProject() throws IllegalArgumentException {
-        activate(projectController);
-        projectController.createProject();
-        deActivate(projectController);
+        activate(showProjectsController);
+        showProjectsController.createProject();
+        deActivate(showProjectsController);
     }
-
-
-//    public void createTask(){
-//        preCreateTask();
-//        preformCreateTask();
-//        postCreateTask();
-//    }
-//
-//    public void preCreateTask(){
-//        activate(taskController);
-//    }
-//
-//    public void preformCreateTask()throws IllegalArgumentException {
-//        throw new IllegalArgumentException("Niet ondersteund");
-//
-//    }
-//
-//    public void postCreateTask(){
-//        deActivate(taskController);
-//    }
-
 
     /**
      * Voert de usecase createTask uit.
@@ -113,9 +92,9 @@ public class MainController extends AbstractController {
      */
     @Override
     public void showProjects() throws IllegalArgumentException {
-        activate(projectController);
-        projectController.showProjects();
-        deActivate(projectController);
+        activate(showProjectsController);
+        showProjectsController.showProjects();
+        deActivate(showProjectsController);
     }
 
     /**

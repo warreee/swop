@@ -10,6 +10,8 @@ import java.util.List;
  * Deze klasse stelt een company voor,
  * Een company heeft een naam, heeft een resource type repository
  * en bestaat uit verschillende branch offices.
+ *
+ * Heeft de verantwoordelijkheid voor het bijhouden van BranchOffices & het aanmaken ervan.
  */
 public class Company {
 
@@ -20,13 +22,13 @@ public class Company {
 
     /**
      * Constructor om een nieuwe company te maken.
+     *
      * @param name                   Naam van de company
      * @param resourceTypeRepository Resource type repository van de company
-     * @param branchOffices          Branch offices van de company
      * @throws IllegalArgumentException Ongeldige naam, resource type repository of branch offices
      */
-    public Company(String name, ResourceTypeRepository resourceTypeRepository) throws IllegalArgumentException {
-        if (! isValidName(name)) {
+    public Company(String name, ResourceTypeRepository resourceTypeRepository, SystemTime systemTime) throws IllegalArgumentException {
+        if (!isValidName(name)) {
             throw new IllegalArgumentException("Ongeldige naam");
         }
         if (resourceTypeRepository == null) {
@@ -35,6 +37,7 @@ public class Company {
         this.name = name;
         this.resourceTypeRepository = resourceTypeRepository;
         this.branchOffices = new ArrayList<>();
+        setSystemTime(systemTime);
     }
 
     /**
@@ -47,6 +50,15 @@ public class Company {
         }
         this.branchOffices.add(branchOffice);
     }
+
+//    public void addNewBranchOffice(String name,String location) {
+//        ProjectRepository projectRepository = new ProjectRepository(getSystemTime());
+//        ResourceRepository resourceRepository = new ResourceRepository(getResourceTypeRepository());
+//        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository, getSystemTime());
+//        BranchOffice bo = new BranchOffice(name, location, projectRepository, resourcePlanner);
+//
+//        addBranchOffice(bo);
+//    }
 
     /**
      * Geeft een immutable list van de branch offices van deze company.
@@ -82,9 +94,37 @@ public class Company {
      * @return True als de branchOffice niet null is.
      */
     public boolean canAddBranchOffice(BranchOffice branchOffice) {
-        return branchOffice != null && !getBranchOffices().contains(branchOffice);
+        return branchOffice != null && !getBranchOffices().contains(branchOffice); // en heeft corresponderende typeRepository?
     }
 
 
+    public SystemTime getSystemTime() {
+        return systemTime;
+    }
+
+    public void setSystemTime(SystemTime systemTime) throws IllegalArgumentException{
+        if (!isValidSystemTime(systemTime)) {
+            throw new IllegalArgumentException("Ongeldige systemTime");
+        }
+        this.systemTime = systemTime;
+    }
+
+    private boolean isValidSystemTime(SystemTime systemTime) {
+        return systemTime != null && getSystemTime() == null;
+    }
+
+    private SystemTime systemTime;
+
+
+
+
+
+    //NOTE is deze methode hier welkom?
+
+    public ImmutableList<Project> getAllProjects() {
+        ArrayList<Project> projs = new ArrayList<>();
+        getBranchOffices().forEach(bo -> projs.addAll(bo.getProjects()));
+        return ImmutableList.copyOf(projs);
+    }
 
 }

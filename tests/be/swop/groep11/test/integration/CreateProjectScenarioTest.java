@@ -1,11 +1,9 @@
 package be.swop.groep11.test.integration;
 
-import be.swop.groep11.main.core.BranchOffice;
+import be.swop.groep11.main.controllers.CreateProjectController;
+import be.swop.groep11.main.controllers.LogonController;
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.exception.CancelException;
-import be.swop.groep11.main.controllers.ProjectController;
-import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.ui.UserInterface;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +23,8 @@ public class CreateProjectScenarioTest {
     private ProjectRepository projectRepository;
     private User user;
     private UserInterface mockedUI;
-    private ProjectController projectController;
+    private CreateProjectController createProjectController;
+    private LogonController logonController;
 
     @Before
     public void setUp() throws Exception {
@@ -39,6 +38,9 @@ public class CreateProjectScenarioTest {
         projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8));
         mockedUI = mock(UserInterface.class);
 
+        this.logonController = mock(LogonController.class);
+        when(logonController.hasIdentifiedProjectManager()).thenReturn(true);
+
     }
 
     @Test
@@ -47,8 +49,8 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
 
-        this.projectController = new ProjectController(projectRepository,mockedUI);
-        projectController.createProject();
+        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        createProjectController.createProject();
     }
 
     @Test (expected = StopTestException.class)
@@ -58,8 +60,8 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(IllegalArgumentException.class));
 
-        projectController = new ProjectController(projectRepository,mockedUI);
-        projectController.createProject();
+        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        createProjectController.createProject();
     }
 
     @Test (expected = StopTestException.class)
@@ -69,8 +71,8 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(IllegalArgumentException.class));
 
-        projectController = new ProjectController(projectRepository,mockedUI);
-        projectController.createProject();
+        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        createProjectController.createProject();
     }
 
     @Test (expected = StopTestException.class)
@@ -80,8 +82,8 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now.plusDays(1)).thenReturn(now);
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
-        projectController = new ProjectController(projectRepository,mockedUI);
-        projectController.createProject();
+        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        createProjectController.createProject();
     }
 
     @Test(expected = StopTestException.class)
@@ -91,8 +93,8 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
-        projectController = new ProjectController(projectRepository,mockedUI);
-        projectController.createProject();
+        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        createProjectController.createProject();
     }
 
     @Test(expected = StopTestException.class)
@@ -103,8 +105,8 @@ public class CreateProjectScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
-        projectController = new ProjectController(projectRepository,mockedUI);
-        projectController.createProject();
+        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        createProjectController.createProject();
     }
     @Test(expected = StopTestException.class)
     public void createProject_CancelCreateTimeTest() throws Exception {
@@ -114,8 +116,8 @@ public class CreateProjectScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
-        projectController = new ProjectController(projectRepository,mockedUI);
-        projectController.createProject();
+        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        createProjectController.createProject();
     }
     @Test(expected = StopTestException.class)
     public void createProject_CancelDueTimeTest() throws Exception {
@@ -125,8 +127,8 @@ public class CreateProjectScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
-        projectController = new ProjectController(projectRepository,mockedUI);
-        projectController.createProject();
+        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        createProjectController.createProject();
     }
 
 }

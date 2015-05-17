@@ -1,5 +1,6 @@
 package be.swop.groep11.test.integration;
 
+import be.swop.groep11.main.controllers.LogonController;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.controllers.TaskController;
@@ -33,6 +34,7 @@ public class CreateTaskScenarioTest {
     private ImmutableList<Project> projects;
     private ImmutableList<Task> tasks;
     private ResourceManager resourceManager;
+    private LogonController logonController;
 
 
     @Before
@@ -48,7 +50,11 @@ public class CreateTaskScenarioTest {
         addTempDomainObjects();
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
-        this.taskController = new TaskController(projectRepository,systemTime,mockedUI, resourceManager);
+
+        this.logonController = mock(LogonController.class);
+        when(logonController.hasIdentifiedProjectManager()).thenReturn(true);
+
+        this.taskController = new TaskController(logonController,systemTime,mockedUI);
 
         this.projects = projectRepository.getProjects();
         this.tasks = projects.get(0).getTasks();
