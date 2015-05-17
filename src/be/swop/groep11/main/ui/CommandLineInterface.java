@@ -3,7 +3,9 @@ package be.swop.groep11.main.ui;
 import be.swop.groep11.main.actions.Action;
 import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.AbstractController;
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.exception.IllegalActionException;
@@ -126,9 +128,8 @@ public class CommandLineInterface implements UserInterface {
         // TODO: project overtime Method?
         return String.format(projectFormatStr, project.getName(), project.getProjectStatus().name(), "(" + overTime + ")");
     });
-    Function<LocalDateTime, String> showLocalDateTimeEntry = (dateTime -> {
-        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-    });
+    Function<LocalDateTime, String> showLocalDateTimeEntry = (dateTime -> dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+    Function<BranchOffice, String> showBranchOfficeEntry = (BranchOffice::getName);
 
     /**
      * Laat de gebruiker een taak selecteren uit een lijst van taken
@@ -226,6 +227,21 @@ public class CommandLineInterface implements UserInterface {
         if (task.getAlternativeTask() != null) {
             java.lang.System.out.printf(format, "Alternatieve taak: ", task.getAlternativeTask().getDescription());
         }
+    }
+
+    /**
+     * Geeft de teksweergave weer van alle branchoffices.
+     * @param branchOffices de lijst van branchoffices die in teksweergave moet weergeven worden.
+     */
+   @Override
+    public BranchOffice selectBranchOfficeFromList(ImmutableList<BranchOffice> branchOffices) throws EmptyListException, CancelException {
+        return selectFromList(branchOffices, showBranchOfficeEntry);
+    }
+
+
+    @Override
+    public User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException {
+        return null;
     }
 
     //    @Override

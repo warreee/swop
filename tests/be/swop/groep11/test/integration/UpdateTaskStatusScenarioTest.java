@@ -1,5 +1,6 @@
 package be.swop.groep11.test.integration;
 
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.core.Project;
@@ -36,6 +37,7 @@ public class UpdateTaskStatusScenarioTest {
         now = LocalDateTime.now();
         systemTime = new SystemTime(now);
         resourceManager = new ResourceManager();
+        BranchOffice branchOffice = mock(BranchOffice.class);
         repository = new ProjectRepository(systemTime);
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10));
         repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));

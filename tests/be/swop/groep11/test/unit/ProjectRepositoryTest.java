@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class ProjectRepositoryTest {
 
@@ -23,6 +24,7 @@ public class ProjectRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
+        BranchOffice branchOffice = mock(BranchOffice.class);
         projRep = new ProjectRepository(new SystemTime());
 
         create = LocalDateTime.now();
@@ -95,6 +97,7 @@ public class ProjectRepositoryTest {
         proj2.addNewTask("taak 3", 0.2, Duration.ofHours(100));
         IProjectRepositoryMemento memento = projRep.createMemento();
 
+        BranchOffice branchOffice = mock(BranchOffice.class); //TODO: branchoffice testen
         ProjectRepository projRep2 = new ProjectRepository(new SystemTime());
         projRep2.setMemento(memento);
         assertTrue(repositoryContainsProject(projRep2, "project 1"));

@@ -1,12 +1,15 @@
 package be.swop.groep11.main.ui;
 
 import be.swop.groep11.main.actions.ControllerStack;
+import be.swop.groep11.main.core.BranchOffice;
+import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
+import com.sun.org.apache.bcel.internal.generic.IMUL;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,6 +43,17 @@ public interface UserInterface {
     void showTaskDetails(Task task);
 
     /**
+     * Toont alle branchoffices
+     */
+    //void showBranchOffices(ImmutableList<BranchOffice> branchOffices);
+
+    BranchOffice selectBranchOfficeFromList(ImmutableList<BranchOffice> branchOffices) throws EmptyListException, CancelException;
+
+    //void showEmployees(ImmutableList<User> users);
+
+    User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException;
+
+    /**
      * Selecteert een project uit een lijst van projecten.
      * @param projects Lijst van projecten
      * @return Nummer van geselecteerde project in lijst
@@ -57,7 +71,14 @@ public interface UserInterface {
      */
     Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
 
-    LocalDateTime selectLocalDateTimeFromList(List<LocalDateTime> dateTimes)throws EmptyListException, CancelException;
+    /**
+     * Selecteerd een localdatetime uit een lijst van localdatetimes
+     * @param dateTimes lijst van datetimes
+     * @return nummer van de geselecteerde datime uit de lijst
+     * @throws EmptyListException De lijst van datetimes is leeg
+     * @throws CancelException de gebruiker heeft aangegeven dat hij de usecase wilt stoppen
+     */
+    LocalDateTime selectLocalDateTimeFromList(List<LocalDateTime> dateTimes) throws EmptyListException, CancelException;
 
     /**
      * Vraagt een invoer van de gebruiker.

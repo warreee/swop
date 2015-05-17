@@ -15,6 +15,7 @@ public class MainController extends AbstractController {
     private final TaskController taskController;
     private final PlanningController planningController;
     private final LogonController logonController;
+    private final DelegateTaskController delegateTaskController;
 
     /**
      * Maakt een nieuwe instantie aan van deze controller.
@@ -29,7 +30,7 @@ public class MainController extends AbstractController {
     public MainController(ControllerStack controllerStack, AdvanceTimeController advanceTimeController,
                           SimulationController simulationController, ProjectController projectController,
                           TaskController taskController, PlanningController planningController,
-                          LogonController logonController, UserInterface userInterface) {
+                          LogonController logonController, DelegateTaskController delegateTaskController, UserInterface userInterface) {
         super(userInterface);
         this.controllerStack = controllerStack;
         this.advanceTimeController = advanceTimeController;
@@ -38,6 +39,7 @@ public class MainController extends AbstractController {
         this.taskController = taskController;
         this.planningController = planningController;
         this.logonController = logonController;
+        this.delegateTaskController = delegateTaskController;
     }
 
     /**

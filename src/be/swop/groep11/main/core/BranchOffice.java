@@ -158,4 +158,23 @@ public class BranchOffice {
     }
 
 
+    ArrayList<User> employees = new ArrayList<>();
+
+    /**
+     * Geeft een immutable list terug van alle employees in deze branch office.
+     * @return
+     */
+    public ImmutableList<User> getEmployees() {
+        return ImmutableList.copyOf(this.employees);
+    }
+
+    public void addEmployee(User employee) {
+        if (isValidEmployee(employee)){
+            employees.add(employee);
+        }
+    }
+
+    private boolean isValidEmployee(User employee) {
+        return employee != null;
+    }
 }

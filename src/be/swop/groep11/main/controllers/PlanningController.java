@@ -20,7 +20,7 @@ import java.util.function.Function;
 /**
  * Bevat de stappen om de usecase planTask uit te voeren.
  */
-public class PlanningController extends AbstractController {
+public class    PlanningController extends AbstractController {
 
     private ProjectRepository projectRepository;
     private ResourceManager resourceManager;

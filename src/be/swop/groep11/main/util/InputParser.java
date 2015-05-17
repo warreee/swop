@@ -9,11 +9,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * Klasse voor het inlezen van de de input file, deze moet staan in /input met de naam input.tman
@@ -46,6 +49,7 @@ public class InputParser {
     public static void main(String[] args) throws FileNotFoundException {
         SystemTime systemTime = new SystemTime(LocalDateTime.MIN);
         ResourceManager typeRepo = new ResourceManager();
+        BranchOffice branchOffice = mock(BranchOffice.class); // TODO: echte branchoffice erinsteken!
         ProjectRepository projectRepository = new ProjectRepository(systemTime);
 
         InputParser parser = new InputParser(projectRepository, typeRepo, systemTime);
@@ -76,13 +80,18 @@ public class InputParser {
         handleDevelopers(values);
         handleDailyAvailability(values);
         handleSystemTime(values);
+        handleCompany(values);
         handleReservations(values);
         handlePlannings(values);
         handleResourceTypes(values);
         handleResources(values);
         handleProjects(values);
         handleTasks(values);
+    }
 
+    private void handleCompany(Map<String, Object> companyMap){
+        String name = (String) companyMap.get("company");
+        // TODO: in company object steken.
     }
 
     /**
@@ -309,7 +318,7 @@ public class InputParser {
      * @param propertiesList
      */
     private void addTask(Map<String, Object> propertiesList) {
-        /* TODO dit werkt niet meer, maar de input parser moet toch aangepast worden...
+        // TODO dit werkt niet meer, maar de input parser moet toch aangepast worden...
         String description = (String) propertiesList.get("description");
         Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
         Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation"))) / 100;
@@ -321,7 +330,7 @@ public class InputParser {
         Task task = taskList.get(taskList.size() - 1);
         ArrayList<Developer> taskDevelopers = new ArrayList<>();
         LocalDateTime plannedStartTime = null;
-
+        /*
         try{
             Integer number = (Integer) propertiesList.get("planning");
             if(number != null) {

@@ -60,6 +60,10 @@ public abstract class AbstractController {
         throw new IllegalArgumentException("Niet ondersteund");
     }
 
+    public void delegateTask() {
+        throw new IllegalArgumentException("Niet ondersteund");
+    }
+
     public void setControllerStack(ControllerStack controllerStack)throws IllegalArgumentException {
         if (!canHaveAsControllerStack(controllerStack)) {
             throw new IllegalArgumentException("Ongeldige controllerStack voor deze AbstractController");

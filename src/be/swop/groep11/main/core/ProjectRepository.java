@@ -20,7 +20,6 @@ public class ProjectRepository {
 
     /**
      * Contstructor om een nieuwe project repository aan te maken.
-     * @param branchOffice
      * @param systemTime De systeemtijd
      * @throws IllegalArgumentException
      *                      | systemTime == null
@@ -28,6 +27,7 @@ public class ProjectRepository {
     public ProjectRepository(SystemTime systemTime) {
         if (systemTime == null)
             throw new IllegalArgumentException("Systeemtijd mag niet null zijn");
+        this.branchOffice = branchOffice;
         this.systemTime = systemTime;
         projects = new ArrayList<>();
     }

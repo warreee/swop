@@ -2,6 +2,7 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.*;
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.resource.ResourceManager;
@@ -29,6 +30,7 @@ public class MainControllerTest {
     private UserInterface mockedUI;
     private MainController main;
     private ControllerStack abmMock;
+    private DelegateTaskController delegateTaskController;
 
     @Before
     public void setUp() throws Exception {
@@ -36,6 +38,7 @@ public class MainControllerTest {
         LocalDateTime now = LocalDateTime.now();
         SystemTime systemTime = new SystemTime(now);
         ResourceManager resourceManager = new ResourceManager();
+        BranchOffice branchOffice = mock(BranchOffice.class);
         ProjectRepository projectRepository = new ProjectRepository(systemTime);
 
         abmMock = mock(ControllerStack.class);
@@ -46,13 +49,13 @@ public class MainControllerTest {
         taskController = mock(TaskController.class);
         projectController = mock(ProjectController.class);
         logonController = mock(LogonController.class);
-
+        delegateTaskController = mock(DelegateTaskController.class);
         advanceTimeController = mock(AdvanceTimeController.class);
 
         simulationController = mock(SimulationController.class);
         planningController = mock(PlanningController.class);
         main = new MainController(abmMock, advanceTimeController,simulationController,projectController,taskController,
-                planningController, logonController, mockedUI );
+                planningController, logonController, delegateTaskController, mockedUI );
     }
 
     @Test

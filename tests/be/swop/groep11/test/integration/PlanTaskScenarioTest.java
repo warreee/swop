@@ -1,6 +1,7 @@
 package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.controllers.PlanningController;
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
@@ -44,6 +45,7 @@ public class PlanTaskScenarioTest {
         this.mockedUI = mock(UserInterface.class);
 
         systemTime = new SystemTime(now);
+        BranchOffice branchOffice = mock(BranchOffice.class);
         projectRepository = new ProjectRepository(systemTime);
         resourceManager = new ResourceManager();
 

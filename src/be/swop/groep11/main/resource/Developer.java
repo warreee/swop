@@ -37,4 +37,12 @@ public class Developer extends User implements ResourceInstance {
 
     private final AResourceType resourceType;
 
+    /**
+     * Geeft aan of een user een developer is.
+     * @return true
+     */
+    @Override
+    public boolean isDeveloper() {
+        return true;
+    }
 }

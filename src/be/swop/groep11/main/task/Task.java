@@ -315,7 +315,7 @@ public class Task implements SystemTimeObserver,ResourcePlannerObserver{
     }
 
     /**
-     *
+     * Zet de status van deze taak op finished.
      * @param endTime
      */
     public void finish(LocalDateTime endTime) {
@@ -343,7 +343,7 @@ public class Task implements SystemTimeObserver,ResourcePlannerObserver{
         return alternativeTask;
     }
 
-    /**
+    /** TODO: dit is niet correct!!!
      * Wjizigt de alternatieve taak van deze taak.
      * Zorgt ervoor dat de dependencies van deze taak overgebracht worden naar de alternatieve taak.
      * @throws java.lang.Exception alternativeTask kan niet als alternatieve taak voor deze taak gezet worden.

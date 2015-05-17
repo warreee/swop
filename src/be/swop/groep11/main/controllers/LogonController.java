@@ -1,6 +1,10 @@
 package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.BranchOffice;
+import be.swop.groep11.main.core.Company;
+import be.swop.groep11.main.core.User;
+import be.swop.groep11.main.exception.CancelException;
+import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.resource.Developer;
 import be.swop.groep11.main.resource.ProjectManager;
 import be.swop.groep11.main.ui.UserInterface;
@@ -10,57 +14,104 @@ import be.swop.groep11.main.ui.UserInterface;
  */
 public class LogonController extends AbstractController implements ILogin {
 
-    private boolean identifiedPM = false;
+    private Company company = null;
+    private BranchOffice branchOffice = null;
+    private Developer developer = null;
+    private ProjectManager projectManager = null;
 
-    public LogonController(UserInterface userInterface) {
+    public LogonController(UserInterface userInterface, Company company) {
         super(userInterface);
+        this.company = company;
     }
-
     @Override
     public void logon() throws IllegalArgumentException {
-        System.out.println("log in");
-        identifiedPM = true;
+        try {
+            selectBranchOffice();
+            identify();
+        } catch (CancelException | EmptyListException e) {
+            getUserInterface().printException(e);
+            logOut();
+        }
     }
 
+    private void identify() {
+        User user = getUserInterface().selectEmployeeFromList(getBranchOffice().getEmployees());
+        if (user.isDeveloper()){
+            setDeveloper((Developer) user);
+        }
+        if (user.isProjectManager()) {
+            setProjectManager((ProjectManager) user); //TODO waarom is hier een warning en bij vorige ifstatement niet?
+        }
+
+        getUserInterface().printMessage("Je bent nu ingelogd als " + user.getName());
+    }
+
+    /**
+     * Bij het uitloggen worden alle gegevens op null gezet.
+     */
     @Override
-    public void logOut() throws IllegalArgumentException {
-        System.out.println("log out");
-        identifiedPM = false;
-
+    public void logOut() {
+        setBranchOffice(null);
+        setDeveloper(null);
+        setProjectManager(null);
     }
+
+
+
+    /**
+     * Vraagt aan de user op welke brancheoffice hij wilt inloggen.
+     */
+    private void selectBranchOffice() {
+        this.branchOffice = getUserInterface().selectBranchOfficeFromList(this.company.getBranchOffices());
+    }
+
+
+
 
     @Override
     public boolean hasIdentifiedProjectManager() {
-        return identifiedPM;
+        return getProjectManager() != null;
     }
 
     @Override
     public boolean hasIdentifiedDeveloper() {
-        return false;
+        return getDeveloper() != null;
     }
 
     @Override
     public boolean hasIdentifiedBranchOffice() {
-        return false;
+        return getBranchOffice() != null;
     }
 
     @Override
     public boolean hasIdentifiedUserAtBranchOffice() {
-        return false;
+        return hasIdentifiedDeveloper() || hasIdentifiedProjectManager();
     }
 
     @Override
     public ProjectManager getProjectManager() {
-        return null;
+        return this.projectManager;
     }
 
     @Override
     public Developer getDeveloper() {
-        return null;
+        return this.developer;
     }
 
     @Override
     public BranchOffice getBranchOffice(){
-        return null;
+        return this.branchOffice;
+    }
+
+    private void setBranchOffice(BranchOffice branchOffice) {
+        this.branchOffice = branchOffice;
+    }
+
+    private void setDeveloper(Developer developer) {
+        this.developer = developer;
+    }
+
+    private void setProjectManager(ProjectManager projectManager) {
+        this.projectManager = projectManager;
     }
 }

@@ -1,6 +1,7 @@
 package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.controllers.ProjectController;
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
@@ -27,19 +28,21 @@ public class ShowProjectsScenarioTest {
     private ImmutableList<Task> tasks;
     private UserInterface mockedUI;
     private ProjectController projectController;
+    private BranchOffice branchOffice;
 
     @Before
     public void setUp() throws Exception {
         LocalDateTime now = LocalDateTime.now();
         SystemTime systemTime = new SystemTime(now);
         this.mockedUI = mock(UserInterface.class);
+        this.branchOffice = mock(BranchOffice.class);
 
         projectRepository = new ProjectRepository(systemTime);
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10));
         projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8));
 
-        this.projectController = new ProjectController(projectRepository,mockedUI );
+        this.projectController = new ProjectController(projectRepository, mockedUI);
         this.projects = projectRepository.getProjects();
         this.tasks = projects.get(0).getTasks();
     }
