@@ -53,37 +53,86 @@ resourceTypes:
 resources:
   - name: "Car 1"
     type: 0
+    branchOffice: 0
   - name: "Car 2"
     type: 0
+    branchOffice: 0
+
   - name: "Car 3"
     type: 0
+    branchOffice: 1
+  - name: "Car 4"
+    type: 0
+    branchOffice: 1
+  - name: "Car 5"
+    type: 0
+    branchOffice: 1
+
   - name: "White Board 1"
     type: 1
+    branchOffice: 0
   - name: "White Board 2"
     type: 1
+    branchOffice: 0
+
+  - name: "White Board small"
+    type: 1
+    branchOffice: 1
+
+  - name: "White Board big"
+    type: 1
+    branchOffice: 2
+  - name: "White Board XL"
+    type: 1
+    branchOffice: 2
+
   - name: "Demo Kit 1"
     type: 2
+    branchOffice: 1
+
   - name: "Demo Kit 2"
     type: 2
+    branchOffice: 2
+
   - name: "The Big Conference Room"
     type: 3
+    branchOffice: 0
+
   - name: "The Small Conference Room"
     type: 3
+    branchOffice: 1
+
+  - name: "The Normal Conference Room"
+    type: 3
+    branchOffice: 2
+
   - name: "The Distributed Test Facility"
     type: 4
+    branchOffice: 0
+
   - name: "Data Center X"
     type: 5
+    branchOffice: 0
+
   - name: "Data Center Y"
     type: 5
+    branchOffice: 1
+
+  - name: "Data Center Z"
+    type: 5
+    branchOffice: 2
 
 developers:
   - name : "John Deere"
     branchOffice: 0
-
   - name : "Tom Hawk"
+    branchOffice: 0
+  - name : "Dave Devver"
     branchOffice: 0
 
   - name : "Bob Grylls"
+    branchOffice: 1
+  - name : "Bobby Joe"
     branchOffice: 1
 
   - name: "Ward \"the coder\" Monkey"
@@ -99,7 +148,7 @@ projectManager:
   - name: "Josefien"
     branchOffice: 0
 
-  - name: "Caaaaaaaaaaaaas (afkomsting van Limburg)"
+  - name: "Caaaaaaaaaaaaas"
     branchOffice: 1
 
   - name: "Sydney \"the city\" kerkhove"
@@ -129,7 +178,6 @@ projects:
     branchOffice : 1
 
 tasks:
-    # projects and tasks are incrementally numbered starting with the number 0
   - project            : 0
     description        : "task description"
     estimatedDuration  : 500
@@ -137,14 +185,14 @@ tasks:
     alternativeFor     :
     prerequisiteTasks  :
     planning           : 0
-    # a task can be finished, failed, executing or unspecified (i.e. ongoing)
     status             : finished
-    # These time stamps are only required if a task is finished of failed
     startTime          : "2014-01-01 10:00"
     endTime            : "2014-01-02 17:00"
     resourceRequirements: [{type: 0, amount: 1}, {type: 1, amount: 2}]
-    amountDevelopers   : 1
-    plannedStartTime : "2014-01-01 09:00"
+    numberDevelopers   : 1
+    plannedStartTime   : "2014-01-01 09:00"
+    # Alleen als hier iets staat is de taak gedelegeerd.
+    delegatedTo        :
 
   - project            : 1
     description        : "another task description"
@@ -154,6 +202,9 @@ tasks:
     prerequisiteTasks  :
     planning           :
     status             :
+    resourceRequirements: [{type: 0, amount: 1}, {type: 5, amount: 1}]
+    numberDevelopers   : 2
+    delegatedTo        : 1
 
   - project            : 1
     description        : "yet another task description"
@@ -165,6 +216,9 @@ tasks:
     status             : finished
     startTime          : "2014-01-01 10:00"
     endTime            : "2014-01-02 10:00"
+    resourceRequirements: [{type: 2, amount: 1}, {type: 4, amount: 1}]
+    numberDevelopers   : 1
+    delegatedTo        :
 
   - project            : 1
     description        : "description"
@@ -176,6 +230,9 @@ tasks:
     status             : failed
     startTime          : "2014-01-02 10:00"
     endTime            : "2014-03-25 18:00"
+    resourceRequirements: []
+    numberDevelopers   : 1
+    delegatedTo        :
 
   - project            : 1
     description        : "description"
@@ -186,6 +243,9 @@ tasks:
     planning           : 2
     status             : executing
     startTime          : "2014-03-26 09:00"
+    resourceRequirements: [{type: 0, amount: 2}]
+    numberDevelopers   : 1
+    delegatedTo        :
 
   - project            : 2
     description        : "description"
@@ -195,6 +255,9 @@ tasks:
     prerequisiteTasks  :
     planning           :
     status             :
+    resourceRequirements: [{type: 5, amount: 1}]
+    numberDevelopers   : 2
+    delegatedTo        :
 
   - project            : 2
     description        : "description"
@@ -204,6 +267,9 @@ tasks:
     prerequisiteTasks  :
     planning           :
     status             :
+    resourceRequirements: [{type: 0, amount: 2}, {type: 1, amount: 1}, {type: 4, amount: 1}]
+    numberDevelopers   : 2
+    delegatedTo        :
 
 plans:
   - branchOffice       : 0
