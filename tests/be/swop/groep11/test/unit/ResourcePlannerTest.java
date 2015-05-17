@@ -1,13 +1,20 @@
 package be.swop.groep11.test.unit;
 
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.exception.IllegalRequirementAmountException;
+import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.mockito.Mockito.*;
 
@@ -42,17 +49,25 @@ public class ResourcePlannerTest {
         repository.addResourceInstance(new Resource("type d 2", typeRepository.getResourceTypeByName("type d")));
         repository.addResourceInstance(new Resource("type d 3", typeRepository.getResourceTypeByName("type d")));
         planner = new ResourcePlanner(repository);
+
+        BranchOffice branchOffice = mock(BranchOffice.class);
+        Task task = mock(Task.class);
+        when(branchOffice.getUnplannedTasks()).thenReturn(Arrays.<Task>asList(task));
+        RequirementListBuilder builder = new RequirementListBuilder();
+        builder.addNewRequirement(typeRepository.getResourceTypeByName("type a"), 2);
+        when(task.getRequirementList()).thenReturn(builder.getRequirements());
+        when(task.getEstimatedDuration()).thenReturn(Duration.ofHours(3));
+        PlanBuilder planBuilder = new PlanBuilder(branchOffice, task, LocalDateTime.of(2015, 3, 1, 10 ,0));
     }
 
-    @Test
+    @Test(expected = IllegalRequirementAmountException.class)
     public void testCanPlan() throws Exception {
         Task task1 = mock(Task.class);
         RequirementListBuilder builder = new RequirementListBuilder();
         builder.addNewRequirement(typeRepository.getResourceTypeByName("type a"), 2);
         when(task1.getRequirementList()).thenReturn(builder.getRequirements());
         assertTrue(planner.canPlan(task1));
-        builder.addNewRequirement(typeRepository.getResourceTypeByName("type a"), 4);
-        assertFalse(planner.canPlan(task1));
+        // TODO: planner met meerdere branchOffices enz
     }
 
     @Test

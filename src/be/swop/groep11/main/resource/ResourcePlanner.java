@@ -41,6 +41,7 @@ public class ResourcePlanner {
         while (it.hasNext()){
             ResourceRequirement req = it.next();
             if(req.getAmount() > resourceRepository.getResources(req.getType()).size()){
+                // Normaal kan de code hier nooit komen aangezien de RequirementListBuilder hier ook al op checked.
                 return false;
             }
         }
