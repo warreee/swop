@@ -562,9 +562,12 @@ public class Task{
     }
 
     // TODO
-    protected Plan getPlan2() {
+    public Plan getPlan2() {
         return null;
     }
+
+    // TODO
+    public void setPlan2(Plan plan) { }
 
     /**
      * Deze methode zorgt ervoor dat taken hun resources kunnen vrijgeven indien ze vroegtijdig stoppen.

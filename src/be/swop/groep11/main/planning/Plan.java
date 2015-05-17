@@ -3,9 +3,13 @@ package be.swop.groep11.main.planning;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
+import com.google.common.collect.ImmutableList;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Stelt een plan voor een taak in een resource planner voor.
@@ -14,16 +18,30 @@ import java.util.List;
  */
 public class Plan {
 
-    protected Plan(Task task, ResourcePlanner resourcePlanner, List<ResourceReservation> reservations) {
-        // TODO
+    private Task task;
+    private ResourcePlanner resourcePlanner;
+    private TimeSpan timeSpan;
+    private List<ResourceReservation> reservations;
+
+    /**
+     * Constructor om een niew plan aan te maken.
+     * @param task            De taak waarvoor het plan gemaakt is
+     * @param resourcePlanner Resource planner waarin het plan zit
+     * @param timeSpan        De tijdspanne van het plan
+     * @param reservations    De lijst van reservaties van het plan
+     */
+    protected Plan(Task task, ResourcePlanner resourcePlanner, TimeSpan timeSpan, List<ResourceReservation> reservations) {
+        this.task = task;
+        this.timeSpan = timeSpan;
+        this.resourcePlanner = resourcePlanner;
+        this.reservations = reservations;
     }
 
     /**
      * Geeft de tijdspanne van dit plan.
      */
     public TimeSpan getTimeSpan() {
-        // TODO
-        return null;
+        return this.timeSpan;
     }
 
     /**
@@ -31,7 +49,9 @@ public class Plan {
      * dit plan uit de resource planner te halen en dit plan uit de bijhorende taak te halen.
      */
     public void clear() {
-        // TODO
+        this.reservations = null; // niet echt nodig
+        this.resourcePlanner.removePlan(this);
+        task.setPlan2(null);
     }
 
     /**
@@ -41,48 +61,57 @@ public class Plan {
      * @throws IllegalArgumentException De gegeven eindtijd ligt buiten de  tijdspanne van dit plan.
      */
     public void clearFutureReservations(LocalDateTime endTime) {
-        // TODO
+        if (! this.timeSpan.containsLocalDateTime(endTime)) {
+            throw new IllegalArgumentException("De gegeven eindtijd ligt buiten de  tijdspanne van dit plan");
+        }
+
+        this.timeSpan = new TimeSpan(this.timeSpan.getStartTime(), endTime);
+
+        List<ResourceReservation> newReservations = new ArrayList<>();
+        for (ResourceReservation reservation : this.reservations) {
+            newReservations.add(new ResourceReservation(
+                    reservation.getTask(),
+                    reservation.getResourceInstance(),
+                    this.timeSpan,
+                    reservation.isSpecific()));
+        }
+        this.reservations = newReservations;
     }
 
     /**
-     * Geeft de lijst van reservaties van dit plan.
+     * Geeft de immutable lijst van de reservaties van dit plan.
      */
-    public List<ResourceReservation> getReservations() {
-        // TODO
-        return null;
+    public ImmutableList<ResourceReservation> getReservations() {
+        return ImmutableList.copyOf(this.reservations);
     }
 
-    public List<ResourceReservation> getReservations(AResourceType type){
-        //TODO
-        return null;
+    /**
+     * Geeft een immutable lijst van de reservaties van dit plan voor een bepaald resource type.
+     * @param type Het resource type
+     */
+    public ImmutableList<ResourceReservation> getReservations(AResourceType type){
+        return ImmutableList.copyOf(reservations.stream()
+                .filter(x -> x.getResourceInstance().getResourceType() == type)
+                .collect(Collectors.toList()));
     }
 
     /**
      * Geeft de taak die bij dit plan hoort.
      */
     public Task getTask(){
-        // TODO
-        return null;
+        return this.task;
     }
 
     /**
-     * Controleert of dit plan voldoende reservaties heeft voor een gegeven resource requirement.
-     * @param resourceRequirement De gegeven resource requirement
-     * @return True als er in dit plan minstens het aantal resources van de requirement gereserveerd is
-     *         voor het resource type van de requirement.
-     */
-    public boolean hasReservationsFor(ResourceRequirement resourceRequirement) {
-        // TODO
-        return false;
-    }
-
-    /** TODO: implementeren
-     * Deze methode gaat na of dat er voor de gegeven systemTime een equivalent plan bestaat voor de taak
+     * Deze methode gaat na of er voor de gegeven systemTime een equivalent plan bestaat voor de taak.
      * Deze moet rekening houden met de resourcerepository waarnaar hij gedelegeerd is.
-     * @return
+     * @return True als er een equivalent plan bestaat (i.e. er zijn genoeg resource instanties beschikbaar
+     *         voor het plan vanaf systemTime gedurende de geschatte duur van de taak)
      */
     public boolean hasEquivalentPlan(LocalDateTime systemTime) {
-        return false;
+        PlanBuilder planBuilder = new PlanBuilder(task.getDelegatedTo(), task, systemTime);
+        planBuilder.proposeResources();
+        return planBuilder.isSatisfied() && (! planBuilder.hasConflictingReservations());
     }
 
 }

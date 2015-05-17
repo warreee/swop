@@ -102,7 +102,7 @@ public class ResourcePlanner {
     }
 
     /**
-     * Berekend alle taken die conflicteren met een lijst van ResourceInstances gedurende een TimeSpan.
+     * Berekent alle taken die conflicteren met een lijst van ResourceInstances gedurende een TimeSpan.
      * @param resourceInstances De lijst met ResourceInstances waarvan alle conflicterende taken gezocht moet worden.
      * @param timeSpan Wanneer de ResourceInstances moeten conflicteren om in de lijst terecht te komen.
      * @return Een lijst met alle conflicterende taken.
@@ -128,8 +128,7 @@ public class ResourcePlanner {
 
     /**
      * Voegt een nieuw plan toe aan deze ResourcePlanner.
-     *
-     * @param plan Het plan dat toegevoegd word.
+     * @param plan Het plan dat toegevoegd wordt.
      */
     public void addPlan(Plan plan){
         checkPlan(plan);
@@ -143,7 +142,21 @@ public class ResourcePlanner {
     }
 
     /**
-     * Controlleert of een plan niet null is en of dat het geen reservaties bevat voor ResourceInstances die op het
+     * Verwijdert een plan uit deze ResourcePlanner.
+     * @param plan Het plan dat verwijderd wordt.
+     */
+    public void removePlan(Plan plan){
+        checkPlan(plan);
+        if(planMap.containsKey(plan.getTimeSpan().getStartTime())){
+            planMap.get(plan.getTimeSpan().getStartTime()).remove(plan);
+            if (planMap.get(plan.getTimeSpan().getStartTime()).isEmpty()) {
+                planMap.remove(plan.getTimeSpan().getStartTime());
+            }
+        }
+    }
+
+    /**
+     * Controleert of een plan niet null is en of dat het geen reservaties bevat voor ResourceInstances die op het
      * moment van die reservatie al gereserveerd zijn.
      *
      * @param plan Het plan dat gecontrolleert moet worden.
