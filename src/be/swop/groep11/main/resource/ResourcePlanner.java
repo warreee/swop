@@ -115,7 +115,7 @@ public class ResourcePlanner {
             for(Plan plan: planList){
                 for(ResourceInstance instance: resourceInstances){
                     if (checkResourceInstanceOverlapsWithOtherPlan(instance, timeSpan, plan)) {
-                        //conflictingTasks.add(plan.getTask());
+                        conflictingTasks.add(plan.getTask());
                     }
                 }
             }

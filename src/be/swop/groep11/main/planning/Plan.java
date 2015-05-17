@@ -58,6 +58,14 @@ public class Plan {
     }
 
     /**
+     * Geeft de taak die bij dit plan hoort.
+     */
+    public Task getTask(){
+        // TODO
+        return null;
+    }
+
+    /**
      * Controleert of dit plan voldoende reservaties heeft voor een gegeven resource requirement.
      * @param resourceRequirement De gegeven resource requirement
      * @return True als er in dit plan minstens het aantal resources van de requirement gereserveerd is
