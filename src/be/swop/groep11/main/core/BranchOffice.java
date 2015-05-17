@@ -157,11 +157,5 @@ public class BranchOffice {
         return otherPlanner.canPlan(task);
     }
 
-    /**
-     * update de status van alle projecten
-     */
-    public void updateAllStatus(){
-        this.projectRepository.getProjects().forEach(Project::updateAllStatus);
-    }
 
 }

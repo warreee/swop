@@ -65,7 +65,8 @@ public class PlanningController extends AbstractController {
             // hopelijk is dit ook zo...
 
             for (OldPlan plan : plans) {
-                plan.getTask().plan(plan);
+                //TODO fix
+//                plan.getTask().plan(plan);
                 ui.printMessage("Taak gepland ("+task.getDescription()+")");
             }
 

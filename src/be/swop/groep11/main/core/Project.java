@@ -2,7 +2,6 @@ package be.swop.groep11.main.core;
 
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.task.TaskFailed;
 import com.google.common.collect.ImmutableList;
 
 import java.time.DayOfWeek;
@@ -184,7 +183,7 @@ public class Project {
      *                              Gooi indien één of meerdere van de parameters niet geldig zijn.
      */
     public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) throws IllegalArgumentException {
-        Task task = new Task(description, estimatedDuration, acceptableDeviation, systemTime, this.dependencyGraph, this);
+        Task task = new Task(description, estimatedDuration, acceptableDeviation, this.dependencyGraph, this);
         tasks.add(task);
     }
 
@@ -198,7 +197,7 @@ public class Project {
      *                              Gooi indien één of meerdere van de parameters niet geldig zijn.
      */
     public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration, IRequirementList requirementList) throws IllegalArgumentException {
-        Task task = new Task(description, estimatedDuration, acceptableDeviation, systemTime, this.dependencyGraph, requirementList, this);
+        Task task = new Task(description, estimatedDuration, acceptableDeviation, this.dependencyGraph, requirementList, this);
         tasks.add(task);
     }
 
@@ -308,10 +307,10 @@ public class Project {
 
     private BranchOffice branchOffice;
 
-    /** TODO: waar zijn de gedelegeerde taken, hoe kan ik er aan?
-     * update alle statussen na een bepaalde usecase
-     */
-    public void updateAllStatus() {
-        this.getTasks().forEach(Task::updateStatus);
-    }
+//    /**
+//     * update alle statussen na een bepaalde usecase
+//     */
+//    public void updateAllStatus() {
+//        this.getTasks().forEach(Task::updateStatus);
+//    }
 }

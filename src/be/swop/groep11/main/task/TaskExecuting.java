@@ -59,7 +59,7 @@ public class TaskExecuting extends TaskStatus {
         task.setEndTime(endTime);
         TaskStatus finished = new TaskFinished();
         task.setStatus(finished);
-        task.releaseResources(endTime);
+        task.getPlan().clearFutureReservations(endTime);
         task.makeDependentTasksAvailable();
     }
 
@@ -90,19 +90,20 @@ public class TaskExecuting extends TaskStatus {
         task.setEndTime(endTime);
         TaskStatus failed = new TaskFailed();
         task.setStatus(failed);
-        task.releaseResources(endTime);
+        task.getPlan().clearFutureReservations(endTime);
     }
 
     /**
      * Geeft de geschatte duur van de taak die aan het uitvoeren is, indien de taak over tijd is
      * dan wordt de duur berekend als het verschil tussen de starttijd en de huidige systeemtijd.
-     * @param task
      * @param currentSystemTime
+     * @param task
+     * @param localDateTime
      * @return de duur van de taak.
      */
     @Override
-    protected Duration getDuration(Task task, LocalDateTime currentSystemTime) {
-        return task.isOverTime() ? Duration.between(task.getStartTime(),currentSystemTime) : task.getEstimatedDuration();
+    protected Duration getDuration(Task task, LocalDateTime localDateTime) {
+        return task.isOverTime() ? Duration.between(task.getStartTime(),localDateTime) : task.getEstimatedDuration();
     }
 
     /**

@@ -71,7 +71,7 @@ public class App {
 
         projectRepository = new ProjectRepository(systemTime);
         ResourceRepository resourceRepository = new ResourceRepository(typeRepository);
-        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository);
+        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository,systemTime );
 
         BranchOffice bo = new BranchOffice("bo1","leuven",projectRepository,resourcePlanner);
 

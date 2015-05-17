@@ -7,8 +7,11 @@ import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.IRequirementList;
-import be.swop.groep11.main.resource.OldPlan;
 import be.swop.groep11.main.resource.RequirementListBuilder;
+import be.swop.groep11.main.resource.ResourcePlanner;
+import be.swop.groep11.main.util.Observer;
+import be.swop.groep11.main.util.ResourcePlannerObserver;
+import be.swop.groep11.main.util.SystemTimeObserver;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -19,7 +22,7 @@ import java.util.Set;
  * Stelt een taak voor met een beschrijving, starttijd, eindtijd, verwachte duur en een aanvaardbare marge.
  * Een taak heeft ook een dependency graph en een lijst van resource requirements.
  */
-public class Task{
+public class Task implements SystemTimeObserver,ResourcePlannerObserver{
 
     /**
      * Constructor om een nieuwe taak te maken.
@@ -27,13 +30,12 @@ public class Task{
      * @param description           De omschrijving van de nieuwe taak
      * @param estimatedDuration     De verwachte duur van de nieuwe taak
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
-     * @param systemTime            De systeemtijd die de nieuwe taak moet gebruiken
      * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
      * @param requirementList       De lijst van resource requirements voor de nieuwe taak
      * @throws IllegalArgumentException Ongeldige beschrijving, ongeldige verwachte duur, ongeldige aanvaardbare marge,
      *                                            ongeldige requirement lijst of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph, IRequirementList requirementList, Project project) throws IllegalArgumentException {
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, DependencyGraph dependencyGraph, IRequirementList requirementList, Project project) throws IllegalArgumentException {
         if (project == null)
             throw  new IllegalArgumentException("Project mag niet null zijn");
         this.setStatus(new TaskAvailable());
@@ -41,7 +43,6 @@ public class Task{
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
         setRequirementList(requirementList);
-        this.systemTime = systemTime;
         this.dependencyGraph = dependencyGraph;
         this.project = project;
         this.delegatedTo = project.getBranchOffice();
@@ -53,28 +54,13 @@ public class Task{
      * @param description           De omschrijving van de nieuwe taak
      * @param estimatedDuration     De verwachte duur van de nieuwe taak
      * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
-     * @param systemTime            De systeemtijd die de nieuwe taak moet gebruiken
      * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
      * @param project
      * @throws java.lang.IllegalArgumentException Ongeldige beschrijving, ongeldige verwachte duur, ongeldige aanvaardbare marge
      *                                            of ongeldig project
      */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, SystemTime systemTime, DependencyGraph dependencyGraph, Project project) throws IllegalArgumentException {
-        this(description, estimatedDuration, acceptableDeviation, systemTime, dependencyGraph, new RequirementListBuilder().getRequirements(), project);
-    }
-
-    private SystemTime systemTime;
-
-    /**
-     * Beschrijving
-     */
-    private String description;
-
-    /**
-     * Geeft de beschrijving van deze taak.
-     */
-    public String getDescription() {
-        return description;
+    public Task(String description, Duration estimatedDuration, double acceptableDeviation, DependencyGraph dependencyGraph, Project project) throws IllegalArgumentException {
+        this(description, estimatedDuration, acceptableDeviation, dependencyGraph, new RequirementListBuilder().getRequirements(), project);
     }
 
     /**
@@ -96,17 +82,16 @@ public class Task{
     }
 
     /**
-     * Verwachte duur
+     * Geeft de beschrijving van deze taak.
      */
-    private Duration estimatedDuration;
+    public String getDescription() {
+        return description;
+    }
 
     /**
-     * Geeft de verwachte duur van de taak.
+     * Beschrijving
      */
-    public Duration getEstimatedDuration() {
-        // Duration is immutable.
-        return estimatedDuration;
-    }
+    private String description;
 
     /**
      * Wijzigt de verwachte duur van de taak.
@@ -129,21 +114,21 @@ public class Task{
     }
 
     /**
-     * Aanvaardbare marge
+     * Geeft de verwachte duur van de taak.
      */
-    private double acceptableDeviation;
-
-    /**
-     * Geeft de aanvaardbare marge van de taak.
-     */
-    public double getAcceptableDeviation() {
-        // Doubles zijn immutable.
-        return acceptableDeviation;
+    public Duration getEstimatedDuration() {
+        // Duration is immutable.
+        return estimatedDuration;
     }
 
     /**
+     * Verwachte duur
+     */
+    private Duration estimatedDuration;
+
+    /**
      * Wijzigt de aanvaardbare marge van de taak.
-     * @throws java.lang.IllegalArgumentException De aanvaardbare marge is niet geldig.
+     * @throws IllegalArgumentException De aanvaardbare marge is niet geldig.
      */
     public void setAcceptableDeviation(double acceptableDeviation) throws IllegalArgumentException {
         if (! isValidAcceptableDeviation(acceptableDeviation))
@@ -160,10 +145,14 @@ public class Task{
         return acceptableDeviation >= 0;
     }
 
-    /**
-     * Starttijd en eindtijd
-     */
-    private LocalDateTime startTime, endTime;
+    // Aanvaardbare marge
+    private double acceptableDeviation;
+
+    //Geeft de aanvaardbare marge van de taak.
+    public double getAcceptableDeviation() {
+        // Doubles zijn immutable.
+        return acceptableDeviation;
+    }
 
     /**
      * Geeft de starttijd van de taak of null als de taak geen starttijd heeft.
@@ -206,7 +195,6 @@ public class Task{
 
     }
 
-
     /**
      * @return      Waar indien deze taak een start tijd heeft.
      */
@@ -221,7 +209,12 @@ public class Task{
         return this.endTime != null;
     }
 
-    private DependencyGraph dependencyGraph;
+    /**
+     * Starttijd en eindtijd
+     */
+    private LocalDateTime startTime, endTime;
+
+
 
     /**
      * Geeft alle taken waarvan deze taak afhankelijk is terug.
@@ -239,14 +232,7 @@ public class Task{
         return dependencyGraph.getDependingOnTasks(this);
     }
 
-    /**
-     * Geeft het project waarin deze taak zit.
-     */
-    public Project getProject() {
-        return project;
-    }
-
-    private Project project;
+    private DependencyGraph dependencyGraph;
 
     /**
      * Voegt een dependency constraint toe voor deze taak.
@@ -264,13 +250,23 @@ public class Task{
     }
 
     /**
+     * Geeft het project waarin deze taak zit.
+     */
+    public Project getProject() {
+        return project;
+    }
+
+    private Project project;
+
+    /**
      * Status van de taak
      */
     private TaskStatus status;
+
     /**
      * Geeft de status van deze taak, er wordt telkens een nieuw object aangemaakt zodat de interne variabele niet wordt terugggeven.
      */
-    public TaskStatus getStatus() {
+    private TaskStatus getStatus() {
         return status.getTaskStatus();
     }
 
@@ -390,102 +386,6 @@ public class Task{
         this.status = status;
     }
 
-    public enum FinishedStatus {
-        EARLY,
-        ONTIME,
-        OVERDUE,
-        NOTFINISHED;
-    }
-
-    /**
-     * Geeft de status waarmee de taak geëindigd is: vroeg / op tijd / te laat
-     * @return FinishedStatus.NOTFINISHED als de taak nog niet geëindigd is,
-     *     <br>FinishedStatus.EARLY als de taak vroeg geëindigd is,
-     *     <br>FinishedStatus.ONTIME als de taak op tijd geëindigd is,
-     *     <br>FinishedStatus.OVERDUE als de taak te laat geëindigd is.
-     */
-    public FinishedStatus getFinishedStatus() {
-        if (isExecuting() || isAvailable() || isUnavailable())
-            return FinishedStatus.NOTFINISHED;
-
-        long durationInSeconds = getDuration().getSeconds();
-
-        long estimatedDurationInSeconds = this.getEstimatedDuration().getSeconds();
-
-        if (durationInSeconds < (1-acceptableDeviation)*estimatedDurationInSeconds)
-            return FinishedStatus.EARLY;
-        else if (durationInSeconds > (1+acceptableDeviation)*estimatedDurationInSeconds)
-            return FinishedStatus.OVERDUE;
-        else
-            return FinishedStatus.ONTIME; //Tussen aanvaardbare afwijking
-    }
-
-    /**
-     * Geeft de delay van deze taak.
-     * @return De delay van deze taak,
-     *         of null indien de duur van deze taak null is.
-     *         (De delay van een taak is steeds positief)
-     */
-    public Duration getDelay() {
-        if (getDuration() == null)
-            return null;
-
-        Duration delay = getDuration().minus(getEstimatedDuration());
-        if (delay.isNegative()) // geen negatieve delays!
-            return Duration.ofSeconds(0);
-        return delay;
-    }
-
-    /**
-     * Geeft de duur van deze taak, indien de starttijd en eindtijd niet null zijn.
-     * @return De duur van deze taak,
-     *         of null als de starttijd of eindtijd van deze taak null is.
-     */
-    public Duration getDuration() {
-        // We nemen als duration de echte tijd die gepasseerd is.
-        return this.getStatus().getDuration(this, systemTime.getCurrentSystemTime());
-    }
-
-    /**
-     * Controleert of deze taak momenteel over tijd is.
-     */
-    public boolean isOverTime() {
-        double percent = getOverTimePercentage();
-        return !(percent <= getAcceptableDeviation());
-    }
-
-    /**
-     * Controleert of deze taak momenteel onacceptable over tijd is. (Meer dan de accepteerbare variatie.)
-     */
-    public boolean isUnacceptablyOverTime(){
-        double percent = getOverTimePercentage();
-        return percent > getAcceptableDeviation();
-    }
-
-    /**
-     * Berekent hoeveel een task overtijd is zonder rekening te houden met de acceptable deviation.
-     * @return 0.1 staat voor 10%, 0.2 staat voor 20%.
-     */
-    public double getOverTimePercentage(){
-        LocalDateTime systemTime = this.systemTime.getCurrentSystemTime();
-        if(!hasStartTime()){
-            return 0.0; // Task is nog niet gestart. Dus over time is 0.
-        }
-        double minutes;
-        if(hasStartTime() && hasEndTime()) {
-            minutes = startTime.until(endTime, ChronoUnit.MINUTES);
-        } else {
-            minutes = startTime.until(systemTime, ChronoUnit.MINUTES);
-        }
-        double dur = getEstimatedDuration().toMinutes();
-        double percent = (minutes / dur) - 1.0;
-        if(percent <= 0.0){
-            return 0.0;
-        } else {
-            return percent;
-        }
-    }
-
     /**
      * Maakt de afhankelijke taken (if any) van deze taak AVAILABLE,
      * indien dat mogelijk is.
@@ -527,53 +427,38 @@ public class Task{
         return this.status.getDuration(this, currentSystemTime);
     }
 
-    /**
-     * Plant deze taak.
-     * @param plan Het plan voor deze taak
-     * @throws IllegalStateException De taak kan niet gepland worden.
-     */
-    public void plan(OldPlan plan) {
-        this.getStatus().plan(this, plan);
+//    /**
+//     * Geeft de geplande starttijd van deze taak.
+//     */
+//    public LocalDateTime getPlannedStartTime() {
+//        return plan.getStartTime();
+//    }
+
+
+    protected void setPlan(Plan plan) {
+        if (!canHaveAsPlan(plan)) {
+            throw new IllegalArgumentException("Illegaal plan"); //TODO aparte exception?
+        }
+        this.plan = plan;
+    }
+
+    private boolean canHaveAsPlan(Plan plan) {
+        return plan != null && getPlan() == null || plan == null && getPlan() != null;
+    }
+
+    protected Plan getPlan() {
+            return this.plan;
     }
 
     /**
      * Controleert of deze taak gepland is.
      */
     public boolean isPlanned() {
-        return this.plan != null;
+        return getPlan() != null;
+
     }
 
-    /**
-     * Geeft de geplande starttijd van deze taak.
-     */
-    public LocalDateTime getPlannedStartTime() {
-        return plan.getStartTime();
-    }
-
-    private OldPlan plan;
-
-    protected void setPlan(OldPlan plan) {
-        plan.applyReservations();
-        this.plan = plan;
-    }
-
-    protected OldPlan getPlan() {
-            return this.plan;
-    }
-
-    // TODO
-    protected Plan getPlan2() {
-        return null;
-    }
-
-    /**
-     * Deze methode zorgt ervoor dat taken hun resources kunnen vrijgeven indien ze vroegtijdig stoppen.
-     */
-    protected void releaseResources(LocalDateTime endTime){
-        if(plan != null) {
-            plan.releaseResources(endTime);
-        }
-    }
+    private Plan plan;
 
     /**
      * Controleert of deze taak naar een andere branch office gedelegeerd is.
@@ -617,13 +502,162 @@ public class Task{
 
     private BranchOffice delegatedTo;
 
+    private Observer<SystemTime> systemTimeObserver = sysTime -> {
+        getStatus().updateStatus(this);
+        evaluateTask(sysTime.getCurrentSystemTime());
+    };
+
+    private Observer<ResourcePlanner> resourcePlannerObserver = resourcePlanner -> {
+        getStatus().updateStatus(this);
+    };
+
+
+    public Observer<SystemTime> getSystemTimeObserver() {
+        return systemTimeObserver;
+    }
+
+    public Observer<ResourcePlanner> getResourcePlannerObserver() {
+        return resourcePlannerObserver;
+    }
+
+
+    public enum TaskEvaluation {
+        EARLY("early"),
+        ONTIME("on time"),
+        OVERDUE("late"),
+        NOTFINISHED("not finished");
+
+
+        private final String txt;
+        TaskEvaluation(String txt) {
+            this.txt = txt;
+        }
+
+        @Override
+        public String toString() {
+            return this.txt;
+        }
+    }
+
+
+    private void evaluateTask(LocalDateTime dateTime) {
+        setOverTimePercentage(dateTime);
+        setFinishedStatus(dateTime);
+        setDelay(dateTime);
+    }
 
     /**
-     * Methode die nagaat of zijn staat moet worden geupdated.
-     * Dit kan bvb indien een andere taak vroegtijd is gestopt waardoor er resources zijn gereleased.
+     * Geeft de status waarmee de taak geëindigd is: vroeg / op tijd / te laat
+     * @return FinishedStatus.NOTFINISHED als de taak nog niet geëindigd is,
+     *     <br>FinishedStatus.EARLY als de taak vroeg geëindigd is,
+     *     <br>FinishedStatus.ONTIME als de taak op tijd geëindigd is,
+     *     <br>FinishedStatus.OVERDUE als de taak te laat geëindigd is.
      */
-    public void updateStatus(){
-        getStatus().updateStatus(this, this.systemTime.getCurrentSystemTime());
+    private void setFinishedStatus(LocalDateTime localDateTime) {
+        if (isExecuting() || isAvailable() || isUnavailable())
+            taskEvaluation = Task.TaskEvaluation.NOTFINISHED;
+
+        long durationInSeconds = getDuration(localDateTime).getSeconds();
+
+        long estimatedDurationInSeconds = getEstimatedDuration().getSeconds();
+        double acceptableDeviation = getAcceptableDeviation();
+        if (durationInSeconds < (1- acceptableDeviation)*estimatedDurationInSeconds)
+            taskEvaluation = Task.TaskEvaluation.EARLY;
+        else if (durationInSeconds > (1+acceptableDeviation)*estimatedDurationInSeconds)
+            taskEvaluation = Task.TaskEvaluation.OVERDUE;
+        else
+            taskEvaluation = Task.TaskEvaluation.ONTIME; //Tussen aanvaardbare afwijking
     }
+
+    /**
+     * Geeft de delay van deze taak.
+     * @return De delay van deze taak,
+     *         of null indien de duur van deze taak null is.
+     *         (De delay van een taak is steeds positief)
+     */
+    private void setDelay(LocalDateTime localDateTime) {
+        Duration taskDur = getDuration(localDateTime);
+        Duration delay = taskDur.minus(getEstimatedDuration());
+        this.delay = !delay.isNegative() ? delay : Duration.ofSeconds(0);// geen negatieve delays!
+    }
+
+
+
+    /**
+     * Berekent hoeveel een task overtijd is zonder rekening te houden met de acceptable deviation.
+     * @return 0.1 staat voor 10%, 0.2 staat voor 20%.
+     */
+    private void setOverTimePercentage(LocalDateTime localDateTime){
+        LocalDateTime systemTime = localDateTime;
+        boolean hasStart = hasStartTime();
+        boolean hasEnd = hasEndTime();
+
+        if(!hasStart){
+            this.overTimePercentage = 0.0; // Task is nog niet gestart. Dus over time is 0.
+        }
+        double minutes;
+        if(hasStart && hasEnd) {
+            minutes = getStartTime().until(getEndTime(), ChronoUnit.MINUTES);
+        } else {
+            minutes = getStartTime().until(systemTime, ChronoUnit.MINUTES);
+        }
+        double dur = getEstimatedDuration().toMinutes();
+        double percent = (minutes / dur) - 1.0;
+        if(percent <= 0.0){
+            this.overTimePercentage = 0.0;
+        } else {
+            this.overTimePercentage = percent;
+        }
+    }
+
+    /**
+     * Geeft de status waarmee de taak geëindigd is: vroeg / op tijd / te laat
+     * @return FinishedStatus.NOTFINISHED als de taak nog niet geëindigd is,
+     *     <br>FinishedStatus.EARLY als de taak vroeg geëindigd is,
+     *     <br>FinishedStatus.ONTIME als de taak op tijd geëindigd is,
+     *     <br>FinishedStatus.OVERDUE als de taak te laat geëindigd is.
+     */
+    public String getFinishedStatus() {
+        return taskEvaluation.toString();
+    }
+
+    /**
+     * Geeft de delay van deze taak.
+     * @return De delay van deze taak,
+     *         of null indien de duur van deze taak null is.
+     *         (De delay van een taak is steeds positief)
+     */
+    public Duration getDelay() {
+      return delay;
+    }
+
+    /**
+     * Controleert of deze taak momenteel over tijd is.
+     */
+    public boolean isOverTime() {
+        double percent = getOverTimePercentage();
+        return !(percent <= getAcceptableDeviation());
+    }
+
+    /**
+     * Controleert of deze taak momenteel onacceptable over tijd is. (Meer dan de accepteerbare variatie.)
+     */
+    public boolean isUnacceptablyOverTime(){
+        double percent = getOverTimePercentage();
+        return percent > getAcceptableDeviation();
+    }
+
+    /**
+     * Berekent hoeveel een task overtijd is zonder rekening te houden met de acceptable deviation.
+     * @return 0.1 staat voor 10%, 0.2 staat voor 20%.
+     */
+    public double getOverTimePercentage(){
+        return overTimePercentage;
+    }
+
+
+    private double overTimePercentage;
+    private Duration delay;
+    private TaskEvaluation taskEvaluation;
 
 }

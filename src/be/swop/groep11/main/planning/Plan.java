@@ -34,6 +34,10 @@ public class Plan {
         // TODO
     }
 
+    public Task getTask(){
+        return null;
+    }
+
     /**
      * Laat de reservaties van dit plan vroeger eindigen dan gepland.
      * Dit wordt gedaan door voor alle reservaties de eindtijd op de gegeven eindtijd te zetten.
@@ -73,7 +77,21 @@ public class Plan {
      * Deze moet rekening houden met de resourcerepository waarnaar hij gedelegeerd is.
      * @return
      */
-    public boolean hasEquivalentPlan(LocalDateTime systemTime) {
+    public boolean hasEquivalentPlan() {
+        return false;
+    }
+
+    /**
+     * Geeft aan of de gegeven LocalDateTime in de periode valt voor dit plan.
+     * @param localDateTime     De gegeven LocalDateTime
+     * @return                  Waar indien de localDateTime in de timespan van dit plan valt, anders niet waar.
+     */
+    public boolean isWithinPlanTimeSpan(LocalDateTime localDateTime) {
+        return getTimeSpan().containsLocalDateTime(localDateTime);
+    }
+
+    public boolean isAvailableForUnplannedExecution(){
+        //TODO past deze methode hier?
         return false;
     }
 

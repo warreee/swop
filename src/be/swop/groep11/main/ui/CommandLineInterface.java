@@ -189,14 +189,7 @@ public class CommandLineInterface implements UserInterface {
         String format = "%-25s %s %n";
         System.out.printf(format, "Beschrijving: ", task.getDescription());
 
-        String finishedStatus = "";
-        if (task.getFinishedStatus() == Task.FinishedStatus.EARLY) {
-            finishedStatus = "early";
-        } else if (task.getFinishedStatus() == Task.FinishedStatus.ONTIME) {
-            finishedStatus = "on time";
-        } else if (task.getFinishedStatus() == Task.FinishedStatus.OVERDUE) {
-            finishedStatus = "late";
-        }
+        String finishedStatus = task.getFinishedStatus();
         System.out.printf(format, "Status: ", task.getStatusString() + " " + finishedStatus); // TODO: hier stond getStatus.name(), we hadden toch nooit een functie .name() ?
 
         // on time?

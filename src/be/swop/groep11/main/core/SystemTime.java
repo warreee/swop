@@ -65,7 +65,7 @@ public class SystemTime extends Observable<SystemTime>{
      */
     public void updateSystemTime(LocalDateTime newTime)throws IllegalArgumentException {
         setCurrentSystemTime(newTime);
-//        updateObservers();
+        updateObservers();
     }
 
 }

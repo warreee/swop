@@ -1,7 +1,6 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.planning.PlanBuilder;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
@@ -9,9 +8,10 @@ import org.junit.Test;
 
 import java.time.LocalTime;
 
-import static org.mockito.Mockito.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by robin on 15/05/15.
@@ -21,6 +21,7 @@ public class ResourcePlannerTest {
     ResourcePlanner planner;
     ResourceTypeRepository typeRepository;
     ResourceRepository repository;
+    private SystemTime systemTime;
 
     @Before
     public void setUp() throws Exception {
@@ -40,7 +41,9 @@ public class ResourcePlannerTest {
         repository.addResourceInstance(new Resource("type d 1", typeRepository.getResourceTypeByName("type d")));
         repository.addResourceInstance(new Resource("type d 2", typeRepository.getResourceTypeByName("type d")));
         repository.addResourceInstance(new Resource("type d 3", typeRepository.getResourceTypeByName("type d")));
-        planner = new ResourcePlanner(repository);
+        systemTime = new SystemTime();
+
+        planner = new ResourcePlanner(repository, systemTime);
     }
 
     @Test

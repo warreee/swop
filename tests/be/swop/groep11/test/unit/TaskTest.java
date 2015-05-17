@@ -47,22 +47,22 @@ public class TaskTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Null() throws Exception {
-        Task invalidTask = new Task(null, Duration.ofHours(8), 0.1, systemTime,dependencyGraph, mock(Project.class));
+        Task invalidTask = new Task(null, Duration.ofHours(8), 0.1, dependencyGraph, mock(Project.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Empty() throws Exception {
-        Task invalidTask = new Task("", Duration.ofHours(8), 0.1, systemTime,dependencyGraph, mock(Project.class));
+        Task invalidTask = new Task("", Duration.ofHours(8), 0.1, dependencyGraph, mock(Project.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDuration_Negative() throws Exception {
-        Task invalidTask = new Task("Test taak", Duration.ofHours(-1), 0.1, systemTime,dependencyGraph, mock(Project.class));
+        Task invalidTask = new Task("Test taak", Duration.ofHours(-1), 0.1, dependencyGraph, mock(Project.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidAcceptableDeviation_Negative() throws Exception {
-        Task invalidTask = new Task("Test taak", Duration.ofHours(8), -0.1, systemTime,dependencyGraph, mock(Project.class));
+        Task invalidTask = new Task("Test taak", Duration.ofHours(8), -0.1, dependencyGraph, mock(Project.class));
     }
 
     /*
@@ -103,28 +103,31 @@ public class TaskTest {
      */
     @Test
     public void FinishedStatus_notFinished() throws Exception {
-        assertTrue(task1.getFinishedStatus() == Task.FinishedStatus.NOTFINISHED);
+        assertEquals(Task.TaskEvaluation.NOTFINISHED.toString(),task1.getFinishedStatus());
     }
 
     @Test
     public void FinishedStatus_early() throws Exception {
         task1.execute(now);
         task1.finish(now.plusHours(2));
-        assertTrue(task1.getFinishedStatus() == Task.FinishedStatus.EARLY);
+        assertEquals(Task.TaskEvaluation.EARLY.toString(), task1.getFinishedStatus());
+
     }
 
     @Test
     public void FinishedStatus_onTime() throws Exception {
         task1.execute(now);
         task1.finish(now.plusHours(8));
-        assertTrue(task1.getFinishedStatus() == Task.FinishedStatus.ONTIME);
+        assertEquals(Task.TaskEvaluation.ONTIME.toString(), task1.getFinishedStatus());
+
     }
 
     @Test
     public void FinishedStatus_late() throws Exception {
         task1.execute(now);
         task1.finish(now.plusHours(18));
-        assertTrue(task1.getFinishedStatus() == Task.FinishedStatus.OVERDUE);
+        assertEquals(Task.TaskEvaluation.OVERDUE.toString(), task1.getFinishedStatus());
+
     }
 
     /*

@@ -2,8 +2,6 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.DailyAvailability;
 import be.swop.groep11.main.resource.OldPlan;
 import be.swop.groep11.main.resource.RequirementListBuilder;
@@ -36,8 +34,8 @@ public class PlanTest {
         RequirementListBuilder builder2 = new RequirementListBuilder();
         builder1.addNewRequirement(resourceManager.getDeveloperType(), 4);
         builder2.addNewRequirement(resourceManager.getDeveloperType(), 4);
-        Task task1 = new Task("test taak1", Duration.ofHours(7), 0.1, new SystemTime(), new DependencyGraph(), builder1.getRequirements(), mock(Project.class));
-        Task task2 = new Task("test taak2", Duration.ofHours(7), 0.1, new SystemTime(), new DependencyGraph(), builder2.getRequirements(), mock(Project.class));
+        Task task1 = new Task("test taak1", Duration.ofHours(7), 0.1, new DependencyGraph(), builder1.getRequirements(), mock(Project.class));
+        Task task2 = new Task("test taak2", Duration.ofHours(7), 0.1, new DependencyGraph(), builder2.getRequirements(), mock(Project.class));
         plan1 = new OldPlan(task1, now, resourceManager);
         //plan1.applyReservations();
         plan2 = new OldPlan(task2, now, resourceManager);

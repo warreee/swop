@@ -105,7 +105,7 @@ public class PlanTaskScenarioTest {
     @Test (expected = IllegalStateException.class)
     public void PlanTask_ConflictTest() throws Exception {
         OldPlan plan = resourceManager.getNextPlans(1, tasks.get(1), now).get(0);
-        tasks.get(1).plan(plan);
+//        tasks.get(1).plan(plan); TODO
 
         // selecteer de juiste taak:
         when(mockedUI.selectTaskFromList(anyObject())).thenReturn(tasks.get(0));
@@ -138,7 +138,7 @@ public class PlanTaskScenarioTest {
         List<ResourceInstance> developers = new ArrayList<>();
         developers.add(resourceManager.getDeveloperType().getResourceInstances().get(3));
         plan.addReservations(developers);
-        tasks.get(1).plan(plan);
+//        tasks.get(1).plan(plan); TODO
 
         // selecteer de juiste taak:
         when(mockedUI.selectTaskFromList(anyObject())).thenReturn(tasks.get(0));
@@ -182,7 +182,7 @@ public class PlanTaskScenarioTest {
         List<ResourceInstance> developers = new ArrayList<>();
         developers.add(resourceManager.getDeveloperType().getResourceInstances().get(3));
         plan.addReservations(developers);
-        tasks.get(1).plan(plan);
+//        tasks.get(1).plan(plan); TODO
 
         // selecteer de juiste taak:
         when(mockedUI.selectTaskFromList(anyObject())).thenReturn(tasks.get(0));

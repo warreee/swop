@@ -29,13 +29,11 @@ public class Company {
         if (! isValidName(name)) {
             throw new IllegalArgumentException("Ongeldige naam");
         }
-        this.name = name;
-
         if (resourceTypeRepository == null) {
             throw new IllegalArgumentException("Ongeldige resource type repository");
         }
+        this.name = name;
         this.resourceTypeRepository = resourceTypeRepository;
-
         this.branchOffices = new ArrayList<>();
     }
 

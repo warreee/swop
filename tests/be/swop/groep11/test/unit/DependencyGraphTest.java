@@ -40,14 +40,14 @@ public class DependencyGraphTest {
 
     @Before
     public void setUp() throws Exception {
-        taskA = new Task("Taak A", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
-        taskB = new Task("Taak B", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
-        taskC = new Task("Taak C", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
-        taskD = new Task("Taak D", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
-        taskE = new Task("Taak E", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
-        taskF = new Task("Taak F", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
-        taskG = new Task("Taak G", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
-        taskH = new Task("Taak H", duration, deviation, systemTime, dependencyGraph, mock(Project.class));
+        taskA = new Task("Taak A", duration, deviation, dependencyGraph, mock(Project.class));
+        taskB = new Task("Taak B", duration, deviation, dependencyGraph, mock(Project.class));
+        taskC = new Task("Taak C", duration, deviation, dependencyGraph, mock(Project.class));
+        taskD = new Task("Taak D", duration, deviation, dependencyGraph, mock(Project.class));
+        taskE = new Task("Taak E", duration, deviation, dependencyGraph, mock(Project.class));
+        taskF = new Task("Taak F", duration, deviation, dependencyGraph, mock(Project.class));
+        taskG = new Task("Taak G", duration, deviation, dependencyGraph, mock(Project.class));
+        taskH = new Task("Taak H", duration, deviation, dependencyGraph, mock(Project.class));
 
         allTasks.add(taskA);
         allTasks.add(taskB);

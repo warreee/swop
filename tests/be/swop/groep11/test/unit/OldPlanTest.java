@@ -2,7 +2,6 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
@@ -34,7 +33,7 @@ public class OldPlanTest {
         RequirementListBuilder builder = new RequirementListBuilder();
         builder.addNewRequirement(resourceManager.getDeveloperType(), 2);
         builder.addNewRequirement(resourceManager.getResourceTypeByName("Auto"), 1);
-        Task task = new Task("test taak", Duration.ofHours(7), 0.1, new SystemTime(), new DependencyGraph(), builder.getRequirements(), mock(Project.class));
+        Task task = new Task("test taak", Duration.ofHours(7), 0.1, new DependencyGraph(), builder.getRequirements(), mock(Project.class));
         plan = new OldPlan(task, now, resourceManager);
     }
 

@@ -1,7 +1,7 @@
 package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
-import be.swop.groep11.main.resource.OldPlan;
+import be.swop.groep11.main.planning.Plan;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -76,15 +76,15 @@ public abstract class TaskStatus implements Cloneable {
         return false;
     }
 
-    /**
-     * Cloned deze task Status.
-     * @return De Clone.
-     * @throws CloneNotSupportedException
-     */
-    @Override
-    protected TaskStatus clone() throws CloneNotSupportedException {
-        return (TaskStatus) super.clone();
-    }
+//    /**
+//     * Cloned deze task Status.
+//     * @return De Clone.
+//     * @throws CloneNotSupportedException
+//     */
+//    @Override
+//    protected TaskStatus clone() throws CloneNotSupportedException {
+//        return (TaskStatus) super.clone();
+//    }
 
     /**
      * Voert een gegeven taak uit op de gegeven tijd.
@@ -124,7 +124,7 @@ public abstract class TaskStatus implements Cloneable {
     /**
      * Geeft de duratie van de gegeven taak terug adhv de systeemtijd.
      */
-    protected abstract Duration getDuration(Task task, LocalDateTime currentSystemTime);
+    protected abstract Duration getDuration(Task task, LocalDateTime localDateTime);
 
 
     /**
@@ -194,16 +194,15 @@ public abstract class TaskStatus implements Cloneable {
      * @param task De te plannen taak
      * @throws IllegalStateException De taak kan niet gepland worden.
      */
-    protected void plan(Task task, OldPlan plan) throws IllegalArgumentException {
+    protected void plan(Task task, Plan plan) throws IllegalArgumentException {
         throw new IllegalStateException("De taak kan niet gepland worden.");
     }
 
     /** TODO: mag dit, een lege methode?
      * Methode wordt overscrheven in subclassen
      * @param task
-     * @param systemTime
      */
-    protected void updateStatus(Task task, LocalDateTime systemTime){
+    protected void updateStatus(Task task){
 
     }
 }

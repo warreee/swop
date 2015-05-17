@@ -1,9 +1,7 @@
 package be.swop.groep11.main.task;
 
-import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.planning.Plan;
-import be.swop.groep11.main.resource.OldPlan;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -67,12 +65,13 @@ public class TaskUnavailable extends TaskStatus {
 
     /**
      * Geeft als duur, de geschatte duur van de taak terug.
+     * @param localDateTime
      * @param task de taak waarvan de geschatte duur wordt teruggegeven.
-     * @param currentSystemTime
+     * @param localDateTime
      * @return de geschatte duur van de taak.
      */
     @Override
-    protected Duration getDuration(Task task, LocalDateTime currentSystemTime) {
+    protected Duration getDuration(Task task, LocalDateTime localDateTime) {
         return task.getEstimatedDuration();
     }
 
@@ -103,21 +102,18 @@ public class TaskUnavailable extends TaskStatus {
      * @param task De te plannen taak
      */
     @Override
-    public void plan(Task task, OldPlan plan) {
+    public void plan(Task task, Plan plan) {
         task.setPlan(plan);
     }
 
     @Override
-    protected void updateStatus(Task task, LocalDateTime systemTime) {
-
+    protected void updateStatus(Task task) {
         if (task.isPlanned()){
-            Plan plan = task.getPlan2();
-            TimeSpan timespan = plan.getTimeSpan();
+            Plan plan = task.getPlan();
 
-            if (!timespan.containsLocalDateTime(systemTime)){
-                if (plan.hasEquivalentPlan(systemTime)) {
-                    makeAvailable(task);
-                }
+            //Check if unplanned execution is possible
+            if (plan.isAvailableForUnplannedExecution()) {
+                makeAvailable(task);
             }
         }
     }
