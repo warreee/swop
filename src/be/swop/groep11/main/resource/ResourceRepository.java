@@ -35,9 +35,10 @@ public class ResourceRepository {
         if (!canAddAsNewResourceInstance( resource)) {
             throw new IllegalArgumentException("ongeldige combinatie van type en resourceInstance");
         }
-        ArrayList<ResourceInstance> resourceList = resources.getOrDefault(resource, new ArrayList<>());
+        ArrayList<ResourceInstance> resourceList = resources.getOrDefault(resource.getResourceType(), new ArrayList<>());
         resourceList.add(resource);
         resources.put(resource.getResourceType(), resourceList);
+        resource.getResourceType().addResourceInstance(resource); // TODO: is deze call nodig? Die lijkt heel raar.
     }
 
     public void setResourceTypeRepository(ResourceTypeRepository resourceTypeRepository) throws IllegalArgumentException{
