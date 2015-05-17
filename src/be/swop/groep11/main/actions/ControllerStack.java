@@ -1,6 +1,7 @@
 package be.swop.groep11.main.actions;
 
 import be.swop.groep11.main.controllers.AbstractController;
+import be.swop.groep11.main.exception.InterruptedAProcedureException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,10 +13,12 @@ import java.util.LinkedList;
  */
 public class ControllerStack {
 
+
     /**
      *  Constructor voor aanmaken van een ControllerStack
      */
     public ControllerStack() {
+
     }
 
     /**
@@ -37,24 +40,40 @@ public class ControllerStack {
      *                  Anders wordt getInvalidProcedure() uitgevoerd.
      */
     public void executeAction(Action action) {
-        //step 1 determine action to ActionProcedure map based on current Active Controller.
-        HashMap<Action, ActionProcedure> actionMap = getControllerToActionMap().get(getActiveController());
-        //step 2 get the corresponding ActionProcedure
-        ActionProcedure procedure = actionMap.getOrDefault(action, getInvalidProcedure());
-        printStack("before");
-        //Step 2 activate controller
-        if (procedure.hasNewPreController()) {
-            activateController(procedure.getNewPreController());
-        }
-        //step 4 uitvoeren
-        printStack("during");
-        procedure.perform();
+        //Step 0, backup current ControllerStack
+        ControllerStackMemento backup = getBackup();
 
-        //Step 5 deactivateAfter
-        if (procedure.toDeleteFromStack()) {
-            deActivateController(getActiveController());
+        try {
+            //step 1 determine action to ActionProcedure map based on current Active Controller.
+            HashMap<Action, ActionProcedure> actionMap = getControllerToActionMap().get(getActiveController());
+            //step 2 get the corresponding ActionProcedure
+            ActionProcedure procedure = actionMap.getOrDefault(action, getInvalidProcedure());
+            //Step 3 activate controller
+            printStack("before");
+            if (procedure.hasNewPreController()) {
+                activateController(procedure.getNewPreController());
+            }
+            //step 4 uitvoeren
+            printStack("during");
+            procedure.perform();
+
+            //Step 5 deactivateAfter
+            if (procedure.toDeleteFromStack()) {
+                deActivateController(getActiveController());
+            }
+            printStack("after");
+        } catch (InterruptedAProcedureException e) {
+            restoreBackup(backup);
+            printStack("restored");
         }
-        printStack("after");
+    }
+
+    private ControllerStackMemento getBackup() {
+        return new ControllerStackMemento(controllerStack);
+    }
+
+    private void restoreBackup(ControllerStackMemento memento) {
+        this.controllerStack = memento.getControllerStack();
     }
 
     private void printStack(String message) {
@@ -63,7 +82,7 @@ public class ControllerStack {
             AbstractController controller = controllerStack.get(i);
             sb.append(i + ". " + controller.getClass().getSimpleName() + "\n");
         }
-        System.out.println(sb.toString());
+      System.out.println(sb.toString());
     }
 
     /**
@@ -169,5 +188,18 @@ public class ControllerStack {
             throw new IllegalArgumentException("Invalid actionProcedure");
         }
         this.invalidProcedure = invalidActionProcedure;
+    }
+
+
+    private class ControllerStackMemento{
+        private final LinkedList<AbstractController> controllerStack;
+
+        public ControllerStackMemento(LinkedList<AbstractController> controllerStack) {
+            this.controllerStack = new LinkedList<>(controllerStack);
+        }
+
+        public LinkedList<AbstractController> getControllerStack() {
+            return controllerStack;
+        }
     }
 }

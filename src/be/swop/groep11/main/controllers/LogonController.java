@@ -5,6 +5,7 @@ import be.swop.groep11.main.core.Company;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.EmptyListException;
+import be.swop.groep11.main.exception.InterruptedAProcedureException;
 import be.swop.groep11.main.resource.Developer;
 import be.swop.groep11.main.resource.ProjectManager;
 import be.swop.groep11.main.ui.UserInterface;
@@ -24,13 +25,14 @@ public class LogonController extends AbstractController implements ILogin {
         this.company = company;
     }
     @Override
-    public void logon() throws IllegalArgumentException {
+    public void logon() throws InterruptedAProcedureException {
         try {
             selectBranchOffice();
             identify();
         } catch (CancelException | EmptyListException e) {
             getUserInterface().printException(e);
             logOut();
+            throw new InterruptedAProcedureException();
         }
     }
 

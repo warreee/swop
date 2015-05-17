@@ -64,20 +64,20 @@ public abstract class AbstractController {
         throw new IllegalArgumentException("Niet ondersteund");
     }
 
-    public void setControllerStack(ControllerStack controllerStack)throws IllegalArgumentException {
-        if (!canHaveAsControllerStack(controllerStack)) {
-            throw new IllegalArgumentException("Ongeldige controllerStack voor deze AbstractController");
-        }
-        this.controllerStack = controllerStack;
-    }
-
-    public boolean canHaveAsControllerStack(ControllerStack controllerStack) {
-        return controllerStack != null && getControllerStack() == null;
-    }
-
-    public ControllerStack getControllerStack(){
-        return this.controllerStack;
-    }
+//    public void setControllerStack(ControllerStack controllerStack)throws IllegalArgumentException {
+//        if (!canHaveAsControllerStack(controllerStack)) {
+//            throw new IllegalArgumentException("Ongeldige controllerStack voor deze AbstractController");
+//        }
+//        this.controllerStack = controllerStack;
+//    }
+//
+//    public boolean canHaveAsControllerStack(ControllerStack controllerStack) {
+//        return controllerStack != null && getControllerStack() == null;
+//    }
+//
+//    public ControllerStack getControllerStack(){
+//        return this.controllerStack;
+//    }
 
 
 

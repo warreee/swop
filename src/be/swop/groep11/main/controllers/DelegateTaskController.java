@@ -1,6 +1,5 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Company;
 import be.swop.groep11.main.ui.UserInterface;
 
@@ -10,13 +9,12 @@ import be.swop.groep11.main.ui.UserInterface;
 public class DelegateTaskController  extends AbstractController {
 
     private Company company;
-    private BranchOffice branchOffice;
-    private  UserInterface ui;
+    private LogonController logonController;
 
-    public DelegateTaskController(UserInterface userInterface, Company company, BranchOffice branchOffice) {
+    public DelegateTaskController(UserInterface userInterface, Company company, LogonController logonController) {
         super(userInterface);
         this.company = company;
-        this.branchOffice = branchOffice;
+        this.logonController = logonController;
     }
 
     @Override

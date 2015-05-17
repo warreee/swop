@@ -74,10 +74,9 @@ public class App {
 
 
         ResourceRepository resourceRepository = new ResourceRepository(typeRepository);
-        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository);
+        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository,systemTime );
         projectRepository = new ProjectRepository(systemTime);
         branchoffice = new BranchOffice("bo1","leuven",projectRepository,resourcePlanner);
-        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository,systemTime );
 
         resourceManager = new ResourceManager();
     }
@@ -104,7 +103,7 @@ public class App {
         simulationController = new SimulationController(controllerStack, projectRepository, cli);
         planningController = new PlanningController(projectRepository,resourceManager, systemTime, cli);
         logonController = new LogonController(cli, company);
-        delegateTaskController = new DelegateTaskController(cli, company, logonController.getBranchOffice()); // TODO WARD: Ronald is dit correct zo?
+        delegateTaskController = new DelegateTaskController(cli, company, logonController);
         main = new MainController(controllerStack, advanceTimeController,simulationController,projectController,
                 taskController, planningController, logonController, delegateTaskController, cli);
     }
