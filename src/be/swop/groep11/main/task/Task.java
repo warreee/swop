@@ -47,21 +47,6 @@ public class Task{
     }
 
     /**
-     * Constructor om een nieuwe taak te maken zonder resource requirements.
-     *
-     * @param description           De omschrijving van de nieuwe taak
-     * @param estimatedDuration     De verwachte duur van de nieuwe taak
-     * @param acceptableDeviation   De aanvaardbare marge van de nieuwe taak
-     * @param dependencyGraph       De dependency graph die de nieuwe taak moet gebruiken
-     * @param project
-     * @throws java.lang.IllegalArgumentException Ongeldige beschrijving, ongeldige verwachte duur, ongeldige aanvaardbare marge
-     *                                            of ongeldig project
-     */
-    public Task(String description, Duration estimatedDuration, double acceptableDeviation, DependencyGraph dependencyGraph, Project project) throws IllegalArgumentException {
-        this(description, estimatedDuration, acceptableDeviation, dependencyGraph, new RequirementListBuilder().getRequirements(), project);
-    }
-
-    /**
      * Wijzigt de beschrijving van de taak.
      * @throws java.lang.IllegalArgumentException De beschrijving is niet geldig.
      */

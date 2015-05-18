@@ -179,19 +179,6 @@ public class Project {
      * @param description           Omschrijving van de taak
      * @param acceptableDeviation   Aanvaardbare afwijking (tijd) in percent
      * @param estimatedDuration     Schatting nodige tijd
-     * @throws IllegalArgumentException
-     *                              Gooi indien één of meerdere van de parameters niet geldig zijn.
-     */
-    public void addNewTask(String description, double acceptableDeviation, Duration estimatedDuration) throws IllegalArgumentException {
-        Task task = new Task(description, estimatedDuration, acceptableDeviation, this.dependencyGraph, this);
-        tasks.add(task);
-    }
-
-    /**
-     * Voegt een taak toe aan dit project.
-     * @param description           Omschrijving van de taak
-     * @param acceptableDeviation   Aanvaardbare afwijking (tijd) in percent
-     * @param estimatedDuration     Schatting nodige tijd
      * @param requirementList       De requirement list voor de taak
      * @throws IllegalArgumentException
      *                              Gooi indien één of meerdere van de parameters niet geldig zijn.

@@ -28,11 +28,13 @@ public class ResourceRequirement {
      * @throws IllegalArgumentException
      *                  Gooi indien type == null
      */
-    public ResourceRequirement(AResourceType type, int amount) throws IllegalRequirementAmountException,IllegalArgumentException {
+    //TODO: moeten we de ResourceRepository ook bijhouden of niet?
+    public ResourceRequirement(ResourceRepository resourceRepository, AResourceType type, int amount)
+            throws IllegalRequirementAmountException,IllegalArgumentException {
         if(!isValidType(type)){
             throw new IllegalArgumentException("Type mag niet null zijn.");
         }
-        if(!isValidAmountFor(type, amount)){
+        if(!isValidAmountFor(resourceRepository, type, amount)){
             throw new IllegalRequirementAmountException("Ongeldige hoeveelheid voor het gegeven ResourceType.",type,amount);
         }
         this.type = type;
@@ -73,13 +75,12 @@ public class ResourceRequirement {
      *                  amount <= de hoeveelheid ResourceInstances een type bevat.
      *                  Anders niet waar.
      */
-    private boolean isValidAmountFor(AResourceType type, int amount) {
+    private boolean isValidAmountFor(ResourceRepository resourceRepository, AResourceType type, int amount) {
         if( type.hasConstraintFor(type)){//constraint op zichzelf
             ResourceTypeConstraint constraintB = type.getConstraintFor(type);
-            return constraintB.isAcceptableAmount(type,amount) && amount <= type.amountOfInstances() ;
+            return constraintB.isAcceptableAmount(type,amount) && amount <= resourceRepository.getResources(type).size();
         }
-        return amount > 0 && amount <= type.amountOfInstances();
-        // TODO: type.amountOfInstances() klopt nu niet meer denk ik.
+        return amount > 0 && amount <= resourceRepository.getResources(type).size();
     }
 
     @Override

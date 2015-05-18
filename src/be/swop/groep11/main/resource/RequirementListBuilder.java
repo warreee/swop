@@ -15,12 +15,14 @@ import java.util.*;
 public class RequirementListBuilder {
 
     private RequirementList reqList;
+    private ResourceRepository resourceRepository;
 
     /**
      * Constructor voor nieuwe RequirementListBuilder
      */
-    public RequirementListBuilder() {
+    public RequirementListBuilder(ResourceRepository resourceRepository) {
         this.reqList = new RequirementList();
+        setResourceRepository(resourceRepository);
     }
 
     /**
@@ -42,6 +44,17 @@ public class RequirementListBuilder {
      */
     public IRequirementList getRequirements(){
         return this.reqList;
+    }
+
+    private void setResourceRepository(ResourceRepository resourceRepository) {
+        checkResourceRepository(resourceRepository);
+        this.resourceRepository = resourceRepository;
+    }
+
+    private void checkResourceRepository(ResourceRepository resourceRepository){
+        if(resourceRepository == null){
+            throw new IllegalArgumentException("ResourceRepository mag niet 'null' zijn.");
+        }
     }
 
     /**
@@ -168,7 +181,7 @@ public class RequirementListBuilder {
             }else {
                 //Indien er al een requirement is voor type zijn we reeds zeker dat een nieuwe requirement de plaats mag vervangen.
                 // Plus de gevraagde hoeveelheid is geen probleem
-                ResourceRequirement requirement = new ResourceRequirement(requiredType, amount);
+                ResourceRequirement requirement = new ResourceRequirement(resourceRepository, requiredType, amount);
                 requirements.put(requiredType,requirement);
                 requiredType.getTypeConstraints().forEach(constraint -> {
                     if (constraint.getMin() > 0 && constraint.getMax() >= constraint.getMin()) {
