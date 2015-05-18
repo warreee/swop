@@ -418,7 +418,7 @@ public class Task{
 //    }
 
 
-    protected void setPlan(Plan plan) {
+    public void setPlan(Plan plan) {
         if (!canHaveAsPlan(plan)) {
             throw new IllegalArgumentException("Illegaal plan"); //TODO aparte exception?
         }

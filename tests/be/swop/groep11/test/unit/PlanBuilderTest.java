@@ -42,12 +42,12 @@ public class PlanBuilderTest {
         // eindtijd van resource types wanneer ze vanaf starttijd voor duration worden gereserveerd
         endTime = startTime.plus(duration);
 
-        initResources();
-
         // branch office en resource planner
         branchOffice = mock(BranchOffice.class);
-        when(branchOffice.getResourcePlanner()).thenReturn(resourcePlanner);
         resourceRepository = mock(ResourceRepository.class);
+
+        initResources();
+        when(branchOffice.getResourcePlanner()).thenReturn(resourcePlanner);
 
         // taak met requirements (2x type1 + 1x type2), duur=1u, niet gedelegeerd en niet gepland
         task = mock(Task.class);
@@ -72,13 +72,10 @@ public class PlanBuilderTest {
 
         type1 = mock(ResourceType.class);
         type2 = mock(ResourceType.class);
-        when(type1.amountOfInstances()).thenReturn(3);
-        when(type2.amountOfInstances()).thenReturn(3);
         when(type1.getDailyAvailability()).thenReturn(new DailyAvailability(LocalTime.MIN, LocalTime.MAX));
         when(type2.getDailyAvailability()).thenReturn(new DailyAvailability(LocalTime.MIN, LocalTime.MAX));
         when(type1.calculateEndTime(anyObject(), anyObject())).thenReturn(endTime);
         when(type2.calculateEndTime(anyObject(), anyObject())).thenReturn(endTime);
-
         instance1a = mock(ResourceInstance.class);
         when(instance1a.getResourceType()).thenReturn(type1);
         instance1b = mock(ResourceInstance.class);
@@ -97,6 +94,8 @@ public class PlanBuilderTest {
 
         when(resourcePlanner.getInstances(eq(type1), any(TimeSpan.class))).thenReturn(instances1);
         when(resourcePlanner.getInstances(eq(type2), any(TimeSpan.class))).thenReturn(instances2);
+        when(resourceRepository.getResources(eq(type1))).thenReturn(instances1);
+        when(resourceRepository.getResources(eq(type2))).thenReturn(instances2);
     }
 
     @Test

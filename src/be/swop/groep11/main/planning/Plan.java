@@ -50,8 +50,9 @@ public class Plan {
      * dit plan uit de resource planner te halen en dit plan uit de bijhorende taak te halen.
      */
     public void clear() {
-        this.reservations = null; // niet echt nodig
+        this.reservations = new ArrayList<>(); // niet echt nodig
         this.resourcePlanner.removePlan(this);
+        this.task.setPlan(null);
     }
 
     /**

@@ -1,5 +1,6 @@
 package be.swop.groep11.main.controllers;
 
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.EmptyListException;
@@ -31,6 +32,9 @@ public class PlanningController extends AbstractController {
      * Start met het plannen van een taak. Alle benodigde info wordt aan de gebruiker gevraagd via de UserInterface.
      */
     public void planTask(){
+
+        BranchOffice branchOffice = logonController.getBranchOffice();
+
 
         try {
 //

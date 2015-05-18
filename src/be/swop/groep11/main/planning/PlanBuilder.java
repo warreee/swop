@@ -162,7 +162,7 @@ public class PlanBuilder {
             throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat de requirements niet voldaan zijn");
         }
 
-        return new Plan(task, branchOffice.getResourcePlanner(), getTimeSpan(), getReservations());
+        return new Plan(getTask(), getBranchOffice().getResourcePlanner(), getTimeSpan(), getReservations());
     }
 
     private void setBranchOffice(BranchOffice branchOffice) {
@@ -170,6 +170,10 @@ public class PlanBuilder {
             throw new IllegalArgumentException("Branch Office mag niet null zijn bij het aanmaken van een PlanBuilder.");
         }
         this.branchOffice = branchOffice;
+    }
+
+    private BranchOffice getBranchOffice() {
+        return this.branchOffice;
     }
 
     /**
@@ -183,6 +187,10 @@ public class PlanBuilder {
     private void setTask(Task task) {
         canHaveAsTask(task);
         this.task = task;
+    }
+
+    private Task getTask() {
+        return this.task;
     }
 
     /**
