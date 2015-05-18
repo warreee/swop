@@ -129,7 +129,7 @@ public class TaskAvailable extends TaskStatus {
         if (task.isPlanned()) {
             Plan plan = task.getPlan();
             //Check if unplanned execution isn't possible
-            if (!plan.isAvailableForUnplannedExecution()) {
+            if (!plan.hasEquivalentPlan()) {
                 makeUnavailable(task);
             }
         }

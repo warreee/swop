@@ -3,10 +3,11 @@ package be.swop.groep11.main.resource;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.planning.Plan;
+import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.util.Observable;
 import be.swop.groep11.main.util.*;
-
+import com.google.common.collect.ImmutableList;
 
 
 import java.time.Duration;
@@ -362,6 +363,21 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     public ResourceRepository getResourceRepository() {
         //TODO TEMP? getter, nodig in branch office atm. zoek betere oplossing
         return resourceRepository;
+    }
+
+    public boolean hasEquivalentPlan(Plan plan,LocalDateTime startTime) {
+        ImmutableList<ResourceReservation> specificReservations = plan.getSpecificReservations();
+
+        PlanBuilder planBuilder = new PlanBuilder(plan.getTask().getDelegatedTo(), plan.getTask(), startTime);
+        //add specific instances
+        specificReservations.forEach(reservation -> planBuilder.addResourceInstance(reservation.getResourceInstance()));
+        //propose rest
+        planBuilder.proposeResources();
+        return planBuilder.isSatisfied() && (! planBuilder.hasConflictingReservations());
+    }
+
+    public boolean hasEquivalentPlan(Plan plan) {
+        return hasEquivalentPlan(plan, getSystemTime().getCurrentSystemTime());
     }
 
     private ResourceRepository resourceRepository;

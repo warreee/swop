@@ -85,6 +85,12 @@ public class Plan {
         return ImmutableList.copyOf(this.reservations);
     }
 
+    public ImmutableList<ResourceReservation> getSpecificReservations() {
+        return ImmutableList.copyOf(
+                reservations.stream().filter(reservation -> reservation.isSpecific()).collect(Collectors.toList())
+        );
+    }
+
     /**
      * Geeft een immutable lijst van de reservaties van dit plan voor een bepaald resource type.
      * @param type Het resource type
@@ -102,15 +108,6 @@ public class Plan {
         return this.task;
     }
 
-    /**
-     * Deze methode gaat na of er voor de gegeven systemTime een equivalent plan bestaat voor de taak.
-     * Deze moet rekening houden met de resourcerepository waarnaar hij gedelegeerd is.
-     * @return True als er een equivalent plan bestaat (i.e. er zijn genoeg resource instanties beschikbaar
-     *         voor het plan vanaf systemTime gedurende de geschatte duur van de taak)
-     */
-    public boolean hasEquivalentPlan() {
-        return false;
-    }
 
     /**
      * Geeft aan of de gegeven LocalDateTime in de periode valt voor dit plan.
@@ -121,15 +118,17 @@ public class Plan {
         return getTimeSpan().containsLocalDateTime(localDateTime);
     }
 
-    public boolean isAvailableForUnplannedExecution() {
-        //TODO past deze methode hier?
-        return false;
+    /**
+     * Deze methode gaat na of er een equivalent plan bestaat op de huidige systeemTijd.
+     * Waarbij rekening gehouden wordt met reeds specifieke reservaties.
+     *
+     * @return Waar indien er een ander plan gemaakt kan worden met de specifieke resources op de huidige systeemTijd
+     */
+    public boolean hasEquivalentPlan() {
+        return getResourcePlanner().hasEquivalentPlan(this);
     }
 
-    public boolean hasEquivalentPlan(LocalDateTime systemTime) {
-        PlanBuilder planBuilder = new PlanBuilder(task.getDelegatedTo(), task, systemTime);
-        planBuilder.proposeResources();
-        return planBuilder.isSatisfied() && (! planBuilder.hasConflictingReservations());
+    private ResourcePlanner getResourcePlanner() {
+        return resourcePlanner;
     }
-
 }

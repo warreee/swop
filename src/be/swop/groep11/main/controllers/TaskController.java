@@ -140,6 +140,7 @@ public class TaskController extends AbstractController {
             tasks.addAll(projectRepository.getAllExecutingTasks());
             Task task =  getUserInterface().selectTaskFromList(ImmutableList.copyOf(tasks));
             updateTask(task);
+
         }
         catch (CancelException|EmptyListException e) {
             getUserInterface().printException(e);
@@ -192,7 +193,6 @@ public class TaskController extends AbstractController {
             ArrayList<String> options = new ArrayList<>(Arrays.asList("FAIL", "FINISH", "EXECUTE"));
             String status = getUserInterface().selectFromList(options, x -> x);
             doTransition(status, task);
-
         }
         catch (IllegalArgumentException|IllegalStateTransitionException e) {
             getUserInterface().printException(e);

@@ -197,6 +197,7 @@ public abstract class TaskStatus implements Cloneable {
 
     /** TODO: mag dit, een lege methode?
      * Methode wordt overscrheven in subclassen
+     * @param localDateTime
      * @param task
      */
     protected void updateStatus(Task task){

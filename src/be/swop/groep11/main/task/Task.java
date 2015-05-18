@@ -7,7 +7,6 @@ import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.IRequirementList;
-import be.swop.groep11.main.resource.RequirementListBuilder;
 import be.swop.groep11.main.resource.ResourcePlanner;
 import be.swop.groep11.main.util.Observer;
 
@@ -497,13 +496,18 @@ public class Task{
 //    }
 
     private Observer<SystemTime> systemTimeObserver = sysTime -> {
-        getStatus().updateStatus(this);
+        getStatus().updateStatus(this, );
         evaluateTask(sysTime.getCurrentSystemTime());
+
+        if (isFailed() || isFinished()) {
+            sysTime.removeObserver(this.getSystemTimeObserver());
+        }
     };
 
     private Observer<ResourcePlanner> resourcePlannerObserver = resourcePlanner -> {
-        getStatus().updateStatus(this);
+        getStatus().updateStatus(this, );
     };
+
 
 
     public Observer<SystemTime> getSystemTimeObserver() {
@@ -514,15 +518,12 @@ public class Task{
         return resourcePlannerObserver;
     }
 
-
-
-
     public enum TaskEvaluation {
+
         EARLY("early"),
         ONTIME("on time"),
         OVERDUE("late"),
         NOTFINISHED("not finished");
-
 
         private final String txt;
         TaskEvaluation(String txt) {
