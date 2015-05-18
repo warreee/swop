@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -66,6 +67,7 @@ public class PlanBuilderTest {
 
     private void initResources() {
         resourcePlanner = mock(ResourcePlanner.class);
+        when(resourcePlanner.isAvailable(any(ResourceInstance.class), any(TimeSpan.class))).thenReturn(true);
 
         type1 = mock(ResourceType.class);
         type2 = mock(ResourceType.class);
@@ -148,7 +150,6 @@ public class PlanBuilderTest {
 
     @Test
      public void hasConflictingReservations_NoConflictsTest() {
-        when(resourcePlanner.isAvailable(any(ResourceInstance.class), any(TimeSpan.class))).thenReturn(true);
         planBuilder.addResourceInstance(instance1a);
         assertFalse(planBuilder.hasConflictingReservations());
     }
@@ -160,6 +161,50 @@ public class PlanBuilderTest {
         assertTrue(planBuilder.hasConflictingReservations());
     }
 
-    // TODO testen voor isSatisfied en getPkan
+    @Test
+    public void isSatisfied_SatisfiedTest() {
+        planBuilder.addResourceInstance(instance1a);
+        planBuilder.addResourceInstance(instance1b);
+        planBuilder.addResourceInstance(instance2a);
+        assertTrue(planBuilder.isSatisfied());
+    }
+
+    @Test
+    public void isSatisfied_NotSatisfiedTest() {
+        planBuilder.addResourceInstance(instance1a);
+        planBuilder.addResourceInstance(instance1b);
+        assertFalse(planBuilder.isSatisfied());
+    }
+
+    @Test
+    public void getPlan_ValidTest() {
+        planBuilder.addResourceInstance(instance1a);
+        planBuilder.addResourceInstance(instance1b);
+        planBuilder.addResourceInstance(instance2a);
+        Plan plan = planBuilder.getPlan();
+        assertTrue(plan.getTask() == task);
+        assertTrue(plan.getTimeSpan().equals(new TimeSpan(startTime, endTime)));
+        assertTrue(plan.getReservations(type1).size() == 2);
+        assertFalse(plan.getReservations(type1).stream().filter(r -> r.getResourceInstance() == instance1a).collect(Collectors.toList()).isEmpty());
+        assertFalse(plan.getReservations(type1).stream().filter(r -> r.getResourceInstance() == instance1b).collect(Collectors.toList()).isEmpty());
+        assertTrue(plan.getReservations(type2).size() == 1);
+        assertFalse(plan.getReservations(type2).stream().filter(r -> r.getResourceInstance() == instance2a).collect(Collectors.toList()).isEmpty());
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void getPlan_NotSatisfiedTest() {
+        planBuilder.addResourceInstance(instance1a);
+        planBuilder.addResourceInstance(instance1b);
+        Plan plan = planBuilder.getPlan();
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void getPlan_ConflictsTest() {
+        when(resourcePlanner.isAvailable(any(ResourceInstance.class), any(TimeSpan.class))).thenReturn(false);
+        planBuilder.addResourceInstance(instance1a);
+        planBuilder.addResourceInstance(instance1b);
+        planBuilder.addResourceInstance(instance2a);
+        Plan plan = planBuilder.getPlan();
+    }
 
 }
