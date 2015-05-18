@@ -38,7 +38,7 @@ public class ResourceRepository {
         ArrayList<ResourceInstance> resourceList = resources.getOrDefault(resource.getResourceType(), new ArrayList<>());
         resourceList.add(resource);
         resources.put(resource.getResourceType(), resourceList);
-        resource.getResourceType().addResourceInstance(resource); // TODO: is deze call nodig? Die lijkt heel raar.
+        //resource.getResourceType().addResourceInstance(resource); // TODO: is deze call nodig? Die lijkt heel raar.
     }
 
     public void setResourceTypeRepository(ResourceTypeRepository resourceTypeRepository) throws IllegalArgumentException{
