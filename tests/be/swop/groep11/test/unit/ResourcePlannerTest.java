@@ -56,7 +56,7 @@ public class ResourcePlannerTest {
         BranchOffice branchOffice = mock(BranchOffice.class);
         Task task = mock(Task.class);
         when(branchOffice.getUnplannedTasks()).thenReturn(Arrays.<Task>asList(task));
-        RequirementListBuilder builder = new RequirementListBuilder();
+        RequirementListBuilder builder = new RequirementListBuilder(repository);
         builder.addNewRequirement(typeRepository.getResourceTypeByName("type a"), 2);
         when(task.getRequirementList()).thenReturn(builder.getRequirements());
         when(task.getEstimatedDuration()).thenReturn(Duration.ofHours(3));
@@ -65,10 +65,10 @@ public class ResourcePlannerTest {
         planner = new ResourcePlanner(repository, systemTime);
     }
 
-    @Test(expected = IllegalRequirementAmountException.class)
+    @Test
     public void testCanPlan() throws Exception {
         Task task1 = mock(Task.class);
-        RequirementListBuilder builder = new RequirementListBuilder();
+        RequirementListBuilder builder = new RequirementListBuilder(repository);
         builder.addNewRequirement(typeRepository.getResourceTypeByName("type a"), 2);
         when(task1.getRequirementList()).thenReturn(builder.getRequirements());
         assertTrue(planner.canPlan(task1));

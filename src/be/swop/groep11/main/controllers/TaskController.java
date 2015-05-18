@@ -104,7 +104,7 @@ public class TaskController extends AbstractController {
             }
 
             // Bouw de IRequirementList en voeg hem toe aan de taak.
-            IRequirementList requirementList = buildIRequirementList(selectedTypes);
+            IRequirementList requirementList = buildIRequirementList(selectedTypes, resourceRepository);
 
             project.addNewTask(description, acceptableDeviation, estimatedDuration, requirementList);
             Task task = project.getTasks().get(project.getTasks().size() - 1);
@@ -176,8 +176,8 @@ public class TaskController extends AbstractController {
      * @param map De map waarvan de IRequirementList moet worden opgebouwd.
      * @return De IRequirementList na het lezen van de gegeven map.
      */
-    private IRequirementList buildIRequirementList(Map<AResourceType, Integer> map){
-        RequirementListBuilder builder = new RequirementListBuilder();
+    private IRequirementList buildIRequirementList(Map<AResourceType, Integer> map, ResourceRepository resourceRepository){
+        RequirementListBuilder builder = new RequirementListBuilder(resourceRepository);
         map.forEach(builder::addNewRequirement);
         return builder.getRequirements();
     }
