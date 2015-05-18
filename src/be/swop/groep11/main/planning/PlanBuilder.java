@@ -98,6 +98,16 @@ public class PlanBuilder {
     }
 
     /**
+     * Verwijdert alle geselecteerde resource instanties voor het plan.
+     */
+    public void clearInstances() {
+        for (ResourceRequirement resourceRequirement : this.resourceRequirements) {
+            specificInstances.put(resourceRequirement.getType(), new ArrayList<>());
+            proposedInstances.put(resourceRequirement.getType(), new ArrayList<>());
+        }
+    }
+
+    /**
      * Controleert of de gegeven resourceInstance wel aan deze PlanBuilder kan worden toegevoegd.
      */
     private void checkCanAddResourceInstance(ResourceInstance resourceInstance) {
