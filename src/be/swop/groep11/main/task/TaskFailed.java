@@ -67,6 +67,8 @@ public class TaskFailed extends TaskStatus {
         return Duration.between(task.getStartTime(), task.getEndTime());
     }
 
+
+
     /**
      * Een gefaalde taak kan geen nieuwe starttijd hebben. Deze is al gezet bij de overgang van available naar executing.
      * @return false

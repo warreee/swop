@@ -1,4 +1,4 @@
-package be.swop.groep11.test;
+package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.util.Observable;
 import be.swop.groep11.main.util.Observer;

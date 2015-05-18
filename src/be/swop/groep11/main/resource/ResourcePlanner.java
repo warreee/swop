@@ -106,7 +106,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     }
 
     /**
-     * Controlleer of de gegeven ResourceInstance beschikbaar is gedurende de gegeven TimeSpan.
+     * Controleer of de gegeven ResourceInstance beschikbaar is gedurende de gegeven TimeSpan.
      *
      * @param resourceInstance De ResourceInstance die beschikbaar moet zijn.
      * @param timeSpan         Wanneer de ResourceInstance beschikbaar moet zijn.
@@ -183,8 +183,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
             }
         }
 
-        //TODO implement remove Plan
-        //plan.clear() roept dit op?
         removeObserver(plan.getTask().getResourcePlannerObserver());
     }
 
@@ -223,11 +221,13 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         LocalDateTime fullHour = Util.getNextHour(firstPossibleStartTime);
         LocalDateTime furthest;
         ArrayList<TimeSpan> possibleTimeSpans = new ArrayList<>();
-
-        while (possibleTimeSpans.size() < amount) {
+        int listSize = possibleTimeSpans.size();
+        while ( listSize < amount) {
             furthest = getFurthestTime(duration, fullHour, requirementList);
-            if (resourceRequirementsSatisfiable(new TimeSpan(fullHour, furthest), requirementList)) {
-                possibleTimeSpans.add(new TimeSpan(fullHour, furthest));
+            TimeSpan ts = new TimeSpan(fullHour, furthest);
+            if (resourceRequirementsSatisfiable(ts, requirementList)) {
+                possibleTimeSpans.add(ts);
+                listSize = possibleTimeSpans.size();
             }
             fullHour = fullHour.plusHours(1);
         }
@@ -286,6 +286,19 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      */
     public List<LocalDateTime> getNextPossibleStartTimes(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount) {
         return getNextPossibleTimeSpans(requirementList, firstPossibleStartTime, duration, amount).stream().map(TimeSpan::getStartTime).collect(Collectors.toList());
+    }
+
+    /**
+     * Bepaald de n volgende mogelijke starttijden (die starten op volledige uren vb 9:00 en 10:00) voor een gegeven
+     * requirementList.
+     *
+     * @param requirementList        De IRequirementList die voldaan moet zijn.
+     * @param duration               Hoelang alle elementen in de IRequirementList beschikbaar moeten zijn.
+     * @param amount                 Hoeveel mogelijke starttijden er moeten berekend worden.
+     * @return Een lijst met de gevraagde hoeveelheid mogelijke starttijden.
+     */
+    public List<LocalDateTime> getNextPossibleStartTimes(IRequirementList requirementList, Duration duration, int amount) {
+        return getNextPossibleStartTimes(requirementList, getSystemTime().getCurrentSystemTime(), duration, amount);
     }
 
     /**
@@ -365,10 +378,16 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         return resourceRepository;
     }
 
-    public boolean hasEquivalentPlan(Plan plan,LocalDateTime startTime) {
+    /**
+     * Deze methode gaat na of er een equivalent plan bestaat op het gegeven Tijdstip.
+     * Waarbij rekening gehouden wordt met reeds specifieke resources.
+     * @param localDateTime Het gegeven tijdStip
+     * @return Waar indien er een ander plan gemaakt kan worden met de specifieke resources op het gegeven tijdStip
+     */
+    public boolean hasEquivalentPlan(Plan plan,LocalDateTime localDateTime) {
         ImmutableList<ResourceReservation> specificReservations = plan.getSpecificReservations();
 
-        PlanBuilder planBuilder = new PlanBuilder(plan.getTask().getDelegatedTo(), plan.getTask(), startTime);
+        PlanBuilder planBuilder = new PlanBuilder(plan.getTask().getDelegatedTo(), plan.getTask(), localDateTime);
         //add specific instances
         specificReservations.forEach(reservation -> planBuilder.addResourceInstance(reservation.getResourceInstance()));
         //propose rest

@@ -8,6 +8,7 @@ import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Aanmaken van requirements en bijhouden in een lijst
@@ -133,8 +134,9 @@ public class RequirementListBuilder {
         @Override
         public DailyAvailability getShortestDailyAvailability() {
             //TODO getShortestDailyAvailability
-
-            return null;
+            List<DailyAvailability> dailyAvailabilities = requirements.keySet().stream().map(type -> type.getDailyAvailability()).collect(Collectors.toList());
+            DailyAvailability min = Collections.min(dailyAvailabilities, (o1, o2) -> o1.getDuration().compareTo(o2.getDuration()));
+            return min;
         }
 
         @Override

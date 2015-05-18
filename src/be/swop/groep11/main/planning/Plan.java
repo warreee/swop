@@ -32,7 +32,7 @@ public class Plan {
      * @param reservations    De lijst van reservaties van het plan
      */
     protected Plan(Task task, ResourcePlanner resourcePlanner, TimeSpan timeSpan, List<ResourceReservation> reservations) {
-        this.task = task;
+        setTask(task);
         this.timeSpan = timeSpan;
         this.resourcePlanner = resourcePlanner;
         this.reservations = reservations;
@@ -50,9 +50,31 @@ public class Plan {
      * dit plan uit de resource planner te halen en dit plan uit de bijhorende taak te halen.
      */
     public void clear() {
+        task.setPlan(null);
+
         this.reservations = new ArrayList<>(); // niet echt nodig
         this.resourcePlanner.removePlan(this);
-        this.task.setPlan(null);
+
+        setTask(null);
+    }
+
+    /**
+     * Setter voor Task parameter
+     * @param task  De nieuwe taak
+     */
+    private void setTask(Task task) {
+        if (!canHaveAsTask(task)) {
+            throw new IllegalArgumentException("Ongeldige taak");
+        }
+        this.task = task;
+    }
+
+    /**
+     * @return  True indien gegeven task niet null && huidige task voor dit plan wel null
+     *          True indien gegeven task wel null &&  huidige task niet null
+     */
+    private boolean canHaveAsTask(Task task) {
+        return task != null && getTask() == null || task == null && getTask() != null;
     }
 
     /**
@@ -128,6 +150,17 @@ public class Plan {
     public boolean hasEquivalentPlan() {
         return getResourcePlanner().hasEquivalentPlan(this);
     }
+
+    /**
+     * Deze methode gaat na of er een equivalent plan bestaat op het gegeven Tijdstip.
+     * Waarbij rekening gehouden wordt met reeds specifieke resources.
+     * @param localDateTime Het gegeven tijdStip
+     * @return Waar indien er een ander plan gemaakt kan worden met de specifieke resources op het gegeven tijdStip
+     */
+    public boolean hasEquivalentPlan(LocalDateTime localDateTime) {
+        return getResourcePlanner().hasEquivalentPlan(this,localDateTime);
+    }
+
 
     private ResourcePlanner getResourcePlanner() {
         return resourcePlanner;

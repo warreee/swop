@@ -420,17 +420,13 @@ public class Task{
 //        return plan.getStartTime();
 //    }
 
-
     public void setPlan(Plan plan) {
-        if (!canHaveAsPlan(plan)) {
+        if (!getStatus().canHaveAsPlan(this,plan)) {
             throw new IllegalArgumentException("Illegaal plan"); //TODO aparte exception?
         }
         this.plan = plan;
     }
 
-    private boolean canHaveAsPlan(Plan plan) {
-        return plan != null && getPlan() == null || plan == null && getPlan() != null;
-    }
 
     protected Plan getPlan() {
             return this.plan;
@@ -500,16 +496,22 @@ public class Task{
 //    }
 
     private Observer<SystemTime> systemTimeObserver = sysTime -> {
-        getStatus().updateStatus(this, );
+        getStatus().updateStatus(this);
         evaluateTask(sysTime.getCurrentSystemTime());
 
         if (isFailed() || isFinished()) {
             sysTime.removeObserver(this.getSystemTimeObserver());
         }
+
     };
 
     private Observer<ResourcePlanner> resourcePlannerObserver = resourcePlanner -> {
-        getStatus().updateStatus(this, );
+        getStatus().updateStatus(this);
+        if (isFailed() || isFinished()) {
+            resourcePlanner.removeObserver(this.getResourcePlannerObserver());
+        }
+
+//        resourcePlanner.
     };
 
 

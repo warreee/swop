@@ -17,8 +17,6 @@ public class SystemTime extends Observable<SystemTime>{
         this.currentSystemTime = LocalDateTime.now();
     }
 
-
-
     /**
      * Initialiseerd deze SystemTime met de doorgegeven tijd.
      * @param systemTime De tijd die deze SystemTime moet bevatten.

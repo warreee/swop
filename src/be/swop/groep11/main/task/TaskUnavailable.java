@@ -97,13 +97,18 @@ public class TaskUnavailable extends TaskStatus {
         return false;
     }
 
-    /**
-     * Plant de taak
-     * @param task De te plannen taak
-     */
+//    /**
+//     * Plant de taak
+//     * @param task De te plannen taak
+//     */
+//    @Override
+//    public void plan(Task task, Plan plan) {
+//        task.setPlan(plan);
+//    }
+
     @Override
-    public void plan(Task task, Plan plan) {
-        task.setPlan(plan);
+    protected boolean canHaveAsPlan(Task task, Plan plan) {
+        return plan != null && task.getPlan() == null;
     }
 
     @Override

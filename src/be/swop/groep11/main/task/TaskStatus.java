@@ -186,13 +186,17 @@ public abstract class TaskStatus implements Cloneable {
         return false;
     }
 
-    /**
-     * Plant de taak
-     * @param task De te plannen taak
-     * @throws IllegalStateException De taak kan niet gepland worden.
-     */
-    protected void plan(Task task, Plan plan) throws IllegalArgumentException {
-        throw new IllegalStateException("De taak kan niet gepland worden.");
+//    /**
+//     * Plant de taak
+//     * @param task De te plannen taak
+//     * @throws IllegalStateException De taak kan niet gepland worden.
+//     */
+//    protected void plan(Task task, Plan plan) throws IllegalArgumentException {
+//        throw new IllegalStateException("De taak kan niet gepland worden.");
+//    }
+
+    protected boolean canHaveAsPlan(Task task, Plan plan){
+        return false;
     }
 
     /** TODO: mag dit, een lege methode?

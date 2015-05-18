@@ -221,4 +221,6 @@ public class DailyAvailability {
         return LocalDateTime.of(nextEndDate, this.getEndTime());
     }
 
+
+
 }
