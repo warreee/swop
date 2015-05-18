@@ -30,6 +30,7 @@ public class DelegateTaskController  extends AbstractController {
         try {
             selectDelegateTask();
             selectDestinationBranchOffice();
+            logonController.getBranchOffice().delegateTask(getDelegationTask(), getDestinationBranchOffice());
         } catch (CancelException | EmptyListException e) {
             getUserInterface().printException(e);
             throw new InterruptedAProcedureException(); // zorgt ervoor dat de status van de stack hersteld wordt
@@ -42,6 +43,10 @@ public class DelegateTaskController  extends AbstractController {
         this.delegationTask = delegatedTask;
     }
 
+    private Task getDelegationTask() {
+        return this.delegationTask;
+    }
+
     private void selectDelegateTask() {
         ImmutableList<Task> tasks = ImmutableList.copyOf(logonController.getBranchOffice().getUnplannedTasks());
         setDelegationTask(getUserInterface().selectTaskFromList(tasks));
@@ -52,6 +57,9 @@ public class DelegateTaskController  extends AbstractController {
     private void setDestinationBranchOffice(BranchOffice branchOffice){
         this.destinationBranchOffice = branchOffice;
     }
+    private BranchOffice getDestinationBranchOffice() {
+        return this.destinationBranchOffice;
+    }
 
     private void selectDestinationBranchOffice() {
         ImmutableList<BranchOffice> branchOffices = ImmutableList.copyOf(
@@ -59,6 +67,7 @@ public class DelegateTaskController  extends AbstractController {
                         .filter(branchOffice -> branchOffice != logonController.getBranchOffice()).collect(Collectors.toList()));
         setDestinationBranchOffice(getUserInterface().selectBranchOfficeFromList(branchOffices));
     }
+
 
 
 
