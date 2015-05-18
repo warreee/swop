@@ -99,7 +99,7 @@ public class TaskController extends AbstractController {
             // Vraag de gebruiker dat dit een alternatieve taak voor iets is als dat kan.
             Task alternativeTaskFor = null;
             if ((!project.getFailedTasks().isEmpty()) && getUserInterface().requestBoolean("Is deze taak een alternatieve taak?")) {
-                getUserInterface().printMessage("Deze taak zal een zal een alternatieve taak zijn voor de geselecteerde taak.");
+                getUserInterface().printMessage("Deze taak zal een alternatieve taak zijn voor de geselecteerde taak.");
                 alternativeTaskFor = getUserInterface().selectTaskFromList(project.getFailedTasks());
             }
 

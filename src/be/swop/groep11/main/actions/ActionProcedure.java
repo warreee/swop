@@ -21,7 +21,7 @@ public class ActionProcedure {
     }
 
     public ActionProcedure(AbstractController controller, ActionBehaviour behaviour, ActionCondition condition, boolean deleteFromStack) {
-        //TODO check valid parameters
+        // TODO check valid prameters
         this.controller = controller;
         this.behaviour = behaviour;
         this.condition = condition;

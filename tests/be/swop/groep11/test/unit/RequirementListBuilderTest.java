@@ -17,29 +17,26 @@ public class RequirementListBuilderTest {
     private AResourceType typeA;
     private AResourceType typeB;
     private AResourceType typeC;
-    private ResourceManager resourceManager;
 
     private RequirementListBuilder rlb;
     private ResourceRepository resourceRepository;
+    private ResourceTypeRepository resourceTypeRepository;
 
     @Before
     public void setUp() throws Exception {
-        // TODO: we maken geen gebruik meer van ResourceManager.
-        this.resourceManager = new ResourceManager();
-        resourceManager.addNewResourceType("A");
-        resourceManager.addNewResourceType("B");
-        resourceManager.addNewResourceType("C");
-        typeA = resourceManager.getResourceTypeByName("A");
-        typeB = resourceManager.getResourceTypeByName("B");
-        typeC = resourceManager.getResourceTypeByName("C");
+        resourceTypeRepository = new ResourceTypeRepository();
+        resourceTypeRepository.addNewResourceType("A");
+        resourceTypeRepository.addNewResourceType("B");
+        resourceTypeRepository.addNewResourceType("C");
+        typeA = resourceTypeRepository.getResourceTypeByName("A");
+        typeB = resourceTypeRepository.getResourceTypeByName("B");
+        typeC = resourceTypeRepository.getResourceTypeByName("C");
 
-        resourceManager.addResourceInstance(typeA,"a1");
-        resourceManager.addResourceInstance(typeA,"a2");
-        resourceManager.addResourceInstance(typeB,"b1");
-        resourceManager.addResourceInstance(typeC,"c1");
-
-        resourceRepository = mock(ResourceRepository.class);
-
+        resourceRepository = new ResourceRepository(resourceTypeRepository);
+        resourceRepository.addResourceInstance(new Resource("a1", typeA));
+        resourceRepository.addResourceInstance(new Resource("a2", typeA));
+        resourceRepository.addResourceInstance(new Resource("b1", typeB));
+        resourceRepository.addResourceInstance(new Resource("c1", typeC));
 
         rlb = new RequirementListBuilder(resourceRepository);
     }
@@ -47,7 +44,7 @@ public class RequirementListBuilderTest {
     @Test
     public void AddRequirement_TypeWithRequiresConstraint_valid() throws Exception {
         //A requires B
-        resourceManager.withRequirementConstraint(typeA, typeB);
+        resourceTypeRepository.withRequirementConstraint(typeA, typeB);
 
         rlb.addNewRequirement(typeA, 2);
 
@@ -58,9 +55,9 @@ public class RequirementListBuilderTest {
     @Test(expected = UnsatisfiableRequirementException.class)
     public void AddIllegalRequirement() throws Exception {
         //A requires B
-        resourceManager.withRequirementConstraint(typeA, typeB);
+        resourceTypeRepository.withRequirementConstraint(typeA, typeB);
         //B conflicts C
-        resourceManager.withConflictConstraint(typeB, typeC);
+        resourceTypeRepository.withConflictConstraint(typeB, typeC);
         rlb.addNewRequirement(typeA, 1);
         rlb.addNewRequirement(typeC, 1);
     }
@@ -68,7 +65,7 @@ public class RequirementListBuilderTest {
     @Test(expected = IllegalRequirementAmountException.class)
     public void selfConflictingType_addIllegalConstraint() throws Exception {
         //C conflicts C
-        resourceManager.withConflictConstraint(typeC, typeC);
+        resourceTypeRepository.withConflictConstraint(typeC, typeC);
         rlb.addNewRequirement(typeC,2);
     }
 
@@ -80,9 +77,9 @@ public class RequirementListBuilderTest {
         AResourceType F = addResourceTypeAndInstance("F");
         AResourceType G = addResourceTypeAndInstance("G");
 
-        resourceManager.withRequirementConstraint(D,E);
-        resourceManager.withRequirementConstraint(E,F);
-        resourceManager.withRequirementConstraint(F,G);
+        resourceTypeRepository.withRequirementConstraint(D,E);
+        resourceTypeRepository.withRequirementConstraint(E,F);
+        resourceTypeRepository.withRequirementConstraint(F,G);
 
         rlb.addNewRequirement(D, 1);
         assertTrue(rlb.getRequirements().containsRequirementFor(D));
@@ -98,25 +95,25 @@ public class RequirementListBuilderTest {
         AResourceType F = addResourceTypeAndInstance("F");
         AResourceType G = addResourceTypeAndInstance("G");
 
-        resourceManager.withRequirementConstraint(D, E);
-        resourceManager.withRequirementConstraint(E, F);
-        resourceManager.withRequirementConstraint(F, G);
-        resourceManager.withConflictConstraint(E, G);
+        resourceTypeRepository.withRequirementConstraint(D, E);
+        resourceTypeRepository.withRequirementConstraint(E, F);
+        resourceTypeRepository.withRequirementConstraint(F, G);
+        resourceTypeRepository.withConflictConstraint(E, G);
 
         rlb.addNewRequirement(D, 1);
     }
 
     @Test(expected = UnsatisfiableRequirementException.class)
     public void illegalRequiresAndConflictConstraintsOnSameTypes() throws Exception {
-        resourceManager.withRequirementConstraint(typeA,typeB);
-        resourceManager.withConflictConstraint(typeA,typeB);
+        resourceTypeRepository.withRequirementConstraint(typeA,typeB);
+        resourceTypeRepository.withConflictConstraint(typeA,typeB);
 
     }
 
     private AResourceType addResourceTypeAndInstance(String name) {
-        resourceManager.addNewResourceType(name);
-        AResourceType type = resourceManager.getResourceTypeByName(name);
-        resourceManager.addResourceInstance(type,"instance");
+        resourceTypeRepository.addNewResourceType(name);
+        AResourceType type = resourceTypeRepository.getResourceTypeByName(name);
+        resourceRepository.addResourceInstance(new Resource("instance", type));
         return type;
     }
 }
