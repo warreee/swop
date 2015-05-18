@@ -42,28 +42,30 @@ public class DelegateTaskScenarioTest {
      * Test voor het tonen van de branchoffices. Hierna wordt er 1 geselecteerd.
      */
     @Test
-    public void delegateTaskShowUnplannedTasksTest() {
+    public void delegateTaskTest() {
         when(mockedUI.selectTaskFromList(unplannedTasks)).thenReturn(unplannedTasks.get(0));
         when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenReturn(branchOffices.get(0));
 
         delegateTaskController.delegateTask();
 
         assertTrue(branchOffices.get(0).getDelegatedTasks().contains(unplannedTasks.get(0)));
+        assertTrue(unplannedTasks.get(0).getDelegatedTo() == branchOffices.get(0));
     }
 
     /**
      * Test voor het tonen van de branchoffices. Hierna wordt er 1 geselecteerd.
+     * Daarna wordt er gecanceld.
      */
     @Test
-    public void delegateTaskShowBranchOfficesTest() {
+    public void delegateTaskShowBranchOfficesCancelTest() {
         fail("Nog niet geimplementeerd.");
     }
 
     /**
-     * Test om het volledige scenario te testen.
+     * Test om het tonen van de taken en daarna cancel
      */
     @Test
-    public void delegateTaskTest() {
+    public void delegateTaskShowUnplannedTasksCancelTest() {
         fail("Nog niet geimplementeerd.");
     }
 
