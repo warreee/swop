@@ -1,6 +1,8 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.BranchOffice;
+import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.exception.IllegalRequirementAmountException;
 import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
@@ -11,9 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.Collections;
 
-import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -31,6 +31,9 @@ public class ResourcePlannerTest {
 
     @Before
     public void setUp() throws Exception {
+        systemTime = new SystemTime();
+
+
         // TODO: al wat plannen met reservaties toevoegen.
         typeRepository = new ResourceTypeRepository();
         typeRepository.addNewResourceType("type a");
@@ -48,7 +51,7 @@ public class ResourcePlannerTest {
         repository.addResourceInstance(new Resource("type d 1", typeRepository.getResourceTypeByName("type d")));
         repository.addResourceInstance(new Resource("type d 2", typeRepository.getResourceTypeByName("type d")));
         repository.addResourceInstance(new Resource("type d 3", typeRepository.getResourceTypeByName("type d")));
-        planner = new ResourcePlanner(repository);
+        planner = new ResourcePlanner(repository,systemTime);
 
         BranchOffice branchOffice = mock(BranchOffice.class);
         Task task = mock(Task.class);
@@ -58,7 +61,6 @@ public class ResourcePlannerTest {
         when(task.getRequirementList()).thenReturn(builder.getRequirements());
         when(task.getEstimatedDuration()).thenReturn(Duration.ofHours(3));
         PlanBuilder planBuilder = new PlanBuilder(branchOffice, task, LocalDateTime.of(2015, 3, 1, 10 ,0));
-        systemTime = new SystemTime();
 
         planner = new ResourcePlanner(repository, systemTime);
     }

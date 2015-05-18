@@ -59,13 +59,12 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      * @param task De taak die gepland moet worden.
      * @return true als het mogelijk is, anders false.
      */
-    public boolean canPlan(Task task) {
+    public boolean canPlan(Task task){
         Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
-        while (it.hasNext()) {
+        while (it.hasNext()){
             ResourceRequirement req = it.next();
             if(req.getAmount() > resourceRepository.getResources(req.getType()).size()){
                 // Normaal kan de code hier nooit komen aangezien de RequirementListBuilder hier ook al op checked.
-            if (req.getAmount() > resourceRepository.getResources(req.getType()).size()) {
                 return false;
             }
         }
@@ -170,12 +169,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         addObserver(plan.getTask().getResourcePlannerObserver());
     }
 
-    protected void removePlan(Plan plan) {
-        //TODO implement remove Plan
-        //plan.clear() roept dit op?
-        removeObserver(plan.getTask().getResourcePlannerObserver());
-    }
-
     /**
      * Verwijdert een plan uit deze ResourcePlanner.
      * @param plan Het plan dat verwijderd wordt.
@@ -188,6 +181,10 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
                 planMap.remove(plan.getTimeSpan().getStartTime());
             }
         }
+
+        //TODO implement remove Plan
+        //plan.clear() roept dit op?
+        removeObserver(plan.getTask().getResourcePlannerObserver());
     }
 
     /**
@@ -195,7 +192,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      * Controleert of een plan niet null is en of dat het geen reservaties bevat voor ResourceInstances die op het
      * moment van die reservatie al gereserveerd zijn.
      *
-     * @param plan Het plan dat gecontrolleert moet worden.
+     * @param plan Het plan dat gecontroleert moet worden.
      * @throws IllegalArgumentException Wordt gegooid wanneer er een fout is.
      */
     // TODO: controleert deze alles genoeg?

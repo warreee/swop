@@ -1,11 +1,12 @@
 package be.swop.groep11.main.planning;
 
 import be.swop.groep11.main.core.TimeSpan;
-import be.swop.groep11.main.resource.*;
+import be.swop.groep11.main.resource.AResourceType;
+import be.swop.groep11.main.resource.ResourcePlanner;
+import be.swop.groep11.main.resource.ResourceReservation;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +52,6 @@ public class Plan {
     public void clear() {
         this.reservations = null; // niet echt nodig
         this.resourcePlanner.removePlan(this);
-        task.setPlan2(null);
-    }
-
-    public Task getTask(){
-        return null;
     }
 
     /**
@@ -125,9 +121,11 @@ public class Plan {
         return getTimeSpan().containsLocalDateTime(localDateTime);
     }
 
-    public boolean isAvailableForUnplannedExecution(){
+    public boolean isAvailableForUnplannedExecution() {
         //TODO past deze methode hier?
         return false;
+    }
+
     public boolean hasEquivalentPlan(LocalDateTime systemTime) {
         PlanBuilder planBuilder = new PlanBuilder(task.getDelegatedTo(), task, systemTime);
         planBuilder.proposeResources();
