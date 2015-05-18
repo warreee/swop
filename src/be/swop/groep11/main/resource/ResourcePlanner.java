@@ -63,6 +63,8 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
         while (it.hasNext()) {
             ResourceRequirement req = it.next();
+            if(req.getAmount() > resourceRepository.getResources(req.getType()).size()){
+                // Normaal kan de code hier nooit komen aangezien de RequirementListBuilder hier ook al op checked.
             if (req.getAmount() > resourceRepository.getResources(req.getType()).size()) {
                 return false;
             }
@@ -125,6 +127,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     }
 
     /**
+     * Berekent alle taken die conflicteren met een lijst van ResourceInstances gedurende een TimeSpan.
      * Berekend alle taken die conflicteren met een lijst van ResourceInstances gedurende een TimeSpan.
      *
      * @param resourceInstances De lijst met ResourceInstances waarvan alle conflicterende taken gezocht moet worden.
@@ -139,7 +142,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
             for (Plan plan : planList) {
                 for (ResourceInstance instance : resourceInstances) {
                     if (checkResourceInstanceOverlapsWithOtherPlan(instance, timeSpan, plan)) {
-                        //conflictingTasks.add(plan.getTask());
+                        conflictingTasks.add(plan.getTask());
                     }
                 }
             }
@@ -151,8 +154,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
 
     /**
      * Voegt een nieuw plan toe aan deze ResourcePlanner.
-     *
-     * @param plan Het plan dat toegevoegd word.
+     * @param plan Het plan dat toegevoegd wordt.
      */
     public void addPlan(Plan plan) throws IllegalArgumentException {
         checkPlan(plan);
@@ -175,6 +177,21 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     }
 
     /**
+     * Verwijdert een plan uit deze ResourcePlanner.
+     * @param plan Het plan dat verwijderd wordt.
+     */
+    public void removePlan(Plan plan){
+        checkPlan(plan);
+        if(planMap.containsKey(plan.getTimeSpan().getStartTime())){
+            planMap.get(plan.getTimeSpan().getStartTime()).remove(plan);
+            if (planMap.get(plan.getTimeSpan().getStartTime()).isEmpty()) {
+                planMap.remove(plan.getTimeSpan().getStartTime());
+            }
+        }
+    }
+
+    /**
+     * Controleert of een plan niet null is en of dat het geen reservaties bevat voor ResourceInstances die op het
      * Controleert of een plan niet null is en of dat het geen reservaties bevat voor ResourceInstances die op het
      * moment van die reservatie al gereserveerd zijn.
      *

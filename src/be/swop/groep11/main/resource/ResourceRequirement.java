@@ -79,6 +79,7 @@ public class ResourceRequirement {
             return constraintB.isAcceptableAmount(type,amount) && amount <= type.amountOfInstances() ;
         }
         return amount > 0 && amount <= type.amountOfInstances();
+        // TODO: type.amountOfInstances() klopt nu niet meer denk ik.
     }
 
     @Override

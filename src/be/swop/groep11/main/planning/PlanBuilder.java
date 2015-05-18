@@ -162,7 +162,7 @@ public class PlanBuilder {
             throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat de requirements niet voldaan zijn");
         }
 
-        return new Plan(task, branchOffice.getResourcePlanner(), getReservations());
+        return new Plan(task, branchOffice.getResourcePlanner(), getTimeSpan(), getReservations());
     }
 
     private void setBranchOffice(BranchOffice branchOffice) {
