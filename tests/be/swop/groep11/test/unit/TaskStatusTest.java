@@ -4,6 +4,7 @@ import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
+import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,10 +44,10 @@ public class TaskStatusTest {
         systemTime = new SystemTime(now);
         project = new Project("Test project", "Mijn eerste project", now, now.plusHours(6), systemTime, mock(BranchOffice.class));
 
-        project.addNewTask("Taak1", 0.1, Duration.ofHours(1));
-        project.addNewTask("Taak2", 0.1, Duration.ofHours(1));
-        project.addNewTask("Taak3", 0.1, Duration.ofHours(1));
-        project.addNewTask("Taak4", 0.1, Duration.ofHours(1));
+        project.addNewTask("Taak1", 0.1, Duration.ofHours(1), mock(IRequirementList.class));
+        project.addNewTask("Taak2", 0.1, Duration.ofHours(1), mock(IRequirementList.class));
+        project.addNewTask("Taak3", 0.1, Duration.ofHours(1), mock(IRequirementList.class));
+        project.addNewTask("Taak4", 0.1, Duration.ofHours(1), mock(IRequirementList.class));
         task1 = project.getTasks().get(0);
         task2 = project.getTasks().get(1);
         task3 = project.getTasks().get(2);

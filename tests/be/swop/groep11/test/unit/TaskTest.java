@@ -4,6 +4,7 @@ import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,9 +32,9 @@ public class TaskTest {
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
                 systemTime, branchOffice);
 
-        project.addNewTask("Test taak 1", 0.1, Duration.ofHours(8));
-        project.addNewTask("Test taak 2", 0, Duration.ofMinutes(120));
-        project.addNewTask("Test taak 3", 0.2, Duration.ofHours(16));
+        project.addNewTask("Test taak 1", 0.1, Duration.ofHours(8), mock(IRequirementList.class));
+        project.addNewTask("Test taak 2", 0, Duration.ofMinutes(120), mock(IRequirementList.class));
+        project.addNewTask("Test taak 3", 0.2, Duration.ofHours(16), mock(IRequirementList.class));
 
         dependencyGraph = new DependencyGraph();
 
@@ -47,22 +48,22 @@ public class TaskTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Null() throws Exception {
-        Task invalidTask = new Task(null, Duration.ofHours(8), 0.1, dependencyGraph, mock(Project.class));
+        Task invalidTask = new Task(null, Duration.ofHours(8), 0.1, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDescription_Empty() throws Exception {
-        Task invalidTask = new Task("", Duration.ofHours(8), 0.1, dependencyGraph, mock(Project.class));
+        Task invalidTask = new Task("", Duration.ofHours(8), 0.1, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidDuration_Negative() throws Exception {
-        Task invalidTask = new Task("Test taak", Duration.ofHours(-1), 0.1, dependencyGraph, mock(Project.class));
+        Task invalidTask = new Task("Test taak", Duration.ofHours(-1), 0.1, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void newTask_InvalidAcceptableDeviation_Negative() throws Exception {
-        Task invalidTask = new Task("Test taak", Duration.ofHours(8), -0.1, dependencyGraph, mock(Project.class));
+        Task invalidTask = new Task("Test taak", Duration.ofHours(8), -0.1, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
     }
 
     /*

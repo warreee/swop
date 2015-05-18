@@ -1,6 +1,7 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
@@ -76,9 +77,9 @@ public class ProjectRepositoryTest {
         projRep.addNewProject("project 2", description, create, due);
         Project proj1 = projRep.getProjects().get(0);
         Project proj2 = projRep.getProjects().get(1);
-        proj1.addNewTask("taak 1", 0.1, Duration.ofHours(8));
-        proj2.addNewTask("taak 2", 0.0, Duration.ofMinutes(30));
-        proj2.addNewTask("taak 3", 0.2, Duration.ofHours(100));
+        proj1.addNewTask("taak 1", 0.1, Duration.ofHours(8), mock(IRequirementList.class));
+        proj2.addNewTask("taak 2", 0.0, Duration.ofMinutes(30), mock(IRequirementList.class));
+        proj2.addNewTask("taak 3", 0.2, Duration.ofHours(100), mock(IRequirementList.class));
         proj2.getTasks().get(0).execute(LocalDateTime.now());
         ImmutableList<Task> availableTasks = projRep.getAllAvailableTasks();
         assertTrue(availableTasks.size() == 2);
@@ -92,9 +93,9 @@ public class ProjectRepositoryTest {
         projRep.addNewProject("project 2", description, create, due);
         Project proj1 = projRep.getProjects().get(0);
         Project proj2 = projRep.getProjects().get(1);
-        proj1.addNewTask("taak 1", 0.1, Duration.ofHours(8));
-        proj2.addNewTask("taak 2", 0.0, Duration.ofMinutes(30));
-        proj2.addNewTask("taak 3", 0.2, Duration.ofHours(100));
+        proj1.addNewTask("taak 1", 0.1, Duration.ofHours(8), mock(IRequirementList.class));
+        proj2.addNewTask("taak 2", 0.0, Duration.ofMinutes(30), mock(IRequirementList.class));
+        proj2.addNewTask("taak 3", 0.2, Duration.ofHours(100), mock(IRequirementList.class));
         IProjectRepositoryMemento memento = projRep.createMemento();
 
         BranchOffice branchOffice = mock(BranchOffice.class); //TODO: branchoffice testen

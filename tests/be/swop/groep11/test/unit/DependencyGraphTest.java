@@ -4,6 +4,7 @@ import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.exception.IllegalDependencyException;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,14 +41,14 @@ public class DependencyGraphTest {
 
     @Before
     public void setUp() throws Exception {
-        taskA = new Task("Taak A", duration, deviation, dependencyGraph, mock(Project.class));
-        taskB = new Task("Taak B", duration, deviation, dependencyGraph, mock(Project.class));
-        taskC = new Task("Taak C", duration, deviation, dependencyGraph, mock(Project.class));
-        taskD = new Task("Taak D", duration, deviation, dependencyGraph, mock(Project.class));
-        taskE = new Task("Taak E", duration, deviation, dependencyGraph, mock(Project.class));
-        taskF = new Task("Taak F", duration, deviation, dependencyGraph, mock(Project.class));
-        taskG = new Task("Taak G", duration, deviation, dependencyGraph, mock(Project.class));
-        taskH = new Task("Taak H", duration, deviation, dependencyGraph, mock(Project.class));
+        taskA = new Task("Taak A", duration, deviation, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
+        taskB = new Task("Taak B", duration, deviation, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
+        taskC = new Task("Taak C", duration, deviation, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
+        taskD = new Task("Taak D", duration, deviation, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
+        taskE = new Task("Taak E", duration, deviation, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
+        taskF = new Task("Taak F", duration, deviation, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
+        taskG = new Task("Taak G", duration, deviation, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
+        taskH = new Task("Taak H", duration, deviation, dependencyGraph, mock(IRequirementList.class), mock(Project.class));
 
         allTasks.add(taskA);
         allTasks.add(taskB);

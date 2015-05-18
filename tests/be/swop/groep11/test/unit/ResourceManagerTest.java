@@ -1,3 +1,4 @@
+/*
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.DependencyGraph;
@@ -19,10 +20,13 @@ import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-
+*/
+/**
+*/
 /**
  * Created by robin on 23/04/15.
- */
+ *//*
+
 public class ResourceManagerTest {
 
      private ResourceManager resourceManager;
@@ -150,10 +154,12 @@ public class ResourceManagerTest {
     }
 
 
-    /**
+    */
+/**
      * Test of alle methodes om een ResourceType toe te voegen.
      * @throws Exception
-     */
+     *//*
+
     @Test
     public void addResourceTypeToResourceManagerTest() throws Exception {
         // TODO: conflict met zichzelf
@@ -179,10 +185,12 @@ public class ResourceManagerTest {
         assertTrue(resourceManager.containsType("Test Resource 4"));
     }
 
-    /**
+    */
+/**
      * Voegt een ResourceInstantie toe via de ResourceManager.
      * @throws Exception
-     */
+     *//*
+
     @Test
     public void addResourceInstanceTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
@@ -192,10 +200,12 @@ public class ResourceManagerTest {
         assertEquals(1, type1.getResourceInstances().size());
     }
 
-    /**
+    */
+/**
      * Voegt een ResourceInstantie toe met een lege naam. Dit zou een IllegalArgumentException moeten gooien.
      * @throws Exception
-     */
+     *//*
+
     @Test(expected = IllegalArgumentException.class)
     public void addEmptyNameInstanceTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
@@ -203,10 +213,12 @@ public class ResourceManagerTest {
         resourceManager.addResourceInstance(type1, "");
     }
 
-    /**
+    */
+/**
      * Voegt een ResourceInstantie toe met een 'null' naam. Dit zou een IllegalArgumentException moeten gooien.
      * @throws Exception
-     */
+     *//*
+
     @Test(expected = IllegalArgumentException.class)
     public void addNullNameInstanceTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
@@ -227,10 +239,12 @@ public class ResourceManagerTest {
         assertTrue(resourceManager.containsType("Car"));
     }
 
-    /**
+    */
+/**
      * Test de methode om reservaties toe te voegen via de ResourceManager.
      * @throws Exception
-     */
+     *//*
+
     @Test
     public void makeReservationTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
@@ -244,10 +258,12 @@ public class ResourceManagerTest {
         assertTrue(resourceManager.isAvailable(type1.getResourceInstances().get(0), new TimeSpan(end, LocalDateTime.of(2015, 3, 10, 17, 0))));
     }
 
-    /**
+    */
+/**
      * Test of er een IllegalArgumentException wordt gegooid indien er een dubbele reservatie wordt gedaan.
      * @throws Exception
-     */
+     *//*
+
     @Test(expected = IllegalArgumentException.class)
     public void makeDoubleReservationTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
@@ -272,10 +288,12 @@ public class ResourceManagerTest {
         resourceManager.makeReservation(null, type1.getResourceInstances().get(0), new TimeSpan(start, end), false);
     }
 
-    /**
+    */
+/**
      * Test de methode getNextAvailableTimeSpan.
      * @throws Exception
-     */
+     *//*
+
     @Test
     public void nextAvailableTimeSpan_ReservationsTest() throws Exception {
         addResourceTypeNameOnly("Test Resource 1");
@@ -580,4 +598,4 @@ public class ResourceManagerTest {
         }
         return false;
     }
-}
+}*/

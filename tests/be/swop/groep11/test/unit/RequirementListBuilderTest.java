@@ -22,6 +22,7 @@ public class RequirementListBuilderTest {
 
     @Before
     public void setUp() throws Exception {
+        // TODO: we maken geen gebruik meer van ResourceManager.
         this.resourceManager = new ResourceManager();
         resourceManager.addNewResourceType("A");
         resourceManager.addNewResourceType("B");
