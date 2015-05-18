@@ -2,10 +2,7 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.DependencyGraph;
 import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.resource.DailyAvailability;
-import be.swop.groep11.main.resource.OldPlan;
-import be.swop.groep11.main.resource.RequirementListBuilder;
-import be.swop.groep11.main.resource.ResourceManager;
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,14 +21,18 @@ public class PlanTest {
     private OldPlan plan1, plan2;
     private ResourceManager resourceManager;
     private LocalDateTime now;
+    private ResourceRepository resourceRepository;
 
     @Before
     public void setUp() {
         now = LocalDateTime.of(2015,1,1,11,0);
         resourceManager = new ResourceManager();
         addTempDomainObjects();
-        RequirementListBuilder builder1 = new RequirementListBuilder();
-        RequirementListBuilder builder2 = new RequirementListBuilder();
+        resourceRepository = mock(ResourceRepository.class);
+
+
+        RequirementListBuilder builder1 = new RequirementListBuilder(resourceRepository);
+        RequirementListBuilder builder2 = new RequirementListBuilder(resourceRepository);
         builder1.addNewRequirement(resourceManager.getDeveloperType(), 4);
         builder2.addNewRequirement(resourceManager.getDeveloperType(), 4);
         Task task1 = new Task("test taak1", Duration.ofHours(7), 0.1, new DependencyGraph(), builder1.getRequirements(), mock(Project.class));

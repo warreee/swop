@@ -91,12 +91,18 @@ public class ControllerStack {
     public AbstractController getActiveController(){
         return controllerStack.getLast();
     }
+
+    //TODO add setFirstController method
+    //TODO make activate & deActivate private
+
     /**
      * Voeg de gegeven AbstractController toe aan deze controllerStack.
      * @param abstractController    De toe te voegen AbstractController.
      */
-    public void activateController(AbstractController abstractController){
-        controllerStack.addLast(abstractController);
+    public void activateController(AbstractController abstractController) {
+        if (!controllerStack.contains(abstractController)) {
+            controllerStack.addLast(abstractController);
+        }
     }
 
     /**

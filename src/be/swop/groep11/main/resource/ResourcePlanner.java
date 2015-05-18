@@ -359,5 +359,10 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         }
     }
 
+    public ResourceRepository getResourceRepository() {
+        //TODO TEMP? getter, nodig in branch office atm. zoek betere oplossing
+        return resourceRepository;
+    }
+
     private ResourceRepository resourceRepository;
 }

@@ -93,8 +93,8 @@ public class App {
         simulationController = new SimulationController(logonController, cli);
         planningController = new PlanningController(logonController, systemTime, cli);
         delegateTaskController = new DelegateTaskController(cli, company, logonController);
-        main = new MainController(controllerStack, advanceTimeController,simulationController, showProjectsController,
-                taskController, planningController, logonController, delegateTaskController, cli);
+        main = new MainController(
+                cli);
     }
 
     private void initActionProcedures() {
@@ -115,7 +115,7 @@ public class App {
         ActionProcedure planTask = new ActionProcedure(planningController, planningController::planTask, logonController::hasIdentifiedProjectManager);
         ActionProcedure delegateTask = new ActionProcedure(delegateTaskController, delegateTaskController::delegateTask, logonController::hasIdentifiedProjectManager, true);
 
-        ActionProcedure createProject = new ActionProcedure(showProjectsController, showProjectsController::createProject, logonController::hasIdentifiedProjectManager);
+        ActionProcedure createProject = new ActionProcedure(showProjectsController, createProjectController::createProject, logonController::hasIdentifiedProjectManager);
         ActionProcedure showProjects = new ActionProcedure(showProjectsController, showProjectsController::showProjects, returnsTrue);
 
         ActionProcedure advanceTime = new ActionProcedure(advanceTimeController, advanceTimeController::advanceTime, returnsTrue);
@@ -177,6 +177,8 @@ public class App {
         bo1.addEmployee(new Developer("DevC"));
         bo1.addEmployee(new Developer("DevD"));
         bo1.addEmployee(new Developer("DevE"));
+
+        bo1.addEmployee(new ProjectManager("PM1"));
 
         resourceTypeRepository.addNewResourceType("Auto");
         AResourceType auto = resourceTypeRepository.getResourceTypeByName("Auto");

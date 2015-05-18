@@ -7,6 +7,7 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.CancelException;
+import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
@@ -41,7 +42,7 @@ public class UpdateTaskStatusScenarioTest {
         BranchOffice branchOffice = mock(BranchOffice.class);
         repository = new ProjectRepository(systemTime);
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10));
-        repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
+        repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8),mock(IRequirementList.class));
 
         this.mockedUI = mock(UserInterface.class);
 
@@ -81,7 +82,7 @@ public class UpdateTaskStatusScenarioTest {
     @Test (expected = StopTestException.class)
     public void updateTask_invalidStartAndDueTimeTest() throws Exception {
         //stubbing
-        projects.get(0).addNewTask("description", 0.1, Duration.ofHours(1));
+        projects.get(0).addNewTask("description", 0.1, Duration.ofHours(1),mock(IRequirementList.class));
         tasks = projects.get(0).getTasks();
         when(mockedUI.selectTaskFromList(anyObject())).thenReturn(tasks.get(0));
         when(mockedUI.requestDatum(anyString())).thenReturn(now.plusDays(1)).thenReturn(now);

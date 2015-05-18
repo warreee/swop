@@ -38,6 +38,7 @@ public class PlanTaskScenarioTest {
     private PlanningController planningController;
     private List<Project> projects;
     private List<Task> tasks;
+    private ResourceRepository resourceRepository;
 
 
     @Before
@@ -60,13 +61,16 @@ public class PlanTaskScenarioTest {
 
         this.projects = projectRepository.getProjects();
 
-        RequirementListBuilder builder1 = new RequirementListBuilder();
+        resourceRepository = mock(ResourceRepository.class);
+
+
+        RequirementListBuilder builder1 = new RequirementListBuilder(resourceRepository);
         builder1.addNewRequirement(resourceManager.getResourceTypeByName("Auto"), 2);
         builder1.addNewRequirement(resourceManager.getResourceTypeByName("Koets"), 1);
         builder1.addNewRequirement(resourceManager.getDeveloperType(), 3);
         projects.get(0).addNewTask("Taak 1", 0.1, Duration.ofMinutes(120), builder1.getRequirements());
 
-        RequirementListBuilder builder2 = new RequirementListBuilder();
+        RequirementListBuilder builder2 = new RequirementListBuilder(resourceRepository);
         builder2.addNewRequirement(resourceManager.getResourceTypeByName("Koets"), 2);
         builder2.addNewRequirement(resourceManager.getDeveloperType(), 1);
         projects.get(0).addNewTask("Taak 2", 0.0, Duration.ofMinutes(60), builder2.getRequirements());

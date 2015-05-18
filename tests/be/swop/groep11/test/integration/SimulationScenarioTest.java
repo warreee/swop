@@ -7,6 +7,7 @@ import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
@@ -37,7 +38,7 @@ public class SimulationScenarioTest {
         BranchOffice branchOffice = mock(BranchOffice.class);
         repository = new ProjectRepository(systemTime);
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
-        repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8));
+        repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8),mock(IRequirementList.class));
 
         this.logonController = mock(LogonController.class);
         when(logonController.hasIdentifiedProjectManager()).thenReturn(true);
@@ -50,7 +51,7 @@ public class SimulationScenarioTest {
     public void simulationRealizeTest() throws Exception {
         simulationController.startSimulation();
 
-        repository.getProjects().get(0).addNewTask("Mag er nog in staan", 5, Duration.ofHours(2));
+        repository.getProjects().get(0).addNewTask("Mag er nog in staan", 5, Duration.ofHours(2),mock(IRequirementList.class));
         assertTrue(repository.getProjects().get(0).getTasks().size() == 2);
         assertEquals("TaakOmschrijving", repository.getProjects().get(0).getTasks().get(0).getDescription());
         assertEquals("Mag er nog in staan", repository.getProjects().get(0).getTasks().get(1).getDescription());
@@ -66,7 +67,7 @@ public class SimulationScenarioTest {
     public void simulationCancelTest() throws Exception {
         simulationController.startSimulation();
 
-        repository.getProjects().get(0).addNewTask("Mag er niet meer in staan", 5, Duration.ofHours(2));
+        repository.getProjects().get(0).addNewTask("Mag er niet meer in staan", 5, Duration.ofHours(2),mock(IRequirementList.class));
         assertTrue(repository.getProjects().get(0).getTasks().size() == 2);
         assertEquals("TaakOmschrijving", repository.getProjects().get(0).getTasks().get(0).getDescription());
         assertEquals("Mag er niet meer in staan", repository.getProjects().get(0).getTasks().get(1).getDescription());

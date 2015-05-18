@@ -28,6 +28,7 @@ public class BranchOffice {
         this.setLocation(location);
         this.setProjectRepository(projectRepository);
         this.resourcePlanner = resourcePlanner;
+        this.resourceRepository = getResourcePlanner().getResourceRepository();
     }
 
     public String getName() {
@@ -203,7 +204,7 @@ public class BranchOffice {
 
 
     public ImmutableList<Project> getProjects() {
-        return null;
+        return getProjectRepository().getProjects();
     }
 
     public ResourceRepository getResourceRepository() {

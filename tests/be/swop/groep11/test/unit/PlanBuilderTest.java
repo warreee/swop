@@ -1,14 +1,13 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.BranchOffice;
-import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
-import org.junit.*;
-import org.mockito.cglib.core.Local;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -32,6 +31,7 @@ public class PlanBuilderTest {
     private ResourceInstance instance1a, instance1b, instance2a, instance2b;
 
     private PlanBuilder planBuilder;
+    private ResourceRepository resourceRepository;
 
     @Before
     public void setUp() {
@@ -47,10 +47,11 @@ public class PlanBuilderTest {
         // branch office en resource planner
         branchOffice = mock(BranchOffice.class);
         when(branchOffice.getResourcePlanner()).thenReturn(resourcePlanner);
+        resourceRepository = mock(ResourceRepository.class);
 
         // taak met requirements (2x type1 + 1x type2), duur=1u, niet gedelegeerd en niet gepland
         task = mock(Task.class);
-        RequirementListBuilder builder = new RequirementListBuilder();
+        RequirementListBuilder builder = new RequirementListBuilder(resourceRepository);
         builder.addNewRequirement(type1, 2);
         builder.addNewRequirement(type2, 1);
         when(task.getRequirementList()).thenReturn(builder.getRequirements());
@@ -143,7 +144,7 @@ public class PlanBuilderTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void addResourceInstance_NoRequirementsTest() {
-        RequirementListBuilder requirementListBuilder = new RequirementListBuilder();
+        RequirementListBuilder requirementListBuilder = new RequirementListBuilder(resourceRepository);
         when(task.getRequirementList()).thenReturn(requirementListBuilder.getRequirements());
         planBuilder.addResourceInstance(instance1a);
     }

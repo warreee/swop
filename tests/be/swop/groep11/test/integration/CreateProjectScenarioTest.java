@@ -4,6 +4,7 @@ import be.swop.groep11.main.controllers.CreateProjectController;
 import be.swop.groep11.main.controllers.LogonController;
 import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.exception.CancelException;
+import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.ui.UserInterface;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class CreateProjectScenarioTest {
         user = new User("Test");
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
-        projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8));
+        projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8),mock(IRequirementList.class));
         mockedUI = mock(UserInterface.class);
 
         this.logonController = mock(LogonController.class);

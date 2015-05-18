@@ -3,6 +3,7 @@ package be.swop.groep11.test.integration;
 import be.swop.groep11.main.controllers.ShowProjectsController;
 import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.exception.CancelException;
+import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -38,7 +39,7 @@ public class ShowProjectsScenarioTest {
         projectRepository = new ProjectRepository(systemTime);
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10));
-        projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8));
+        projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8),mock(IRequirementList.class));
 
         this.showProjectsController = new ShowProjectsController(company, mockedUI);
         this.projects = projectRepository.getProjects();

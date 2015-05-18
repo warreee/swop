@@ -30,7 +30,8 @@ public class OldPlanTest {
         now = LocalDateTime.of(2015,1,1,11,0);
         resourceManager = new ResourceManager();
         addTempDomainObjects();
-        RequirementListBuilder builder = new RequirementListBuilder();
+
+        RequirementListBuilder builder = new RequirementListBuilder(mock(ResourceRepository.class));
         builder.addNewRequirement(resourceManager.getDeveloperType(), 2);
         builder.addNewRequirement(resourceManager.getResourceTypeByName("Auto"), 1);
         Task task = new Task("test taak", Duration.ofHours(7), 0.1, new DependencyGraph(), builder.getRequirements(), mock(Project.class));

@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by Ronald on 24/04/2015.
@@ -19,6 +20,7 @@ public class RequirementListBuilderTest {
     private ResourceManager resourceManager;
 
     private RequirementListBuilder rlb;
+    private ResourceRepository resourceRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -36,7 +38,10 @@ public class RequirementListBuilderTest {
         resourceManager.addResourceInstance(typeB,"b1");
         resourceManager.addResourceInstance(typeC,"c1");
 
-        rlb = new RequirementListBuilder();
+        resourceRepository = mock(ResourceRepository.class);
+
+
+        rlb = new RequirementListBuilder(resourceRepository);
     }
 
     @Test

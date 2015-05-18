@@ -54,8 +54,8 @@ public class MainControllerTest {
 
         simulationController = mock(SimulationController.class);
         planningController = mock(PlanningController.class);
-        main = new MainController(abmMock, advanceTimeController,simulationController, showProjectsController,taskController,
-                planningController, logonController, delegateTaskController, mockedUI );
+        main = new MainController(
+                mockedUI );
     }
 
     @Test

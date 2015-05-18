@@ -9,7 +9,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TaskTest.class, SystemTimeTest.class, TaskStatusTest.class,ControllerStackTest.class,
         TimeSpanTest.class, ResourceTypeConstraintTest.class,AbstractControllerTest.class,
         ProjectTest.class, ProjectRepositoryTest.class,MainControllerTest.class,CompanyTest.class,BranchOfficeTest.class,
-        ResourceTypeTest.class, DependencyGraphTest.class, DeveloperTypeTest.class, DailyAvailabilityTest.class, ResourceManagerTest.class,
+        ResourceTypeTest.class, DependencyGraphTest.class, DeveloperTypeTest.class, DailyAvailabilityTest.class,
         ResourceScheduleTest.class,ResourceRepositoryTest.class})
 public class UnitTests {
 }
