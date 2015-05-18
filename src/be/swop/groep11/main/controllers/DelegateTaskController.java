@@ -1,5 +1,6 @@
 package be.swop.groep11.main.controllers;
 
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Company;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.EmptyListException;
@@ -7,6 +8,8 @@ import be.swop.groep11.main.exception.InterruptedAProcedureException;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
+
+import java.util.stream.Collectors;
 
 /**
  * Klasse voor de controller van de usecase delegatetask.
@@ -26,26 +29,37 @@ public class DelegateTaskController  extends AbstractController {
     public void delegateTask() {
         try {
             selectDelegateTask();
-            selectDestinationBranchoffice();
+            selectDestinationBranchOffice();
         } catch (CancelException | EmptyListException e) {
             getUserInterface().printException(e);
             throw new InterruptedAProcedureException(); // zorgt ervoor dat de status van de stack hersteld wordt
         }
     }
 
-    Task delegatedTask;
+    Task delegationTask;
 
-    private void setDelegateTask(Task delegatedTask) {
-        this.delegatedTask = delegatedTask;
+    private void setDelegationTask(Task delegatedTask) {
+        this.delegationTask = delegatedTask;
     }
 
     private void selectDelegateTask() {
         ImmutableList<Task> tasks = ImmutableList.copyOf(logonController.getBranchOffice().getUnplannedTasks());
-        setDelegateTask(getUserInterface().selectTaskFromList(tasks));
+        setDelegationTask(getUserInterface().selectTaskFromList(tasks));
     }
 
-    private void selectDestinationBranchoffice() {
+    BranchOffice destinationBranchOffice;
 
+    private void setDestinationBranchOffice(BranchOffice branchOffice){
+        this.destinationBranchOffice = branchOffice;
     }
+
+    private void selectDestinationBranchOffice() {
+        ImmutableList<BranchOffice> branchOffices = ImmutableList.copyOf(
+                company.getBranchOffices().stream() //Lambda om alle branchoffice te nemen zonder die branchoffice waaruit gedelegeerd wordt
+                        .filter(branchOffice -> branchOffice != logonController.getBranchOffice()).collect(Collectors.toList()));
+        setDestinationBranchOffice(getUserInterface().selectBranchOfficeFromList(branchOffices));
+    }
+
+
 
 }
