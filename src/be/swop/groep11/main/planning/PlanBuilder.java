@@ -98,6 +98,16 @@ public class PlanBuilder {
     }
 
     /**
+     * Verwijdert alle geselecteerde resource instanties voor het plan.
+     */
+    public void clearInstances() {
+        for (ResourceRequirement resourceRequirement : this.resourceRequirements) {
+            specificInstances.put(resourceRequirement.getType(), new ArrayList<>());
+            proposedInstances.put(resourceRequirement.getType(), new ArrayList<>());
+        }
+    }
+
+    /**
      * Controleert of de gegeven resourceInstance wel aan deze PlanBuilder kan worden toegevoegd.
      */
     private void checkCanAddResourceInstance(ResourceInstance resourceInstance) {
@@ -149,8 +159,12 @@ public class PlanBuilder {
     }
 
     /**
-     * Geeft het gemaakte plan terug.
-     * @return
+     * Maakt een plan voor de taak in de branch office,
+     * met de gekozen starttijd en de berekende eindtijd,
+     * een als resource instanties de gekozen specifieke instanties,
+     * eventueel aangevuld met voorgestelde niet-specifieke instanties.
+     * (opmerking: de eindtijd wordt zo berekend dat alle resources beschikbaar zijn voor minstens de geschatte duur van de taak)
+     *
      * @throws IllegalArgumentException Het plan heeft conflicterende reservaties of voldoet niet aan de requirements.
      *                                  | hasConflictingReservations() || ! isSatisfied()
      */
@@ -163,6 +177,35 @@ public class PlanBuilder {
         }
 
         return new Plan(getTask(), getBranchOffice().getResourcePlanner(), getTimeSpan(), getReservations());
+    }
+
+    /**
+     * Maakt een plan voor de taak in de branch office,
+     * met de gekozen starttijd en een gegeven eindtijd,
+     * en als resource instanties de gekozen specifieke instanties,
+     * aangevuld met een gegeven lijst van niet-specifieke instanties.
+     *
+     * @param endTime              De gekozen eindtijd
+     * @param nonSpecificInstances De niet-specifieke resource instanties
+     *
+     * @throws IllegalArgumentException Het plan heeft conflicterende reservaties of voldoet niet aan de requirements.
+     *                                  | hasConflictingReservations() || ! isSatisfied()
+     */
+    public Plan getPlan(LocalDateTime endTime, List<ResourceInstance> nonSpecificInstances) {
+        // eerst de voorgestelde niet-specifieke resource instanties verwijderen
+        for (AResourceType resourceType : this.proposedInstances.keySet()) {
+            this.proposedInstances.put(resourceType, new ArrayList<>());
+        }
+
+        // dan zelf niet-specifieke resoruces toevoegen
+        for (ResourceInstance resourceInstance : nonSpecificInstances) {
+            this.proposedInstances.get(resourceInstance.getResourceType()).add(resourceInstance);
+        }
+
+        // en kies zelf de eindtijd
+        this.endTime = endTime;
+
+        return getPlan();
     }
 
     private void setBranchOffice(BranchOffice branchOffice) {
