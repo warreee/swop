@@ -305,4 +305,15 @@ public class Project {
 //    public void updateAllStatus() {
 //        this.getTasks().forEach(Task::updateStatus);
 //    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (! (other instanceof Project)) {
+            return false;
+        }
+        else {
+            return this.hashCode() == other.hashCode();
+        }
+    }
+
 }

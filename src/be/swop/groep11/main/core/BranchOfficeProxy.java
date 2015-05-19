@@ -28,6 +28,10 @@ public class BranchOfficeProxy extends BranchOffice {
      */
     public BranchOfficeProxy(BranchOffice realBranchOffice) {
         super();
+        // dit is om ervoor te zorgen dat we geen proxy van een proxy krijgen...
+        while (realBranchOffice.getClass() == BranchOfficeProxy.class) {
+            realBranchOffice = ((BranchOfficeProxy) realBranchOffice).realBranchOffice;
+        }
         this.realBranchOffice = realBranchOffice;
     }
 
@@ -149,5 +153,20 @@ public class BranchOfficeProxy extends BranchOffice {
     @Override
     public ImmutableList<ResourceInstance> getDevelopers() {
         return realBranchOffice.getDevelopers();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (! (other instanceof BranchOffice)) {
+            return false;
+        }
+        else {
+            return this.hashCode() == other.hashCode();
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return realBranchOffice.hashCode();
     }
 }

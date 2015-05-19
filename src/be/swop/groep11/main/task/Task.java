@@ -667,4 +667,16 @@ public class Task {
     private Duration delay;
     private TaskEvaluation taskEvaluation;
 
+
+
+    @Override
+    public boolean equals(Object other) {
+        if (! (other instanceof Task)) {
+            return false;
+        }
+        else {
+            return this.hashCode() == other.hashCode();
+        }
+    }
+
 }

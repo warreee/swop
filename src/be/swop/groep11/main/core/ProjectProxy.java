@@ -28,6 +28,10 @@ public class ProjectProxy extends Project {
      */
     public ProjectProxy(Project realProject) {
         super();
+        // dit is om ervoor te zorgen dat we geen proxy van een proxy krijgen...
+        while (realProject.getClass() == ProjectProxy.class) {
+            realProject = ((ProjectProxy) realProject).realProject;
+        }
         this.realProject = realProject;
     }
 
@@ -105,5 +109,20 @@ public class ProjectProxy extends Project {
     public BranchOffice getBranchOffice() {
         // TODO: is het goed om hier een BranchOfficeProxy object terug te geven?
         return new BranchOfficeProxy(realProject.getBranchOffice());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (! (other instanceof Project)) {
+            return false;
+        }
+        else {
+            return this.hashCode() == other.hashCode();
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return realProject.hashCode();
     }
 }

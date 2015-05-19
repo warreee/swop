@@ -48,7 +48,9 @@ public class Company {
         if (! canAddBranchOffice(branchOffice)) {
             throw new IllegalArgumentException("Ongeldige branch office");
         }
-        this.branchOffices.add(branchOffice);
+
+        // voeg een proxy naar branch office toe!
+        this.branchOffices.add(new BranchOfficeProxy(branchOffice));
     }
 
     /**

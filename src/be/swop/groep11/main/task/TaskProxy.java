@@ -29,6 +29,10 @@ public class TaskProxy extends Task {
      */
     public TaskProxy(Task realTask) {
         super();
+        // dit is om ervoor te zorgen dat we geen proxy van een proxy krijgen...
+        while (realTask.getClass() == TaskProxy.class) {
+            realTask = ((TaskProxy) realTask).realTask;
+        }
         this.realTask = realTask;
     }
 
@@ -293,6 +297,21 @@ public class TaskProxy extends Task {
     @Override
     public double getOverTimePercentage() {
         return realTask.getOverTimePercentage();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (! (other instanceof Task)) {
+            return false;
+        }
+        else {
+            return this.hashCode() == other.hashCode();
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return realTask.hashCode();
     }
 
 }

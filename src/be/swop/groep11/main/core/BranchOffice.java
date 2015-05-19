@@ -2,10 +2,13 @@ package be.swop.groep11.main.core;
 
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.task.TaskProxy;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -110,6 +113,7 @@ public class BranchOffice {
 
     /**
      * Geeft een immutable lijst van alle taken die naar deze branch office gedelegeerd zijn.
+     * Opmerking: de taken zijn TaskProxy objecten
      */
     public ImmutableList<Task> getDelegatedTasks() {
         return ImmutableList.copyOf(this.delegatedTasks);
@@ -142,15 +146,23 @@ public class BranchOffice {
 
         else if (this.getAllTasks().contains(task)) {
             // delegatie van (branch office die taak wel gemaakt heeft) naar (branch office die taak niet gemaakt heeft)
-            other.addDelegatedTask(task);
-            task.setDelegatedTo(other);
+
+            // voeg dan een proxy voor task toe aan other!
+            other.addDelegatedTask(new TaskProxy(task));
+
+            // zet dan een proxy van other als delegatedTo branch office van task!
+            task.setDelegatedTo(new BranchOfficeProxy(other));
         }
 
         else {
             // delegatie van (branch office die taak niet gemaakt heeft) naar (branch office die taak niet gemaakt heeft)
             this.removeDelegatedTask(task);
-            other.addDelegatedTask(task);
-            task.setDelegatedTo(other);
+
+            // voeg dan een proxy voor task toe aan other!
+            other.addDelegatedTask(new TaskProxy(task));
+
+            // zet dan een proxy van other als delegatedTo branch office van task!
+            task.setDelegatedTo(new BranchOfficeProxy(other));
         }
     }
 
@@ -171,7 +183,8 @@ public class BranchOffice {
         return otherPlanner.hasEnoughResourcesToPlan(task);
     }
 
-    private List<Task> delegatedTasks = new ArrayList<>();
+    /* een set zodat een taak hier zeker nooit 2x kan instaan */
+    private Set<Task> delegatedTasks = new HashSet<>();
 
 
     /**
@@ -221,4 +234,15 @@ public class BranchOffice {
 
         return ImmutableList.copyOf(instances);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (! (other instanceof BranchOffice)) {
+            return false;
+        }
+        else {
+            return this.hashCode() == other.hashCode();
+        }
+    }
+
 }
