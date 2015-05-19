@@ -46,6 +46,10 @@ public class Task{
         this.delegatedTo = project.getBranchOffice();
     }
 
+    protected Task() {
+        // dit was nodig om TaskProxy van Task te kunnen laten overerven... Java bullshit
+    }
+
     /**
      * Wijzigt de beschrijving van de taak.
      * @throws java.lang.IllegalArgumentException De beschrijving is niet geldig.
