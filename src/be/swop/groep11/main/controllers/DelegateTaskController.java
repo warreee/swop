@@ -25,6 +25,9 @@ public class DelegateTaskController  extends AbstractController {
         this.logonController = logonController;
     }
 
+    /**
+     * Voert de usecase van delegateTask uit.
+     */
     @Override
     public void delegateTask() {
         try {
@@ -39,6 +42,7 @@ public class DelegateTaskController  extends AbstractController {
 
     Task delegationTask;
 
+
     private void setDelegationTask(Task delegatedTask) {
         this.delegationTask = delegatedTask;
     }
@@ -47,6 +51,10 @@ public class DelegateTaskController  extends AbstractController {
         return this.delegationTask;
     }
 
+    /**
+     * Geeft een lijst van TAKEN weer in de UI
+     * En zorgt ervoor dat de gekozen taak als gedelegerde taak wordt gezet.
+     */
     private void selectDelegateTask() {
         ImmutableList<Task> tasks = ImmutableList.copyOf(logonController.getBranchOffice().getUnplannedTasks());
         setDelegationTask(getUserInterface().selectTaskFromList(tasks));
@@ -61,6 +69,10 @@ public class DelegateTaskController  extends AbstractController {
         return this.destinationBranchOffice;
     }
 
+    /**
+     * Geeft een lijst van branchoffices weer in de UI
+     * En zorgt ervoor dat de gekozen branchoffice als gedelegerde branchoffice wordt gezet.
+     */
     private void selectDestinationBranchOffice() {
         ImmutableList<BranchOffice> branchOffices = ImmutableList.copyOf(
                 company.getBranchOffices().stream() //Lambda om alle branchoffice te nemen zonder die branchoffice waaruit gedelegeerd wordt
