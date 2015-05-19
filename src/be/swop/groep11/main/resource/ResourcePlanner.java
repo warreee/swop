@@ -1,7 +1,6 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.util.Observable;
@@ -365,4 +364,35 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     }
 
     private ResourceRepository resourceRepository;
+
+    /**
+     * Geeft een ResourcePlannerMemento object die de status van deze project repository bevat.
+     */
+    public IResourcePlannerMemento createMemento() {
+        ResourcePlannerMemento memento = new ResourcePlannerMemento();
+        memento.setPlans(this.getPlans());
+        return memento;
+    }
+
+    /**
+     * Wijzigt de status van deze resource planner naar de status van een gegeven ResourcePlannerMemento object.
+     * @param memento Het ResourcePlannerMemento object met de status
+     */
+    public void setMemento(IResourcePlannerMemento memento) {
+        this.planMap = new TreeMap<>();
+        List<Plan> plans = memento.getPlans();
+        for (Plan plan : plans) {
+            this.addPlan(plan);
+        }
+    }
+
+    private List<Plan> getPlans() {
+        List<Plan> plans = new ArrayList<>();
+        for (LocalDateTime startTime : this.planMap.keySet()) {
+            if (planMap.get(startTime) != null) {
+                plans.addAll(planMap.get(startTime));
+            }
+        }
+        return plans;
+    }
 }
