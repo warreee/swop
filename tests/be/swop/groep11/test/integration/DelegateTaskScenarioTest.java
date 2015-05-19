@@ -4,6 +4,7 @@ import be.swop.groep11.main.controllers.DelegateTaskController;
 import be.swop.groep11.main.controllers.LogonController;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Company;
+import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -12,6 +13,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,17 +59,26 @@ public class DelegateTaskScenarioTest {
      * Test voor het tonen van de branchoffices. Hierna wordt er 1 geselecteerd.
      * Daarna wordt er gecanceld.
      */
-    @Test
+    @Test(expected = StopTestException.class)
     public void delegateTaskShowBranchOfficesCancelTest() {
-        fail("Nog niet geimplementeerd.");
+        when(mockedUI.selectTaskFromList(unplannedTasks)).thenReturn(unplannedTasks.get(0));
+        when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenThrow(new CancelException("Cancel in Test"));
+
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
+
+        delegateTaskController.delegateTask();
     }
 
     /**
      * Test om het tonen van de taken en daarna cancel
      */
-    @Test
+    @Test(expected = StopTestException.class)
     public void delegateTaskShowUnplannedTasksCancelTest() {
-        fail("Nog niet geimplementeerd.");
+        when(mockedUI.selectTaskFromList(unplannedTasks)).thenThrow(new CancelException("Cancel in Test"));
+        when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenReturn(branchOffices.get(0));
+
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
+        delegateTaskController.delegateTask();
     }
 
 
