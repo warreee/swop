@@ -34,8 +34,8 @@ public class LogonScenarioTest {
         ProjectRepository projectRepository = mock(ProjectRepository.class);
         ResourcePlanner resourcePlanner = mock(ResourcePlanner.class);
         this.branchOffice = new BranchOffice("BranchOffice 1", "Leuven", projectRepository, resourcePlanner);
-        Developer developer1 = new Developer("dev1"); // TODO: moet er echt telkends een resourcetype worden meegegeven
-        Developer developer2 = new Developer("dev2"); // TODO: kunnen we geen standaard constructor in devloper aanmaken?
+        Developer developer1 = new Developer("dev1");
+        Developer developer2 = new Developer("dev2");
         ProjectManager projectManager = new ProjectManager("projectmanager1");
         company.addBranchOffice(branchOffice);
         branchOffice.addEmployee(developer1);

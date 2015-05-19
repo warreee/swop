@@ -41,9 +41,9 @@ public class LogonController extends AbstractController{
         User user = getUserInterface().selectEmployeeFromList(getBranchOffice().getEmployees());
         if (user.isDeveloper()) {
             setDeveloper((Developer) user);
-        }
+        } else
         if (user.isProjectManager()) {
-            setProjectManager((ProjectManager) user); //TODO waarom is hier een warning en bij vorige ifstatement niet?
+            setProjectManager((ProjectManager) user);
         }
 
         getUserInterface().printMessage("Je bent nu ingelogd als " + user.getName());

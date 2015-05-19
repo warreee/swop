@@ -84,7 +84,7 @@ public class BranchOffice {
     private ResourcePlanner resourcePlanner;
 
 
-    /**
+    /** TODO: mss veranderen naar immutable list, hoewel er vanuit projectrepository al een immutable list wordt teruggeven
      * Geeft van alle taken die door deze branch office gepland moeten worden,
      * een lijst van de taken die nog niet gepland zijn.
      */
