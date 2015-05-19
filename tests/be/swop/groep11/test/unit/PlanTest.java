@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.TestCase.fail;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
@@ -66,6 +67,7 @@ public class PlanTest {
         when(task.getRequirementList()).thenReturn(builder.getRequirements());
         when(task.getEstimatedDuration()).thenReturn(duration);
         when(task.isDelegated()).thenReturn(false);
+        when(task.getDelegatedTo()).thenReturn(branchOffice);
         when(task.isPlanned()).thenReturn(false);
 
         List<Task> tasks = new ArrayList<>();
@@ -137,42 +139,8 @@ public class PlanTest {
      */
     @Test
     public void hasEquivalentPlan_TrueTest() {
-        BranchOffice branchOffice2 = mock(BranchOffice.class);
-        ResourcePlanner resourcePlanner2 = mock(ResourcePlanner.class);
-        //when(resourcePlanner2.isAvailable());
-        when(branchOffice2.getResourcePlanner()).thenReturn(resourcePlanner2);
-    }
-
-    private void hasEquivalentPlan_TrueTest_initResources(ResourcePlanner resourcePlanner2) {
-        when(resourcePlanner2.isAvailable(any(ResourceInstance.class), any(TimeSpan.class))).thenReturn(true);
-
-        type1 = mock(ResourceType.class);
-        type2 = mock(ResourceType.class);
-        when(type1.amountOfInstances()).thenReturn(3);
-        when(type2.amountOfInstances()).thenReturn(3);
-        when(type1.getDailyAvailability()).thenReturn(new DailyAvailability(LocalTime.MIN, LocalTime.MAX));
-        when(type2.getDailyAvailability()).thenReturn(new DailyAvailability(LocalTime.MIN, LocalTime.MAX));
-        when(type1.calculateEndTime(anyObject(), anyObject())).thenReturn(endTime);
-        when(type2.calculateEndTime(anyObject(), anyObject())).thenReturn(endTime);
-
-        instance1a = mock(ResourceInstance.class);
-        when(instance1a.getResourceType()).thenReturn(type1);
-        instance1b = mock(ResourceInstance.class);
-        when(instance1b.getResourceType()).thenReturn(type1);
-        List<ResourceInstance> instances1 = new ArrayList<>();
-        instances1.add(instance1a);
-        instances1.add(instance1b);
-
-        instance2a = mock(ResourceInstance.class);
-        when(instance2a.getResourceType()).thenReturn(type2);
-        instance2b = mock(ResourceInstance.class);
-        when(instance2b.getResourceType()).thenReturn(type2);
-        List<ResourceInstance> instances2 = new ArrayList<>();
-        instances2.add(instance2a);
-        instances2.add(instance2b);
-
-        when(resourcePlanner.getInstances(eq(type1), any(TimeSpan.class))).thenReturn(instances1);
-        when(resourcePlanner.getInstances(eq(type2), any(TimeSpan.class))).thenReturn(instances2);
+        when(resourcePlanner.isAvailable(any(ResourceInstance.class), eq(new TimeSpan(startTime.plusDays(1), endTime.plusDays(1))))).thenReturn(true);
+        assertTrue(plan.hasEquivalentPlan(startTime.plusDays(1)));
     }
 
     /**
@@ -181,7 +149,8 @@ public class PlanTest {
      */
     @Test
     public void hasEquivalentPlan_FalseTest() {
-        fail("Nog niet geimplenteerd");
+        when(resourcePlanner.isAvailable(any(ResourceInstance.class), eq(new TimeSpan(startTime.plusDays(1),endTime.plusDays(1))))).thenReturn(false);
+        assertFalse(plan.hasEquivalentPlan(startTime.plusDays(1)));
     }
 
 }
