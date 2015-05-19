@@ -3,19 +3,14 @@ package be.swop.groep11.main.resource;
 import be.swop.groep11.main.exception.IllegalRequirementAmountException;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 
-import java.util.List;
-
 /**
  * Een klasse die een ResourceRequirement voorstelt.
  */
 public class ResourceRequirement {
-    /**
-     * De hoeveelheid ResourceInstances er required zijn.
-     */
+
+    // De hoeveelheid ResourceInstances er required zijn.
     private final int amount;
-    /**
-     * Het type voor required ResourceInstances.
-     */
+    // Het type voor required ResourceInstances.
     private final AResourceType type;
 
     /**
@@ -82,8 +77,8 @@ public class ResourceRequirement {
             ResourceTypeConstraint constraintB = type.getConstraintFor(type);
             return constraintB.isAcceptableAmount(type,amount) && amount <= resourceRepository.getResources(type).size();
         }
-        List<ResourceInstance> instances = resourceRepository.getResources(type);
-        return amount > 0 && amount <= resourceRepository.getResources(type).size();
+        return amount > 0 && amount <= resourceRepository.amountOfResourceInstances(type);
+
     }
 
     @Override

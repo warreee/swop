@@ -3,7 +3,6 @@ package be.swop.groep11.test.unit;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.core.TimeSpan;
-import be.swop.groep11.main.exception.IllegalRequirementAmountException;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.*;
@@ -79,7 +78,7 @@ public class ResourcePlannerTest {
         RequirementListBuilder builder = new RequirementListBuilder(repository);
         builder.addNewRequirement(typeRepository.getResourceTypeByName("type a"), 2);
         when(task1.getRequirementList()).thenReturn(builder.getRequirements());
-        assertTrue(planner.canPlan(task1));
+        assertTrue(planner.hasEnoughResourcesToPlan(task1));
         // TODO: planner met meerdere branchOffices enz
     }
 

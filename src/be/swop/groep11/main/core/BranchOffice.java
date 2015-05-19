@@ -163,7 +163,7 @@ public class BranchOffice {
 
         // controleren of de taak in de andere branch office kan gepland worden:
         ResourcePlanner otherPlanner = other.getResourcePlanner();
-        return otherPlanner.canPlan(task);
+        return otherPlanner.hasEnoughResourcesToPlan(task);
     }
 
     private List<Task> delegatedTasks = new ArrayList<>();

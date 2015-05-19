@@ -1,16 +1,16 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.util.Observable;
-import be.swop.groep11.main.util.*;
 import com.google.common.collect.ImmutableList;
-
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,11 +59,11 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      * @param task De taak die gepland moet worden.
      * @return true als het mogelijk is, anders false.
      */
-    public boolean canPlan(Task task){
+    public boolean hasEnoughResourcesToPlan(Task task){
         Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
         while (it.hasNext()){
             ResourceRequirement req = it.next();
-            if(req.getAmount() > resourceRepository.getResources(req.getType()).size()){
+            if(req.getAmount() > resourceRepository.amountOfResourceInstances(req.getType())){
                 // Normaal kan de code hier nooit komen aangezien de RequirementListBuilder hier ook al op checked.
                 return false;
             }
@@ -206,7 +206,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         }
     }
 
-
     /**
      * Bepaald of voor een gegeven IRequirementList en TimeSpan alles beschikbaar is gedurende die TimeSpan.
      *
@@ -214,7 +213,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      * @param requirementList De IRequirementList die beschikbaar moet zijn.
      * @return true als alles beschikbaar is, anders false.
      */
-    private boolean resourceRequirementsSatisfiable(TimeSpan timeSpan, IRequirementList requirementList) {
+    private boolean hasAvailableRequiredResources(TimeSpan timeSpan, IRequirementList requirementList) {
         Iterator<ResourceRequirement> it = requirementList.iterator();
         while (it.hasNext()) {
             ResourceRequirement req = it.next();
@@ -236,20 +235,42 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      * @return Een lijst met de gevraagde hoeveelheid mogelijke TimeSpans.
      */
     public List<TimeSpan> getNextPossibleTimeSpans(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount) {
-        LocalDateTime fullHour = Util.getNextHour(firstPossibleStartTime);
+//        System.out.println(foo(requirementList, firstPossibleStartTime.plusDays(1), duration, amount));
+
+        LocalDateTime fullHour = getNextHour(firstPossibleStartTime);
 
         ArrayList<TimeSpan> possibleTimeSpans = new ArrayList<>();
         int listSize = possibleTimeSpans.size();
         while ( listSize < amount) {
             TimeSpan timeSpan = requirementList.calculateReservationTimeSpan(fullHour, duration);
-            if (resourceRequirementsSatisfiable(timeSpan, requirementList)) {
+            if (hasAvailableRequiredResources(timeSpan, requirementList)) {
                 possibleTimeSpans.add(timeSpan);
                 listSize = possibleTimeSpans.size();
             }
             fullHour = fullHour.plusHours(1);
         }
 
+        return possibleTimeSpans;
+    }
 
+
+    public ArrayList<TimeSpan> foo(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount) {
+        ArrayList<TimeSpan> possibleTimeSpans = new ArrayList<>();
+        LocalDateTime start = firstPossibleStartTime;
+
+        int size = possibleTimeSpans.size();
+        while (size < amount) {
+            boolean test = false;
+            TimeSpan ts = null;
+
+            while (test == false) {
+                ts = requirementList.calculateReservationTimeSpan(start, duration);
+                test = hasAvailableRequiredResources(ts, requirementList);
+                start = !test ? ts.getEndTime() : start.plusHours(1);
+            }
+            possibleTimeSpans.add(ts);
+            size = possibleTimeSpans.size();
+        }
         return possibleTimeSpans;
     }
 
@@ -316,7 +337,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
             }
         }
         Collections.sort(instances, new ResourceInstanceComparator());
-
         return instances;
     }
 
@@ -409,5 +429,12 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
             }
         }
         return plans;
+    }
+
+    private LocalDateTime getNextHour(LocalDateTime dateTime){
+        if (dateTime.getMinute() == 0)
+            return dateTime;
+        else
+            return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour() + 1, 0));
     }
 }

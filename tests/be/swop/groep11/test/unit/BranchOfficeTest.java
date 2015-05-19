@@ -30,17 +30,17 @@ public class BranchOfficeTest {
         // branch office 1
         projectRepository1 = mock(ProjectRepository.class);
         resourcePlanner1 = mock(ResourcePlanner.class);
-        when(resourcePlanner1.canPlan(any())).thenReturn(true);
+        when(resourcePlanner1.hasEnoughResourcesToPlan(any())).thenReturn(true);
         branchOffice1 = new BranchOffice("Branch office 1", "Locatie 1", projectRepository1, resourcePlanner1);
         // branch office 2
         projectRepository2 = mock(ProjectRepository.class);
         resourcePlanner2 = mock(ResourcePlanner.class);
-        when(resourcePlanner2.canPlan(any())).thenReturn(true);
+        when(resourcePlanner2.hasEnoughResourcesToPlan(any())).thenReturn(true);
         branchOffice2 = new BranchOffice("Branch office 2", "Locatie 2", projectRepository2, resourcePlanner2);
         // branch office 3
         projectRepository3 = mock(ProjectRepository.class);
         resourcePlanner3 = mock(ResourcePlanner.class);
-        when(resourcePlanner3.canPlan(any())).thenReturn(true);
+        when(resourcePlanner3.hasEnoughResourcesToPlan(any())).thenReturn(true);
         branchOffice3 = new BranchOffice("Branch office 3", "Locatie 3", projectRepository3, resourcePlanner3);
 
         // taak in branch office 1
@@ -136,7 +136,7 @@ public class BranchOfficeTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void delegateTask_CanNotPlanTask() throws Exception {
-        when(resourcePlanner2.canPlan(task)).thenReturn(false);
+        when(resourcePlanner2.hasEnoughResourcesToPlan(task)).thenReturn(false);
 
         when(task.isUnavailable()).thenReturn(true);
 
