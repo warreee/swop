@@ -19,7 +19,7 @@ import java.util.Set;
  * Stelt een taak voor met een beschrijving, starttijd, eindtijd, verwachte duur en een aanvaardbare marge.
  * Een taak heeft ook een dependency graph en een lijst van resource requirements.
  */
-public class Task{
+public class Task {
 
     /**
      * Constructor om een nieuwe taak te maken.

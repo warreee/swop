@@ -56,6 +56,10 @@ public class Project {
         this.branchOffice = branchOffice;
     }
 
+    protected Project() {
+        // dit was nodig om ProjectProxy van Project te kunnen laten overerven...
+    }
+
     /**
      * @param name  De naam die dit project moet dragen.
      * @throws IllegalArgumentException

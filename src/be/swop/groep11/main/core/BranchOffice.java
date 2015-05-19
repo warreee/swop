@@ -31,6 +31,11 @@ public class BranchOffice {
         this.resourceRepository = getResourcePlanner().getResourceRepository();
     }
 
+    protected BranchOffice() {
+        // dit was nodig om BranchOfficeProxy van BranchOffice te kunnen laten overerven...
+    }
+
+
     public String getName() {
         return name;
     }
