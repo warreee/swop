@@ -68,6 +68,6 @@ public class ResourceReservation{
 
     @Override
     public String toString() {
-        return getTimeSpan().getStartTime().toString() + "  -  " + getTimeSpan().getEndTime().toString();
+        return getTimeSpan().getStartTime().toString() + "  -  " + getTimeSpan().getEndTime().toString() + " - " + getResourceInstance();
     }
 }

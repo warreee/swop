@@ -14,16 +14,16 @@ public class ResourceType extends AResourceType {
         super(typeName);
     }
 
-    /**
-     * Voegt een nieuwe ResourceInstance toe aan dit ResourceType.
-     * @param name De naam van de ResourceInstance die moet worden toegevoegd.
-     * @throws IllegalArgumentException Wordt gegooid indien er een fout zit in de naam.
-     */
-    @Override
-    protected void addResourceInstance(String name) throws IllegalArgumentException {
-        Resource resource = new Resource(name,this);
-        addResourceInstance(resource);
-    }
+//    /**
+//     * Voegt een nieuwe ResourceInstance toe aan dit ResourceType.
+//     * @param name De naam van de ResourceInstance die moet worden toegevoegd.
+//     * @throws IllegalArgumentException Wordt gegooid indien er een fout zit in de naam.
+//     */
+//    @Override
+//    protected void addResourceInstance(String name) throws IllegalArgumentException {
+//        Resource resource = new Resource(name,this);
+//        addResourceInstance(resource);
+//    }
 
     /**
      * Implementeert calculateEndTime in de interface ResourceInstance.

@@ -1,7 +1,7 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.resource.AResourceType;
-import be.swop.groep11.main.resource.ResourceManager;
+import be.swop.groep11.main.resource.ResourceTypeRepository;
 import be.swop.groep11.main.resource.constraint.ConflictConstraint;
 import be.swop.groep11.main.resource.constraint.RequiresConstraint;
 import org.junit.Before;
@@ -14,21 +14,22 @@ import static org.junit.Assert.*;
  */
 public class ResourceTypeConstraintTest {
 
-    private ResourceManager repository;
     private AResourceType typeA;
     private AResourceType typeB;
     private AResourceType typeC;
+    private ResourceTypeRepository resourceTypeRepository;
 
     @Before
     public void setUp() throws Exception {
-        this.repository = new ResourceManager();
-        repository.addNewResourceType("testA");
-        repository.addNewResourceType("testB");
-        repository.addNewResourceType("testC");
+        resourceTypeRepository = new ResourceTypeRepository();
 
-        this.typeA = repository.getResourceTypeByName("testA");
-        this.typeB = repository.getResourceTypeByName("testB");
-        this.typeC = repository.getResourceTypeByName("testC");
+        resourceTypeRepository.addNewResourceType("testA");
+        resourceTypeRepository.addNewResourceType("testB");
+        resourceTypeRepository.addNewResourceType("testC");
+
+        this.typeA = resourceTypeRepository.getResourceTypeByName("testA");
+        this.typeB = resourceTypeRepository.getResourceTypeByName("testB");
+        this.typeC = resourceTypeRepository.getResourceTypeByName("testC");
     }
 
     @Test

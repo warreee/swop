@@ -2,8 +2,6 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.resource.AResourceType;
 import be.swop.groep11.main.resource.Developer;
-import be.swop.groep11.main.resource.ResourceManager;
-import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,28 +20,12 @@ public class DeveloperTypeTest {
      *                  * wo 15/04/2015 12:00 - wo 15/04/2015 13:00 => middagpauze inbegrepen
      */
     private Developer developer;
-    private Task taskA;
     private AResourceType developerType;
 
     @Before
     public void setUp() throws Exception {
-        ResourceManager repo = new ResourceManager();
-        developerType = repo.getDeveloperType();
-/*        developer = new Developer("Jos", developerType);
-
-        String description = "description";
-        Duration duration = Duration.ofDays(1);
-        SystemTime systemTime = new SystemTime();
-        Double deviation = 0.2;
-        DependencyGraph dependencyGraph = new DependencyGraph();
-
-        taskA = new Task(description, duration, deviation, systemTime, dependencyGraph);
-
-
-        ResourceReservation reservation1 = new ResourceReservation(taskA,developer, new TimeSpan(LocalDateTime.of(2015,4,8,8,0), LocalDateTime.of(2015,4,10,14,0)),false);
-        ResourceReservation reservation2 = new ResourceReservation(taskA,developer, new TimeSpan(LocalDateTime.of(2015,4,13,8,0), LocalDateTime.of(2015,4,13,12,30)),false);
-        ResourceReservation reservation3 = new ResourceReservation(taskA,developer, new TimeSpan(LocalDateTime.of(2015,4,14,13,0), LocalDateTime.of(2015,4,14,13,30)),false);
-        ResourceReservation reservation4 = new ResourceReservation(taskA,developer, new TimeSpan(LocalDateTime.of(2015,4,15,12,0), LocalDateTime.of(2015,4,15,13,0)),false);*/
+        developer = new Developer("Jos");
+        developerType = developer.getResourceType();
     }
 
     @Test

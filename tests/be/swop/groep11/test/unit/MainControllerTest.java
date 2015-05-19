@@ -5,7 +5,7 @@ import be.swop.groep11.main.controllers.*;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.resource.ResourceManager;
+import be.swop.groep11.main.resource.ResourceTypeRepository;
 import be.swop.groep11.main.ui.UserInterface;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class MainControllerTest {
         //maak een nieuwe system aan
         LocalDateTime now = LocalDateTime.now();
         SystemTime systemTime = new SystemTime(now);
-        ResourceManager resourceManager = new ResourceManager();
+        ResourceTypeRepository resourceTypeRepository = new ResourceTypeRepository();
         BranchOffice branchOffice = mock(BranchOffice.class);
         ProjectRepository projectRepository = new ProjectRepository(systemTime);
 

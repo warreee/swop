@@ -49,4 +49,9 @@ public class Developer extends User implements ResourceInstance {
     protected String getUserFuction() {
         return "DEV";
     }
+
+    @Override
+    public String toString() {
+        return getName() +  " -- "  + resourceType ;
+    }
 }

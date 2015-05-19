@@ -1,14 +1,12 @@
 package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.controllers.LogonController;
-import be.swop.groep11.main.core.BranchOffice;
-import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.controllers.TaskController;
+import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.resource.DailyAvailability;
-import be.swop.groep11.main.resource.ResourceManager;
+import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -16,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -33,7 +30,6 @@ public class CreateTaskScenarioTest {
     private SystemTime systemTime;
     private ImmutableList<Project> projects;
     private ImmutableList<Task> tasks;
-    private ResourceManager resourceManager;
     private LogonController logonController;
 
 
@@ -45,7 +41,6 @@ public class CreateTaskScenarioTest {
         systemTime = new SystemTime(now);
         BranchOffice branchOffice = mock(BranchOffice.class);
         projectRepository = new ProjectRepository(systemTime);
-        resourceManager = new ResourceManager();
 
         addTempDomainObjects();
 
@@ -148,20 +143,20 @@ public class CreateTaskScenarioTest {
 
     private void addTempDomainObjects() {
 
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter SWOP");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ward");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ronald");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Robin");
-        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Arne");
-
-        resourceManager.addNewResourceType("Auto");
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Aston Martin Rapide");
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Toyota Auris");
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Rolls Royce Phantom");
-
-        resourceManager.addNewResourceType("Koets", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(14, 0)));
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Koets"), "Koets 1");
-        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Koets"), "Koets 2");
+//        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter SWOP");
+//        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ward");
+//        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Ronald");
+//        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Robin");
+//        resourceManager.addResourceInstance(resourceManager.getDeveloperType(), "Kabouter Arne");
+//
+//        resourceManager.addNewResourceType("Auto");
+//        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Aston Martin Rapide");
+//        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Toyota Auris");
+//        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Auto"), "Rolls Royce Phantom");
+//
+//        resourceManager.addNewResourceType("Koets", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(14, 0)));
+//        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Koets"), "Koets 1");
+//        resourceManager.addResourceInstance(resourceManager.getResourceTypeByName("Koets"), "Koets 2");
 
     }
 

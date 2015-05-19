@@ -49,7 +49,7 @@ public class ResourceRepository {
     }
 
     public List<ResourceInstance> getResources(AResourceType type) {
-        return ImmutableList.copyOf(resources.get(type));
+        return new ArrayList<>(resources.get(type));
     }
 
     public int amountOfResourceInstances(AResourceType type) {

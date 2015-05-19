@@ -92,8 +92,8 @@ public class PlanningController extends AbstractController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             ui.printMessage("Gekozen starttijd: " + planBuilder.getTimeSpan().getStartTime().format(formatter));
             planBuilder.proposeResources();
-            this.showProposedInstances(task, planBuilder);
-            this.selectResources(task, planBuilder);
+            this.showProposedInstances(task, planBuilder,branchOffice.getResourceRepository());
+            this.selectResources(task, planBuilder,branchOffice.getResourceRepository());
 
             // zijn er nu al conflicten?
             if (planBuilder.hasConflictingReservations()) {
@@ -101,7 +101,7 @@ public class PlanningController extends AbstractController {
             }
 
             /* The system shows a list of developers. The user selects the developers to perform the task. */
-            this.selectDevelopers(task, branchOffice.getResourcePlanner(), planBuilder);
+            this.selectDevelopers(task, branchOffice.getResourcePlanner(), planBuilder,branchOffice);
 
             // zijn de resources en developers geldig?
             if (planBuilder.hasConflictingReservations() || ! planBuilder.isSatisfied()) {
@@ -154,7 +154,10 @@ public class PlanningController extends AbstractController {
         return startTime;
     }
 
-    private void showProposedInstances(Task task, PlanBuilder planBuilder) {
+    private void showProposedInstances(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) {
+
+
+
         String msgDefaultResourceInstances = "Voorgestelde reservaties:";
         Iterator<ResourceRequirement> it1 = task.getRequirementList().iterator();
         while (it1.hasNext()) {
@@ -163,7 +166,7 @@ public class PlanningController extends AbstractController {
             if (! (type instanceof DeveloperType)) {
                 msgDefaultResourceInstances += "\n - Voor type " + type.getName() + ": (" + requirement.getAmount() + " instanties nodig)";
 
-                for (ResourceInstance resourceInstance : type.getResourceInstances()) {
+                for (ResourceInstance resourceInstance : resourceRepository.getResources(type)) {
                     if (planBuilder.getSelectedInstances(type).contains(resourceInstance)) {
                         msgDefaultResourceInstances += "\n    - " + resourceInstance.getName();
                     }
@@ -173,7 +176,7 @@ public class PlanningController extends AbstractController {
         ui.printMessage(msgDefaultResourceInstances);
     }
 
-    private void selectResources(Task task, PlanBuilder planBuilder) {
+    private void selectResources(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) {
 
         /* The user allows the system to select the required resources. */
 
@@ -190,11 +193,11 @@ public class PlanningController extends AbstractController {
                 if (! (type instanceof DeveloperType)) {
                     String msgSelectResourceInstances = "Selecteer instanties voor type " + type.getName() + " (" + requirement.getAmount() + " instanties nodig)";
 
-                    List<ResourceInstance> allInstances = type.getResourceInstances();
+                    List<ResourceInstance> allInstances = resourceRepository.getResources(type);
                     List<ResourceInstance> defaultSelectedInstances = new ArrayList<>();
                     int nbInstances = requirement.getAmount();
 
-                    for (ResourceInstance resourceInstance : type.getResourceInstances()) {
+                    for (ResourceInstance resourceInstance : resourceRepository.getResources(type)) {
                         if (planBuilder.getSelectedInstances(resourceInstance.getResourceType()).contains(resourceInstance)) {
                             defaultSelectedInstances.add(resourceInstance);
                         }
@@ -214,11 +217,11 @@ public class PlanningController extends AbstractController {
         }
     }
 
-    private void selectDevelopers(Task task, ResourcePlanner resourcePlanner, PlanBuilder planBuilder) {
+    private void selectDevelopers(Task task, ResourcePlanner resourcePlanner, PlanBuilder planBuilder,BranchOffice branchOffice) {
         String msgSelectDevelopers = "Selecteer developers";
         AResourceType developerType = resourcePlanner.getResourceRepository().getResourceTypeRepository().getDeveloperType();
         int nbDevelopers = getNbRequiredDevelopers(task.getRequirementList());
-        ImmutableList<ResourceInstance> allDevelopers = developerType.getResourceInstances();
+        ImmutableList<ResourceInstance> allDevelopers = branchOffice.getDevelopers();
         ImmutableList<ResourceInstance> availableDevelopers = ImmutableList.copyOf(resourcePlanner.getAvailableInstances(developerType, planBuilder.getTimeSpan()));
         Function<ResourceInstance, String> entryPrinter = s -> {
             if (availableDevelopers.contains(s)) {

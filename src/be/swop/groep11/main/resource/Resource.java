@@ -55,4 +55,8 @@ public class Resource implements ResourceInstance {
 
     private final String name;
 
+    @Override
+    public String toString() {
+        return name +  " -- "  + resourceType ;
+    }
 }

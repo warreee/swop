@@ -31,28 +31,24 @@ public class InputParser {
     private ArrayList<ResourceInstance> developerList = new ArrayList<>();
     private ArrayList<Map<String, Object>> planningsList = new ArrayList<>();
     private Map<Integer, Map<Integer, Map<String, LocalDateTime>>> reservationsMap = new HashMap<>();
-    private ResourceManager resourceManager;
     private SystemTime systemTime;
 
     /**
      * Initialiseerd deze inputparser.
      * @param projectRepository De ProjectRepository waaraan alle projecten moeten worden toegevoegd.
-     * @param resourceManager De ResourceManager waaraan alle Resources en reservaties moeten worden toegevoegd.
      */
-    public InputParser(ProjectRepository projectRepository, ResourceManager resourceManager, SystemTime systemTime) {
+    public InputParser(ProjectRepository projectRepository , SystemTime systemTime) {
         this.projectRepository = projectRepository;
-        this.resourceManager = resourceManager;
         this.systemTime = systemTime;
     }
 
 
     public static void main(String[] args) throws FileNotFoundException {
         SystemTime systemTime = new SystemTime(LocalDateTime.MIN);
-        ResourceManager typeRepo = new ResourceManager();
         BranchOffice branchOffice = mock(BranchOffice.class); // TODO: echte branchoffice erinsteken!
         ProjectRepository projectRepository = new ProjectRepository(systemTime);
 
-        InputParser parser = new InputParser(projectRepository, typeRepo, systemTime);
+        InputParser parser = new InputParser(projectRepository, systemTime);
         parser.parseInputFile();
         System.out.println("Finished :)");
     }
@@ -262,11 +258,11 @@ public class InputParser {
      * @param propertiesList
      */
     private void addResource(Map<String, Object> propertiesList){
-        String name = (String) propertiesList.get("name");
-        AResourceType resourceType = resourceTypeList.get((Integer) propertiesList.get("type"));
-        resourceManager.addResourceInstance(resourceType, name);
-        int size = resourceType.getResourceInstances().size();
-        resourceInstanceList.add(resourceType.getResourceInstances().get(size - 1));
+//        String name = (String) propertiesList.get("name");
+//        AResourceType resourceType = resourceTypeList.get((Integer) propertiesList.get("type"));
+//        resourceManager.addResourceInstance(resourceType, name);
+//        int size = resourceType.getResourceInstances().size();
+//        resourceInstanceList.add(resourceType.getResourceInstances().get(size - 1));
     }
 
     /**

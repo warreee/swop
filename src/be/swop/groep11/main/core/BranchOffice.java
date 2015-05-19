@@ -202,12 +202,18 @@ public class BranchOffice {
 
     private ArrayList<User> employees = new ArrayList<>();
 
-
     public ImmutableList<Project> getProjects() {
         return getProjectRepository().getProjects();
     }
 
     public ResourceRepository getResourceRepository() {
         return resourceRepository;
+    }
+
+    public ImmutableList<ResourceInstance> getDevelopers() {
+        ArrayList<ResourceInstance> instances = new ArrayList<>();
+        employees.stream().filter(user -> user.isDeveloper()).forEachOrdered(dev -> instances.add((Developer) dev));
+
+        return ImmutableList.copyOf(instances);
     }
 }

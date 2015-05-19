@@ -51,15 +51,6 @@ public class Company {
         this.branchOffices.add(branchOffice);
     }
 
-//    public void addNewBranchOffice(String name,String location) {
-//        ProjectRepository projectRepository = new ProjectRepository(getSystemTime());
-//        ResourceRepository resourceRepository = new ResourceRepository(getResourceTypeRepository());
-//        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository, getSystemTime());
-//        BranchOffice bo = new BranchOffice(name, location, projectRepository, resourcePlanner);
-//
-//        addBranchOffice(bo);
-//    }
-
     /**
      * Geeft een immutable list van de branch offices van deze company.
      */
@@ -114,9 +105,6 @@ public class Company {
     }
 
     private SystemTime systemTime;
-
-
-
 
 
     //NOTE is deze methode hier welkom?

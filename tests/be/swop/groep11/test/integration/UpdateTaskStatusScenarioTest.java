@@ -8,7 +8,6 @@ import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.resource.IRequirementList;
-import be.swop.groep11.main.resource.ResourceManager;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -28,7 +27,6 @@ public class UpdateTaskStatusScenarioTest {
     private SystemTime systemTime;
     private TaskController taskController;
     private UserInterface mockedUI;
-    private ResourceManager resourceManager;
 
     private ImmutableList<Project> projects;
     private ImmutableList<Task> tasks;
@@ -38,7 +36,6 @@ public class UpdateTaskStatusScenarioTest {
     public void setUp() throws Exception {
         now = LocalDateTime.now();
         systemTime = new SystemTime(now);
-        resourceManager = new ResourceManager();
         BranchOffice branchOffice = mock(BranchOffice.class);
         repository = new ProjectRepository(systemTime);
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10));

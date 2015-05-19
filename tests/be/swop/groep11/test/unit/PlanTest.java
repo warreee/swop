@@ -1,17 +1,13 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.BranchOffice;
-import be.swop.groep11.main.core.DependencyGraph;
-import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.cglib.core.Local;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -19,15 +15,12 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Testklasse voor de klasse Plan.

@@ -8,7 +8,6 @@ import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Aanmaken van requirements en bijhouden in een lijst
@@ -132,23 +131,17 @@ public class RequirementListBuilder {
 
 
         @Override
-        public DailyAvailability getShortestDailyAvailability() {
-            //TODO getShortestDailyAvailability
-            List<DailyAvailability> dailyAvailabilities = requirements.keySet().stream().map(type -> type.getDailyAvailability()).collect(Collectors.toList());
-            DailyAvailability min = Collections.min(dailyAvailabilities, (o1, o2) -> o1.getDuration().compareTo(o2.getDuration()));
-            return min;
-        }
-
-        @Override
-        public Duration calculateRequiredDuration(Duration estimatedDuration) {
-            //TODO calculateRequiredDuration
-            return null;
-        }
-
-        @Override
         public TimeSpan calculateReservationTimeSpan(LocalDateTime selectedStartTime, Duration estimatedDuration) {
-            //TODO calculateReservationTimeSpan
-            return null;
+            Set<AResourceType> types = requirements.keySet();
+
+            Optional<LocalDateTime> date = types.stream().map(type -> {
+                LocalDateTime max = type.calculateEndTime(selectedStartTime, estimatedDuration);
+                return max;
+            }).max((o1, o2) -> o1.compareTo(o2));
+
+            LocalDateTime end = date.get();
+
+            return new TimeSpan(selectedStartTime, end);
         }
 
         /**

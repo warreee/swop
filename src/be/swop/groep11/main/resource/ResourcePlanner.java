@@ -82,7 +82,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      */
     public boolean isAvailable(AResourceType resourceType, TimeSpan timeSpan, int amount) {
         int count = 0;
-        for (ResourceInstance resourceInstance : resourceType.getResourceInstances()) {
+        for (ResourceInstance resourceInstance : getResourceRepository().getResources(resourceType)) {
             if (isAvailable(resourceInstance, timeSpan)) {
                 count++;
             }
@@ -206,32 +206,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         }
     }
 
-    /**
-     * Bepaald de n volgende mogelijke TimeSpans (die starten op volledige uren vb 9:00 en 10:00) voor een gegeven
-     * requirementList.
-     *
-     * @param requirementList        De IRequirementList die voldaan moet zijn.
-     * @param firstPossibleStartTime De eerste mogelijke starttijd vanaf wanneer de TimeSpans kunnen beginnen.
-     * @param duration               Hoelang alle elementen in de IRequirementList beschikbaar moeten zijn.
-     * @param amount                 Hoeveel mogelijke TimeSpans er moeten berekend worden.
-     * @return Een lijst met de gevraagde hoeveelheid mogelijke TimeSpans.
-     */
-    public List<TimeSpan> getNextPossibleTimeSpans(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount) {
-        LocalDateTime fullHour = Util.getNextHour(firstPossibleStartTime);
-        LocalDateTime furthest;
-        ArrayList<TimeSpan> possibleTimeSpans = new ArrayList<>();
-        int listSize = possibleTimeSpans.size();
-        while ( listSize < amount) {
-            furthest = getFurthestTime(duration, fullHour, requirementList);
-            TimeSpan ts = new TimeSpan(fullHour, furthest);
-            if (resourceRequirementsSatisfiable(ts, requirementList)) {
-                possibleTimeSpans.add(ts);
-                listSize = possibleTimeSpans.size();
-            }
-            fullHour = fullHour.plusHours(1);
-        }
-        return possibleTimeSpans;
-    }
 
     /**
      * Bepaald of voor een gegeven IRequirementList en TimeSpan alles beschikbaar is gedurende die TimeSpan.
@@ -252,25 +226,31 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     }
 
     /**
-     * Bepaald voor een IRequirementList de verste eindtijd vanaf een starttijd wanneer de IRequirementList een Duration
-     * beschikbaar moet zijn.
+     * Bepaald de n volgende mogelijke TimeSpans (die starten op volledige uren vb 9:00 en 10:00) voor een gegeven
+     * requirementList.
      *
-     * @param duration        Hoelang alle dingen in IRequirementList beschikbaar moeten zijn.
-     * @param startTime       De starttijd vanaf wanneer de dingen in IRequirementList beschikbaar moeten zijn.
-     * @param requirementList De IRequirementList waarvan de verste eindtijd berekend moet worden.
-     * @return De verste eindtijd.
+     * @param requirementList        De IRequirementList die voldaan moet zijn.
+     * @param firstPossibleStartTime De eerste mogelijke starttijd vanaf wanneer de TimeSpans kunnen beginnen.
+     * @param duration               Hoelang alle elementen in de IRequirementList beschikbaar moeten zijn.
+     * @param amount                 Hoeveel mogelijke TimeSpans er moeten berekend worden.
+     * @return Een lijst met de gevraagde hoeveelheid mogelijke TimeSpans.
      */
-    // TODO: information expert, hoort dit thuis in requirements list of waar?
-    private LocalDateTime getFurthestTime(Duration duration, LocalDateTime startTime, IRequirementList requirementList) {
-        LocalDateTime furthest = LocalDateTime.MIN;
-        Iterator<ResourceRequirement> it = requirementList.iterator();
-        while (it.hasNext()) {
-            LocalDateTime end = it.next().getType().calculateEndTime(startTime, duration);
-            if (end.isAfter(furthest)) {
-                furthest = end;
+    public List<TimeSpan> getNextPossibleTimeSpans(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount) {
+        LocalDateTime fullHour = Util.getNextHour(firstPossibleStartTime);
+
+        ArrayList<TimeSpan> possibleTimeSpans = new ArrayList<>();
+        int listSize = possibleTimeSpans.size();
+        while ( listSize < amount) {
+            TimeSpan timeSpan = requirementList.calculateReservationTimeSpan(fullHour, duration);
+            if (resourceRequirementsSatisfiable(timeSpan, requirementList)) {
+                possibleTimeSpans.add(timeSpan);
+                listSize = possibleTimeSpans.size();
             }
+            fullHour = fullHour.plusHours(1);
         }
-        return furthest;
+
+
+        return possibleTimeSpans;
     }
 
     /**
@@ -341,7 +321,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     }
 
     /**
-     * Controlleer of een ResourceInstance in een TimeSpan voorkomt in een gegeven OldPlan. Dit gebeurt door alle reservaties
+     * Controleer of een ResourceInstance in een TimeSpan voorkomt in een gegeven OldPlan. Dit gebeurt door alle reservaties
      * van een plan op te halen wanneer de TimeSpan van het plan overlapt met de gegeven TimeSpan.
      *
      * @param resourceInstance De ResourceInstance die nog niet in het plan mag zitten.
