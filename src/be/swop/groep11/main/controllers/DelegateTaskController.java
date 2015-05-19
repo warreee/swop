@@ -33,7 +33,7 @@ public class DelegateTaskController  extends AbstractController {
         try {
             selectDelegateTask();
             selectDestinationBranchOffice();
-            logonController.getBranchOffice().delegateTask(getDelegationTask(), getDestinationBranchOffice());
+            getSourceBranchOffice().delegateTask(getDelegationTask(), getDestinationBranchOffice());
         } catch (CancelException | EmptyListException e) {
             getUserInterface().printException(e);
             throw new InterruptedAProcedureException(); // zorgt ervoor dat de status van de stack hersteld wordt
@@ -42,6 +42,10 @@ public class DelegateTaskController  extends AbstractController {
 
     Task delegationTask;
 
+
+    private BranchOffice getSourceBranchOffice() {
+        return logonController.getBranchOffice();
+    }
 
     private void setDelegationTask(Task delegatedTask) {
         this.delegationTask = delegatedTask;
