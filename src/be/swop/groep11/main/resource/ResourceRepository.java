@@ -49,7 +49,7 @@ public class ResourceRepository {
     }
 
     public List<ResourceInstance> getResources(AResourceType type) {
-        return new ArrayList<>(resources.get(type));
+        return new ArrayList<>(resources.getOrDefault(type, new ArrayList<>()));
     }
 
     public int amountOfResourceInstances(AResourceType type) {

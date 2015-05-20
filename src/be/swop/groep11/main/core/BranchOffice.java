@@ -219,7 +219,7 @@ public class BranchOffice {
      */
     public void addEmployee(User employee) {
         if (isValidEmployee(employee)){
-            if(employee instanceof Developer){
+            if(employee.isDeveloper()){
                 // developers worden als resource instanties toegevoegd
                 if (((Developer) employee).getResourceType() != getResourceRepository().getDeveloperType()) {
                     throw new IllegalArgumentException("Developer heeft niet het developer type van de resource repository van de branch office");
