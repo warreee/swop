@@ -172,11 +172,11 @@ public class App {
         BranchOffice bo1 = new BranchOffice("bo1", "leuven", projectRepository,resourcePlanner);
         company.addBranchOffice(bo1);
 
-        bo1.addEmployee(new Developer("DevA"));
-        bo1.addEmployee(new Developer("DevB"));
-        bo1.addEmployee(new Developer("DevC"));
-        bo1.addEmployee(new Developer("DevD"));
-        bo1.addEmployee(new Developer("DevE"));
+        bo1.addEmployee(new Developer("DevA", resourceTypeRepository.getDeveloperType()));
+        bo1.addEmployee(new Developer("DevB", resourceTypeRepository.getDeveloperType()));
+        bo1.addEmployee(new Developer("DevC", resourceTypeRepository.getDeveloperType()));
+        bo1.addEmployee(new Developer("DevD", resourceTypeRepository.getDeveloperType()));
+        bo1.addEmployee(new Developer("DevE", resourceTypeRepository.getDeveloperType()));
 
         bo1.addEmployee(new ProjectManager("PM1"));
 

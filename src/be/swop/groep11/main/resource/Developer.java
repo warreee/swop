@@ -8,16 +8,14 @@ import be.swop.groep11.main.util.ResourceSchedule;
  */
 public class Developer extends User implements ResourceInstance {
 
-    private static AResourceType developerType = new DeveloperType();
-
     /**
      * Constructor om een nieuwe developer aan te maken met een naam en een resource type.
      * @param name         Naam van de developer
      * @throws IllegalArgumentException Ongeldige developer naam.
      */
-    public Developer(String name) throws IllegalArgumentException {
+    public Developer(String name, AResourceType resourceType) throws IllegalArgumentException {
         super(name);
-        this.resourceType = developerType;
+        this.resourceType = resourceType;
     }
 
     @Override
