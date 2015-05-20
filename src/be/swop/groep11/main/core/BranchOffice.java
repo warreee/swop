@@ -190,7 +190,11 @@ public class BranchOffice {
      * @return
      */
     public ImmutableList<User> getEmployees() {
-        return ImmutableList.copyOf(this.employees);
+        List<User> allEmployees = new ArrayList<>(this.employees);
+        for (ResourceInstance developer : this.getDevelopers()) {
+            allEmployees.add((Developer) developer);
+        }
+        return ImmutableList.copyOf(allEmployees);
     }
 
     public int amountOfEmployees() {
@@ -198,7 +202,7 @@ public class BranchOffice {
     }
 
     public int amountOfDevelopers(){
-        return Long.valueOf(getEmployees().stream().filter(user -> user instanceof Developer).count()).intValue();
+        return Long.valueOf(getDevelopers().stream().count()).intValue();
     }
 
     public int amountOfProjectManagers(){
@@ -206,11 +210,25 @@ public class BranchOffice {
 
     }
 
+    /**
+     * Voegt een employee toe aan deze branch office.
+     * Indien een developer wordt toegevoegd, wordt die als resource instantie aan de resource repository toegevoegd.
+     * @param employee De toe te voegen employee
+     * @throws IllegalArgumentException Developer heeft niet het developer type van de resource repository van de branch office
+     *                                  (als een developer wordt toegevoegd)
+     */
     public void addEmployee(User employee) {
         if (isValidEmployee(employee)){
-            employees.add(employee);
             if(employee instanceof Developer){
-                getResourceRepository().addResourceInstance((ResourceInstance) employee);
+                // developers worden als resource instanties toegevoegd
+                if (((Developer) employee).getResourceType() != getResourceRepository().getDeveloperType()) {
+                    throw new IllegalArgumentException("Developer heeft niet het developer type van de resource repository van de branch office");
+                }
+                getResourceRepository().addResourceInstance((Developer) employee);
+            }
+            else {
+                // andere gebruikers worden als employee toegevoegd
+                employees.add(employee);
             }
         }
     }
@@ -230,10 +248,8 @@ public class BranchOffice {
     }
 
     public ImmutableList<ResourceInstance> getDevelopers() {
-        ArrayList<ResourceInstance> instances = new ArrayList<>();
-        employees.stream().filter(user -> user.isDeveloper()).forEachOrdered(dev -> instances.add((Developer) dev));
-
-        return ImmutableList.copyOf(instances);
+        AResourceType developerType = getResourceRepository().getDeveloperType();
+        return ImmutableList.copyOf(getResourceRepository().getResources(developerType));
     }
 
     @Override

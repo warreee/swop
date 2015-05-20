@@ -69,5 +69,13 @@ public class ResourceRepository {
         return null;
     }
 
+    /**
+     * Geeft het Type terug dat Developers voorsteld.
+     * @return getResourceTypeRepository().getDeveloperType()
+     */
+    public AResourceType getDeveloperType() {
+        return getResourceTypeRepository().getDeveloperType();
+    }
+
     //TODO methode request present resource types / resources
 }
