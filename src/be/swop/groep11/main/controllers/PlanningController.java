@@ -164,7 +164,7 @@ public class PlanningController extends AbstractController {
             ResourceRequirement requirement = it1.next();
             AResourceType type = requirement.getType();
             if (! (type instanceof DeveloperType)) {
-                msgDefaultResourceInstances += "\n - Voor type " + type.getName() + ": (" + requirement.getAmount() + " instanties nodig)";
+                msgDefaultResourceInstances += "\n - Voor type " + type.getTypeName() + ": (" + requirement.getAmount() + " instanties nodig)";
 
                 for (ResourceInstance resourceInstance : resourceRepository.getResources(type)) {
                     if (planBuilder.getSelectedInstances(type).contains(resourceInstance)) {
@@ -191,7 +191,7 @@ public class PlanningController extends AbstractController {
                 ResourceRequirement requirement = it2.next();
                 AResourceType type = requirement.getType();
                 if (! (type instanceof DeveloperType)) {
-                    String msgSelectResourceInstances = "Selecteer instanties voor type " + type.getName() + " (" + requirement.getAmount() + " instanties nodig)";
+                    String msgSelectResourceInstances = "Selecteer instanties voor type " + type.getTypeName() + " (" + requirement.getAmount() + " instanties nodig)";
 
                     List<ResourceInstance> allInstances = resourceRepository.getResources(type);
                     List<ResourceInstance> defaultSelectedInstances = new ArrayList<>();
@@ -219,7 +219,7 @@ public class PlanningController extends AbstractController {
 
     private void selectDevelopers(Task task, ResourcePlanner resourcePlanner, PlanBuilder planBuilder,BranchOffice branchOffice) {
         String msgSelectDevelopers = "Selecteer developers";
-        AResourceType developerType = resourcePlanner.getResourceRepository().getResourceTypeRepository().getDeveloperType();
+        AResourceType developerType =  resourcePlanner.getResourceRepository().getResourceTypeRepository().getDeveloperType();
         int nbDevelopers = getNbRequiredDevelopers(task.getRequirementList());
         ImmutableList<ResourceInstance> allDevelopers = branchOffice.getDevelopers();
         ImmutableList<ResourceInstance> availableDevelopers = ImmutableList.copyOf(resourcePlanner.getAvailableInstances(developerType, planBuilder.getTimeSpan()));

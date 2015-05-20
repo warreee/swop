@@ -70,7 +70,7 @@ public class TaskController extends AbstractController {
             String message = "Voeg resource types toe?";
             while (getUserInterface().requestBoolean(message)) {
                 try {
-                    AResourceType iResourceType = getUserInterface().selectFromList(resourceTypes, AResourceType::getName);
+                    AResourceType iResourceType = getUserInterface().selectFromList(resourceTypes, AResourceType::getTypeName);
                     Integer number = getUserInterface().requestNumber("Hoeveel wil je er?");
                     selectedTypes = addToResourceMap(iResourceType, number, selectedTypes);
                     resourceTypes.remove(iResourceType);
@@ -169,7 +169,7 @@ public class TaskController extends AbstractController {
      */
     private void printResourceMap(Map<AResourceType, Integer> map){
         getUserInterface().printMessage("De volgende resource zijn al geselecteerd:\n");
-        map.forEach((x, y) -> getUserInterface().printMessage("\t" + x.getName() + ": " + y));
+        map.forEach((x, y) -> getUserInterface().printMessage("\t" + x.getTypeName() + ": " + y));
     }
 
     /**

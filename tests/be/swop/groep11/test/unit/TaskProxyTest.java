@@ -9,9 +9,7 @@ import org.junit.Test;
 
 import java.time.Duration;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 /**

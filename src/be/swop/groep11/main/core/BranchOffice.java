@@ -39,6 +39,14 @@ public class BranchOffice {
     }
 
 
+    public static BranchOffice createBranchOffice(String name,String location,SystemTime systemTime,ResourceTypeRepository resourceTypeRepository) {
+        ProjectRepository projectRepository = new ProjectRepository(systemTime);
+        ResourceRepository resourceRepository = new ResourceRepository(resourceTypeRepository);
+        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository, systemTime);
+
+        return new BranchOffice(name, location, projectRepository,resourcePlanner);
+    }
+
     public String getName() {
         return name;
     }

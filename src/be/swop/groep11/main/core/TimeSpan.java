@@ -15,7 +15,7 @@ public class TimeSpan{
      */
     public TimeSpan(LocalDateTime startTime, LocalDateTime endTime) throws IllegalArgumentException {
         if (! isValidStartTimeEndTime(startTime, endTime))
-            throw new IllegalArgumentException("Ongeldige start- en/of eindtijd");
+            throw new IllegalArgumentException("Ongeldige start- en/of eindtijd " + startTime + " " + endTime);
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -79,7 +79,7 @@ public class TimeSpan{
 
     /**
      * Controleer of deze TimeSpan voor een LocalDateTime valt.
-     * @param other De LocalDateTime die gecontrolleerd wordt.
+     * @param other De LocalDateTime die gecontroleerd wordt.
      * @return true indien deze TimeSpan voor de LocalDateTime ligt, anders False
      */
     public boolean isBefore(LocalDateTime other){
@@ -97,7 +97,7 @@ public class TimeSpan{
     }
 
     /**
-     * Bereken een ITimeSpan die de tijdsperiode voorstelt die tussen deze en de gegeven ITimeSpan zit.
+     * Bereken een ITimeSpan die de tijdsPeriode voorstelt die tussen deze en de gegeven ITimeSpan zit.
      * @param other De andere ITimeSpan
      * @return      null indien other overlapt met deze ITimeSpan.
      *              indien deze ITimeSpan niet overlapt met other geeft het een nieuwe ITimeSpan met
@@ -119,7 +119,6 @@ public class TimeSpan{
      * @return  Waar indien getStartTime.isBefore(dateTime) && getEndTime.isAfter(dateTime)
      */
     public boolean containsLocalDateTime(LocalDateTime dateTime) {
-
         //return dateTime!= null && getStartTime().isBefore(dateTime) && getEndTime().isAfter(dateTime);
         return dateTime!= null && getStartTime().compareTo(dateTime) <= 0 && dateTime.compareTo(getEndTime()) <= 0;
     }
@@ -142,5 +141,10 @@ public class TimeSpan{
         return getStartTime().toString() + "  -  " + getEndTime().toString();
     }
 
-    //TODO override hashCode
+    @Override
+    public int hashCode() {
+        int result = startTime.hashCode();
+        result = 31 * result + endTime.hashCode();
+        return result;
+    }
 }

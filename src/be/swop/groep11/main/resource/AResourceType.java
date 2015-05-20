@@ -119,7 +119,7 @@ public abstract class AResourceType {
     /**
      * @return geeft de naam voor het type terug.
      */
-    public String getName() {
+    public String getTypeName() {
         return this.name;
     }
 
@@ -130,42 +130,6 @@ public abstract class AResourceType {
         return dailyAvailability;
     }
 
-//    /**
-//     * Een lijst die alle ResourceInstance van dit ResourceType bevat.
-//     */
-//    private ArrayList<ResourceInstance> instances = new ArrayList<>();
-//
-//    /**
-//     * Voegt een nieuwe instantie van dit type resource toe aan deze ResourceType.
-//     *
-//     * @param name De naam van de ResourceInstance die moet worden toegevoegd.
-//     */
-//    protected abstract void addResourceInstance(String name) throws IllegalArgumentException;
-//
-//    /**
-//     * Voegt een instantie van dit AResourceType toe.
-//     * @param resourceInstance De instantie.
-//     */
-//    protected void addResourceInstance(ResourceInstance resourceInstance) {
-//        if (resourceInstance == null) {
-//            throw new IllegalInputException("Ongeldige resourceInstance, moet ge?nitialiseerd zijn");
-//        }
-//        instances.add(resourceInstance);
-//    }
-//
-//    /**
-//     * @return een immutable lijst van alle ResourceInstances voor dit type.
-//     */
-//    public ImmutableList<ResourceInstance> getResourceInstances() {
-//        return ImmutableList.copyOf(instances);
-//    }
-//
-//    /**
-//     * @return geef terug hoeveel ResourceInstances er zijn voor dit type.
-//     */
-//    public int amountOfInstances() {
-//        return instances.size();
-//    }
 
     public abstract LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration);
 

@@ -176,6 +176,7 @@ public class Project {
      */
     public static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime){
         return startTime !=null && endTime != null && startTime.isBefore(endTime);
+        //TODO moet dit niet canHaveAsStartTimeEndTime zijn, waarin er ook gecontroleerd wordt of er al een start & eind tijd is?
     }
 
     /**

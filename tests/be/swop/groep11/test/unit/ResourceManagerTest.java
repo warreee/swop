@@ -50,7 +50,7 @@ public class ResourceManagerTest {
     @Test
     public void testBasicResourceType() throws Exception {
         ResourceType type = new ResourceType("A");
-        assertEquals("A", type.getName());
+        assertEquals("A", type.getTypeName());
         assertEquals(0, type.amountOfInstances());
         assertEquals(0, type.amountOfConstraints());
 
@@ -101,7 +101,7 @@ public class ResourceManagerTest {
         AResourceType developerType = resourceManager.getDeveloperType();
         resourceManager.addResourceInstance(developerType,"devA");
         assertEquals(1, developerType.amountOfInstances());
-        assertEquals("devA",developerType.getResourceInstances().get(0).getName());
+        assertEquals("devA",developerType.getResourceInstances().get(0).getTypeName());
     }
 
     @Test
@@ -196,7 +196,7 @@ public class ResourceManagerTest {
         addResourceTypeNameOnly("Test Resource 1");
         AResourceType type1 = resourceManager.getResourceTypes().get(0);
         resourceManager.addResourceInstance(type1, "Instance 1");
-        assertTrue(type1.getResourceInstances().get(0).getName().equals("Instance 1"));
+        assertTrue(type1.getResourceInstances().get(0).getTypeName().equals("Instance 1"));
         assertEquals(1, type1.getResourceInstances().size());
     }
 

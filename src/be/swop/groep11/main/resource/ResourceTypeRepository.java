@@ -13,18 +13,25 @@ import java.util.NoSuchElementException;
 public class ResourceTypeRepository {
 
     /**
-     * Geeft het Type terug dat Developers voorsteld.
-     * @return Het DeveloperType.
+     * Voeg een AResourceType toe aan deze ResourceTypeRepository
+     * @param type  Het toe te voegen AResourceType
+     * @throws IllegalArgumentException Gooi indien type null is of indien deze ResourceTypeRepository type al bevat.
      */
-    public AResourceType getDeveloperType() {
-        if (this.developerType == null) {
-            developerType =  new DeveloperType();
-            resourceTypes.add(developerType);
+    private void addResourceType(AResourceType type) throws IllegalArgumentException{
+        if (!canHaveAsResourceType(type)) {
+            throw new IllegalArgumentException("Ongeldig resourceType");
         }
-        return developerType;
+        resourceTypes.add(type);
     }
 
-    private DeveloperType developerType;
+    /**
+     * Controleer of het gegegen AResourceType toegevoegd kan worden aan deze ResourceTypeRepository
+     * @param type  Het toe te voegen AResourceType.
+     * @return  Waar indien type niet null en deze ResourceTypeRepository type niet bevat.
+     */
+    public boolean canHaveAsResourceType(AResourceType type) {
+        return type != null && !resourceTypes.contains(type);
+    }
 
     /**
      * Voegt een nieuwe ResourceType toe zonder start en eindtijd voor de beschikbaarheid.
@@ -35,23 +42,14 @@ public class ResourceTypeRepository {
      *
      */
     public void addNewResourceType(String name, DailyAvailability availability, List<AResourceType> requireTypes, List<AResourceType> conflictingTypes) {
-        if(containsType(name)){
-            throw new IllegalArgumentException("Er bestaat reeds een ResourceType met de naam " +name);
-        }
-        ResourceType type = new ResourceType(name);
-        type.setDailyAvailability(availability);
+        ResourceTypeBuilder typeBuilder = new ResourceTypeBuilder();
+        typeBuilder.setName(name);
+        typeBuilder.setAvailability(availability);
+        typeBuilder.setRequireTypes(requireTypes);
+        typeBuilder.setConflictingTypes(conflictingTypes);
 
-        //Add require constraints
-        for (AResourceType reqType : requireTypes) {
-            type.addRequirementConstraint(reqType);
-        }
-
-        //Add conflicting constraints
-        for (AResourceType conflictType : conflictingTypes) {
-            type.addConflictConstraint(conflictType);
-        }
-
-        resourceTypes.add(type);
+        AResourceType type = typeBuilder.getResourceType();
+        addResourceType(type);
     }
 
     /**
@@ -90,7 +88,7 @@ public class ResourceTypeRepository {
      */
     public AResourceType getResourceTypeByName(String name)throws NoSuchElementException{
         for(AResourceType type : resourceTypes){
-            if(type.getName().equals(name)){
+            if(type.getTypeName().equals(name)){
                 return type;
             }
         }
@@ -104,7 +102,7 @@ public class ResourceTypeRepository {
      */
     public boolean containsType(String typeName){
         for(AResourceType type : resourceTypes){
-            if(type.getName().equals(typeName)){
+            if(type.getTypeName().equals(typeName)){
                 return true;
             }
         }
@@ -142,4 +140,17 @@ public class ResourceTypeRepository {
         return resourceTypes.contains(resourceType);
     }
 
+    /**
+     * Geeft het Type terug dat Developers voorsteld.
+     * @return Het DeveloperType.
+     */
+    public AResourceType getDeveloperType() {
+        if (this.developerType == null) {
+            developerType =  new DeveloperType();
+            resourceTypes.add(developerType);
+        }
+        return developerType;
+    }
+
+    private DeveloperType developerType;
 }

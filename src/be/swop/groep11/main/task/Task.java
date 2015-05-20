@@ -488,44 +488,28 @@ public class Task {
 
     private BranchOffice delegatedTo;
 
-//    @Override
-//    public void update(ResourcePlanner resourcePlanner) {
-//        getStatus().updateStatus(this);
-//    }
-//
-//    @Override
-//    public void update(SystemTime systemTime) {
-//        getStatus().updateStatus(this);
-//        evaluateTask(systemTime.getCurrentSystemTime());
-//    }
-
-    private Observer<SystemTime> systemTimeObserver = sysTime -> {
-        getStatus().updateStatus(this);
-        evaluateTask(sysTime.getCurrentSystemTime());
-
-        if (isFailed() || isFinished()) {
-            sysTime.removeObserver(this.getSystemTimeObserver());
-        }
-
-    };
-
-    private Observer<ResourcePlanner> resourcePlannerObserver = resourcePlanner -> {
-        getStatus().updateStatus(this);
-        if (isFailed() || isFinished()) {
-            resourcePlanner.removeObserver(this.getResourcePlannerObserver());
-        }
-
-//        resourcePlanner.
-    };
-
-
 
     public Observer<SystemTime> getSystemTimeObserver() {
-        return systemTimeObserver;
+        return sysTime -> {
+            getStatus().updateStatus(this);
+            evaluateTask(sysTime.getCurrentSystemTime());
+
+            if (isFailed() || isFinished()) {
+                sysTime.removeObserver(this.getSystemTimeObserver());
+            }
+
+        };
     }
 
     public Observer<ResourcePlanner> getResourcePlannerObserver() {
-        return resourcePlannerObserver;
+        return resourcePlanner -> {
+            getStatus().updateStatus(this);
+            if (isFailed() || isFinished()) {
+                resourcePlanner.removeObserver(this.getResourcePlannerObserver());
+            }
+
+//        resourcePlanner.
+        };
     }
 
     public enum TaskEvaluation {
@@ -666,7 +650,6 @@ public class Task {
     private double overTimePercentage;
     private Duration delay;
     private TaskEvaluation taskEvaluation;
-
 
 
     @Override

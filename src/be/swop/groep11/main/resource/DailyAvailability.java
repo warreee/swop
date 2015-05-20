@@ -1,6 +1,7 @@
 package be.swop.groep11.main.resource;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -139,10 +140,15 @@ public class DailyAvailability {
      * @return Het volledig uur.
      */
     private LocalDateTime getNextHour(LocalDateTime dateTime) {
-        if (dateTime.getMinute() == 0)
+        if (dateTime.getMinute() == 0){
             return dateTime;
-        else
-            return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour()+1,0));
+
+        }
+        else{
+            return dateTime.plusHours(1).truncatedTo(ChronoUnit.HOURS);
+//            return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour(),0).plusHours(1)); //Geeft fout indien dateTime.getHour() == 23 => Hours gaan van 0 tot en met 23 en niet 24
+
+        }
     }
 
     /**

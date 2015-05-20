@@ -158,11 +158,42 @@ public class Plan {
      * @return Waar indien er een ander plan gemaakt kan worden met de specifieke resources op het gegeven tijdStip
      */
     public boolean hasEquivalentPlan(LocalDateTime localDateTime) {
-        return getResourcePlanner().hasEquivalentPlan(this,localDateTime);
+        return getResourcePlanner().hasEquivalentPlan(this, localDateTime);
     }
 
 
     private ResourcePlanner getResourcePlanner() {
         return resourcePlanner;
+    }
+
+    public LocalDateTime getPlannedStartTime() {
+        return getTimeSpan().getStartTime();
+    }
+
+    public LocalDateTime getPlannedEndTime() {
+        return getTimeSpan().getEndTime();
+    }
+
+    /**
+     * Controleer of dit plan start voor een gegeven Plan.
+     * @param other
+     * @return
+     */
+    public boolean startsBefore(Plan other){
+        return other.getPlannedStartTime().isAfter(getPlannedStartTime());
+    }
+
+    /**
+     * Controleer of dit plan eindig na het gegeven Plan.
+     * @param other
+     * @return
+     */
+    public boolean endsAfter(Plan other){
+        return other.getPlannedEndTime().isBefore(getPlannedEndTime());
+    }
+
+    @Override
+    public String toString() {
+        return "Plan{" +  timeSpan + " - " + getTask() + '}';
     }
 }

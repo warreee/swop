@@ -1,7 +1,5 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.util.ResourceSchedule;
-
 /**
  * Stelt een resource voor met een naam en resource type.
  */
@@ -20,11 +18,6 @@ public class Resource implements ResourceInstance {
             throw new IllegalArgumentException("Resource type mag niet null zijn");
         this.name = name;
         this.resourceType = resourceType;
-    }
-
-    @Override
-    public ResourceSchedule getResourceSchedule() {
-        return null;
     }
 
     private final AResourceType resourceType;
