@@ -1,7 +1,6 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.task.Task;

@@ -188,9 +188,8 @@ tasks:
     status             : finished
     startTime          : "2014-01-01 10:00"
     endTime            : "2014-01-02 17:00"
-    resourceRequirements: [{type: 0, amount: 1}, {type: 1, amount: 2}]
+    resourceRequirements: [{type: 0,  amount: 1}, {type: 1,  amount: 2}]
     numberDevelopers   : 1
-    plannedStartTime   : "2014-01-01 09:00"
     # Alleen als hier iets staat is de taak gedelegeerd.
     delegatedTo        :
 
@@ -275,13 +274,23 @@ plans:
   - branchOffice       : 0
     task               : 0
     specificResources  : [3]
+    nonSpecificResources:
+    developers         :
     startTime          :
+    endTime            :
 
   - branchOffice       : 0
     task               : 0
     specificResources  : [3]
+    nonSpecificResources:
+    developers         :
+    startTime          :
+    endTime            :
 
   - branchOffice       : 0
     task               : 0
     specificResources  : [3]
-
+    nonSpecificResources:
+    developers         :
+    startTime          :
+    endTime            :

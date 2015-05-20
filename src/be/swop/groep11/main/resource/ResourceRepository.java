@@ -53,7 +53,7 @@ public class ResourceRepository {
     }
 
     public int amountOfResourceInstances(AResourceType type) {
-        return resources.get(type).size();
+        return resources.getOrDefault(type, new ArrayList<>()).size();
     }
 
     public boolean containsResourceInstance(ResourceInstance instance) {
