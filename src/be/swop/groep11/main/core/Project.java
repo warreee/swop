@@ -300,12 +300,9 @@ public class Project {
 
     private BranchOffice branchOffice;
 
-//    /**
-//     * update alle statussen na een bepaalde usecase
-//     */
-//    public void updateAllStatus() {
-//        this.getTasks().forEach(Task::updateStatus);
-//    }
+    public Task getLastAddedTask() {
+        return getTasks().get(getTasks().size() - 1);
+    }
 
     @Override
     public boolean equals(Object other) {

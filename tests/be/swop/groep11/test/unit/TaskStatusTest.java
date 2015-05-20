@@ -127,7 +127,7 @@ public class TaskStatusTest {
 //        task2.addNewDependencyConstraint(task1);
 //        assertTrue(task1.isAvailable());
 //        assertTrue(task2.isUnavailable());
-//        TaskUnavailable test = (TaskUnavailable) task2.getStatus();
+//        TaskUnavailable test = (TaskUnavailable) task2.getStatusString();
 //        try {
 //            TUmethodMakeUnAvailable.invoke(test, task2);
 //        } catch (InvocationTargetException e) {
@@ -171,7 +171,7 @@ public class TaskStatusTest {
 //    @Test (expected = IllegalStateTransitionException.class)
 //    public void availableToAvailable() throws Throwable {
 //
-//        TaskAvailable test = (TaskAvailable) task1.getStatus();
+//        TaskAvailable test = (TaskAvailable) task1.getStatusString();
 //        try {
 //            TAmethodMakeAvailable.invoke(test, task1);
 //        } catch (InvocationTargetException e) {
@@ -206,7 +206,7 @@ public class TaskStatusTest {
 //    @Test (expected = IllegalStateTransitionException.class)
 //    public void executingToAvailable() throws Throwable {
 //        task1.execute(LocalDateTime.now());
-//        TaskExecuting state = (TaskExecuting) task1.getStatus();
+//        TaskExecuting state = (TaskExecuting) task1.getStatusString();
 //        try {
 //            TEmethodmakeAvailable.invoke(state, task1);
 //        } catch (InvocationTargetException e) {
@@ -217,7 +217,7 @@ public class TaskStatusTest {
 //    @Test (expected = IllegalStateTransitionException.class)
 //    public void executingToUnavailable() throws Throwable {
 //        task1.execute(LocalDateTime.now());
-//        TaskExecuting state = (TaskExecuting) task1.getStatus();
+//        TaskExecuting state = (TaskExecuting) task1.getStatusString();
 //        try {
 //            TEmethodmakeUnavailable.invoke(state, task1);
 //        } catch (InvocationTargetException e) {
@@ -257,7 +257,7 @@ public class TaskStatusTest {
 //    public void finishedToAvailable() throws Throwable {
 //        task1.execute(LocalDateTime.now());
 //        task1.finish(LocalDateTime.now());
-//        TaskFinished state = (TaskFinished) task1.getStatus();
+//        TaskFinished state = (TaskFinished) task1.getStatusString();
 //        try {
 //            FmethodmakeAvailable.invoke(state, task1);
 //        } catch (InvocationTargetException e) {
@@ -269,7 +269,7 @@ public class TaskStatusTest {
 //    public void finishedToUnavailable() throws Throwable {
 //        task1.execute(LocalDateTime.now());
 //        task1.finish(LocalDateTime.now());
-//        TaskFinished state = (TaskFinished) task1.getStatus();
+//        TaskFinished state = (TaskFinished) task1.getStatusString();
 //        try {
 //            FmethodmakeUnavailable.invoke(state, task1);
 //        } catch (InvocationTargetException e) {
@@ -307,7 +307,7 @@ public class TaskStatusTest {
 //    public void failedToAvailable() throws Throwable {
 //        task1.execute(LocalDateTime.now());
 //        task1.fail(LocalDateTime.now());
-//        TaskFailed state = (TaskFailed) task1.getStatus();
+//        TaskFailed state = (TaskFailed) task1.getStatusString();
 //        try {
 //            FamethodmakeAvailable.invoke(state, task1);
 //        } catch (InvocationTargetException e) {
@@ -319,7 +319,7 @@ public class TaskStatusTest {
 //    public void failedToUnavailable() throws Throwable {
 //        task1.execute(LocalDateTime.now());
 //        task1.fail(LocalDateTime.now());
-//        TaskFailed state = (TaskFailed) task1.getStatus();
+//        TaskFailed state = (TaskFailed) task1.getStatusString();
 //        try {
 //            FamethodmakeUnavailable.invoke(state, task1);
 //        } catch (InvocationTargetException e) {

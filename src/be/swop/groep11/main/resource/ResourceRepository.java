@@ -114,7 +114,13 @@ public class ResourceRepository {
         return getResourceTypeRepository().getDeveloperType();
     }
 
+    /**
+     * Geeft een lijst van alle aanwezige AResourceTypes, exclusief DeveloperType.
+     * @return
+     */
     public ImmutableList<AResourceType> getPresentResourceTypes() {
-        return ImmutableList.copyOf(resources.keySet());
+        ArrayList<AResourceType> types = new ArrayList<>(resources.keySet());
+        types.remove(getDeveloperType());
+        return ImmutableList.copyOf(types);
     }
 }

@@ -85,14 +85,13 @@ public class App {
         logonController = new LogonController(cli, company);
 
         taskController = new TaskController(logonController, systemTime,cli);
-        showProjectsController = new ShowProjectsController(company, cli );
+        showProjectsController = new ShowProjectsController(company, cli, systemTime);
         createProjectController = new CreateProjectController(logonController, cli);
         advanceTimeController = new AdvanceTimeController( systemTime, cli);
         simulationController = new SimulationController(logonController, cli);
         planningController = new PlanningController(logonController, systemTime, cli);
         delegateTaskController = new DelegateTaskController(cli, company, logonController);
-        main = new MainController(
-                cli);
+        main = new MainController(cli);
     }
 
     private void initActionProcedures() {

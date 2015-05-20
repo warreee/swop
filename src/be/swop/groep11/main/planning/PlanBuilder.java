@@ -4,7 +4,6 @@ import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
-import org.mockito.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -70,10 +69,12 @@ public class PlanBuilder {
             int nbRequiredInstances = requirement.getAmount();
             int nbSelectedInstances = getSelectedInstances(requirement.getType()).size();
 
+            AResourceType devType = branchOffice.getResourceRepository().getDeveloperType();
+
             // welke instances kunnen nog gekozen worden?
             List<ResourceInstance> instancesLeft = branchOffice.getResourcePlanner()
                     .getInstances(type, getTimeSpan()).stream()
-                    .filter(x -> !getSelectedInstances(type).contains(x))
+                    .filter(x -> type != devType && !getSelectedInstances(type).contains(x) )
                     .collect(Collectors.toList());
 
             for (int i=0; i<nbRequiredInstances-nbSelectedInstances; i++) {

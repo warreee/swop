@@ -104,14 +104,14 @@ public class TaskTest {
      */
     @Test
     public void FinishedStatus_notFinished() throws Exception {
-        assertEquals(Task.TaskEvaluation.NOTFINISHED.toString(),task1.getFinishedStatus());
+        assertEquals(Task.TaskEvaluation.NOTFINISHED.toString(),task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
     }
 
     @Test
     public void FinishedStatus_early() throws Exception {
         task1.execute(now);
         task1.finish(now.plusHours(2));
-        assertEquals(Task.TaskEvaluation.EARLY.toString(), task1.getFinishedStatus());
+        assertEquals(Task.TaskEvaluation.EARLY.toString(), task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
 
     }
 
@@ -119,7 +119,7 @@ public class TaskTest {
     public void FinishedStatus_onTime() throws Exception {
         task1.execute(now);
         task1.finish(now.plusHours(8));
-        assertEquals(Task.TaskEvaluation.ONTIME.toString(), task1.getFinishedStatus());
+        assertEquals(Task.TaskEvaluation.ONTIME.toString(), task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
 
     }
 
@@ -127,7 +127,7 @@ public class TaskTest {
     public void FinishedStatus_late() throws Exception {
         task1.execute(now);
         task1.finish(now.plusHours(18));
-        assertEquals(Task.TaskEvaluation.OVERDUE.toString(), task1.getFinishedStatus());
+        assertEquals(Task.TaskEvaluation.OVERDUE.toString(), task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
 
     }
 

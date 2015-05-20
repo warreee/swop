@@ -35,7 +35,7 @@ public class Task {
     public Task(String description, Duration estimatedDuration, double acceptableDeviation, DependencyGraph dependencyGraph, IRequirementList requirementList, Project project) throws IllegalArgumentException {
         if (project == null)
             throw  new IllegalArgumentException("Project mag niet null zijn");
-        this.setStatus(new TaskAvailable());
+        this.setStatus(new TaskUnavailable());
         setDescription(description);
         setEstimatedDuration(estimatedDuration);
         setAcceptableDeviation(acceptableDeviation);
@@ -261,7 +261,7 @@ public class Task {
      * @return
      */
     public String getStatusString() {
-        return this.getStatus().getStatus().toString();
+        return this.getStatus().getStatusString().toString();
     }
 
 
@@ -429,6 +429,7 @@ public class Task {
             throw new IllegalArgumentException("Illegaal plan"); //TODO aparte exception?
         }
         this.plan = plan;
+        getStatus().updateStatus(this);
     }
 
 
@@ -589,9 +590,13 @@ public class Task {
         double minutes;
         if(hasStart && hasEnd) {
             minutes = getStartTime().until(getEndTime(), ChronoUnit.MINUTES);
-        } else {
+        } else if (hasStart) {
             minutes = getStartTime().until(systemTime, ChronoUnit.MINUTES);
+        } else {
+            //nog niet gestart
+            minutes = 0;
         }
+
         double dur = getEstimatedDuration().toMinutes();
         double percent = (minutes / dur) - 1.0;
         if(percent <= 0.0){
@@ -608,7 +613,8 @@ public class Task {
      *     <br>FinishedStatus.ONTIME als de taak op tijd geëindigd is,
      *     <br>FinishedStatus.OVERDUE als de taak te laat geëindigd is.
      */
-    public String getFinishedStatus() {
+    public String getFinishedStatus(LocalDateTime localDateTime) {
+        evaluateTask(localDateTime);
         return taskEvaluation.toString();
     }
 
@@ -647,8 +653,8 @@ public class Task {
     }
 
 
-    private double overTimePercentage;
-    private Duration delay;
+    private double overTimePercentage = 0;
+    private Duration delay = Duration.ofMinutes(0);
     private TaskEvaluation taskEvaluation;
 
 

@@ -21,8 +21,8 @@ public class TaskFinished extends TaskStatus {
      * Haalt de status op.
      */
     @Override
-    public TaskStatusEnum getStatus() {
-        return TaskStatusEnum.FINISHED;
+    public String getStatusString() {
+        return TaskStatusEnum.FINISHED.toString();
     }
 
     /**

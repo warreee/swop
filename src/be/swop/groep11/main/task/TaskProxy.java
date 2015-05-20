@@ -275,8 +275,8 @@ public class TaskProxy extends Task {
     }
 
     @Override
-    public String getFinishedStatus() {
-        return realTask.getFinishedStatus();
+    public String getFinishedStatus(LocalDateTime localDateTime) {
+        return realTask.getFinishedStatus(localDateTime);
     }
 
     @Override

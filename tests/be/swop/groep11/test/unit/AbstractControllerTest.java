@@ -37,7 +37,7 @@ public class AbstractControllerTest {
         projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8), new RequirementListBuilder(branchOffice.getResourceRepository()).getRequirements());
         mockedUI = mock(UserInterface.class);
         Company company = mock(Company.class);
-        this.showProjectsController = new ShowProjectsController(company,mockedUI);
+        this.showProjectsController = new ShowProjectsController(company,mockedUI,systemTime );
     }
 
     @Test(expected = IllegalArgumentException.class)
