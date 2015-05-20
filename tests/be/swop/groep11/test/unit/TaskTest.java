@@ -1,19 +1,22 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.core.BranchOffice;
-import be.swop.groep11.main.core.DependencyGraph;
-import be.swop.groep11.main.core.Project;
-import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.planning.Plan;
+import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.IRequirementList;
+import be.swop.groep11.main.resource.RequirementListBuilder;
+import be.swop.groep11.main.resource.ResourceRepository;
 import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TaskTest {
 
@@ -27,12 +30,18 @@ public class TaskTest {
     public void setUp() throws Exception {
         now = LocalDateTime.now();
         this.systemTime = new SystemTime(now);
+
+
         BranchOffice branchOffice = mock(BranchOffice.class);
+
+
         project = new Project("Test project", "Test beschrijving",
                 LocalDateTime.of(2015, 3, 4, 8, 30), LocalDateTime.of(2015, 3, 4, 16, 0),
                 systemTime, branchOffice);
 
-        project.addNewTask("Test taak 1", 0.1, Duration.ofHours(8), mock(IRequirementList.class));
+        ResourceRepository resourceRepository = mock(ResourceRepository.class);
+
+        project.addNewTask("Test taak 1", 0.1, Duration.ofHours(8), new RequirementListBuilder(resourceRepository).getRequirements());
         project.addNewTask("Test taak 2", 0, Duration.ofMinutes(120), mock(IRequirementList.class));
         project.addNewTask("Test taak 3", 0.2, Duration.ofHours(16), mock(IRequirementList.class));
 
@@ -41,6 +50,28 @@ public class TaskTest {
         task1 = project.getTasks().get(0);
         task2 = project.getTasks().get(1);
         task3 = project.getTasks().get(2);
+        ArrayList<Task> tasks = new ArrayList<>();
+        tasks.add(task1);
+        tasks.add(task2);
+        tasks.add(task3);
+        when(branchOffice.getUnplannedTasks()).thenReturn(tasks);
+
+        LocalDateTime startTime = LocalDateTime.of(2015,1,1,0,0);
+
+        PlanBuilder planBuilder = new PlanBuilder(branchOffice, task1, startTime);
+
+        Plan plan1 = planBuilder.getPlan();
+
+        Plan testPlan = mock(Plan.class);
+        task1.setPlan(testPlan);
+        task2.setPlan(testPlan);
+        task3.setPlan(testPlan);
+        when(testPlan.hasEquivalentPlan()).thenReturn(true);
+
+        systemTime.addObserver(task1.getSystemTimeObserver());
+        systemTime.addObserver(task2.getSystemTimeObserver());
+        systemTime.addObserver(task3.getSystemTimeObserver());
+        systemTime.updateSystemTime(systemTime.getCurrentSystemTime().plusDays(1));
     }
     //TODO review testen, wordt alles getest dat getest moet worden?
     /*
@@ -184,8 +215,10 @@ public class TaskTest {
 
     @Test
     public void isOverTimeTest() throws Exception {
+
         task1.execute(LocalDateTime.of(2015, 7, 8, 8, 0));
         assertFalse(task1.isOverTime());
+
         systemTime.updateSystemTime(LocalDateTime.of(2015, 7, 8, 16, 0));
         assertFalse(task1.isOverTime());
         systemTime.updateSystemTime(LocalDateTime.of(2015, 7, 8, 18, 0));
