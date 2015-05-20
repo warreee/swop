@@ -45,7 +45,7 @@ public class ShowProjectsController extends AbstractController {
 
             List<Task> tasks = project.getTasks();
             Task task = getUserInterface().selectTaskFromList(ImmutableList.copyOf(tasks));
-            getUserInterface().showTaskDetails(task);
+            getUserInterface().showTaskDetails(task, systemTime.getCurrentSystemTime());
         } catch (CancelException | EmptyListException e) {
             getUserInterface().printException(e);
         }
