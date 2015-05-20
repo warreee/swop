@@ -2,6 +2,8 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.resource.AResourceType;
 import be.swop.groep11.main.resource.Developer;
+import be.swop.groep11.main.resource.DeveloperType;
+import be.swop.groep11.main.resource.ResourceTypeRepository;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,8 +26,8 @@ public class DeveloperTypeTest {
 
     @Before
     public void setUp() throws Exception {
-        developer = new Developer("Jos");
-        developerType = developer.getResourceType();
+        developerType = new ResourceTypeRepository().getDeveloperType();
+        developer = new Developer("Jos", developerType);
     }
 
     @Test

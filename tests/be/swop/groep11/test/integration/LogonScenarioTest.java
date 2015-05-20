@@ -34,8 +34,9 @@ public class LogonScenarioTest {
         ProjectRepository projectRepository = mock(ProjectRepository.class);
         ResourcePlanner resourcePlanner = mock(ResourcePlanner.class);
         this.branchOffice = new BranchOffice("BranchOffice 1", "Leuven", projectRepository, resourcePlanner);
-        Developer developer1 = new Developer("dev1");
-        Developer developer2 = new Developer("dev2");
+        AResourceType developerType = new ResourceTypeRepository().getDeveloperType();
+        Developer developer1 = new Developer("dev1", developerType);
+        Developer developer2 = new Developer("dev2", developerType);
         ProjectManager projectManager = new ProjectManager("projectmanager1");
         company.addBranchOffice(branchOffice);
         branchOffice.addEmployee(developer1);
