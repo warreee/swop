@@ -150,8 +150,7 @@ public class BranchOffice {
             // voeg dan een proxy voor task toe aan other!
             other.addDelegatedTask(new TaskProxy(task));
 
-            // zet dan een proxy van other als delegatedTo branch office van task!
-            task.setDelegatedTo(new BranchOfficeProxy(other));
+            task.setDelegatedTo(other); // other zou hier al een proxy voor een branch office moeten zijn
         }
 
         else {
@@ -161,8 +160,7 @@ public class BranchOffice {
             // voeg dan een proxy voor task toe aan other!
             other.addDelegatedTask(new TaskProxy(task));
 
-            // zet dan een proxy van other als delegatedTo branch office van task!
-            task.setDelegatedTo(new BranchOfficeProxy(other));
+            task.setDelegatedTo(other);  // other zou hier al een proxy voor een branch office moeten zijn
         }
     }
 
