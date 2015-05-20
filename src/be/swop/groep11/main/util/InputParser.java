@@ -26,7 +26,6 @@ import static org.mockito.Mockito.mock;
  * Klasse voor het inlezen van de de input file, deze moet staan in /input met de naam input.tman
  */
 public class InputParser {
-    private ProjectRepository projectRepository;
     private ArrayList<BranchOffice> branchOfficeList = new ArrayList<>();
     private ArrayList<Project> projectList = new ArrayList<>();
     private ArrayList<Task> taskList = new ArrayList<>();
@@ -34,8 +33,6 @@ public class InputParser {
     private ArrayList<ResourceInstance> resourceInstanceList = new ArrayList<>();
     private ArrayList<DailyAvailability> dailyAvailabilityList = new ArrayList<>();
     private ArrayList<ResourceInstance> developerList = new ArrayList<>();
-    private ArrayList<Map<String, Object>> planningsList = new ArrayList<>();
-    private Map<Integer, Map<Integer, Map<String, LocalDateTime>>> reservationsMap = new HashMap<>();
     private SystemTime systemTime;
     private Company company;
     private ResourceTypeRepository resourceTypeRepository;
@@ -43,21 +40,21 @@ public class InputParser {
 
     /**
      * Initialiseerd deze inputparser.
-     * @param projectRepository De ProjectRepository waaraan alle projecten moeten worden toegevoegd.
+     * @param company De globale company
      */
-    public InputParser(ProjectRepository projectRepository, SystemTime systemTime, ResourceTypeRepository resourceTypeRepository) {
-        this.projectRepository = projectRepository;
-        this.systemTime = systemTime;
-        this.resourceTypeRepository = resourceTypeRepository;
+    public InputParser(Company company) {
+        this.systemTime = company.getSystemTime();
+        this.company = company;
+        this.resourceTypeRepository = company.getResourceTypeRepository();
     }
 
 
     public static void main(String[] args) throws FileNotFoundException {
         SystemTime systemTime = new SystemTime(LocalDateTime.MIN);
-        ProjectRepository projectRepository = new ProjectRepository(systemTime);
         ResourceTypeRepository resourceTypeRepository = new ResourceTypeRepository();
+        Company company = new Company("inputParser", resourceTypeRepository, systemTime);
 
-        InputParser parser = new InputParser(projectRepository, systemTime, resourceTypeRepository);
+        InputParser parser = new InputParser(company);
         parser.parseInputFile();
         System.out.println("Finished :)");
     }
@@ -101,7 +98,7 @@ public class InputParser {
 
     public void handleCompany(Map<String, Object> companyMap){
         String name = (String) companyMap.get("company");
-        company = new Company(name, new ResourceTypeRepository(), getSystemTime());
+        company.setName(name);
     }
 
     /**

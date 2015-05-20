@@ -11,8 +11,10 @@ import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.ui.CommandLineInterface;
+import be.swop.groep11.main.util.InputParser;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -68,18 +70,17 @@ public class App {
     }
 
     private void initInputParser(boolean readYamlFile){
-//        if (readYamlFile) {
-//            // run inputreader
-//            InputParser inputParser = new InputParser(projectRepository, resourceManager, systemTime);
-//            try {
-//                inputParser.parseInputFile();
-//            } catch (FileNotFoundException e) {
-//                System.out.println("Yaml file niet gevonden");
-//            }
-//        }else{
-//            addTempDomainObjects();
-//        }
-        addTempDomainObjects();
+        if (readYamlFile) {
+            // run inputreader
+            InputParser inputParser = new InputParser(company);
+            try {
+                inputParser.parseInputFile();
+            } catch (FileNotFoundException e) {
+                System.out.println("Yaml file niet gevonden");
+            }
+        }else{
+            addTempDomainObjects();
+        }
     }
 
     private void initControllers(){

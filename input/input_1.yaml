@@ -1,6 +1,7 @@
 # The file format is a simple subset of YAML.
 # Everything after '#' is ignored (i.e. single line comment)
 
+# Systeemtijd moet steeds na de laatste gefinishte of gefailde taak liggen.
 systemTime: "2014-04-01 09:00"
 
 company: "Fluffy Unicorn Inc"
