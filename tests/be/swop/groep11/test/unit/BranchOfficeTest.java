@@ -42,7 +42,6 @@ public class BranchOfficeTest {
         projectRepository2 = mock(ProjectRepository.class);
         resourcePlanner2 = mock(ResourcePlanner.class);
         when(resourcePlanner2.hasEnoughResourcesToPlan(any())).thenReturn(true);
-        when(resourcePlanner2.hasEnoughResourcesToPlan(any())).thenReturn(true);
         branchOffice2 = new BranchOffice("Branch office 2", "Locatie 2", projectRepository2, resourcePlanner2);
         // branch office 3
         projectRepository3 = mock(ProjectRepository.class);
@@ -50,13 +49,7 @@ public class BranchOfficeTest {
         when(resourcePlanner3.hasEnoughResourcesToPlan(any())).thenReturn(true);
         branchOffice3 = new BranchOffice("Branch office 3", "Locatie 3", projectRepository3, resourcePlanner3);
 
-        // taak in branch office 1
-        task = mock(Task.class);
-        List<Task> tasks = new ArrayList<>();
-        tasks.add(task);
-        when(projectRepository1.getAllTasks()).thenReturn(tasks);
-        when(projectRepository2.getAllTasks()).thenReturn(new ArrayList<>());
-        when(projectRepository3.getAllTasks()).thenReturn(new ArrayList<>());
+
 
         user1 = mock(User.class);
         user2 = mock(User.class);
@@ -65,6 +58,15 @@ public class BranchOfficeTest {
 
     @Test
     public void delegateTask_ProperToOther() throws Exception {
+        task = mock(Task.class);
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(task);
+        when(projectRepository1.getAllTasks()).thenReturn(tasks);
+        when(projectRepository2.getAllTasks()).thenReturn(new ArrayList<>());
+        when(projectRepository3.getAllTasks()).thenReturn(new ArrayList<>());
+
+
+
         when(task.isUnavailable()).thenReturn(true);
 
         // branchOffice1 -> branchOffice2 = proper to other
@@ -85,6 +87,14 @@ public class BranchOfficeTest {
 
     @Test
     public void delegateTask_OtherToProper() throws Exception {
+        task = mock(Task.class);
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(task);
+        when(projectRepository1.getAllTasks()).thenReturn(tasks);
+        when(projectRepository2.getAllTasks()).thenReturn(new ArrayList<>());
+        when(projectRepository3.getAllTasks()).thenReturn(new ArrayList<>());
+
+
         when(task.isUnavailable()).thenReturn(true);
 
         // branchOffice2 -> branchOffice3
@@ -99,16 +109,24 @@ public class BranchOfficeTest {
         when(task.getDelegatedTo()).thenReturn(branchOffice2);
         when(task.isDelegated()).thenReturn(false);
 
-        assertTrue(branchOffice2.getAllTasks().contains(task));
-        assertFalse(branchOffice2.getDelegatedTasks().contains(task));
-        assertTrue(branchOffice2.getUnplannedTasks().contains(task));
-        assertFalse(branchOffice3.getAllTasks().contains(task));
+        assertTrue(branchOffice3.getAllTasks().contains(task));
         assertFalse(branchOffice3.getDelegatedTasks().contains(task));
-        assertFalse(branchOffice3.getUnplannedTasks().contains(task));
+        assertTrue(branchOffice3.getUnplannedTasks().contains(task));
+        assertFalse(branchOffice2.getAllTasks().contains(task));
+        assertFalse(branchOffice2.getDelegatedTasks().contains(task));
+        assertFalse(branchOffice2.getUnplannedTasks().contains(task));
     }
 
     @Test
     public void delegateTask_OtherToOther() throws Exception {
+        task = mock(Task.class);
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(task);
+        when(projectRepository1.getAllTasks()).thenReturn(tasks);
+        when(projectRepository2.getAllTasks()).thenReturn(new ArrayList<>());
+        when(projectRepository3.getAllTasks()).thenReturn(new ArrayList<>());
+
+
         when(task.isUnavailable()).thenReturn(true);
 
         // branchOffice1 -> branchOffice2
@@ -133,6 +151,13 @@ public class BranchOfficeTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void delegateTask_SameBranchOffice() throws Exception {
+        task = mock(Task.class);
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(task);
+        when(projectRepository1.getAllTasks()).thenReturn(tasks);
+        when(projectRepository2.getAllTasks()).thenReturn(new ArrayList<>());
+        when(projectRepository3.getAllTasks()).thenReturn(new ArrayList<>());
+
         when(task.isUnavailable()).thenReturn(true);
 
         // branchOffice1 -> branchOffice1
@@ -143,6 +168,14 @@ public class BranchOfficeTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void delegateTask_CanNotPlanTask() throws Exception {
+        task = mock(Task.class);
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(task);
+        when(projectRepository1.getAllTasks()).thenReturn(tasks);
+        when(projectRepository2.getAllTasks()).thenReturn(new ArrayList<>());
+        when(projectRepository3.getAllTasks()).thenReturn(new ArrayList<>());
+
+
         when(resourcePlanner2.hasEnoughResourcesToPlan(task)).thenReturn(false);
 
         when(task.isUnavailable()).thenReturn(true);
@@ -154,10 +187,6 @@ public class BranchOfficeTest {
     }
 
 
-    @Test
-    public void updateAllStatusTest() {
-        fail("Nog niet geïmplementeerd!");
-    }
 
     @Test
     public void addEmployeeTest() {
