@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class Company {
 
-    private final String name;
+    private String name;
     private final List<BranchOffice> branchOffices;
 
     private final ResourceTypeRepository resourceTypeRepository;
@@ -63,6 +63,13 @@ public class Company {
      */
     public String getName() {
         return name;
+    }
+
+    public void setName(String name){
+        if(!isValidName(name)){
+            throw new IllegalArgumentException("Geen geldige naam aan Company gegeven.");
+        }
+        this.name = name;
     }
 
     /**
