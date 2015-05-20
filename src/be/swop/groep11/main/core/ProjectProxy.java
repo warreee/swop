@@ -76,7 +76,7 @@ public class ProjectProxy extends Project {
     }
 
     @Override
-    public ImmutableList<Task> getTasks() {
+    public List<Task> getTasks() {
         return realProject.getTasks();
     }
 

@@ -19,7 +19,7 @@ public class TaskProxy extends Task {
     /**
      * De echte Task van deze TaskProxy.
      * In een gedistribueerd systeem kan deze referentie weggelaten worden,
-     * door bijvoorbeeld met een database te werken. TODO: of niet?
+     * door bijvoorbeeld met een database te werken.
      */
     private Task realTask;
 
@@ -98,7 +98,6 @@ public class TaskProxy extends Task {
 
     @Override
     public Set<Task> getDependentTasks() {
-        // TODO: is het goed om hier ook TaskProxy objecten terug te geven?
         Set<Task> taskProxys = new HashSet<Task>();
         for (Task task : realTask.getDependentTasks()) {
             taskProxys.add(new TaskProxy(task));
@@ -108,7 +107,6 @@ public class TaskProxy extends Task {
 
     @Override
     public Set<Task> getDependingOnTasks() {
-        // TODO: is het goed om hier ook TaskProxy objecten terug te geven?
         Set<Task> taskProxys = new HashSet<Task>();
         for (Task task : realTask.getDependingOnTasks()) {
             taskProxys.add(new TaskProxy(task));
@@ -123,7 +121,6 @@ public class TaskProxy extends Task {
 
     @Override
     public Project getProject() {
-        // TODO: is het goed om hier een ProjectProxy object terug te geven?
         return new ProjectProxy(realTask.getProject());
     }
 
@@ -184,7 +181,6 @@ public class TaskProxy extends Task {
 
     @Override
     public Task getAlternativeTask() {
-        // TODO: is het goed om hier ook een TaskProxy object terug te geven?
         return new TaskProxy(realTask.getAlternativeTask());
     }
 
@@ -250,7 +246,6 @@ public class TaskProxy extends Task {
 
     @Override
     public BranchOffice getDelegatedTo() {
-        // TODO: is het goed om hier een BranchOfficeProxy object terug te geven?
         return new BranchOfficeProxy(realTask.getDelegatedTo());
     }
 
@@ -301,6 +296,7 @@ public class TaskProxy extends Task {
 
     @Override
     public boolean equals(Object other) {
+        System.out.println("equals van TaskProxy opgeroepen");
         if (! (other instanceof Task)) {
             return false;
         }

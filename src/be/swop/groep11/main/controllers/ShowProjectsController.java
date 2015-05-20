@@ -10,6 +10,7 @@ import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Bevat de stappen om de use cases "Show Projects" en "Create Project" uit te voeren.
@@ -38,8 +39,8 @@ public class ShowProjectsController extends AbstractController {
             Project project = getUserInterface().selectProjectFromList(projects);
             getUserInterface().showProjectDetails(project);
 
-            ImmutableList<Task> tasks = project.getTasks();
-            Task task = getUserInterface().selectTaskFromList(tasks);
+            List<Task> tasks = project.getTasks();
+            Task task = getUserInterface().selectTaskFromList(ImmutableList.copyOf(tasks));
             getUserInterface().showTaskDetails(task);
         } catch (CancelException | EmptyListException e) {
             getUserInterface().printException(e);

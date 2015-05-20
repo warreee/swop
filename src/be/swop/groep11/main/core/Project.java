@@ -148,8 +148,8 @@ public class Project {
     /**
      * @return Een ImmutableList die alle taken bevat.
      */
-    public ImmutableList<Task> getTasks() {
-        return ImmutableList.copyOf(tasks.iterator());
+    public List<Task> getTasks() {
+        return new ArrayList<>(this.tasks);
     }
 
     /**

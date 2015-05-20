@@ -671,6 +671,10 @@ public class Task {
 
     @Override
     public boolean equals(Object other) {
+        System.out.println("equals van Task opgeroepen");
+        if (other == null) {
+            return false;
+        }
         if (! (other instanceof Task)) {
             return false;
         }

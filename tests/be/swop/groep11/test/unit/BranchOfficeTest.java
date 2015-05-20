@@ -1,13 +1,17 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.core.BranchOffice;
-import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.User;
+import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.planning.Plan;
+import be.swop.groep11.main.planning.PlanBuilder;
+import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourcePlanner;
 import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.task.TaskProxy;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,13 +47,16 @@ public class BranchOfficeTest {
         when(resourcePlanner3.hasEnoughResourcesToPlan(any())).thenReturn(true);
         branchOffice3 = new BranchOffice("Branch office 3", "Locatie 3", projectRepository3, resourcePlanner3);
 
-        // taak in branch office 1
-        task = mock(Task.class);
+        // taak in branch office
+        Project project = mock(Project.class);
+        when(project.getBranchOffice()).thenReturn(branchOffice1);
+        task = new Task("taak", Duration.ofHours(1), 0.1, mock(DependencyGraph.class), mock(IRequirementList.class), project);
         List<Task> tasks = new ArrayList<>();
         tasks.add(task);
         when(projectRepository1.getAllTasks()).thenReturn(tasks);
         when(projectRepository2.getAllTasks()).thenReturn(new ArrayList<>());
         when(projectRepository3.getAllTasks()).thenReturn(new ArrayList<>());
+        task.setDelegatedTo(branchOffice1);
 
         user1 = mock(User.class);
         user2 = mock(User.class);
@@ -58,15 +65,18 @@ public class BranchOfficeTest {
 
     @Test
     public void delegateTask_ProperToOther() throws Exception {
-        when(task.isUnavailable()).thenReturn(true);
+        //when(task.isUnavailable()).thenReturn(true);
 
         // branchOffice1 -> branchOffice2 = proper to other
-        when(task.isDelegated()).thenReturn(false);
-        when(task.getDelegatedTo()).thenReturn(branchOffice1);
+        //when(task.isDelegated()).thenReturn(false);
+        //when(task.getDelegatedTo()).thenReturn(branchOffice1);
         branchOffice1.delegateTask(task, branchOffice2);
 
-        verify(task).setDelegatedTo(branchOffice2);
-        when(task.isDelegated()).thenReturn(true);
+       // verify(task).setDelegatedTo(branchOffice2);
+        //when(task.isDelegated()).thenReturn(true);
+
+        //List<Task> tasks = branchOffice2.getUnplannedTasks();
+        //assertTrue(task.equals(branchOffice2.getDelegatedTasks().get(0)));
 
         assertTrue(branchOffice1.getAllTasks().contains(task));
         assertFalse(branchOffice1.getDelegatedTasks().contains(task));
@@ -78,19 +88,8 @@ public class BranchOfficeTest {
 
     @Test
     public void delegateTask_OtherToProper() throws Exception {
-        when(task.isUnavailable()).thenReturn(true);
-
-        // branchOffice1 -> branchOffice2
-        when(task.isDelegated()).thenReturn(false);
-        when(task.getDelegatedTo()).thenReturn(branchOffice1);
         branchOffice1.delegateTask(task, branchOffice2);
-        when(task.isDelegated()).thenReturn(true);
-        when(task.getDelegatedTo()).thenReturn(branchOffice2);
-        // branchOffice2 -> branchOffice1 = other to proper
-        branchOffice2.delegateTask(task, branchOffice1);
-        verify(task).setDelegatedTo(branchOffice1);
-        when(task.getDelegatedTo()).thenReturn(branchOffice1);
-        when(task.isDelegated()).thenReturn(false);
+        branchOffice2.delegateTask(task, branchOffice1); // waarom lukt dit niet?
 
         assertTrue(branchOffice1.getAllTasks().contains(task));
         assertFalse(branchOffice1.getDelegatedTasks().contains(task));
@@ -102,19 +101,19 @@ public class BranchOfficeTest {
 
     @Test
     public void delegateTask_OtherToOther() throws Exception {
-        when(task.isUnavailable()).thenReturn(true);
+       // when(task.isUnavailable()).thenReturn(true);
 
         // branchOffice1 -> branchOffice2
-        when(task.isDelegated()).thenReturn(false);
-        when(task.getDelegatedTo()).thenReturn(branchOffice1);
+        //when(task.isDelegated()).thenReturn(false);
+        //when(task.getDelegatedTo()).thenReturn(branchOffice1);
         branchOffice1.delegateTask(task, branchOffice2);
-        when(task.isDelegated()).thenReturn(true);
-        when(task.getDelegatedTo()).thenReturn(branchOffice2);
+        //when(task.isDelegated()).thenReturn(true);
+        //when(task.getDelegatedTo()).thenReturn(branchOffice2);
         // branchOffice2 -> branchOffice3 = other to other
         branchOffice2.delegateTask(task, branchOffice3);
-        verify(task).setDelegatedTo(branchOffice3);
-        when(task.getDelegatedTo()).thenReturn(branchOffice3);
-        when(task.isDelegated()).thenReturn(true);
+        //verify(task).setDelegatedTo(branchOffice3);
+        //when(task.getDelegatedTo()).thenReturn(branchOffice3);
+        //when(task.isDelegated()).thenReturn(true);
 
         assertFalse(branchOffice2.getAllTasks().contains(task));
         assertFalse(branchOffice2.getDelegatedTasks().contains(task));
@@ -126,11 +125,12 @@ public class BranchOfficeTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void delegateTask_SameBranchOffice() throws Exception {
-        when(task.isUnavailable()).thenReturn(true);
+        //when(task.isUnavailable()).thenReturn(true);
 
         // branchOffice1 -> branchOffice1
-        when(task.isDelegated()).thenReturn(false);
-        when(task.getDelegatedTo()).thenReturn(branchOffice1);
+        //when(task.isDelegated()).thenReturn(false);
+        //when(task.getDelegatedTo()).thenReturn(branchOffice1);
+        task.setPlan(mock(Plan.class));
         branchOffice1.delegateTask(task, branchOffice1);
     }
 
@@ -138,11 +138,11 @@ public class BranchOfficeTest {
     public void delegateTask_CanNotPlanTask() throws Exception {
         when(resourcePlanner2.hasEnoughResourcesToPlan(task)).thenReturn(false);
 
-        when(task.isUnavailable()).thenReturn(true);
+        //when(task.isUnavailable()).thenReturn(true);
 
         // branchOffice1 -> branchOffice2
-        when(task.isDelegated()).thenReturn(false);
-        when(task.getDelegatedTo()).thenReturn(branchOffice2);
+        //when(task.isDelegated()).thenReturn(false);
+        //when(task.getDelegatedTo()).thenReturn(branchOffice2);
         branchOffice1.delegateTask(task, branchOffice2);
     }
 

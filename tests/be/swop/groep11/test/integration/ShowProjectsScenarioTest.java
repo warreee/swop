@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -23,7 +24,7 @@ public class ShowProjectsScenarioTest {
 
     private ProjectRepository projectRepository;
     private ImmutableList<Project> projects;
-    private ImmutableList<Task> tasks;
+    private List<Task> tasks;
     private UserInterface mockedUI;
     private ShowProjectsController showProjectsController;
     private BranchOffice branchOffice;
@@ -49,7 +50,7 @@ public class ShowProjectsScenarioTest {
     @Test
     public void showProjects_validTest() throws Exception {
         //stubbing
-        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        when(mockedUI.selectTaskFromList(ImmutableList.copyOf(tasks))).thenReturn(tasks.get(0));
         when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
 
         showProjectsController.showProjects();
@@ -58,7 +59,7 @@ public class ShowProjectsScenarioTest {
     @Test(expected = StopTestException.class)
     public void showProjects_CancelSelectProjectTest() throws Exception {
         //stubbing
-        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        when(mockedUI.selectTaskFromList(ImmutableList.copyOf(tasks))).thenReturn(tasks.get(0));
         when(mockedUI.selectProjectFromList(projects)).thenThrow(new CancelException("Cancel in Test"));
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
@@ -69,7 +70,7 @@ public class ShowProjectsScenarioTest {
     @Test(expected = StopTestException.class)
     public void showProjects_CancelSelectTaskTest() throws Exception {
         //stubbing
-        when(mockedUI.selectTaskFromList(tasks)).thenThrow(new CancelException("Cancel in test"));
+        when(mockedUI.selectTaskFromList(ImmutableList.copyOf(tasks))).thenThrow(new CancelException("Cancel in test"));
         when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 

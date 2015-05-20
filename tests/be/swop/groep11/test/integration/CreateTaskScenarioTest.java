@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -29,7 +30,7 @@ public class CreateTaskScenarioTest {
     private UserInterface mockedUI;
     private SystemTime systemTime;
     private ImmutableList<Project> projects;
-    private ImmutableList<Task> tasks;
+    private List<Task> tasks;
     private LogonController logonController;
 
 

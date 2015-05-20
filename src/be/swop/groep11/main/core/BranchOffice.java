@@ -103,8 +103,8 @@ public class BranchOffice {
     }
 
     /**
-     * Geeft een lijst van alle taken die in deze branch office aangemaakt zijn.
-     * Deze lijst bevat ook de taken die naar een andere branch office gedelegeerd zijn.
+     * Geeft een lijst van alle taken die in deze branch office aangemaakt zijn,
+     * zonder de taken die naar andere branch offices gedelegeerd zijn.
      */
     public List<Task> getAllTasks() {
         List<Task> tasks = this.getProjectRepository().getAllTasks();
@@ -115,8 +115,8 @@ public class BranchOffice {
      * Geeft een immutable lijst van alle taken die naar deze branch office gedelegeerd zijn.
      * Opmerking: de taken zijn TaskProxy objecten
      */
-    public ImmutableList<Task> getDelegatedTasks() {
-        return ImmutableList.copyOf(this.delegatedTasks);
+    public List<Task> getDelegatedTasks() {
+        return new ArrayList<>(this.delegatedTasks);
     }
 
     private void addDelegatedTask(Task task) {
@@ -172,7 +172,7 @@ public class BranchOffice {
      *         en deze taak in other kan gepland worden.
      */
     public boolean canBeDelegatedTo(Task task, BranchOffice other) {
-        if (task.getDelegatedTo() == other) {
+        if (task.getDelegatedTo().equals(other)) {
             return false;
         }
 
@@ -181,8 +181,7 @@ public class BranchOffice {
         return otherPlanner.hasEnoughResourcesToPlan(task);
     }
 
-    /* een set zodat een taak hier zeker nooit 2x kan instaan */
-    private Set<Task> delegatedTasks = new HashSet<>();
+    private List<Task> delegatedTasks = new ArrayList<>();
 
 
     /**

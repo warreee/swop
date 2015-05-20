@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -29,7 +30,7 @@ public class UpdateTaskStatusScenarioTest {
     private UserInterface mockedUI;
 
     private ImmutableList<Project> projects;
-    private ImmutableList<Task> tasks;
+    private List<Task> tasks;
     private LogonController logonController;
 
     @Before
@@ -55,7 +56,7 @@ public class UpdateTaskStatusScenarioTest {
     @Test
     public void updateTask_validTest() throws Exception {
         //stubbing
-        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        when(mockedUI.selectTaskFromList(ImmutableList.copyOf(tasks))).thenReturn(tasks.get(0));
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         when(mockedUI.selectFromList(anyListOf(String.class), anyObject())).thenReturn("EXECUTE");
 
@@ -66,7 +67,7 @@ public class UpdateTaskStatusScenarioTest {
     @Test (expected = StopTestException.class)
     public void updateTask_CancelTest() throws Exception {
         //stubbing
-        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
+        when(mockedUI.selectTaskFromList(ImmutableList.copyOf(tasks))).thenReturn(tasks.get(0));
         when(mockedUI.requestDatum(anyString())).thenThrow(new CancelException("cancel in test")).thenReturn(now.plusDays(1));
         when(mockedUI.selectFromList(anyListOf(String.class), anyObject())).thenThrow(new CancelException("cancel in test")).thenReturn("Niks doen");
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
