@@ -39,6 +39,7 @@ public class InputParser {
     private SystemTime systemTime;
     private Company company;
     private ResourceTypeRepository resourceTypeRepository;
+    private Map<String, Object> values;
 
     /**
      * Initialiseerd deze inputparser.
@@ -71,8 +72,6 @@ public class InputParser {
         Yaml yaml = new Yaml();
         String path = Paths.get("input/input_1.yaml").toAbsolutePath().toString();
 
-        Map<String, Object> values;
-
         try {
             values = (Map<String, Object>) yaml.load(new FileInputStream(new File(path)));
         } catch (FileNotFoundException e) {
@@ -91,7 +90,6 @@ public class InputParser {
         handleResources(values);
         handleProjects(values);
         handleTasks(values);
-        handlePlans(values);
     }
 
     private void handleBranchOffiches(Map<String, Object> branchOfficeMap){
@@ -129,21 +127,11 @@ public class InputParser {
         }
     }
 
-    /**
-     * Leest alle plannings in.
-     * Dit moet opgeroepen worden na handleTasks (Anders is de lijst met wat aan welke taak moet worden gelinked niet
-     * beschikbaar).
-     * @param planningsMap
-     */
-    private void handlePlans(Map<String, Object> planningsMap){
-        ArrayList<Map<String, Object>> plannings = (ArrayList) planningsMap.get("plans");
-        for(Map<String, Object> plan: plannings){
-            addPlan(plan);
-        }
-    }
-
     private void handleProjectManagers(Map<String, Object> projectManagersMap){
-        // TODO
+        ArrayList<Map<String, Object>> managers = (ArrayList<Map<String, Object>>) projectManagersMap.get("projectManager");
+        for(Map<String, Object> manager: managers){
+            addProjectManager(manager);
+        }
     }
 
     /**
@@ -229,30 +217,9 @@ public class InputParser {
     private void addDeveloper(Map<String, Object> propertiesList){
         String name = (String) propertiesList.get("name");
         int branch = (int) propertiesList.get("branchOffice");
-        Developer developer = new Developer(name);
+        Developer developer = new Developer(name, resourceTypeRepository.getDeveloperType());
         branchOfficeList.get(branch).addEmployee(developer);
         developerList.add(developer);
-    }
-
-    private void addPlan(Map<String, Object> propertiesList){
-        BranchOffice branchOffice = branchOfficeList.get((Integer) propertiesList.get("branchOffice"));
-        Task task = taskList.get((Integer) propertiesList.get("task"));
-        List<ResourceInstance> specific = ((List<Integer>) propertiesList.get("specificResources")).stream()
-                .map(resourceInstanceList::get).collect(Collectors.toList());
-        List<ResourceInstance> nonSpecific = ((List<Integer>) propertiesList.get("nonSpecificResources")).stream()
-                .map(resourceInstanceList::get).collect(Collectors.toList());
-        List<ResourceInstance> developers = ((List<Integer>) propertiesList.get("developers")).stream()
-                .map(developerList::get).collect(Collectors.toList());
-        LocalDateTime startTime = parseTime((String) propertiesList.get("startTime"));
-        LocalDateTime endTime = parseTime((String) propertiesList.get("endTime"));
-
-        PlanBuilder builder = new PlanBuilder(branchOffice, task, startTime);
-        specific.forEach(builder::addResourceInstance);
-        developers.forEach(builder::addResourceInstance);
-
-        Plan plan = builder.getPlan(endTime, nonSpecific);
-        branchOffice.getResourcePlanner().addPlan(plan);
-        // TODO: Is alles hiervan klaar?
     }
 
     /**
@@ -324,7 +291,6 @@ public class InputParser {
      * @param propertiesList
      */
     private void addTask(Map<String, Object> propertiesList) {
-        // TODO dit werkt niet meer, maar de input parser moet toch aangepast worden...
         String description = (String) propertiesList.get("description");
         Duration duration = Duration.ofMinutes(Long.valueOf(String.valueOf(propertiesList.get("estimatedDuration"))));
         Double acceptableDeviation = Double.valueOf(String.valueOf(propertiesList.get("acceptableDeviation"))) / 100;
@@ -335,10 +301,13 @@ public class InputParser {
         ArrayList<Map<String, Integer>> resourceRequirement = (ArrayList<Map<String, Integer>>) propertiesList.get("resourceRequirements");
         Integer numberDevelopers = (Integer) propertiesList.get("numberDevelopers");
         Integer delegatedTo = (Integer) propertiesList.get("delegatedTo");
+        Integer planning = (Integer) propertiesList.get("planning");
+        String startTime = (String) propertiesList.get("startTime");
+        String endTime = (String) propertiesList.get("endTime");
 
         // Maak een RequirementListBuilder en voeg alle requirements daar aan toe.
         RequirementListBuilder builder = new RequirementListBuilder(project.getBranchOffice().getResourceRepository());
-        //builder.addNewRequirement(resourceTypeRepository.getDeveloperType(), numberDevelopers); TODO: terug aanzetten wanneer dit terug werkt.
+        builder.addNewRequirement(resourceTypeRepository.getDeveloperType(), numberDevelopers);
         for(Map<String, Integer> requirement: resourceRequirement){
             AResourceType type = resourceTypeList.get(requirement.get("type"));
             Integer amount = requirement.get("amount");
@@ -362,7 +331,46 @@ public class InputParser {
             project.getBranchOffice().delegateTask(task, branchOfficeList.get(delegatedTo));
         }
 
-        // TODO: afwerken
+        if(planning != null){
+            Plan plan = readPlan(planning, task);
+            project.getBranchOffice().getResourcePlanner().addPlan(plan);
+            task.setPlan(plan);
+        }
+
+        if(startTime != null){
+            task.execute(parseTime(startTime));
+        }
+
+        if(endTime != null){
+            if(status.equalsIgnoreCase("failed")){
+                task.fail(parseTime(endTime));
+            } else if(status.equalsIgnoreCase("finished")){
+                task.finish(parseTime(endTime));
+            } else {
+                throw new UnsupportedOperationException("Ik weet niet wat hier mee te doen.");
+            }
+        }
+    }
+
+    private Plan readPlan(int planNumber, Task task){
+        ArrayList plans = (ArrayList) values.get("plans");
+        Map<String, Object> planMap = (Map<String, Object>) plans.get(planNumber);
+
+        BranchOffice branchOffice = branchOfficeList.get((Integer) planMap.get("branchOffice"));
+        List<ResourceInstance> specific = ((List<Integer>) planMap.get("specificResources")).stream()
+                .map(resourceInstanceList::get).collect(Collectors.toList());
+        List<ResourceInstance> nonSpecific = ((List<Integer>) planMap.get("nonSpecificResources")).stream()
+                .map(resourceInstanceList::get).collect(Collectors.toList());
+        List<ResourceInstance> developers = ((List<Integer>) planMap.get("developers")).stream()
+                .map(developerList::get).collect(Collectors.toList());
+        LocalDateTime startTime = parseTime((String) planMap.get("startTime"));
+        LocalDateTime endTime = parseTime((String) planMap.get("endTime"));
+
+        PlanBuilder builder = new PlanBuilder(branchOffice, task, startTime);
+        specific.forEach(builder::addResourceInstance);
+        developers.forEach(builder::addResourceInstance);
+
+        return builder.getPlan(endTime, nonSpecific);
     }
 
     /**

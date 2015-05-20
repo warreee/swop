@@ -86,11 +86,15 @@ resources:
     type: 1
     branchOffice: 2
 
-  - name: "Demo Kit 1"
+  - name: "Demo Kit 2"
+    type: 2
+    branchOffice: 0
+
+  - name: "Demo Kit 2"
     type: 2
     branchOffice: 1
 
-  - name: "Demo Kit 2"
+  - name: "Demo Kit 3"
     type: 2
     branchOffice: 2
 
@@ -109,6 +113,10 @@ resources:
   - name: "The Distributed Test Facility"
     type: 4
     branchOffice: 0
+
+  - name: "The Small Distributed Test Facility"
+    type: 4
+    branchOffice: 1
 
   - name: "Data Center X"
     type: 5
@@ -183,7 +191,7 @@ tasks:
     estimatedDuration  : 500
     acceptableDeviation: 50
     alternativeFor     :
-    prerequisiteTasks  :
+    prerequisiteTasks  : []
     planning           : 0
     status             : finished
     startTime          : "2014-01-01 10:00"
@@ -198,7 +206,7 @@ tasks:
     estimatedDuration  : 50000
     acceptableDeviation: 50
     alternativeFor     :
-    prerequisiteTasks  :
+    prerequisiteTasks  : []
     planning           :
     status             :
     resourceRequirements: [{type: 0, amount: 1}, {type: 5, amount: 1}]
@@ -210,8 +218,8 @@ tasks:
     estimatedDuration  : 10000
     acceptableDeviation: 10
     alternativeFor     :
-    prerequisiteTasks  :
-    planning           :
+    prerequisiteTasks  : []
+    planning           : 1
     status             : finished
     startTime          : "2014-01-01 10:00"
     endTime            : "2014-01-02 10:00"
@@ -225,7 +233,7 @@ tasks:
     acceptableDeviation: 0
     alternativeFor     :
     prerequisiteTasks  : [ 2 ]
-    planning           : 1
+    planning           : 2
     status             : failed
     startTime          : "2014-01-02 10:00"
     endTime            : "2014-03-25 18:00"
@@ -239,7 +247,7 @@ tasks:
     acceptableDeviation: 0
     alternativeFor     : 3
     prerequisiteTasks  : [ 2 ]
-    planning           : 2
+    planning           : 3
     status             : executing
     startTime          : "2014-03-26 09:00"
     resourceRequirements: [{type: 0, amount: 2}]
@@ -251,7 +259,7 @@ tasks:
     estimatedDuration  : 500
     acceptableDeviation: 50
     alternativeFor     :
-    prerequisiteTasks  :
+    prerequisiteTasks  : []
     planning           :
     status             :
     resourceRequirements: [{type: 5, amount: 1}]
@@ -263,7 +271,7 @@ tasks:
     estimatedDuration  : 500
     acceptableDeviation: 50
     alternativeFor     :
-    prerequisiteTasks  :
+    prerequisiteTasks  : []
     planning           :
     status             :
     resourceRequirements: [{type: 0, amount: 2}, {type: 1, amount: 1}, {type: 4, amount: 1}]
@@ -272,25 +280,29 @@ tasks:
 
 plans:
   - branchOffice       : 0
-    task               : 0
-    specificResources  : [3]
-    nonSpecificResources:
-    developers         :
-    startTime          :
-    endTime            :
+    specificResources  : [1, 5]
+    nonSpecificResources: [6]
+    developers         : [2]
+    startTime          : "2014-01-01 10:00"
+    endTime            : "2014-01-02 10:20"
 
   - branchOffice       : 0
-    task               : 0
-    specificResources  : [3]
-    nonSpecificResources:
-    developers         :
-    startTime          :
-    endTime            :
+    specificResources  : [10]
+    nonSpecificResources: [16]
+    developers         : [1]
+    startTime          : "2014-01-01 10:00"
+    endTime            : "2014-01-02 10:00"
 
   - branchOffice       : 0
-    task               : 0
-    specificResources  : [3]
-    nonSpecificResources:
-    developers         :
-    startTime          :
-    endTime            :
+    specificResources  : []
+    nonSpecificResources: []
+    developers         : [1]
+    startTime          : "2014-01-02 10:00"
+    endTime            : "2014-03-25 18:00"
+
+  - branchOffice       : 0
+    specificResources  : [1]
+    nonSpecificResources: [0]
+    developers         : [2]
+    startTime          : "2014-03-26 09:00"
+    endTime            : "2014-03-28 18:00"

@@ -78,6 +78,15 @@ public class TimeSpan{
     }
 
     /**
+     * Controleer of deze TimeSpan voor een LocalDateTime valt.
+     * @param other De LocalDateTime die gecontrolleerd wordt.
+     * @return true indien deze TimeSpan voor de LocalDateTime ligt, anders False
+     */
+    public boolean isBefore(LocalDateTime other){
+        return other != null && this.getEndTime().isBefore(other);
+    }
+
+    /**
      * Controleer of deze TimeSpan na een andere TimeSpan valt
      * @param other De andere TimeSpan
      * @return      Niet waar indien other niet ge?nitialiseerd is.
@@ -110,7 +119,9 @@ public class TimeSpan{
      * @return  Waar indien getStartTime.isBefore(dateTime) && getEndTime.isAfter(dateTime)
      */
     public boolean containsLocalDateTime(LocalDateTime dateTime) {
-        return dateTime!= null && getStartTime().isBefore(dateTime) && getEndTime().isAfter(dateTime);
+
+        //return dateTime!= null && getStartTime().isBefore(dateTime) && getEndTime().isAfter(dateTime);
+        return dateTime!= null && getStartTime().compareTo(dateTime) <= 0 && dateTime.compareTo(getEndTime()) <= 0;
     }
 
     /**

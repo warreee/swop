@@ -1,5 +1,6 @@
 package be.swop.groep11.main.task;
 
+import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
 
 import java.time.Duration;
@@ -59,7 +60,9 @@ public class TaskExecuting extends TaskStatus {
         task.setEndTime(endTime);
         TaskStatus finished = new TaskFinished();
         task.setStatus(finished);
-        task.getPlan().clearFutureReservations(endTime);
+        if(!task.getPlan().getTimeSpan().isBefore(endTime)) {
+            task.getPlan().clearFutureReservations(endTime);
+        }
         task.makeDependentTasksAvailable();
     }
 

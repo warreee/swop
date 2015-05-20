@@ -209,6 +209,9 @@ public class BranchOffice {
     public void addEmployee(User employee) {
         if (isValidEmployee(employee)){
             employees.add(employee);
+            if(employee instanceof Developer){
+                getResourceRepository().addResourceInstance((ResourceInstance) employee);
+            }
         }
     }
 
