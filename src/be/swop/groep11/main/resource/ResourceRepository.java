@@ -85,7 +85,7 @@ public class ResourceRepository {
      * @return      Een lijst van ResourceInstances waarvan iedere ResourceInstance van het gegeven type is.
      */
     public List<ResourceInstance> getResources(AResourceType type) {
-        return new ArrayList<>(resources.get(type));
+        return new ArrayList<>(resources.getOrDefault(type, new ArrayList<>()));
     }
 
     /**
