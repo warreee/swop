@@ -207,7 +207,7 @@ public class TaskController extends AbstractController {
      * @throws IllegalArgumentException Wordt gegooid indien de status overgang niet mag.
      */
     private void doTransition(String status, Task task) throws IllegalArgumentException {
-        status = status.toLowerCase();
+        status = status.toUpperCase();
         switch (status) {
             case "EXECUTE":
                 task.execute(getUserInterface().requestDatum("Starttijd:"));
