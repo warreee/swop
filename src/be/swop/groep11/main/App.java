@@ -5,10 +5,7 @@ import be.swop.groep11.main.actions.ActionCondition;
 import be.swop.groep11.main.actions.ActionProcedure;
 import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.*;
-import be.swop.groep11.main.core.BranchOffice;
-import be.swop.groep11.main.core.Company;
-import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.ui.CommandLineInterface;
 import be.swop.groep11.main.util.InputParser;
@@ -165,35 +162,54 @@ public class App {
 
 
     private void addTempDomainObjects() {
-        ProjectRepository projectRepository = new ProjectRepository(systemTime);
         ResourceTypeRepository resourceTypeRepository = company.getResourceTypeRepository();
-        ResourceRepository resourceRepository = new ResourceRepository(resourceTypeRepository);
-        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository, systemTime);
 
-        BranchOffice bo1 = new BranchOffice("bo1", "leuven", projectRepository,resourcePlanner);
+        ProjectRepository projectRepository1 = new ProjectRepository(systemTime);
+        ResourceRepository resourceRepository1 = new ResourceRepository(resourceTypeRepository);
+        ResourcePlanner resourcePlanner1 = new ResourcePlanner(resourceRepository1, systemTime);
+        BranchOffice bo1 = new BranchOffice("Branch Office 1", "Leuven", projectRepository1, resourcePlanner1);
         company.addBranchOffice(bo1);
+
+        ProjectRepository projectRepository2 = new ProjectRepository(systemTime);
+        ResourceRepository resourceRepository2 = new ResourceRepository(resourceTypeRepository);
+        ResourcePlanner resourcePlanner2 = new ResourcePlanner(resourceRepository2, systemTime);
+        BranchOffice bo2 = new BranchOfficeProxy(new BranchOffice("Branch Office 2", "Louvain-la-Neuve", projectRepository2, resourcePlanner2));
+        company.addBranchOffice(bo2);
+
 
         bo1.addEmployee(new Developer("DevA", resourceTypeRepository.getDeveloperType()));
         bo1.addEmployee(new Developer("DevB", resourceTypeRepository.getDeveloperType()));
         bo1.addEmployee(new Developer("DevC", resourceTypeRepository.getDeveloperType()));
         bo1.addEmployee(new Developer("DevD", resourceTypeRepository.getDeveloperType()));
         bo1.addEmployee(new Developer("DevE", resourceTypeRepository.getDeveloperType()));
-
         bo1.addEmployee(new ProjectManager("PM1"));
+
+        bo2.addEmployee(new Developer("DevF", resourceTypeRepository.getDeveloperType()));
+        bo2.addEmployee(new Developer("DevG", resourceTypeRepository.getDeveloperType()));
+        bo2.addEmployee(new Developer("DevH", resourceTypeRepository.getDeveloperType()));
+        bo2.addEmployee(new Developer("DevI", resourceTypeRepository.getDeveloperType()));
+        bo2.addEmployee(new ProjectManager("PM2"));
+        bo2.addEmployee(new ProjectManager("PM3"));
 
         resourceTypeRepository.addNewResourceType("Auto");
         AResourceType auto = resourceTypeRepository.getResourceTypeByName("Auto");
 
-        resourceRepository.addResourceInstance(new Resource("Aston Martin Rapide",auto));
-        resourceRepository.addResourceInstance(new Resource("Toyota Auris",auto));
-        resourceRepository.addResourceInstance(new Resource("Rolls Royce Phantom",auto));
+        resourceRepository1.addResourceInstance(new Resource("Aston Martin Rapide", auto));
+        resourceRepository1.addResourceInstance(new Resource("Toyota Auris", auto));
+        resourceRepository1.addResourceInstance(new Resource("Rolls Royce Phantom", auto));
+
+        resourceRepository2.addResourceInstance(new Resource("Auto 1",auto));
+        resourceRepository2.addResourceInstance(new Resource("Auto 2",auto));
+        resourceRepository2.addResourceInstance(new Resource("Auto 3",auto));
+        resourceRepository2.addResourceInstance(new Resource("Auto 4", auto));
 
         resourceTypeRepository.addNewResourceType("CarWash", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(14, 0)));
         AResourceType carWash = resourceTypeRepository.getResourceTypeByName("CarWash");
 
-        resourceRepository.addResourceInstance(new Resource("car wash A",carWash));
-        resourceRepository.addResourceInstance(new Resource("car wash B",carWash));
+        resourceRepository1.addResourceInstance(new Resource("CarWash A", carWash));
+        resourceRepository1.addResourceInstance(new Resource("CarWash B", carWash));
 
+        resourceRepository2.addResourceInstance(new Resource("CarWash C",carWash));
     }
 
 }
