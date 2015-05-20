@@ -82,7 +82,7 @@ public class ControllerStack {
             AbstractController controller = controllerStack.get(i);
             sb.append(i + ". " + controller.getClass().getSimpleName() + "\n");
         }
-      System.out.println(sb.toString());
+//      System.out.println(sb.toString());
     }
 
     /**

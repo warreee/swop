@@ -22,8 +22,8 @@ public class TaskAvailable extends TaskStatus {
      * Haalt de status op.
      */
     @Override
-    public TaskStatusEnum getStatus() {
-        return TaskStatusEnum.AVAILABLE;
+    public String getStatusString() {
+        return TaskStatusEnum.AVAILABLE.toString();
     }
 
     /**

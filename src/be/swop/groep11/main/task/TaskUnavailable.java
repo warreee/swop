@@ -46,8 +46,8 @@ public class TaskUnavailable extends TaskStatus {
     /**
      */
     @Override
-    public TaskStatusEnum getStatus() {
-        return TaskStatusEnum.UNAVAILABLE;
+    public String getStatusString() {
+        return TaskStatusEnum.UNAVAILABLE.toString();
     }
 
     /**

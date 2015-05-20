@@ -39,7 +39,7 @@ public class ResourceSchedule {
      * @return          Waar indien resource niet null is en boven resource reeds geen ResourceSchedule heeft.
      */
     private boolean canHaveAsResourceInstance(ResourceInstance resource) {
-        return resource != null && !resource.hasResourceSchedule();
+        return resource != null;  //&&!resource.hasResourceSchedule();
 
     }
 

@@ -42,7 +42,7 @@ public class ShowProjectsScenarioTest {
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10));
         projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8),mock(IRequirementList.class));
 
-        this.showProjectsController = new ShowProjectsController(company, mockedUI);
+        this.showProjectsController = new ShowProjectsController(company, mockedUI, systemTime );
         this.projects = projectRepository.getProjects();
         this.tasks = projects.get(0).getTasks();
     }

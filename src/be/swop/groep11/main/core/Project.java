@@ -176,6 +176,7 @@ public class Project {
      */
     public static boolean isValidStartTimeEndTime(LocalDateTime startTime, LocalDateTime endTime){
         return startTime !=null && endTime != null && startTime.isBefore(endTime);
+        //TODO moet dit niet canHaveAsStartTimeEndTime zijn, waarin er ook gecontroleerd wordt of er al een start & eind tijd is?
     }
 
     /**
@@ -299,12 +300,9 @@ public class Project {
 
     private BranchOffice branchOffice;
 
-//    /**
-//     * update alle statussen na een bepaalde usecase
-//     */
-//    public void updateAllStatus() {
-//        this.getTasks().forEach(Task::updateStatus);
-//    }
+    public Task getLastAddedTask() {
+        return getTasks().get(getTasks().size() - 1);
+    }
 
     @Override
     public boolean equals(Object other) {

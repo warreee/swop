@@ -1,6 +1,5 @@
 package be.swop.groep11.main.task;
 
-import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
 
 import java.time.Duration;
@@ -22,8 +21,8 @@ public class TaskExecuting extends TaskStatus {
      * Haalt de status op.
      */
     @Override
-    public TaskStatusEnum getStatus() {
-        return TaskStatusEnum.EXECUTING;
+    public String getStatusString() {
+        return TaskStatusEnum.EXECUTING.toString();
     }
 
     /**

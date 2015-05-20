@@ -71,6 +71,13 @@ public class ProjectRepository {
         return ImmutableList.copyOf(tasks);
     }
 
+    public List<Task> getAllAvailableOrExecutingTasks() {
+        ArrayList<Task> tasks = new ArrayList<>();
+        tasks.addAll(getAllAvailableTasks());
+        tasks.addAll(getAllExecutingTasks());
+        return tasks;
+    }
+
     /**
      * Geeft een lijst van alle executing taken in deze project repository.
      */

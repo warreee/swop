@@ -21,8 +21,8 @@ public class TaskFailed extends TaskStatus {
      * Haalt de status op.
      */
     @Override
-    public TaskStatusEnum getStatus() {
-        return TaskStatusEnum.FAILED;
+    public String getStatusString() {
+        return TaskStatusEnum.FAILED.toString();
     }
 
     /**

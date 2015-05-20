@@ -27,7 +27,7 @@ public abstract class TaskStatus implements Cloneable {
      * Haalt de status op van deze TaskStatus.
      * @return
      */
-    protected abstract TaskStatusEnum getStatus();
+    protected abstract String getStatusString();
 
     /**
      * Haalt het status object op vand eze TaskStatus.

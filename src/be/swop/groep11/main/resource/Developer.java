@@ -1,7 +1,6 @@
 package be.swop.groep11.main.resource;
 
 import be.swop.groep11.main.core.User;
-import be.swop.groep11.main.util.ResourceSchedule;
 
 /**
  * Stelt een developer voor met een naam en resource type.
@@ -16,11 +15,6 @@ public class Developer extends User implements ResourceInstance {
     public Developer(String name, AResourceType resourceType) throws IllegalArgumentException {
         super(name);
         this.resourceType = resourceType;
-    }
-
-    @Override
-    public ResourceSchedule getResourceSchedule() {
-        return null;
     }
 
     /**

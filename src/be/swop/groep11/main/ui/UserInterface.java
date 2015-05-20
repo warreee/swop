@@ -40,16 +40,11 @@ public interface UserInterface {
     /**
      * Toont de details van een taak.
      */
-    void showTaskDetails(Task task);
+    void showTaskDetails(Task task,LocalDateTime dateTime);
 
-    /**
-     * Toont alle branchoffices
-     */
-    //void showBranchOffices(ImmutableList<BranchOffice> branchOffices);
 
     BranchOffice selectBranchOfficeFromList(ImmutableList<BranchOffice> branchOffices) throws EmptyListException, CancelException;
 
-    //void showEmployees(ImmutableList<User> users);
 
     default User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException {
         return selectFromList(users, usr -> usr.getDescription());
@@ -196,4 +191,7 @@ public interface UserInterface {
         return selectMultipleFromList(request,list, preselectedList, list.size(),false,listEntryPrinter);
     }
 
+    int requestNumberBetween(String s, int min, int max);
+
+    Function<Task,String> getTaskPrinter();
 }

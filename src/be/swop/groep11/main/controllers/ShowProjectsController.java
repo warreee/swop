@@ -3,6 +3,7 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.core.Company;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.task.Task;
@@ -18,15 +19,18 @@ import java.util.List;
 public class ShowProjectsController extends AbstractController {
 
     private Company company;
+    private SystemTime systemTime;
 
     /**
      * Constructor om een nieuwe project controller te maken.
      * @param projectRepository Project repository om projecten aan toe te voegen
      * @param userInterface
+     * @param systemTime
      */
-    public ShowProjectsController(Company company, UserInterface userInterface){
+    public ShowProjectsController(Company company, UserInterface userInterface, SystemTime systemTime){
         super(userInterface);
         this.company = company;
+        this.systemTime = systemTime;
     }
 
 

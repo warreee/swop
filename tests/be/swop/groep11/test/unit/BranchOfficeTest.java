@@ -1,5 +1,10 @@
 package be.swop.groep11.test.unit;
 
+import be.swop.groep11.main.core.BranchOffice;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.User;
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.planning.PlanBuilder;
@@ -7,6 +12,7 @@ import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourcePlanner;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskProxy;
+import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,13 +34,17 @@ public class BranchOfficeTest {
     ResourcePlanner resourcePlanner1, resourcePlanner2, resourcePlanner3;
     Task task;
     User user1, user2, user3;
+    ResourceRepository resourceRepository1;
 
     @Before
     public void setUp() throws Exception {
         // branch office 1
         projectRepository1 = mock(ProjectRepository.class);
-        resourcePlanner1 = mock(ResourcePlanner.class);
-        when(resourcePlanner1.hasEnoughResourcesToPlan(any())).thenReturn(true);
+        ResourceTypeRepository resourceTypeRepository = new ResourceTypeRepository();
+        resourceRepository1 = new ResourceRepository(resourceTypeRepository);
+        SystemTime systemTime = mock(SystemTime.class);
+        resourcePlanner1 = new ResourcePlanner(resourceRepository1, systemTime);
+
         branchOffice1 = new BranchOffice("Branch office 1", "Locatie 1", projectRepository1, resourcePlanner1);
         // branch office 2
         projectRepository2 = mock(ProjectRepository.class);

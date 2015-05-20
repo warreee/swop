@@ -1,6 +1,7 @@
 package be.swop.groep11.main.resource;
 
-import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.task.Task;
@@ -9,7 +10,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
  */
 public class ResourcePlanner extends Observable<ResourcePlanner>{
 
+    //Sleutel = StartTijd van Plan, waarde is lijst van plannen met zelfde StartTijd
     private TreeMap<LocalDateTime, ArrayList<Plan>> planMap;
 
     /**
@@ -63,7 +65,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         while (it.hasNext()){
             ResourceRequirement req = it.next();
             if(req.getAmount() > resourceRepository.amountOfResourceInstances(req.getType())){
-                // Normaal kan de code hier nooit komen aangezien de RequirementListBuilder hier ook al op checked.
                 return false;
             }
         }
@@ -156,12 +157,13 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      */
     public void addPlan(Plan plan) throws IllegalArgumentException {
         checkPlan(plan);
-        if (planMap.containsKey(plan.getTimeSpan().getStartTime())) {
+
+        if (planMap.containsKey(plan.getPlannedStartTime())) {
             planMap.get(plan.getTimeSpan().getStartTime()).add(plan);
         } else {
             ArrayList<Plan> list = new ArrayList<>();
             list.add(plan);
-            planMap.put(plan.getTimeSpan().getStartTime(), list);
+            planMap.put(plan.getPlannedStartTime(), list);
         }
 
         //
@@ -174,10 +176,10 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      */
     public void removePlan(Plan plan){
         checkPlan(plan);
-        if(planMap.containsKey(plan.getTimeSpan().getStartTime())){
-            planMap.get(plan.getTimeSpan().getStartTime()).remove(plan);
-            if (planMap.get(plan.getTimeSpan().getStartTime()).isEmpty()) {
-                planMap.remove(plan.getTimeSpan().getStartTime());
+        if(planMap.containsKey(plan.getPlannedStartTime())){
+            planMap.get(plan.getPlannedStartTime()).remove(plan);
+            if (planMap.get(plan.getPlannedStartTime()).isEmpty()) {
+                planMap.remove(plan.getPlannedStartTime());
             }
         }
 
@@ -234,44 +236,23 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      * @return Een lijst met de gevraagde hoeveelheid mogelijke TimeSpans.
      */
     public List<TimeSpan> getNextPossibleTimeSpans(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount) {
-//        System.out.println(foo(requirementList, firstPossibleStartTime.plusDays(1), duration, amount));
-
         LocalDateTime fullHour = getNextHour(firstPossibleStartTime);
 
         ArrayList<TimeSpan> possibleTimeSpans = new ArrayList<>();
         int listSize = possibleTimeSpans.size();
         while ( listSize < amount) {
+
             TimeSpan timeSpan = requirementList.calculateReservationTimeSpan(fullHour, duration);
             if (hasAvailableRequiredResources(timeSpan, requirementList)) {
                 possibleTimeSpans.add(timeSpan);
                 listSize = possibleTimeSpans.size();
             }
             fullHour = fullHour.plusHours(1);
-        }
 
-        return possibleTimeSpans;
-    }
-
-
-    public ArrayList<TimeSpan> foo(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount) {
-        ArrayList<TimeSpan> possibleTimeSpans = new ArrayList<>();
-        LocalDateTime start = firstPossibleStartTime;
-
-        int size = possibleTimeSpans.size();
-        while (size < amount) {
-            boolean test = false;
-            TimeSpan ts = null;
-
-            while (test == false) {
-                ts = requirementList.calculateReservationTimeSpan(start, duration);
-                test = hasAvailableRequiredResources(ts, requirementList);
-                start = !test ? ts.getEndTime() : start.plusHours(1);
-            }
-            possibleTimeSpans.add(ts);
-            size = possibleTimeSpans.size();
         }
         return possibleTimeSpans;
     }
+
 
     /**
      * Bepaald de n volgende mogelijke starttijden (die starten op volledige uren vb 9:00 en 10:00) voor een gegeven
@@ -340,7 +321,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     }
 
     /**
-     * Controleer of een ResourceInstance in een TimeSpan voorkomt in een gegeven OldPlan. Dit gebeurt door alle reservaties
+     * Controleer of een ResourceInstance in een TimeSpan voorkomt in een gegeven Plan. Dit gebeurt door alle reservaties
      * van een plan op te halen wanneer de TimeSpan van het plan overlapt met de gegeven TimeSpan.
      *
      * @param resourceInstance De ResourceInstance die nog niet in het plan mag zitten.
@@ -432,8 +413,11 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
 
     private LocalDateTime getNextHour(LocalDateTime dateTime){
         if (dateTime.getMinute() == 0)
-            return dateTime;
-        else
-            return LocalDateTime.of(dateTime.toLocalDate(), LocalTime.of(dateTime.getHour() + 1, 0));
+            return dateTime.truncatedTo(ChronoUnit.SECONDS);
+        else{
+            return dateTime.plusHours(1).truncatedTo(ChronoUnit.HOURS);
+
+        }
     }
+
 }

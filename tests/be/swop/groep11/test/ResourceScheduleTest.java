@@ -1,4 +1,4 @@
-package be.swop.groep11.test.unit;
+package be.swop.groep11.test;
 
 import be.swop.groep11.main.util.ResourceSchedule;
 import be.swop.groep11.main.core.TimeSpan;

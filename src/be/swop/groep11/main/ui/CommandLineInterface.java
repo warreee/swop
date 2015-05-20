@@ -117,9 +117,14 @@ public class CommandLineInterface implements UserInterface {
     private String taskFormatStr = "%-35s %-20s %-15s %n";
     Function<Task, String> showTaskEntry = (task -> {
         String asterix = (task.isUnacceptablyOverTime()) ? "*" : "";
-        String onTime = task.isOverTime() ? "nee (" + Math.round(task.getOverTimePercentage() * 100) + "%)" : "ja";
+        String onTime = task.isOverTime() ? "Not on time: (" + Math.round(task.getOverTimePercentage() * 100) + "%)" : "On Time!";
         return String.format(taskFormatStr, task.getDescription() + asterix, task.getStatusString(), onTime);
     });
+
+    @Override
+    public Function<Task, String> getTaskPrinter() {
+        return showTaskEntry;
+    }
 
     private String projectFormatStr = "%-35s %-20s %-20s %n";
     Function<Project, String> showProjectEntry = (project -> {
@@ -183,14 +188,14 @@ public class CommandLineInterface implements UserInterface {
      * Implementeert showTaskDetails uit UserInterface
      */
     @Override
-    public void showTaskDetails(Task task) {
+    public void showTaskDetails(Task task,LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         System.out.println("*** Taak details ***");
         String format = "%-25s %s %n";
         System.out.printf(format, "Beschrijving: ", task.getDescription());
 
-        String finishedStatus = task.getFinishedStatus();
-        System.out.printf(format, "Status: ", task.getStatusString() + " " + finishedStatus); // TODO: hier stond getStatus.name(), we hadden toch nooit een functie .name() ?
+        String finishedStatus = task.getFinishedStatus(dateTime);
+        System.out.printf(format, "Status: ", task.getStatusString() + " " + finishedStatus); // TODO: hier stond getStatusString.name(), we hadden toch nooit een functie .name() ?
 
         // on time?
         String onTime = "ja";
@@ -236,8 +241,6 @@ public class CommandLineInterface implements UserInterface {
     public BranchOffice selectBranchOfficeFromList(ImmutableList<BranchOffice> branchOffices) throws EmptyListException, CancelException {
         return selectFromList(branchOffices, showBranchOfficeEntry);
     }
-
-
 
 
     //    @Override
@@ -297,6 +300,12 @@ public class CommandLineInterface implements UserInterface {
     @Override
     public boolean requestBoolean(String request) throws CancelException {
         return getBooleanFromUser().apply(request + " (y/n)");
+    }
+
+    @Override
+    public int requestNumberBetween(String s, int min, int max) {
+        printMessage(s);
+        return numberBetween(getIntFromUser(), min, max);
     }
 
     /**
