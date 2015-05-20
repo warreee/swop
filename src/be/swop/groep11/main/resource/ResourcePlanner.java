@@ -65,7 +65,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         while (it.hasNext()){
             ResourceRequirement req = it.next();
             if(req.getAmount() > resourceRepository.amountOfResourceInstances(req.getType())){
-                // Normaal kan de code hier nooit komen aangezien de RequirementListBuilder hier ook al op checked.
                 return false;
             }
         }

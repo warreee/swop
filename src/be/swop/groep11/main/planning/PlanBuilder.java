@@ -81,7 +81,7 @@ public class PlanBuilder {
                 if (instancesLeft.size() > 0) {
                     // voeg telkens 1 instantie toe
                     ResourceInstance instance = instancesLeft.get(0);
-                    addResourceInstance(instance);
+                    proposedInstances.getOrDefault(instance.getResourceType(), new ArrayList<>()).add(instance);
                     instancesLeft.remove(instance);
                 }
             }
