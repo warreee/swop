@@ -58,9 +58,6 @@ public class TaskTest {
 
         LocalDateTime startTime = LocalDateTime.of(2015,1,1,0,0);
 
-        PlanBuilder planBuilder = new PlanBuilder(branchOffice, task1, startTime);
-
-        Plan plan1 = planBuilder.getPlan();
 
         Plan testPlan = mock(Plan.class);
         task1.setPlan(testPlan);
