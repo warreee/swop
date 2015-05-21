@@ -326,7 +326,7 @@ public class ResourcePlannerTest {
                 typeRepository.getResourceTypeByName("type d"),
                 new TimeSpan(LocalDateTime.of(2015, 5, 20, 7, 0), LocalDateTime.of(2015, 5, 20, 15, 0))
         );
-        assertTrue(resourceInstanceList4.size() == 0);
+        assertTrue(resourceInstanceList4.size() == 3);
     }
 
     @Test
