@@ -1,17 +1,23 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.IRequirementList;
+import be.swop.groep11.main.task.Task;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ProjectTest {
 
@@ -23,6 +29,7 @@ public class ProjectTest {
     private String description;
     private Project project;
     private SystemTime systemTime;
+    private IRequirementList emptyRequirementList;
 
     @Before
     public void setUp() throws Exception {
@@ -37,6 +44,9 @@ public class ProjectTest {
         repository = new ProjectRepository(systemTime);
 
         project = new Project(name, description, create, due, systemTime, mock(BranchOffice.class));
+
+        emptyRequirementList = mock(IRequirementList.class);
+        when(emptyRequirementList.iterator()).thenReturn(mock(Iterator.class));
     }
 
 
@@ -66,21 +76,36 @@ public class ProjectTest {
     @Test
     public void isOverTime_OverTimeProject() {
         Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0), systemTime, mock(BranchOffice.class));
-        project1.addNewTask("Taak",0.1,Duration.ofHours(24), mock(IRequirementList.class));
-        project1.addNewTask("Afhankelijke taak", 0, Duration.ofHours(16), mock(IRequirementList.class));
+        project1.addNewTask("Taak",0.1,Duration.ofHours(24), emptyRequirementList);
+        project1.addNewTask("Afhankelijke taak", 0, Duration.ofHours(16), emptyRequirementList);
         project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
+
+        // zorg project1.getTasks().get(0) available is
+        Plan plan = mock(Plan.class);
+        when(plan.hasEquivalentPlan()).thenReturn(true);
+        project1.getTasks().get(0).setPlan(plan);
+        systemTime.updateSystemTime(LocalDateTime.of(2015, 1, 1, 10, 0));
+        // nu zoud project1.getTasks().get(0) available moeten zijn
+
         project1.getTasks().get(0).execute(LocalDateTime.of(2015, 3, 14, 18, 0));
         System.out.println(project1.getEstimatedEndTime());
         assertTrue(project1.isOverTime());
-        //TODO fix
     }
 
     @Test
     public void isOverTime_NotOverTimeProject() {
 
         Project project1 = new Project(name,description,LocalDateTime.of(2015,3,8,9,32),LocalDateTime.of(2015,3,13,18,0), systemTime, mock(BranchOffice.class));
-        project1.addNewTask("Taak",0.1,Duration.ofHours(8), mock(IRequirementList.class));
-        project1.addNewTask("Afhankelijke taak", 0, Duration.ofHours(16), mock(IRequirementList.class));
+        project1.addNewTask("Taak",0.1,Duration.ofHours(8), emptyRequirementList);
+        project1.addNewTask("Afhankelijke taak", 0, Duration.ofHours(16), emptyRequirementList);
+
+        // zorg project1.getTasks().get(0) available is
+        Plan plan = mock(Plan.class);
+        when(plan.hasEquivalentPlan()).thenReturn(true);
+        project1.getTasks().get(0).setPlan(plan);
+        systemTime.updateSystemTime(LocalDateTime.of(2015, 1, 1, 10, 0));
+        // nu zoud project1.getTasks().get(0) available moeten zijn
+
         project1.getTasks().get(1).addNewDependencyConstraint(project1.getTasks().get(0));
         project1.getTasks().get(0).execute(LocalDateTime.of(2015, 3, 8, 0, 0));
         assertFalse(project1.isOverTime());
@@ -141,8 +166,4 @@ public class ProjectTest {
         new Project(name, description, create,null, systemTime, mock(BranchOffice.class));
     }
 
-    @Test
-    public void updateAllStatusTest() {
-        fail("Nog niet geïmplementeerd!");
-    }
 }
