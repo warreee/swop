@@ -231,6 +231,8 @@ public class CommandLineInterface implements UserInterface {
         if (task.getAlternativeTask() != null) {
             java.lang.System.out.printf(format, "Alternatieve taak: ", task.getAlternativeTask().getDescription());
         }
+
+        System.out.println(task.getDelegatedTo().getPlanForTask(task)); //TODO temp
     }
 
     /**

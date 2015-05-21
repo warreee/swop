@@ -416,23 +416,11 @@ public class Task {
         return this.status.getDuration(this, currentSystemTime);
     }
 
-//    /**
-//     * Geeft de geplande starttijd van deze taak.
-//     */
-//    public LocalDateTime getPlannedStartTime() {
-//        return plan.getStartTime();
-//    }
+
 
     public boolean canHaveAsPlan(Plan plan) {
         return getStatus().canHaveAsPlan(this, plan);
     }
-
-//    public void setPlan(Plan plan) {
-//        if (!getStatus().canHaveAsPlan(this,plan)) {
-//            throw new IllegalArgumentException("Illegaal plan"); //TODO aparte exception?
-//        }
-//        getStatus().updateStatus(this);
-//    }
 
 
     protected Plan getPlan() {
