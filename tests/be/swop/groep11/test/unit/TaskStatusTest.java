@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -59,11 +60,15 @@ public class TaskStatusTest {
         task3 = project.getTasks().get(2);
         when(branchOffice.containsTask(any())).thenReturn(true);
 
-        //Plan zetten
+        // Plan zetten
+        // zorg dat elke taak een plan heeft en available wordt
         Plan testPlan = mock(Plan.class);
-        task1.setPlan(testPlan);
-        task2.setPlan(testPlan);
-        task3.setPlan(testPlan);
+        when(branchOffice.isTaskPlanned(eq(task1))).thenReturn(true);
+        when(branchOffice.isTaskPlanned(eq(task2))).thenReturn(true);
+        when(branchOffice.isTaskPlanned(eq(task3))).thenReturn(true);
+        when(branchOffice.getPlanForTask(eq(task1))).thenReturn(testPlan);
+        when(branchOffice.getPlanForTask(eq(task2))).thenReturn(testPlan);
+        when(branchOffice.getPlanForTask(eq(task3))).thenReturn(testPlan);
         when(testPlan.hasEquivalentPlan()).thenReturn(true);
         when(testPlan.isWithinPlanTimeSpan(any())).thenReturn(true);
 
@@ -106,6 +111,8 @@ public class TaskStatusTest {
         FamethodmakeAvailable.setAccessible(true);
         FamethodmakeUnavailable.setAccessible(true);
     }
+
+
 
 /////////////////////////// UNAVAILABLE___TO____ //////////////////////
 

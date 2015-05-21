@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -61,9 +62,14 @@ public class TaskTest {
 
 
         Plan testPlan = mock(Plan.class);
-        task1.setPlan(testPlan);
-        task2.setPlan(testPlan);
-        task3.setPlan(testPlan);
+        when(testPlan.hasEquivalentPlan()).thenReturn(true);
+        when(testPlan.isWithinPlanTimeSpan(any())).thenReturn(true);
+        when(branchOffice.isTaskPlanned(eq(task1))).thenReturn(true);
+        when(branchOffice.isTaskPlanned(eq(task2))).thenReturn(true);
+        when(branchOffice.isTaskPlanned(eq(task3))).thenReturn(true);
+        when(branchOffice.getPlanForTask(eq(task1))).thenReturn(testPlan);
+        when(branchOffice.getPlanForTask(eq(task2))).thenReturn(testPlan);
+        when(branchOffice.getPlanForTask(eq(task3))).thenReturn(testPlan);
         when(testPlan.hasEquivalentPlan()).thenReturn(true);
         when(testPlan.isWithinPlanTimeSpan(any())).thenReturn(true);
 
@@ -256,14 +262,16 @@ public class TaskTest {
      */
     @Test
     public void SetDelegatedToTest() {
-        Task testTask = new Task("Test taak X", Duration.ofMinutes(120), 0, mock(DependencyGraph.class), mock(IRequirementList.class), mock(Project.class));
         BranchOffice branchOffice = mock(BranchOffice.class);
+        BranchOffice otherBranchOffice = mock(BranchOffice.class);
+        Project project = mock(Project.class);
+        when(project.getBranchOffice()).thenReturn(branchOffice);
+        Task testTask = new Task("Test taak X", Duration.ofMinutes(120), 0, mock(DependencyGraph.class), mock(IRequirementList.class), project);
         ArrayList<Task> temp = new ArrayList<>();
         temp.add(testTask);
-        when(branchOffice.getUnplannedTasks()).thenReturn(temp);
-
-        testTask.setDelegatedTo(branchOffice);
-        assertTrue(testTask.getDelegatedTo() == branchOffice);
+        when(otherBranchOffice.getUnplannedTasks()).thenReturn(temp);
+        testTask.setDelegatedTo(otherBranchOffice);
+        assertTrue(testTask.getDelegatedTo() == otherBranchOffice);
         assertTrue(testTask.isDelegated());
     }
 
