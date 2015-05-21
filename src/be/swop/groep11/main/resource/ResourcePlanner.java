@@ -178,21 +178,14 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      * @param plan Het plan dat verwijderd wordt.
      */
     public void removePlan(Plan plan) {
-
-//        //Is er nood aan task dependency
-//        checkPlan(plan);
-//        if (planMap.containsKey(plan.getPlannedStartTime())) {
-//            planMap.get(plan.getPlannedStartTime()).remove(plan);
-//            if (planMap.get(plan.getPlannedStartTime()).isEmpty()) {
-//                planMap.remove(plan.getPlannedStartTime());
-//            }
-//        }
+        if (plan == null) {
+            throw new IllegalArgumentException("Plan mag niet null zijn");
+        }
         planMap.getOrDefault(plan.getPlannedStartTime(), new ArrayList<>()).remove(plan);
         planToTask.remove(plan);
         removeObserver(plan.getTask().getResourcePlannerObserver());
         plan.clear();
         updateObservers();
-
     }
 
     /**

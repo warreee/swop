@@ -37,10 +37,8 @@ public class ResourcePlannerMemento implements IResourcePlannerMemento {
         cloner.dontCloneInstanceOf(Observable.class);
         cloner.dontCloneInstanceOf(ResourceRepository.class);
         cloner.dontCloneInstanceOf(ResourceTypeRepository.class);
-        List<Plan> plansClone = cloner.deepClone(plans);
-        this.plans = plansClone;
-//        TreeMap<LocalDateTime, ArrayList<Plan>> plansClone = cloner.deepClone(planMap);
-        TreeMap<LocalDateTime, ArrayList<Plan>> plansClone = new TreeMap<>(planMap);
+        TreeMap<LocalDateTime, ArrayList<Plan>> plansClone = cloner.deepClone(planMap);
+//        TreeMap<LocalDateTime, ArrayList<Plan>> plansClone = new TreeMap<>(planMap);
         this.planMap = plansClone;
     }
 
