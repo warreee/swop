@@ -3,7 +3,6 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
-import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.exception.IllegalRequirementAmountException;
@@ -26,7 +25,6 @@ import java.util.function.Function;
  */
 public class TaskController extends AbstractController {
 
-    private SystemTime systemTime;
     private LogonController logonController;
 
     /**
@@ -34,16 +32,11 @@ public class TaskController extends AbstractController {
      *
      * @param userInterface
      */
-    public TaskController(LogonController logonController, SystemTime systemTime, UserInterface userInterface) {
-
+    public TaskController(LogonController logonController, UserInterface userInterface) {
         super(userInterface);
         this.logonController = logonController;
-        this.systemTime = systemTime;
     }
 
-    private SystemTime getSystemTime() {
-        return systemTime;
-    }
 
     /**
      * Voert de stappen voor de use case "Create Task" uit.
@@ -153,7 +146,6 @@ public class TaskController extends AbstractController {
                 options.add("FAIL");
                 options.add("FINISH");
             }
-
             String status = getUserInterface().selectFromList(options, x -> x);
             doTransition(status, task);
         }
@@ -174,7 +166,6 @@ public class TaskController extends AbstractController {
         switch (status) {
             case "EXECUTE":
                 task.execute(getUserInterface().requestDatum("Starttijd:"));
-                // TODO: planned of unplanned execution? (unplanned => extra reservaties maken = mogelijk)
                 break;
             case "FAIL":
                 task.fail(getUserInterface().requestDatum("Eindtijd:"));
@@ -185,6 +176,7 @@ public class TaskController extends AbstractController {
             default:
                 throw new IllegalArgumentException("Een verkeerd status werd meegegeven!");
         }
+        getUserInterface().printMessage("Task status aangepast naar: " + task.getStatusString());
     }
 
 }

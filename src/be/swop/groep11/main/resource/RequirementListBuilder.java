@@ -144,6 +144,26 @@ public class RequirementListBuilder {
             return new TimeSpan(selectedStartTime, end);
         }
 
+        @Override
+        public LocalDateTime calculateNextPossibleStartTime(LocalDateTime startTime) {
+            Set<AResourceType> types = requirements.keySet();
+
+            for(AResourceType type: types){
+                if(!type.getDailyAvailability().containsDateTime(startTime) || type.getDailyAvailability().getEndTime().equals(startTime.toLocalTime())){
+                    if(type.getDailyAvailability().getStartTime().isAfter(startTime.toLocalTime())){
+                        // De starttijd ligt voor het beschikbare tijdsbestek van de DailyAvailability. We nemen dus de
+                        // begintijd van de DailyAvailability.
+                        startTime = startTime.with(type.getDailyAvailability().getStartTime());
+                    } else {
+                        // De starttijd ligt na het beschikbare tijdbestek van de DailyAvailability. We nemen dus
+                        // de begintijd van DailyAvailability, maar dan de volgende dag.
+                        startTime = startTime.with(type.getDailyAvailability().getStartTime()).plusDays(1);
+                    }
+                }
+            }
+            return startTime;
+        }
+
         /**
          * Controleer of alle DailyAvailabilities van deze lijst overlappen met de DailyAvailability van requestedType.
          * @param requestedType Het te controleren type.

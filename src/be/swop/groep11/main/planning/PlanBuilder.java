@@ -61,6 +61,7 @@ public class PlanBuilder {
      * Stelt resource instanties voor,
      * door de huidige gekozen resource instanties aan te vullen
      * met andere resource instanties zodat aan de requirement lijst van de taak voldaan is.
+     * Stelt geen Developers voor.
      */
     public void proposeResources() {
         for (ResourceRequirement requirement : this.resourceRequirements) {

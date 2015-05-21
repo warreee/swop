@@ -3,7 +3,9 @@ package be.swop.groep11.test.unit;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
+import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.*;
 import org.junit.Before;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 public class TaskStatusTest {
@@ -51,6 +54,22 @@ public class TaskStatusTest {
         task1 = project.getTasks().get(0);
         task2 = project.getTasks().get(1);
         task3 = project.getTasks().get(2);
+
+        //Plan zetten
+        Plan testPlan = mock(Plan.class);
+        task1.setPlan(testPlan);
+        task2.setPlan(testPlan);
+        task3.setPlan(testPlan);
+        when(testPlan.hasEquivalentPlan()).thenReturn(true);
+
+        LocalDateTime startTime = LocalDateTime.of(2015,1,1,0,0);
+        TimeSpan timeSpan = new TimeSpan(startTime, startTime.plusHours(1));
+        when(testPlan.getTimeSpan()).thenReturn(timeSpan);
+
+        systemTime.addObserver(task1.getSystemTimeObserver());
+        systemTime.addObserver(task2.getSystemTimeObserver());
+        systemTime.addObserver(task3.getSystemTimeObserver());
+        systemTime.updateSystemTime(systemTime.getCurrentSystemTime().plusDays(1));
 
         //Unavailable
         TUmethodMakeUnAvailable = TaskUnavailable.class.getDeclaredMethod("makeUnavailable", Task.class);

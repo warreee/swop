@@ -47,7 +47,7 @@ public class UpdateTaskStatusScenarioTest {
         this.logonController = mock(LogonController.class);
         when(logonController.hasIdentifiedDeveloper()).thenReturn(true);
 
-        this.taskController = new TaskController(logonController,systemTime,mockedUI);
+        this.taskController = new TaskController(logonController,mockedUI);
 
         projects = repository.getProjects();
         tasks = projects.get(0).getTasks();
@@ -60,7 +60,7 @@ public class UpdateTaskStatusScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         when(mockedUI.selectFromList(anyListOf(String.class), anyObject())).thenReturn("EXECUTE");
 
-        this.taskController = new TaskController(logonController,systemTime,mockedUI);
+        this.taskController = new TaskController(logonController,mockedUI);
         taskController.updateTask();
     }
 
@@ -73,7 +73,7 @@ public class UpdateTaskStatusScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         //Cancel exception wordt opgevangen in de controller.
-        this.taskController = new TaskController(logonController,systemTime,mockedUI);
+        this.taskController = new TaskController(logonController,mockedUI);
         taskController.updateTask();
     }
 
@@ -87,7 +87,7 @@ public class UpdateTaskStatusScenarioTest {
         when(mockedUI.selectFromList(anyListOf(String.class), anyObject())).thenReturn("EXECUTE").thenReturn("FINISH");
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
-        this.taskController = new TaskController(logonController,systemTime,mockedUI);
+        this.taskController = new TaskController(logonController,mockedUI);
         taskController.updateTask();
         taskController.updateTask();
     }

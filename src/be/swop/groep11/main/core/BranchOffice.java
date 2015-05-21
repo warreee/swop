@@ -113,7 +113,7 @@ public class BranchOffice {
      * zonder de taken die naar andere branch offices gedelegeerd zijn.
      */
     public List<Task> getOwnTasks() {
-        List<Task> tasks = this.getProjectRepository().getAllTasks();
+        List<Task> tasks = this.getProjectRepository().getAllTasks().stream().filter(task -> !task.isDelegated()).collect(Collectors.toList());//Zonder gedelegeerde taken.
         return tasks;
     }
 

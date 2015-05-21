@@ -32,9 +32,13 @@ public class LogonScenarioTest {
         company = new Company("company", mock(ResourceTypeRepository.class),systemTime);
         this.mockedUI = mock(UserInterface.class);
         ProjectRepository projectRepository = mock(ProjectRepository.class);
+        ResourceTypeRepository resourceTypeRepository = new ResourceTypeRepository();
+        ResourceRepository resourceRepository = new ResourceRepository(resourceTypeRepository);
         ResourcePlanner resourcePlanner = mock(ResourcePlanner.class);
+        when(resourcePlanner.hasEnoughResourcesToPlan(any())).thenReturn(true);
+        when(resourcePlanner.getResourceRepository()).thenReturn(resourceRepository);
         this.branchOffice = new BranchOffice("BranchOffice 1", "Leuven", projectRepository, resourcePlanner);
-        AResourceType developerType = new ResourceTypeRepository().getDeveloperType();
+        AResourceType developerType = resourceTypeRepository.getDeveloperType();
         Developer developer1 = new Developer("dev1", developerType);
         Developer developer2 = new Developer("dev2", developerType);
         ProjectManager projectManager = new ProjectManager("projectmanager1");
@@ -55,7 +59,7 @@ public class LogonScenarioTest {
     public void logonDeveloperValidTest() {
         // stubbing
         when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenReturn(branchOffices.get(0));
-        when(mockedUI.selectEmployeeFromList(employees)).thenReturn(employees.get(0));
+        when(mockedUI.selectEmployeeFromList(employees)).thenReturn(employees.get(1));
 
         logonController.logon();
 
@@ -72,7 +76,7 @@ public class LogonScenarioTest {
     public void logonProjectManagerValidTest() {
         // stubbing
         when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenReturn(branchOffices.get(0));
-        when(mockedUI.selectEmployeeFromList(employees)).thenReturn(employees.get(2));
+        when(mockedUI.selectEmployeeFromList(employees)).thenReturn(employees.get(0));
 
         logonController.logon();
 
@@ -104,7 +108,7 @@ public class LogonScenarioTest {
     @Test
     public void logoutTest() {
         when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenReturn(branchOffices.get(0));
-        when(mockedUI.selectEmployeeFromList(employees)).thenReturn(employees.get(0));
+        when(mockedUI.selectEmployeeFromList(employees)).thenReturn(employees.get(1));
 
         logonController.logon();
         assertTrue(logonController.hasIdentifiedBranchOffice());

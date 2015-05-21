@@ -86,7 +86,7 @@ public class App {
         //Aanmaken van controllers
         logonController = new LogonController(cli, company);
 
-        taskController = new TaskController(logonController, systemTime,cli);
+        taskController = new TaskController(logonController,cli);
         showProjectsController = new ShowProjectsController(company, cli, systemTime);
         createProjectController = new CreateProjectController(logonController, cli);
         advanceTimeController = new AdvanceTimeController( systemTime, cli);
