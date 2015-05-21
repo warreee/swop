@@ -2,6 +2,7 @@ package be.swop.groep11.main.task;
 
 import be.swop.groep11.main.exception.IllegalStateTransitionException;
 import be.swop.groep11.main.planning.Plan;
+import be.swop.groep11.main.planning.PlanBuilder;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -46,6 +47,15 @@ public class TaskAvailable extends TaskStatus {
      */
     @Override
     protected void execute(Task task, LocalDateTime startTime) {
+
+        if (!task.getPlan().isWithinPlanTimeSpan(startTime)) {
+            PlanBuilder planBuilder = new PlanBuilder(task.getDelegatedTo(), task, startTime);
+            task.getPlan().getSpecificResources().forEach(resourceInstance -> planBuilder.addResourceInstance(resourceInstance));
+            planBuilder.proposeResources();
+            task.getPlan().getAssignedDevelopers().forEach(resourceInstance -> planBuilder.addResourceInstance(resourceInstance));
+            Plan newPlan = planBuilder.getPlan();
+        }
+
         task.setStartTime(startTime);
         TaskStatus executing = new TaskExecuting();
         task.setStatus(executing);

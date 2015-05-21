@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Klasse verantwoordelijk voor BootStrapping.
@@ -76,6 +77,7 @@ public class App {
                 System.out.println("Yaml file niet gevonden");
             }
         }else{
+            systemTime.updateSystemTime(LocalDateTime.now().plusHours(1).truncatedTo(ChronoUnit.HOURS)); //TEMP
             addTempDomainObjects();
         }
     }

@@ -117,6 +117,21 @@ public class BranchOffice {
         return tasks;
     }
 
+    public List<Task> getAllTasks() {
+        ArrayList<Task> tasks = new ArrayList<>(getOwnTasks());
+        tasks.addAll(getDelegatedTasks());
+        return ImmutableList.copyOf(tasks);
+    }
+
+    /**
+     * Controleer of de gegeven Task aanwezig is in deze BranchOffice.
+     * @param task  De te controleren taak.
+     * @return  Waar indien de taak aanwezig is in
+     */
+    public boolean containsTask(Task task) {
+        return getAllTasks().contains(task);
+    }
+
     /**
      * Geeft een immutable lijst van alle taken die naar deze branch office gedelegeerd zijn.
      * Opmerking: de taken zijn TaskProxy objecten
