@@ -189,14 +189,9 @@ public class BranchOffice {
      * Controleert of een taak naar een gegeven branch office kan gedelegeerd worden.
      * @param task  De te delegeren taak.
      * @param other De gegeven branch office.
-     * @return True als de taak niet al naar other is gedelegeerd
-     *         en deze taak in other kan gepland worden.
+     * @return True als de taak in other kan gepland worden.
      */
     public boolean canBeDelegatedTo(Task task, BranchOffice other) {
-        if (task.getDelegatedTo().equals(other)) {
-            return false;
-        }
-
         // controleren of de taak in de andere branch office kan gepland worden:
         ResourcePlanner otherPlanner = other.getResourcePlanner();
         return otherPlanner.hasEnoughResourcesToPlan(task);
