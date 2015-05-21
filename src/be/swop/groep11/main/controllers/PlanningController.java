@@ -222,28 +222,38 @@ public class PlanningController extends AbstractController {
      * @return Een lijst met plannen.
      */
     private List<Plan> resolveConflict(Task task, List<Task> conflictingTasks,BranchOffice branchOffice) {
+        IResourcePlannerMemento memento = branchOffice.getResourcePlanner().createMemento();
+        getUserInterface().printMessage("De volgende taken vormen een conflict met de in te plannen taak: " + task.getDescription());
+        getUserInterface().showList(conflictingTasks, Task::getDescription);
+
+        if (getUserInterface().requestBoolean("Wilt u de conflicterende taken verplaatsen?")) {
+            conflictingTasks.forEach(taak -> {
+                //Taak plan delete!
+            });
+        }
+
+        branchOffice.getResourcePlanner().setMemento(memento);
+
         List<Plan> plans = new ArrayList<>();
 
-        String msgConflictingTasks = "De planning voor de taak "+task.getDescription()+" is in conflict met de volgende taken:";
+        String msgConflictingTasks = "De planning voor de taak " + task.getDescription() + " is in conflict met de volgende taken:";
         ui.printMessage(msgConflictingTasks);
-        Function<Task,String> conflictEntryPrinter = task1 -> task1.getDescription() ;
-        getUserInterface().showList(conflictingTasks, conflictEntryPrinter);
+        getUserInterface().showList(conflictingTasks, Task::getDescription);
 
         if (ui.requestBoolean("Verplaats de conflicterende taken?")) {
-            int i=1;
+            int i = 1;
             for (Task conflictingTask : conflictingTasks) {
                 try {
                     ui.printMessage("Verplaats conflicterende taak " + i);
-                    plans.addAll(planTask(conflictingTask,branchOffice));
-                }
-                catch(CancelException e) {
+                    plans.addAll(planTask(conflictingTask, branchOffice));
+                } catch (CancelException e) {
                     getUserInterface().printException(e);
                 }
                 i++;
             }
         }
 
-        List<Plan> newPlansForTask = planTask(task,branchOffice);
+        List<Plan> newPlansForTask = planTask(task, branchOffice);
         plans.addAll(newPlansForTask);
 
         return plans;
