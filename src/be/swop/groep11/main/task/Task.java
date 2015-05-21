@@ -478,7 +478,10 @@ public class Task {
      * @return True als deze taak nog niet gepland is,
      *         en wanneer de ongeplande taken van delegatedTo deze taak bevatten.
      */
-    public boolean canHaveAsDelegatedTo(BranchOffice delegatedTo) {
+    protected boolean canHaveAsDelegatedTo(BranchOffice delegatedTo) {
+        if (delegatedTo == null){
+            return false;
+        }
         if (this.isPlanned())
             return false;
         if (! delegatedTo.getUnplannedTasks().contains(this))

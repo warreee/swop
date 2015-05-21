@@ -248,4 +248,29 @@ public class TaskTest {
         Task testTask = new Task("Test taak 2", Duration.ofMinutes(120), 0, mock(DependencyGraph.class), mock(IRequirementList.class), null);
 
     }
+
+    @Test
+    public void SetDelegatedToTest() {
+        Task testTask = new Task("Test taak X", Duration.ofMinutes(120), 0, mock(DependencyGraph.class), mock(IRequirementList.class), mock(Project.class));
+        BranchOffice branchOffice = mock(BranchOffice.class);
+        ArrayList<Task> temp = new ArrayList<>();
+        temp.add(testTask);
+        when(branchOffice.getUnplannedTasks()).thenReturn(temp);
+
+        testTask.setDelegatedTo(branchOffice);
+        assertTrue(testTask.getDelegatedTo() == branchOffice);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void InvalidSetDelegatedToTest1() {
+        task1.setDelegatedTo(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void InvalidSetDelegatedToTest2() {
+        task1.setDelegatedTo(mock(BranchOffice.class));
+    }
+
+
 }
