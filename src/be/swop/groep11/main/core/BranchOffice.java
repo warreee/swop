@@ -38,6 +38,7 @@ public class BranchOffice {
     }
 
 
+    // TODO: deze methode wordt niet gebruikt
     public static BranchOffice createBranchOffice(String name,String location,SystemTime systemTime,ResourceTypeRepository resourceTypeRepository) {
         ProjectRepository projectRepository = new ProjectRepository(systemTime);
         ResourceRepository resourceRepository = new ResourceRepository(resourceTypeRepository);
