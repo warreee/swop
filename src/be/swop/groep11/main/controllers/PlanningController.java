@@ -73,6 +73,7 @@ public class PlanningController extends AbstractController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         /* The user selects a start time */
         LocalDateTime startTime = selectStartTime(task, branchOffice.getResourcePlanner());
+        System.out.println(startTime);
         PlanBuilder planBuilder = new PlanBuilder(branchOffice, task, startTime);
 
         getUserInterface().printMessage("Een plan maken voor de taak: " + task.getDescription());

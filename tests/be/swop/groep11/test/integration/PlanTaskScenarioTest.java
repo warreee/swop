@@ -14,7 +14,6 @@ import org.junit.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
@@ -105,31 +104,36 @@ public class PlanTaskScenarioTest {
     }
 
 
-
-
-
     @Test
     public void PlanTask_NoConflictsTest() throws Exception {
         // selecteer de juiste taak:
-        when(mockedUI.selectTaskFromList(anyObject())).thenReturn(taskA);
+        when(mockedUI.selectTaskFromList(anyObject())).thenReturn(taskA).thenReturn(taskB);
         // starttijd uit lijst selecteren:
-        when(mockedUI.requestBoolean(anyString())).thenReturn(true);
+        when(mockedUI.requestBoolean(anyString())).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
         // kies als starttijd de eerste in de lijst:
-        when(mockedUI.selectFromList(anyList(), any())).thenReturn(now.plusHours(1).truncatedTo(ChronoUnit.HOURS));
+        when(mockedUI.selectFromList(anyList(), any())).thenReturn(now.plusHours(1)).thenReturn(now.plusHours(1));
 
 
         //Niet zelf selecteren van resources
-        when(mockedUI.requestBoolean(anyString())).thenReturn(false);
         ArrayList<ResourceInstance> resourceInstances = new ArrayList<>();
         resourceInstances.add(devA);
         //selectDevelopers
-        when(mockedUI.selectMultipleFromList(anyString(), anyList(), anyList(), any(), anyBoolean(), any())).thenReturn(resourceInstances);
-
-
+        when(mockedUI.selectMultipleFromList(anyString(), anyList(), anyList(), anyInt(), anyBoolean(), any())).thenReturn(resourceInstances);
 
         planningController.planTask();
-
         assertTrue(branchOffice.isTaskPlanned(taskA));
+
+
+        //Niet zelf selecteren van resources
+        ArrayList<ResourceInstance> resourceInstancesB = new ArrayList<>();
+        resourceInstancesB.add(devB);
+        //selectDevelopers
+        when(mockedUI.selectMultipleFromList(anyString(), anyList(), anyList(), anyInt(), anyBoolean(), any())).thenReturn(resourceInstancesB);
+
+        planningController.planTask();
+        assertTrue(branchOffice.isTaskPlanned(taskB));
+
+
     }
 //
 //    @Test (expected = IllegalStateException.class)
