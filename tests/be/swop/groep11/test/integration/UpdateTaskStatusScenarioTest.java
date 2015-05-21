@@ -39,8 +39,9 @@ public class UpdateTaskStatusScenarioTest {
         systemTime = new SystemTime(now);
         BranchOffice branchOffice = mock(BranchOffice.class);
         repository = new ProjectRepository(systemTime);
+        repository.setBranchOffice(branchOffice);
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10));
-        repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8),mock(IRequirementList.class));
+        repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8), mock(IRequirementList.class));
 
         this.mockedUI = mock(UserInterface.class);
 
@@ -51,6 +52,9 @@ public class UpdateTaskStatusScenarioTest {
 
         projects = repository.getProjects();
         tasks = projects.get(0).getTasks();
+
+        when(logonController.getBranchOffice()).thenReturn(branchOffice);
+        when(branchOffice.getProjectRepository()).thenReturn(repository);
     }
 
     @Test

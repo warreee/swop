@@ -42,7 +42,7 @@ public class CreateTaskScenarioTest {
         systemTime = new SystemTime(now);
         BranchOffice branchOffice = mock(BranchOffice.class);
         projectRepository = new ProjectRepository(systemTime);
-
+        projectRepository.setBranchOffice(branchOffice);
         addTempDomainObjects();
 
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
@@ -54,6 +54,9 @@ public class CreateTaskScenarioTest {
 
         this.projects = projectRepository.getProjects();
         this.tasks = projects.get(0).getTasks();
+
+        when(logonController.getBranchOffice()).thenReturn(branchOffice);
+        when(branchOffice.getProjectRepository()).thenReturn(projectRepository);
     }
 
     @Test

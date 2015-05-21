@@ -2,6 +2,7 @@ package be.swop.groep11.main.resource;
 
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.task.Task;
+import be.swop.groep11.main.util.Observable;
 import com.rits.cloning.Cloner;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,11 @@ public class ResourcePlannerMemento implements IResourcePlannerMemento {
         Cloner cloner = new Cloner();
         cloner.dontCloneInstanceOf(Task.class);
         cloner.dontCloneInstanceOf(ResourceInstance.class);
+        cloner.dontCloneInstanceOf(Observable.class);
+        cloner.dontCloneInstanceOf(ResourceRepository.class);
+        cloner.dontCloneInstanceOf(ResourceTypeRepository.class);
+        List<Plan> plansClone = cloner.deepClone(plans);
+        this.plans = plansClone;
 //        TreeMap<LocalDateTime, ArrayList<Plan>> plansClone = cloner.deepClone(planMap);
         TreeMap<LocalDateTime, ArrayList<Plan>> plansClone = new TreeMap<>(planMap);
         this.planMap = plansClone;
