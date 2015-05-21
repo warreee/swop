@@ -104,6 +104,7 @@ public class TaskController extends AbstractController {
         }
         catch (IllegalArgumentException|IllegalRequirementAmountException e) {
             getUserInterface().printException(e);
+            System.out.println(e.getMessage());
             createTask();
         }
         catch (EmptyListException|CancelException e) {

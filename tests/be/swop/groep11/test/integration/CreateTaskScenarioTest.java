@@ -7,6 +7,10 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.CancelException;
+import be.swop.groep11.main.resource.DeveloperType;
+import be.swop.groep11.main.resource.ResourcePlanner;
+import be.swop.groep11.main.resource.ResourceRepository;
+import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -14,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
@@ -55,8 +60,20 @@ public class CreateTaskScenarioTest {
         this.projects = projectRepository.getProjects();
         this.tasks = projects.get(0).getTasks();
 
+        ResourceRepository resourceRepository = mock(ResourceRepository.class);
+
         when(logonController.getBranchOffice()).thenReturn(branchOffice);
         when(branchOffice.getProjectRepository()).thenReturn(projectRepository);
+        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository, systemTime);
+        when(branchOffice.getResourcePlanner()).thenReturn(resourcePlanner);
+        when(branchOffice.getResourceRepository()).thenReturn(resourceRepository);
+        when(resourceRepository.getPresentResourceTypes()).thenReturn(ImmutableList.copyOf(new ArrayList<>()));
+
+        DeveloperType developerType = mock(DeveloperType.class);
+        when(resourceRepository.getDeveloperType()).thenReturn(developerType);
+
+
+        //when(developerType.getConstraintFor(developerType).isAcceptableAmount(any(), anyInt())).thenReturn(true);
     }
 
     @Test
@@ -64,7 +81,8 @@ public class CreateTaskScenarioTest {
         //stubbing
         when(mockedUI.requestString(anyString())).thenReturn("beschrijving Test");
         when(mockedUI.requestDouble(anyString())).thenReturn(new Double(50));
-        when(mockedUI.requestNumber(anyString())).thenReturn(2);
+        when(mockedUI.requestNumber(anyString())).thenReturn(1);
+        when(mockedUI.requestNumberBetween(anyString(), anyInt(), anyInt())).thenReturn(1);
         when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
 
         taskController.createTask();
