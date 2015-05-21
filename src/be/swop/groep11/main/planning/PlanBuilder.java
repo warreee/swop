@@ -251,13 +251,13 @@ public class PlanBuilder {
             throw new IllegalArgumentException("BranchOffice moet voor Task gezet worden.");
         }
         if (!branchOffice.containsTask(task)) {
-            throw new IllegalArgumentException("Task zit niet in de lijst van ongeplande taken van BranchOffice.");
+            throw new IllegalArgumentException("Task zit niet in de lijst van taken van BranchOffice.");
         }
     }
 
     private void setStartTime(LocalDateTime startTime) {
         if (! isValidStartTime(startTime))
-            throw new IllegalArgumentException("Starttijd mag niet null zijn");
+            throw new IllegalArgumentException("Ongeldige starttijd");
         this.startTime = startTime;
     }
 

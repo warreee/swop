@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +56,7 @@ public class TaskTest {
         tasks.add(task2);
         tasks.add(task3);
         when(branchOffice.getUnplannedTasks()).thenReturn(tasks);
-
+        when(branchOffice.containsTask(any())).thenReturn(true);
         LocalDateTime startTime = LocalDateTime.of(2015, 1, 1, 0, 0);
 
 
@@ -64,6 +65,7 @@ public class TaskTest {
         task2.setPlan(testPlan);
         task3.setPlan(testPlan);
         when(testPlan.hasEquivalentPlan()).thenReturn(true);
+        when(testPlan.isWithinPlanTimeSpan(any())).thenReturn(true);
 
         TimeSpan timeSpan = new TimeSpan(startTime, startTime.plusHours(1));
         when(testPlan.getTimeSpan()).thenReturn(timeSpan);
@@ -102,7 +104,7 @@ public class TaskTest {
      */
     @Test
     public void SetAlternativeTask_valid() {
-        task1.execute(now);
+        task1.execute(LocalDateTime.of(2015,1,1,1,0));
         task1.fail(now.plusDays(1));
         task1.setAlternativeTask(task2);
         assertTrue(task1.getAlternativeTask() == task2);
@@ -115,7 +117,7 @@ public class TaskTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void SetAlternativeTask_sameTask() throws Exception {
-        task1.execute(now);
+        task1.execute(LocalDateTime.of(2015,1,1,1,0));
         task1.fail(now.plusHours(1));
         task1.setAlternativeTask(task1);
     }
@@ -123,7 +125,7 @@ public class TaskTest {
     @Test
     public void SetAlternativeTask_withDepedencyConstraints() throws Exception {
         task3.addNewDependencyConstraint(task1);
-        task1.execute(now);
+        task1.execute(LocalDateTime.of(2015,1,1,1,0));
         task1.fail(now.plusDays(1));
         task1.setAlternativeTask(task2);
         assertTrue(task3.getDependingOnTasks().contains(task2));
@@ -140,24 +142,24 @@ public class TaskTest {
 
     @Test
     public void FinishedStatus_early() throws Exception {
-        task1.execute(now);
-        task1.finish(now.plusHours(2));
+        task1.execute(LocalDateTime.of(2015,1,1,1,0));
+        task1.finish(LocalDateTime.of(2015,1,1,1,0).plusHours(2));
         assertEquals(Task.TaskEvaluation.EARLY.toString(), task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
 
     }
 
     @Test
     public void FinishedStatus_onTime() throws Exception {
-        task1.execute(now);
-        task1.finish(now.plusHours(8));
+        task1.execute(LocalDateTime.of(2015,1,1,1,0));
+        task1.finish(LocalDateTime.of(2015,1,1,1,0).plusHours(8));
         assertEquals(Task.TaskEvaluation.ONTIME.toString(), task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
 
     }
 
     @Test
     public void FinishedStatus_late() throws Exception {
-        task1.execute(now);
-        task1.finish(now.plusHours(18));
+        task1.execute(LocalDateTime.of(2015,1,1,1,0));
+        task1.finish(LocalDateTime.of(2015,1,1,1,0).plusHours(18));
         assertEquals(Task.TaskEvaluation.OVERDUE.toString(), task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
 
     }
@@ -167,15 +169,15 @@ public class TaskTest {
      */
     @Test
     public void Delay_EarlyFinishedTask() {
-        task1.execute(now);
-        task1.finish(now.plusHours(1));
+        task1.execute(LocalDateTime.of(2015,1,1,1,0));
+        task1.finish(LocalDateTime.of(2015,1,1,1,0).plusHours(1));
         assertTrue(task1.getDelay().equals(Duration.ofDays(0)));
     }
 
     @Test
     public void Delay_FinishedAfterEstimatedDuration() {
-        task1.execute(LocalDateTime.of(2015, 3, 8, 8, 32));
-        task1.finish(LocalDateTime.of(2015, 3, 8, 16, 35));
+        task1.execute(LocalDateTime.of(2015, 3, 8, 8, 0));
+        task1.finish(LocalDateTime.of(2015, 3, 8, 16, 3));
         assertTrue(task1.getDelay().equals(Duration.ofSeconds(180)));
     }
 
@@ -185,18 +187,18 @@ public class TaskTest {
     @Test
     public void AlternativeStatus_NoAlternativeTask() {
         assertFalse(task1.getAlternativeFinished());
-        task1.execute(LocalDateTime.of(2015, 3, 8, 10, 30));
+        task1.execute(LocalDateTime.of(2015, 3, 8, 10, 0));
         task1.finish(LocalDateTime.of(2015, 3, 8, 12, 0));
         assertTrue(task1.getAlternativeFinished());
     }
 
     @Test
     public void AlternativeStatus_AlternativeTask() throws Exception {
-        task1.execute(LocalDateTime.of(2015, 3, 8, 10, 30));
+        task1.execute(LocalDateTime.of(2015, 3, 8, 10, 0));
         task1.fail(LocalDateTime.of(2015, 3, 8, 12, 0));
         task1.setAlternativeTask(task2);
         assertFalse(task1.getAlternativeFinished());
-        task2.execute(LocalDateTime.of(2015, 3, 8, 10, 30));
+        task2.execute(LocalDateTime.of(2015, 3, 8, 10, 0));
         task2.finish(LocalDateTime.of(2015, 3, 8, 12, 0));
         assertTrue(task1.getAlternativeFinished());
     }

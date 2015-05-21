@@ -137,22 +137,22 @@ public class CommandLineInterface implements UserInterface {
 
     /**
      * Laat de gebruiker een taak selecteren uit een lijst van taken
-     * en geeft het nummer van de geselecteerde taak in de lijst terug.
+     * en geeft de geselecteerde taak in de lijst terug.
      * Implementeert selectTaskFromList in UserInterface
      */
     @Override
-    public Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException {
+    public Task selectTaskFromList(List<Task> tasks) throws EmptyListException, CancelException {
         printMessage(String.format(taskFormatStr, "Omschrijving", "Status", "On time?"));
         return selectFromList(tasks, showTaskEntry);
     }
 
     /**
      * Laat de gebruiker een project selecteren uit een lijst van projecten
-     * en geeft het nummer van het geselecteerde project in de lijst terug.
+     * en geeft het geselecteerde project in de lijst terug.
      * Implementeert selectProjectFromList in UserInterface
      */
     @Override
-    public Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException {
+    public Project selectProjectFromList(List<Project> projects) throws EmptyListException, CancelException {
         return selectFromList(projects, showProjectEntry);
     }
 
@@ -238,7 +238,7 @@ public class CommandLineInterface implements UserInterface {
      * @param branchOffices de lijst van branchoffices die in teksweergave moet weergeven worden.
      */
    @Override
-    public BranchOffice selectBranchOfficeFromList(ImmutableList<BranchOffice> branchOffices) throws EmptyListException, CancelException {
+    public BranchOffice selectBranchOfficeFromList(List<BranchOffice> branchOffices) throws EmptyListException, CancelException {
         return selectFromList(branchOffices, showBranchOfficeEntry);
     }
 

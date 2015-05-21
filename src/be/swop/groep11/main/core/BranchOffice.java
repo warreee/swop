@@ -97,30 +97,30 @@ public class BranchOffice {
 
     private ResourcePlanner resourcePlanner;
 
+    /**
+     * Geeft een lijst van alle taken die in deze branch office aangemaakt zijn.
+     * Deze lijst bevat ook de taken die naar andere branch offices gedelegeerd zijn.
+     */
+    public List<Task> getOwnTasks() {
+        List<Task> tasks = this.getProjectRepository().getAllTasks()/*.stream().filter(task -> !task.isDelegated()).collect(Collectors.toList())*/;
+        return tasks;
+    }
 
-    /** TODO: mss veranderen naar immutable list, hoewel er vanuit projectrepository al een immutable list wordt teruggeven
+    /**
+     * Geeft een lijst van alle taken die in deze branch office moeten gepland worden of gepland zijn.
+     */
+    public List<Task> getAllTasks() {
+        ArrayList<Task> tasks = new ArrayList<>(getOwnTasks().stream().filter(task -> !task.isDelegated()).collect(Collectors.toList()));
+        tasks.addAll(getDelegatedTasks());
+        return tasks;
+    }
+
+    /**
      * Geeft van alle taken die door deze branch office gepland moeten worden,
      * een lijst van de taken die nog niet gepland zijn.
      */
     public List<Task> getUnplannedTasks() {
-        List<Task> allTasks = getOwnTasks().stream().filter(task -> (!task.isDelegated())).collect(Collectors.toList());
-        allTasks.addAll(getDelegatedTasks());
-        return allTasks.stream().filter(task -> (! task.isPlanned()) ).collect(Collectors.toList());
-    }
-
-    /**
-     * Geeft een lijst van alle taken die in deze branch office aangemaakt zijn,
-     * zonder de taken die naar andere branch offices gedelegeerd zijn.
-     */
-    public List<Task> getOwnTasks() {
-        List<Task> tasks = this.getProjectRepository().getAllTasks().stream().filter(task -> !task.isDelegated()).collect(Collectors.toList());//Zonder gedelegeerde taken.
-        return tasks;
-    }
-
-    public List<Task> getAllTasks() {
-        ArrayList<Task> tasks = new ArrayList<>(getOwnTasks());
-        tasks.addAll(getDelegatedTasks());
-        return ImmutableList.copyOf(tasks);
+        return this.getAllTasks().stream().filter(task -> (! task.isPlanned()) ).collect(Collectors.toList());
     }
 
     /**
@@ -140,11 +140,11 @@ public class BranchOffice {
         return new ArrayList<>(this.delegatedTasks);
     }
 
-    private void addDelegatedTask(Task task) {
+    protected void addDelegatedTask(Task task) {
         this.delegatedTasks.add(task);
     }
 
-    private void removeDelegatedTask(Task task) {
+    protected void removeDelegatedTask(Task task) {
         this.delegatedTasks.remove(task);
     }
 
@@ -189,14 +189,9 @@ public class BranchOffice {
      * Controleert of een taak naar een gegeven branch office kan gedelegeerd worden.
      * @param task  De te delegeren taak.
      * @param other De gegeven branch office.
-     * @return True als de taak niet al naar other is gedelegeerd
-     *         en deze taak in other kan gepland worden.
+     * @return True als de taak in other kan gepland worden.
      */
     public boolean canBeDelegatedTo(Task task, BranchOffice other) {
-        if (task.getDelegatedTo().equals(other)) {
-            return false;
-        }
-
         // controleren of de taak in de andere branch office kan gepland worden:
         ResourcePlanner otherPlanner = other.getResourcePlanner();
         return otherPlanner.hasEnoughResourcesToPlan(task);

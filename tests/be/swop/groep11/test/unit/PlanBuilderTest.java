@@ -59,6 +59,7 @@ public class PlanBuilderTest {
         when(task.getEstimatedDuration()).thenReturn(duration);
         when(task.isDelegated()).thenReturn(false);
         when(task.isPlanned()).thenReturn(false);
+        when(branchOffice.containsTask(eq(task))).thenReturn(true);
 
         List<Task> tasks = new ArrayList<>();
         tasks.add(task);
@@ -108,7 +109,7 @@ public class PlanBuilderTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void NewPlanBuilder_planNotInBranchOfficeTest() {
-        when(branchOffice.getUnplannedTasks()).thenReturn(new ArrayList<Task>());
+        when(branchOffice.containsTask(eq(task))).thenReturn(false);
         PlanBuilder planBuilderTest = new PlanBuilder(branchOffice, task, startTime);
     }
 
