@@ -50,7 +50,7 @@ public class DelegateTaskController extends AbstractController {
             this.delegationsTo.put(getDelegationTask(), getDestinationBranchOffice());
             getDelegationTask().setDelegatedTo(getDestinationBranchOffice());
             getUserInterface().printMessage("Taak gedelegeerd naar: " + destinationBranchOffice.getName());
-        } catch (CancelException | EmptyListException e) {
+        } catch (CancelException | EmptyListException | IllegalArgumentException e) {
             getUserInterface().printException(e);
             throw new InterruptedAProcedureException();
         }
@@ -104,9 +104,25 @@ public class DelegateTaskController extends AbstractController {
      * Voert de delegaties uit voor de branch offices.
      */
     public void performDelegations() {
+        try {
+            for (Task task : delegationsFrom.keySet()) {
+                task.setDelegatedTo(delegationsFrom.get(task));
+                delegationsFrom.get(task).delegateTask(task, delegationsTo.get(task));
+            }
+            this.delegationsFrom = new HashMap<>();
+            this.delegationsTo = new HashMap<>();
+        } catch (IllegalArgumentException e) {
+            getUserInterface().printException(e);
+            throw new InterruptedAProcedureException();
+        }
+    }
+
+    /**
+     * Zorgt ervoor dat de delegaties niet uitgevoerd worden.
+     */
+    public void clearDelegations() {
         for (Task task : delegationsFrom.keySet()) {
             task.setDelegatedTo(delegationsFrom.get(task));
-            delegationsFrom.get(task).delegateTask(task, delegationsTo.get(task));
         }
         this.delegationsFrom = new HashMap<>();
         this.delegationsTo = new HashMap<>();
