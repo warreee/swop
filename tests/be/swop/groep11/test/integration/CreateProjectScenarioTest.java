@@ -32,16 +32,18 @@ public class CreateProjectScenarioTest {
         now = LocalDateTime.now();
         SystemTime systemTime = new SystemTime(now);
         BranchOffice branchOffice = mock(BranchOffice.class);
+
         projectRepository = new ProjectRepository(systemTime);
         user = new User("Test");
-
+        projectRepository.setBranchOffice(branchOffice);
         projectRepository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
         projectRepository.getProjects().get(0).addNewTask("TestTaak", 0.5, Duration.ofHours(8),mock(IRequirementList.class));
         mockedUI = mock(UserInterface.class);
 
         this.logonController = mock(LogonController.class);
         when(logonController.hasIdentifiedProjectManager()).thenReturn(true);
-
+        when(logonController.getBranchOffice()).thenReturn(branchOffice);
+        when(branchOffice.getProjectRepository()).thenReturn(projectRepository);
     }
 
     @Test
