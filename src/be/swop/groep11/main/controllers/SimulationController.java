@@ -3,6 +3,7 @@ package be.swop.groep11.main.controllers;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.IProjectRepositoryMemento;
 import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.ui.UserInterface;
 
 /**
@@ -25,8 +26,10 @@ public class SimulationController extends AbstractController {
         this.logonController = logonController;
         //Zelfde project repository als alle andere controllers, geen nood om actions(commands) te deligeren via simulatiecontroller.
     }
+
     //Store initial state
-    private IProjectRepositoryMemento originalState;
+    private IProjectRepositoryMemento projectRepositoryMemento;
+    private IResourcePlannerMemento resourcePlannerMemento;
 
 
     /**
@@ -36,8 +39,9 @@ public class SimulationController extends AbstractController {
         // hou de huidige state van projectRepository bij
         BranchOffice bo = logonController.getBranchOffice();
         ProjectRepository projectRepository = bo.getProjectRepository();
+        ResourcePlanner resourcePlanner = bo.getResourcePlanner();
 
-        storeState(projectRepository);
+        storeState(projectRepository, resourcePlanner);
         UserInterface ui = this.getUserInterface();
         ui.showHelp(this);
     }
@@ -57,7 +61,8 @@ public class SimulationController extends AbstractController {
     public void cancel() {
         BranchOffice bo = logonController.getBranchOffice();
         ProjectRepository projectRepository = bo.getProjectRepository();
-        restoreState(projectRepository);
+        ResourcePlanner resourcePlanner = bo.getResourcePlanner();
+        restoreState(projectRepository, resourcePlanner);
         getUserInterface().printMessage("Canceled Simulation");
         deActivate(this);
     }
@@ -65,17 +70,23 @@ public class SimulationController extends AbstractController {
     /**
      * Slaat de huidige staat van de projectRepository op.
      */
-    private void storeState(ProjectRepository projectRepository) {
-        this.originalState = projectRepository.createMemento();
+    private void storeState(ProjectRepository projectRepository, ResourcePlanner resourcePlanner) {
+        this.projectRepositoryMemento = projectRepository.createMemento();
+        this.resourcePlannerMemento = resourcePlanner.createMemento();
     }
 
     /**
      * Hersteld de oude staat van de projectRepository.
      */
-    private void restoreState(ProjectRepository projectRepository) {
-        IProjectRepositoryMemento memento = this.originalState;
-        if (memento != null) {
-            projectRepository.setMemento(memento);
+    private void restoreState(ProjectRepository projectRepository, ResourcePlanner resourcePlanner) {
+        IProjectRepositoryMemento projectRepositoryMemento = this.projectRepositoryMemento;
+        if (projectRepositoryMemento != null) {
+            projectRepository.setMemento(projectRepositoryMemento);
+        }
+
+        IResourcePlannerMemento resourcePlannerMemento = this.resourcePlannerMemento;
+        if (resourcePlannerMemento != null) {
+            resourcePlanner.setMemento(resourcePlannerMemento);
         }
     }
 
