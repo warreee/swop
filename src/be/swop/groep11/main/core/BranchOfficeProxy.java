@@ -81,10 +81,10 @@ public class BranchOfficeProxy extends BranchOffice {
     }
 
     @Override
-    public List<Task> getAllTasks() {
+    public List<Task> getOwnTasks() {
         // TODO: is het goed om hier TaskProxy objecten terug te geven?
         List<Task> allTasks = new ArrayList<>();
-        for (Task task : realBranchOffice.getAllTasks()) {
+        for (Task task : realBranchOffice.getOwnTasks()) {
             allTasks.add(new TaskProxy(task));
         }
         return allTasks;

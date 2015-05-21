@@ -74,10 +74,10 @@ public class BranchOfficeTest {
     public void delegateTask_ProperToOther() throws Exception {
         branchOffice1.delegateTask(task, branchOffice2);
 
-        assertTrue(branchOffice1.getAllTasks().contains(task));
+        assertTrue(branchOffice1.getOwnTasks().contains(task));
         assertFalse(branchOffice1.getDelegatedTasks().contains(task));
         assertFalse(branchOffice1.getUnplannedTasks().contains(task));
-        assertFalse(branchOffice2.getAllTasks().contains(task));
+        assertFalse(branchOffice2.getOwnTasks().contains(task));
         assertTrue(branchOffice2.getDelegatedTasks().contains(task));
         assertTrue(branchOffice2.getUnplannedTasks().contains(task));
         assertTrue(task.getDelegatedTo().equals(branchOffice2));
@@ -89,10 +89,10 @@ public class BranchOfficeTest {
         branchOffice1.delegateTask(task, branchOffice2);
         branchOffice2.delegateTask(task, branchOffice1);
 
-        assertTrue(branchOffice1.getAllTasks().contains(task));
+        assertTrue(branchOffice1.getOwnTasks().contains(task));
         assertFalse(branchOffice1.getDelegatedTasks().contains(task));
         assertTrue(branchOffice1.getUnplannedTasks().contains(task));
-        assertFalse(branchOffice2.getAllTasks().contains(task));
+        assertFalse(branchOffice2.getOwnTasks().contains(task));
         assertFalse(branchOffice2.getDelegatedTasks().contains(task));
         assertFalse(branchOffice2.getUnplannedTasks().contains(task));
     }
@@ -102,10 +102,10 @@ public class BranchOfficeTest {
         branchOffice1.delegateTask(task, branchOffice2);
         branchOffice2.delegateTask(task, branchOffice3);
 
-        assertFalse(branchOffice2.getAllTasks().contains(task));
+        assertFalse(branchOffice2.getOwnTasks().contains(task));
         assertFalse(branchOffice2.getDelegatedTasks().contains(task));
         assertFalse(branchOffice2.getUnplannedTasks().contains(task));
-        assertFalse(branchOffice3.getAllTasks().contains(task));
+        assertFalse(branchOffice3.getOwnTasks().contains(task));
         assertTrue(branchOffice3.getDelegatedTasks().contains(task));
         assertTrue(branchOffice3.getUnplannedTasks().contains(task));
     }
