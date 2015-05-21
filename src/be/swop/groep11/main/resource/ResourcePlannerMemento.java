@@ -31,6 +31,8 @@ public class ResourcePlannerMemento implements IResourcePlannerMemento {
         cloner.dontCloneInstanceOf(Task.class);
         cloner.dontCloneInstanceOf(ResourceInstance.class);
         cloner.dontCloneInstanceOf(Observable.class);
+        cloner.dontCloneInstanceOf(ResourceRepository.class);
+        cloner.dontCloneInstanceOf(ResourceTypeRepository.class);
         List<Plan> plansClone = cloner.deepClone(plans);
         this.plans = plansClone;
     }
