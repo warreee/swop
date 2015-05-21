@@ -54,6 +54,8 @@ public class TaskAvailable extends TaskStatus {
             planBuilder.proposeResources();
             task.getPlan().getAssignedDevelopers().forEach(resourceInstance -> planBuilder.addResourceInstance(resourceInstance));
             Plan newPlan = planBuilder.getPlan();
+            task.getPlan().clear();
+            task.setPlan(newPlan);
         }
 
         task.setStartTime(startTime);

@@ -54,7 +54,7 @@ public class PlanningController extends AbstractController {
                 they belong to. The user selects the task he wants to plan. */
             Task task = ui.selectTaskFromList(ImmutableList.copyOf(branchOffice.getUnplannedTasks()));
 
-            List<Plan> plans = planTask(task);
+            List<Plan> plans = planTask(task,branchOffice);
 
             /* The system makes the required reservations and assigns the selected
                 developers. */
@@ -74,13 +74,12 @@ public class PlanningController extends AbstractController {
      * @param task De taak die gepland moet worden.
      * @return Een lijst met plannen.
      */
-    private List<Plan> planTask(Task task) {
+    private List<Plan> planTask(Task task,BranchOffice branchOffice) {
         ui.printMessage("Een plan maken voor de taak: " + task.getDescription());
-        BranchOffice branchOffice = task.getDelegatedTo();
         List<Plan> plans = new ArrayList<>();
 
         /* The user selects a start time */
-        LocalDateTime startTime = this.selectStartTime(task, branchOffice.getResourcePlanner());
+        LocalDateTime startTime = selectStartTime(task, branchOffice.getResourcePlanner());
         PlanBuilder planBuilder = new PlanBuilder(branchOffice, task, startTime);
         try {
 
@@ -91,7 +90,7 @@ public class PlanningController extends AbstractController {
                 to make a reservation for. */
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             ui.printMessage("Gekozen starttijd: " + planBuilder.getTimeSpan().getStartTime().format(formatter));
-            planBuilder.proposeResources();
+            planBuilder.proposeResources(); //Stelt geen developers voor.
             this.showProposedInstances(task, planBuilder,branchOffice.getResourceRepository());
             this.selectResources(task, planBuilder,branchOffice.getResourceRepository());
 
@@ -113,7 +112,7 @@ public class PlanningController extends AbstractController {
             List<ResourceInstance> instances = planBuilder.getSelectedInstances();
             TimeSpan timeSpan = planBuilder.getTimeSpan();
             List<Task> conflictingtasks = branchOffice.getResourcePlanner().getConflictingTasks(instances, timeSpan);
-            return resolveConflict(task, conflictingtasks);
+            return resolveConflict(task, conflictingtasks,branchOffice);
         }
 
         plans.add(planBuilder.getPlan());
@@ -134,30 +133,39 @@ public class PlanningController extends AbstractController {
                 3);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        String msgTimes = "De eerste 3 mogelijke starttijden zijn:\n";
-        for (LocalDateTime startTime : nextStartTimes) {
-            msgTimes += " " + startTime.format(formatter) + "\n";
-        }
-        ui.printMessage(msgTimes);
-
         LocalDateTime startTime = null;
-        if (ui.requestBoolean("Een starttijd hieruit selecteren?")) {
-        /* The user selects a proposed time. */
-            startTime = ui.selectLocalDateTimeFromList(new LinkedList<>(nextStartTimes));
+        if (ui.requestBoolean("Wilt u mogelijke startTijden laten generen? (N: indien u zelf een startTijd wilt ingeven)")) {
+            /* The user selects a proposed time. */
+            Function<LocalDateTime, String> dateTimePrinter = localDateTime -> localDateTime.format(formatter);
+            startTime = getUserInterface().selectFromList(nextStartTimes, dateTimePrinter);
         } else {
-        /* The user indicates he wants to select another time */
-            while (startTime == null || startTime.getMinute() != 0 || startTime.isBefore(systemTime.getCurrentSystemTime())) {
-                startTime = ui.requestDatum("Kies een starttijd (moet op een uur vallen en mag niet voor de huidige systeemtijd (" + systemTime.getCurrentSystemTime().format(formatter) + ") vallen:");
-            }
+            /* The user indicates he wants to select another time */
+            startTime = ui.requestDatum("Kies een starttijd (moet op een uur vallen en mag niet voor de huidige systeemtijd (" + systemTime.getCurrentSystemTime().format(formatter) + ") vallen:");
         }
+        
+        
+        
+//        String msgTimes = "De eerste 3 mogelijke starttijden zijn:\n";
+//        for (LocalDateTime startTime : nextStartTimes) {
+//            msgTimes += " " + startTime.format(formatter) + "\n";
+//        }
+//        ui.printMessage(msgTimes);
+
+//        LocalDateTime startTime = null;
+//        if (ui.requestBoolean("Een starttijd hieruit selecteren?")) {
+//
+//            startTime = ui.selectLocalDateTimeFromList(new LinkedList<>(nextStartTimes));
+//        } else {
+//        /* The user indicates he wants to select another time */
+//            while (startTime == null || startTime.getMinute() != 0 || startTime.isBefore(systemTime.getCurrentSystemTime())) {
+//                startTime = ui.requestDatum("Kies een starttijd (moet op een uur vallen en mag niet voor de huidige systeemtijd (" + systemTime.getCurrentSystemTime().format(formatter) + ") vallen:");
+//            }
+//        }
 
         return startTime;
     }
 
     private void showProposedInstances(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) {
-
-
-
         String msgDefaultResourceInstances = "Voorgestelde reservaties:";
         Iterator<ResourceRequirement> it1 = task.getRequirementList().iterator();
         while (it1.hasNext()) {
@@ -259,7 +267,7 @@ public class PlanningController extends AbstractController {
      * @param conflictingtasks De conflicterende taken
      * @return Een lijst met plannen.
      */
-    private List<Plan> resolveConflict(Task task, List<Task> conflictingtasks) {
+    private List<Plan> resolveConflict(Task task, List<Task> conflictingtasks,BranchOffice branchOffice) {
         List<Plan> plans = new ArrayList<>();
 
         String msgConflictingTasks = "De planning voor de taak "+task.getDescription()+" conflicteert met de volgende taken:";
@@ -273,7 +281,7 @@ public class PlanningController extends AbstractController {
             for (Task conflictingTask : conflictingtasks) {
                 try {
                     ui.printMessage("Verplaats conflicterende taak " + i);
-                    plans.addAll(planTask(conflictingTask));
+                    plans.addAll(planTask(conflictingTask,branchOffice));
                 }
                 catch(CancelException e) {
                     getUserInterface().printException(e);
@@ -282,7 +290,7 @@ public class PlanningController extends AbstractController {
             }
         }
 
-        List<Plan> newPlansForTask = planTask(task);
+        List<Plan> newPlansForTask = planTask(task,branchOffice);
         plans.addAll(newPlansForTask);
 
         return plans;

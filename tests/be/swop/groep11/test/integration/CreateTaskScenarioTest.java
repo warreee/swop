@@ -50,7 +50,7 @@ public class CreateTaskScenarioTest {
         this.logonController = mock(LogonController.class);
         when(logonController.hasIdentifiedProjectManager()).thenReturn(true);
 
-        this.taskController = new TaskController(logonController,systemTime,mockedUI);
+        this.taskController = new TaskController(logonController,mockedUI);
 
         this.projects = projectRepository.getProjects();
         this.tasks = projects.get(0).getTasks();
