@@ -545,19 +545,21 @@ public class Task {
      *     <br>FinishedStatus.OVERDUE als de taak te laat geëindigd is.
      */
     private void setFinishedStatus(LocalDateTime localDateTime) {
-        if (isExecuting() || isAvailable() || isUnavailable())
+        if (isExecuting() || isAvailable() || isUnavailable()) {
             taskEvaluation = Task.TaskEvaluation.NOTFINISHED;
+        } else {
 
-        long durationInSeconds = getDuration(localDateTime).getSeconds();
+            long durationInSeconds = getDuration(localDateTime).getSeconds();
 
-        long estimatedDurationInSeconds = getEstimatedDuration().getSeconds();
-        double acceptableDeviation = getAcceptableDeviation();
-        if (durationInSeconds < (1- acceptableDeviation)*estimatedDurationInSeconds)
-            taskEvaluation = Task.TaskEvaluation.EARLY;
-        else if (durationInSeconds > (1+acceptableDeviation)*estimatedDurationInSeconds)
-            taskEvaluation = Task.TaskEvaluation.OVERDUE;
-        else
-            taskEvaluation = Task.TaskEvaluation.ONTIME; //Tussen aanvaardbare afwijking
+            long estimatedDurationInSeconds = getEstimatedDuration().getSeconds();
+            double acceptableDeviation = getAcceptableDeviation();
+            if (durationInSeconds < (1 - acceptableDeviation) * estimatedDurationInSeconds)
+                taskEvaluation = Task.TaskEvaluation.EARLY;
+            else if (durationInSeconds > (1 + acceptableDeviation) * estimatedDurationInSeconds)
+                taskEvaluation = Task.TaskEvaluation.OVERDUE;
+            else
+                taskEvaluation = Task.TaskEvaluation.ONTIME; //Tussen aanvaardbare afwijking
+        }
     }
 
     /**
