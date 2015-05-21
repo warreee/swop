@@ -423,7 +423,6 @@ public class Task {
 //        return plan.getStartTime();
 //    }
 
-    //TODO plan task
 
     public void setPlan(Plan plan) {
         if (!getStatus().canHaveAsPlan(this,plan)) {
@@ -437,6 +436,7 @@ public class Task {
     protected Plan getPlan() {
             return this.plan;
     }
+
 
     /**
      * Controleert of deze taak gepland is.

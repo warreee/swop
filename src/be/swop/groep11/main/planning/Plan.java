@@ -51,12 +51,11 @@ public class Plan {
      * dit plan uit de resource planner te halen en dit plan uit de bijhorende taak te halen.
      */
     public void clear() {
+        setTask(null);
         task.setPlan(null);
 
         this.reservations = new ArrayList<>(); // niet echt nodig
         this.resourcePlanner.removePlan(this);
-
-        setTask(null);
     }
 
     /**
@@ -75,6 +74,8 @@ public class Plan {
      *          True indien gegeven task wel null &&  huidige task niet null
      */
     private boolean canHaveAsTask(Task task) {
+        //Task is niet null, en plan heeft geen taak.
+        //Of task is null & Plan heeft reeds een taak.
         return task != null && getTask() == null || task == null && getTask() != null;
     }
 
@@ -128,7 +129,7 @@ public class Plan {
     /**
      * Geeft de taak die bij dit plan hoort.
      */
-    public Task getTask(){
+    public Task getTask() {
         return this.task;
     }
 

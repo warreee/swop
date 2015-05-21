@@ -23,6 +23,8 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     //Sleutel = StartTijd van Plan, waarde is lijst van plannen met zelfde StartTijd
     private TreeMap<LocalDateTime, ArrayList<Plan>> planMap;
 
+//    private HashMap<Plan, Task> planToTask = new HashMap<>();
+
     /**
      * Maakt een nieuwe ResourcePlanner object aan. Dit ResourcePlanner object gebruikt de gegeven ResourceRepository om
      * alle resources in te plannen.
@@ -158,15 +160,20 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     public void addPlan(Plan plan) throws IllegalArgumentException {
         checkPlan(plan);
 
-        if (planMap.containsKey(plan.getPlannedStartTime())) {
-            planMap.get(plan.getTimeSpan().getStartTime()).add(plan);
-        } else {
-            ArrayList<Plan> list = new ArrayList<>();
-            list.add(plan);
-            planMap.put(plan.getPlannedStartTime(), list);
-        }
+        ArrayList<Plan> plans = planMap.getOrDefault(plan.getPlannedStartTime(), new ArrayList<>());
+        plans.add(plan);
+        planMap.put(plan.getPlannedStartTime(), plans);
+
+//        if (planMap.containsKey(plan.getPlannedStartTime())) {
+//            planMap.get(plan.getTimeSpan().getStartTime()).add(plan);
+//        } else {
+//            ArrayList<Plan> list = new ArrayList<>();
+//            list.add(plan);
+//            planMap.put(plan.getPlannedStartTime(), list);
+//        }
 
         //
+//        planToTask.put(plan, task);
         addObserver(plan.getTask().getResourcePlannerObserver());
     }
 
@@ -393,7 +400,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      */
     public IResourcePlannerMemento createMemento() {
         ResourcePlannerMemento memento = new ResourcePlannerMemento();
-        memento.setPlans(this.getPlans());
+        memento.setPlans(this.planMap);
         return memento;
     }
 
@@ -403,19 +410,22 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      */
     public void setMemento(IResourcePlannerMemento memento) {
         this.planMap = new TreeMap<>();
-        List<Plan> plans = memento.getPlans();
-        for (Plan plan : plans) {
-            this.addPlan(plan);
-        }
+        TreeMap<LocalDateTime, ArrayList<Plan>> plans = memento.getPlans();
+        plans.forEach((localDateTime, plans1) -> planMap.put(localDateTime,plans1));
+//        for (Plan plan : plans) {
+//            this.addPlan(plan);
+//        }
     }
 
     private List<Plan> getPlans() {
         List<Plan> plans = new ArrayList<>();
-        for (LocalDateTime startTime : this.planMap.keySet()) {
-            if (planMap.get(startTime) != null) {
-                plans.addAll(planMap.get(startTime));
-            }
-        }
+
+        planMap.values().forEach(plns -> plans.addAll(plns));
+//        for (LocalDateTime startTime : this.planMap.keySet()) {
+//            if (planMap.get(startTime) != null) {
+//                plans.addAll(planMap.get(startTime));
+//            }
+//        }
         return plans;
     }
 
@@ -427,4 +437,16 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         }
     }
 
+    public Plan getPlanForTask(Task task) {
+        Plan result = null;
+        List<Plan> plans = getPlans().stream().filter(plan -> plan.getTask().equals(task)).collect(Collectors.toList());
+        System.out.println(plans.size());
+
+        return result;
+    }
+
+    protected Task getTaskForPlan(Plan plan) {
+
+        return null;
+    }
 }

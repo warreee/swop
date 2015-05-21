@@ -126,18 +126,11 @@ public class TaskAvailable extends TaskStatus {
         return false;
     }
 
-//    /**
-//     * Plant de taak
-//     * @param task De te plannen taak
-//     */
-//    @Override
-//    public void plan(Task task, Plan plan) {
-//        task.setPlan(plan);
-//    }
-
     @Override
     protected boolean canHaveAsPlan(Task task, Plan plan) {
-        return plan != null && task.getPlan() == null || (plan == null && task.getPlan() != null);
+        //plan is niet null en de taak heeft geen plan of
+        //plan is null en de taak heeft reeds een plan, en het plan voor de taak heeft geen associatie meer met de taak.
+        return plan != null && task.getPlan() == null || (plan == null && task.getPlan() != null && task.getPlan().getTask() == null);
     }
 
     @Override

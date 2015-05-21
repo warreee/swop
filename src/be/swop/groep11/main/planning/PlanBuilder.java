@@ -2,13 +2,13 @@ package be.swop.groep11.main.planning;
 
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.exception.ConflictException;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
  */
 public class PlanBuilder {
 
-    private BranchOffice branchOffice;
+//    private BranchOffice branchOffice;
+    private ResourcePlanner resourcePlanner;
     private Task task;
 
     private List<ResourceRequirement> resourceRequirements;
@@ -37,21 +38,26 @@ public class PlanBuilder {
      *                      | ! isValidStartTime(startTime)
      */
     public PlanBuilder(BranchOffice branchOffice, Task task, LocalDateTime startTime) {
-        setBranchOffice(branchOffice);
+        setResourcePlanner(branchOffice.getResourcePlanner());
         setTask(task);
         setStartTime(startTime);
 
-        resourceRequirements = new ArrayList<>();
+        resourceRequirements = task.getRequirementList().getRequirements();
         specificInstances = new HashMap<>();
         proposedInstances = new HashMap<>();
 
-        Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
-        while (it.hasNext()) {
-            ResourceRequirement resourceRequirement = it.next();
-            resourceRequirements.add(resourceRequirement);
+        for (ResourceRequirement resourceRequirement : resourceRequirements) {
             specificInstances.put(resourceRequirement.getType(), new ArrayList<>());
             proposedInstances.put(resourceRequirement.getType(), new ArrayList<>());
         }
+
+//        Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
+//        while (it.hasNext()) {
+//            ResourceRequirement resourceRequirement = it.next();
+//            resourceRequirements.add(resourceRequirement);
+//            specificInstances.put(resourceRequirement.getType(), new ArrayList<>());
+//            proposedInstances.put(resourceRequirement.getType(), new ArrayList<>());
+//        }
 
         setEndTime();
     }
@@ -65,20 +71,21 @@ public class PlanBuilder {
      */
     public void proposeResources() {
         for (ResourceRequirement requirement : this.resourceRequirements) {
+            if (requirement.isDeveloperRequirement()) {
+                continue;//skip developer requirement
+            }
 
             AResourceType type = requirement.getType();
             int nbRequiredInstances = requirement.getAmount();
             int nbSelectedInstances = getSelectedInstances(requirement.getType()).size();
 
-            AResourceType devType = branchOffice.getResourceRepository().getDeveloperType();
-
             // welke instances kunnen nog gekozen worden?
-            List<ResourceInstance> instancesLeft = branchOffice.getResourcePlanner()
+            List<ResourceInstance> instancesLeft = getResourcePlanner()
                     .getInstances(type, getTimeSpan()).stream()
-                    .filter(x -> type != devType && !getSelectedInstances(type).contains(x) )
+                    .filter(x -> !getSelectedInstances(type).contains(x))
                     .collect(Collectors.toList());
 
-            for (int i=0; i<nbRequiredInstances-nbSelectedInstances; i++) {
+            for (int i = 0; i < nbRequiredInstances - nbSelectedInstances; i++) {
                 if (instancesLeft.size() > 0) {
                     // voeg telkens 1 instantie toe
                     ResourceInstance instance = instancesLeft.get(0);
@@ -136,7 +143,7 @@ public class PlanBuilder {
      *         gedurende de timespan van het plan.
      */
     public boolean hasConflictingReservations() {
-        ResourcePlanner resourcePlanner = branchOffice.getResourcePlanner();
+        ResourcePlanner resourcePlanner = getResourcePlanner();
         for (ResourceInstance resourceInstance : this.getSelectedInstances()) {
             if (! resourcePlanner.isAvailable(resourceInstance, getTimeSpan())) {
                 return true;
@@ -160,6 +167,13 @@ public class PlanBuilder {
         return true;
     }
 
+    public void checkForConflictingReservations() throws ConflictException{
+        if (hasConflictingReservations()) {
+            throw new ConflictException("con", getResourcePlanner().getConflictingTasks(getSelectedInstances(), getTimeSpan()));
+//            throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat er conflicten zijn");
+        }
+    }
+
     /**
      * Maakt een plan voor de taak in de branch office,
      * met de gekozen starttijd en de berekende eindtijd,
@@ -172,13 +186,15 @@ public class PlanBuilder {
      */
     public Plan getPlan() throws IllegalArgumentException{
         if (hasConflictingReservations()) {
-            throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat er conflicten zijn");
+            throw new ConflictException("con", getResourcePlanner().getConflictingTasks(getSelectedInstances(), getTimeSpan()));
+
+//            throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat er conflicten zijn");
         }
         if (! isSatisfied()) {
             throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat de requirements niet voldaan zijn");
         }
 
-        return new Plan(getTask(), getBranchOffice().getResourcePlanner(), getTimeSpan(), getReservations());
+        return new Plan(getTask(), getResourcePlanner(), getTimeSpan(), getReservations());
     }
 
     /**
@@ -210,24 +226,24 @@ public class PlanBuilder {
         return getPlan();
     }
 
-    private void setBranchOffice(BranchOffice branchOffice) {
-        if (!isValidBranchOffice(branchOffice)) {
-            throw new IllegalArgumentException("Branch Office mag niet null zijn bij het aanmaken van een PlanBuilder.");
-        }
-        this.branchOffice = branchOffice;
-    }
-
-    private BranchOffice getBranchOffice() {
-        return this.branchOffice;
-    }
-
-    /**
-     * Controleert of een branch office geldig is.
-     * @return branchOffice != null
-     */
-    public static boolean isValidBranchOffice(BranchOffice branchOffice) {
-        return branchOffice != null;
-    }
+//    private void setBranchOffice(BranchOffice branchOffice) {
+//        if (!isValidBranchOffice(branchOffice)) {
+//            throw new IllegalArgumentException("Branch Office mag niet null zijn bij het aanmaken van een PlanBuilder.");
+//        }
+//        this.branchOffice = branchOffice;
+//    }
+//
+//    private BranchOffice getBranchOffice() {
+//        return this.branchOffice;
+//    }
+//
+//    /**
+//     * Controleert of een branch office geldig is.
+//     * @return branchOffice != null
+//     */
+//    public static boolean isValidBranchOffice(BranchOffice branchOffice) {
+//        return branchOffice != null;
+//    }
 
     private void setTask(Task task) {
         canHaveAsTask(task);
@@ -247,10 +263,10 @@ public class PlanBuilder {
         if (task == null) {
             throw new IllegalArgumentException("Task mag niet null zijn.");
         }
-        if (branchOffice == null) {
+        if (task.getDelegatedTo() == null) {
             throw new IllegalArgumentException("BranchOffice moet voor Task gezet worden.");
         }
-        if (!branchOffice.containsTask(task)) {
+        if (!task.getDelegatedTo().containsTask(task)) {
             throw new IllegalArgumentException("Task zit niet in de lijst van taken van BranchOffice.");
         }
     }
@@ -341,5 +357,20 @@ public class PlanBuilder {
             instances.addAll(instancesOfType);
         }
         return instances;
+    }
+
+    private void setResourcePlanner(ResourcePlanner resourcePlanner) throws IllegalArgumentException{
+        if (!canHaveAsResourcePlanner(resourcePlanner)) {
+            throw new IllegalArgumentException("Illegale resourceplanner");
+        }
+        this.resourcePlanner = resourcePlanner;
+    }
+
+    private boolean canHaveAsResourcePlanner(ResourcePlanner resourcePlanner) {
+        return resourcePlanner != null && getResourcePlanner() == null;
+    }
+
+    private ResourcePlanner getResourcePlanner() {
+        return resourcePlanner;
     }
 }

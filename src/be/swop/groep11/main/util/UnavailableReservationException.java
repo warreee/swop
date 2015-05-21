@@ -1,4 +1,4 @@
-package be.swop.groep11.main.exception;
+package be.swop.groep11.main.util;
 
 import be.swop.groep11.main.resource.ResourceReservation;
 

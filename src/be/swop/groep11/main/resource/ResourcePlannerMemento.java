@@ -4,33 +4,38 @@ import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.task.Task;
 import com.rits.cloning.Cloner;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  * Houdt een moment in de tijd bij van ResourcePlanner.
  */
 public class ResourcePlannerMemento implements IResourcePlannerMemento {
 
-    private List<Plan> plans;
+    //Sleutel = StartTijd van Plan, waarde is lijst van plannen met zelfde StartTijd
+    private TreeMap<LocalDateTime, ArrayList<Plan>> planMap;
+//    private List<Plan> plans;
 
     /**
      * Haal alle plannen die in deze memento zitten op.
      * @return Een lijst met plannen.
      */
-    public List<Plan> getPlans() {
-        return this.plans;
+    public TreeMap<LocalDateTime, ArrayList<Plan>> getPlans() {
+        return this.planMap;
     }
 
     /**
      * Zet alle plannen die in deze memento moeten zitten.
-     * @param plans De plannen die er in zouden moeten zitten.
+     * @param planMap De plannen die er in zouden moeten zitten.
      */
-    public void setPlans(List<Plan> plans) {
+    public void setPlans(TreeMap<LocalDateTime, ArrayList<Plan>> planMap) {
         Cloner cloner = new Cloner();
         cloner.dontCloneInstanceOf(Task.class);
         cloner.dontCloneInstanceOf(ResourceInstance.class);
-        List<Plan> plansClone = cloner.deepClone(plans);
-        this.plans = plansClone;
+//        TreeMap<LocalDateTime, ArrayList<Plan>> plansClone = cloner.deepClone(planMap);
+        TreeMap<LocalDateTime, ArrayList<Plan>> plansClone = new TreeMap<>(planMap);
+        this.planMap = plansClone;
     }
 
 }

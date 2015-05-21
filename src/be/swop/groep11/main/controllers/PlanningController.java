@@ -2,7 +2,6 @@ package be.swop.groep11.main.controllers;
 
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.SystemTime;
-import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.ConflictException;
 import be.swop.groep11.main.exception.EmptyListException;
@@ -15,7 +14,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -67,55 +67,7 @@ public class PlanningController extends AbstractController {
         }
     }
 
-    /**
-     * Plant een taak.
-     * @param task De taak die gepland moet worden.
-     * @return Een lijst met plannen.
-     */
-    private List<Plan> planTask(Task task,BranchOffice branchOffice) {
-        ui.printMessage("Een plan maken voor de taak: " + task.getDescription());
-        List<Plan> plans = new ArrayList<>();
 
-        /* The user selects a start time */
-        LocalDateTime startTime = selectStartTime(task, branchOffice.getResourcePlanner());
-        PlanBuilder planBuilder = new PlanBuilder(branchOffice, task, startTime);
-        try {
-
-            /* The system confirms the selected planned timespan and shows the re-
-                quired resource types and their necessary quantity as assigned by the
-                project manager when creating the task. For each required resource
-                type instance to perform the task, the system proposes a resource instance
-                to make a reservation for. */
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            ui.printMessage("Gekozen starttijd: " + planBuilder.getTimeSpan().getStartTime().format(formatter));
-            planBuilder.proposeResources(); //Stelt geen developers voor.
-            this.showProposedInstances(task, planBuilder);
-            this.selectResources(task, planBuilder,branchOffice.getResourceRepository());
-
-            // zijn er nu al conflicten?
-            if (planBuilder.hasConflictingReservations()) {
-                throw new ConflictException("Conflict!");
-            }
-
-            /* The system shows a list of developers. The user selects the developers to perform the task. */
-            this.selectDevelopers(task, branchOffice.getResourcePlanner(), planBuilder,branchOffice);
-
-            // zijn de resources en developers geldig?
-            if (planBuilder.hasConflictingReservations() || ! planBuilder.isSatisfied()) {
-                throw new ConflictException("Conflict!");
-            }
-        }
-
-        catch (ConflictException e) {
-            List<ResourceInstance> instances = planBuilder.getSelectedInstances();
-            TimeSpan timeSpan = planBuilder.getTimeSpan();
-            List<Task> conflictingtasks = branchOffice.getResourcePlanner().getConflictingTasks(instances, timeSpan);
-            return resolveConflict(task, conflictingtasks,branchOffice);
-        }
-
-        plans.add(planBuilder.getPlan());
-        return plans;
-    }
 
 
     private LocalDateTime selectStartTime(Task task, ResourcePlanner resourcePlanner) {
@@ -153,7 +105,7 @@ public class PlanningController extends AbstractController {
         });
     }
 
-    private void selectResources(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) {
+    private void selectResources(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) throws ConflictException {
 
         /* The user allows the system to select the required resources. */
         if (ui.requestBoolean("Wilt u zelf resources selecteren?")) {
@@ -169,7 +121,8 @@ public class PlanningController extends AbstractController {
                 );
                 instances.forEach(resourceInstance -> planBuilder.addResourceInstance(resourceInstance));
             });
-
+            //Check for conflicting reservations
+            planBuilder.checkForConflictingReservations();
 //            List<ResourceInstance> selectedInstances = new ArrayList<>();
 //            Iterator<ResourceRequirement> it2 = task.getRequirementList().iterator();
 //            while (it2.hasNext()) {
@@ -202,7 +155,7 @@ public class PlanningController extends AbstractController {
         }
     }
 
-    private void selectDevelopers(Task task, ResourcePlanner resourcePlanner, PlanBuilder planBuilder,BranchOffice branchOffice) {
+    private void selectDevelopers(Task task, ResourcePlanner resourcePlanner, PlanBuilder planBuilder,BranchOffice branchOffice) throws ConflictException{
         String msgSelectDevelopers = "Selecteer developers";
         int nbDevelopers = task.getRequirementList().getRequiredDevelopers();
 
@@ -212,6 +165,7 @@ public class PlanningController extends AbstractController {
 
         List<ResourceInstance> selectedDevelopers = ui.selectMultipleFromList(msgSelectDevelopers,  branchOffice.getDevelopers(), new ArrayList<>(), nbDevelopers, true, entryPrinter);
         selectedDevelopers.forEach(planBuilder::addResourceInstance);
+        planBuilder.checkForConflictingReservations();
     }
 
 
@@ -228,7 +182,9 @@ public class PlanningController extends AbstractController {
 
         if (getUserInterface().requestBoolean("Wilt u de conflicterende taken verplaatsen?")) {
             conflictingTasks.forEach(taak -> {
-                //Taak plan delete!
+                Plan plan = branchOffice.getResourcePlanner().getPlanForTask(taak);
+                plan.clear(); //Taak plan delete!
+               planTask(taak,branchOffice);
             });
         }
 
@@ -256,6 +212,64 @@ public class PlanningController extends AbstractController {
         List<Plan> newPlansForTask = planTask(task, branchOffice);
         plans.addAll(newPlansForTask);
 
+        return plans;
+    }
+
+    /**
+     * Plant een taak.
+     * @param task De taak die gepland moet worden.
+     * @return Een lijst met plannen.
+     */
+    private List<Plan> planTask(Task task,BranchOffice branchOffice) {
+         /* The system confirms the selected planned timespan and shows the re-
+                quired resource types and their necessary quantity as assigned by the
+                project manager when creating the task. For each required resource
+                type instance to perform the task, the system proposes a resource instance
+                to make a reservation for. */
+
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        /* The user selects a start time */
+        LocalDateTime startTime = selectStartTime(task, branchOffice.getResourcePlanner());
+        PlanBuilder planBuilder = new PlanBuilder(branchOffice, task, startTime);
+
+        getUserInterface().printMessage("Een plan maken voor de taak: " + task.getDescription());
+        getUserInterface().printMessage("Gekozen starttijd: " + startTime.format(formatter));
+
+        planBuilder.proposeResources(); //Stelt geen developers voor.
+        showProposedInstances(task, planBuilder);
+
+
+        try {
+            selectResources(task, planBuilder, branchOffice.getResourceRepository()); //checks & can throw ConflictException
+
+        /* The system shows a list of developers. The user selects the developers to perform the task. */
+            selectDevelopers(task, branchOffice.getResourcePlanner(), planBuilder, branchOffice);  //checks & can throw ConflictException
+
+            Plan p = planBuilder.getPlan();
+
+            branchOffice.getResourcePlanner().addPlan(p);
+            task.setPlan(p);
+            ui.printMessage("Taak gepland (" + task.getDescription() + ")");
+        } catch (ConflictException e) {
+//            resolveConflict()
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        //TODO cancelException?
+
+
+
+
+//
+//        catch (ConflictException e) {
+//            List<ResourceInstance> instances = planBuilder.getSelectedInstances();
+//            TimeSpan timeSpan = planBuilder.getTimeSpan();
+//            List<Task> conflictingtasks = branchOffice.getResourcePlanner().getConflictingTasks(instances, timeSpan);
+//            return resolveConflict(task, conflictingtasks,branchOffice);
+//        }
+        List<Plan> plans = new ArrayList<>();
         return plans;
     }
 }
