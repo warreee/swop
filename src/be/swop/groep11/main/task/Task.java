@@ -482,9 +482,12 @@ public class Task {
     public boolean canHaveAsDelegatedTo(BranchOffice delegatedTo) {
         if (this.isPlanned())
             return false;
-        if (! delegatedTo.getUnplannedTasks().contains(this))
-            return false;
-        return true;
+        else if (delegatedTo.equals(this.getProject().getBranchOffice())) {
+            return true;
+        }
+        else {
+            return (delegatedTo.getUnplannedTasks().contains(this));
+        }
     }
 
     private BranchOffice delegatedTo;
