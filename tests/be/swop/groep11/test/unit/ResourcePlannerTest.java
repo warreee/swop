@@ -245,6 +245,7 @@ public class ResourcePlannerTest {
 
     @Test
     public void testGetNextPossibleTimeSpansDailyAvailability() throws Exception {
+        // TODO: deze test faalt omdat de methode foute uren terug geeft. De test zelf is wat we verwachten terug te krijgen.
         RequirementListBuilder builder1 = new RequirementListBuilder(repository1);
         builder1.addNewRequirement(typeRepository.getResourceTypeByName("type d"), 1);
         LocalDateTime start = LocalDateTime.of(2015, 5, 20, 13, 0);
@@ -333,13 +334,9 @@ public class ResourcePlannerTest {
         PlanBuilder builder1 = new PlanBuilder(branchOffice3, task3, LocalDateTime.of(2015, 5, 20, 10, 0));
         builder1.proposeResources();
         Plan plan1 = builder1.getPlan();
-        PlanBuilder builder2 = new PlanBuilder(branchOffice1, task1, LocalDateTime.of(2015, 5, 25, 10, 0));
-        builder2.proposeResources();
-        Plan plan2 = builder2.getPlan();
 
         planner3.addPlan(plan1);
         planner3.removePlan(plan1);
-        planner3.removePlan(plan2);
     }
 
     @Test
@@ -405,22 +402,12 @@ public class ResourcePlannerTest {
 
     @Test
     public void testHasEquivalentPlan() throws Exception{
-        PlanBuilder planBuilder1 = new PlanBuilder(branchOffice2, task2, LocalDateTime.of(2015, 5, 22, 14, 0));
-        planBuilder1.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type a")).get(0));
-        planBuilder1.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type b")).get(0));
-        planBuilder1.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type c")).get(0));
-        Plan plan1 = planBuilder1.getPlan();
-        PlanBuilder planBuilder2 = new PlanBuilder(branchOffice2, task2, LocalDateTime.of(2015, 6, 10, 14, 0));
-        planBuilder2.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type a")).get(0));
-        planBuilder2.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type b")).get(0));
-        planBuilder2.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type c")).get(1));
-        Plan plan2 = planBuilder2.getPlan();
-        planner2.addPlan(plan2);
-        assertTrue(planner2.hasEquivalentPlan(plan1, LocalDateTime.of(2015, 5, 22, 14, 0)));
-        assertTrue(planner2.hasEquivalentPlan(plan1, LocalDateTime.of(2015, 5, 30, 14, 0)));
-        assertFalse(planner2.hasEquivalentPlan(plan1, LocalDateTime.of(2015, 6, 10, 10, 0)));
-        assertFalse(planner2.hasEquivalentPlan(plan1));
+        // TODO: kijk deze test nog een keertje na.
+        assertFalse(planner2.hasEquivalentPlan(task2.getDelegatedTo().getPlanForTask(task2)));
+        assertTrue(planner2.hasEquivalentPlan(task2.getDelegatedTo().getPlanForTask(task2), LocalDateTime.of(2015, 5, 24, 14, 0)));
 
+        assertFalse(planner1.hasEquivalentPlan(task1.getDelegatedTo().getPlanForTask(task1)));
+        assertTrue(planner1.hasEquivalentPlan(task1.getDelegatedTo().getPlanForTask(task1), LocalDateTime.of(2015, 5, 24, 14, 0)));
     }
 
     @Test
