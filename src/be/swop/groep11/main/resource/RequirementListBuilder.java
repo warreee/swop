@@ -6,8 +6,11 @@ import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import com.google.common.collect.ImmutableList;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /**
@@ -147,10 +150,30 @@ public class RequirementListBuilder {
 
         @Override
         public LocalDateTime calculateNextPossibleStartTime(LocalDateTime startTime) {
+            // TODO: ergens in deze methode zit in fout. Nu ze nog vinden.
             Set<AResourceType> types = requirements.keySet();
 
+            LocalTime earliestExecution = LocalTime.MIN;
+            LocalTime latestExecution = LocalTime.MAX;
+            boolean nextDay = false;
+            boolean possible = true;
+
             for(AResourceType type: types){
-                if(!type.getDailyAvailability().containsDateTime(startTime) || type.getDailyAvailability().getEndTime().equals(startTime.toLocalTime())){
+                if(!type.getDailyAvailability().containsDateTime(startTime)){
+                    possible = false;
+                }
+                if(Arrays.asList(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).contains(startTime.getDayOfWeek())){
+                    nextDay = true;
+                }
+                if(type.getDailyAvailability().getStartTime().isAfter(earliestExecution)){
+                    earliestExecution = type.getDailyAvailability().getStartTime();
+                }
+                if(type.getDailyAvailability().getEndTime().isBefore(startTime.toLocalTime()) ||
+                        type.getDailyAvailability().getEndTime().equals(startTime.toLocalTime())){
+                    nextDay = true;
+                    //possible = false;
+                }
+/*                if(!type.getDailyAvailability().containsDateTime(startTime) || type.getDailyAvailability().getEndTime().equals(startTime.toLocalTime())){
                     if(type.getDailyAvailability().getStartTime().isAfter(startTime.toLocalTime())){
                         // De starttijd ligt voor het beschikbare tijdsbestek van de DailyAvailability. We nemen dus de
                         // begintijd van de DailyAvailability.
@@ -160,9 +183,16 @@ public class RequirementListBuilder {
                         // de begintijd van DailyAvailability, maar dan de volgende dag.
                         startTime = startTime.with(type.getDailyAvailability().getStartTime()).plusDays(1);
                     }
-                }
+                }*/
             }
-            return startTime;
+            if(possible){
+                return getNextHour(startTime);
+            }
+            if(nextDay){
+                return startTime.with(earliestExecution).plusDays(1);
+            } else{
+                return startTime.with(earliestExecution);
+            }
         }
 
         /**
@@ -204,6 +234,20 @@ public class RequirementListBuilder {
                         addRequirement(constraint.getConstrainingType(), constraint.getMin());
                     }
                 });
+            }
+        }
+
+        /**
+         * Haal het volgende volledige uur op van de gegeven tijd. Of de huidige tijd als dit al een volledig uur is.
+         * @param dateTime Te te controleren tijd.
+         * @return Het volledig uur.
+         */
+        private LocalDateTime getNextHour(LocalDateTime dateTime) {
+            if (dateTime.getMinute() == 0){
+                return dateTime;
+            }
+            else{
+                return dateTime.plusHours(1).truncatedTo(ChronoUnit.HOURS);
             }
         }
 

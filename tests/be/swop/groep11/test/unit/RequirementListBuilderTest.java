@@ -117,12 +117,16 @@ public class RequirementListBuilderTest {
     public void testGetNextPossibleStartTime() throws Exception{
         resourceTypeRepository.addNewResourceType("DA 1", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(16, 0)));
         resourceTypeRepository.addNewResourceType("DA 2", new DailyAvailability(LocalTime.of(12, 0), LocalTime.of(17, 0)));
+        resourceTypeRepository.addNewResourceType("DA 3");
 
         resourceRepository.addResourceInstance(new Resource("IDA 1", resourceTypeRepository.getResourceTypeByName("DA 1")));
         resourceRepository.addResourceInstance(new Resource("IDA 2", resourceTypeRepository.getResourceTypeByName("DA 2")));
+        resourceRepository.addResourceInstance(new Resource("IDA 3", resourceTypeRepository.getResourceTypeByName("DA 3")));
+
 
         rlb.addNewRequirement(resourceTypeRepository.getResourceTypeByName("DA 1"), 1);
         rlb.addNewRequirement(resourceTypeRepository.getResourceTypeByName("DA 2"), 1);
+        rlb.addNewRequirement(resourceTypeRepository.getResourceTypeByName("DA 3"), 1);
 
         IRequirementList requirementList = rlb.getRequirements();
 
@@ -135,7 +139,13 @@ public class RequirementListBuilderTest {
         next = requirementList.calculateNextPossibleStartTime(LocalDateTime.of(2015, 4, 10, 12, 0));
         assertTrue(next.equals(LocalDateTime.of(2015, 4, 10, 12, 0)));
 
+        next = requirementList.calculateNextPossibleStartTime(LocalDateTime.of(2015, 4, 10, 0, 0));
+        assertTrue(next.equals(LocalDateTime.of(2015, 4, 10, 12, 0)));
+
         next = requirementList.calculateNextPossibleStartTime(LocalDateTime.of(2015, 4, 10, 14, 0));
+        assertTrue(next.equals(LocalDateTime.of(2015, 4, 10, 14, 0)));
+
+        next = requirementList.calculateNextPossibleStartTime(LocalDateTime.of(2015, 4, 10, 13, 48));
         assertTrue(next.equals(LocalDateTime.of(2015, 4, 10, 14, 0)));
     }
 
