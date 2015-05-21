@@ -1,6 +1,7 @@
 package be.swop.groep11.main.actions;
 
 import be.swop.groep11.main.controllers.AbstractController;
+import be.swop.groep11.main.exception.FailedConditionException;
 
 /**
  * Created by Ronald on 14/05/2015.
@@ -30,11 +31,11 @@ public class ActionProcedure {
 
     /**
      * Voer de ActionProcedure uit.
-     * @throws IllegalArgumentException
+     * @throws FailedConditionException
      */
-    public void perform() throws IllegalArgumentException {
+    public void perform() throws FailedConditionException {
         if (!condition.test()) {
-            throw new IllegalArgumentException("Condition test failed"); //TODO bepaal nieuwe exception
+            throw new FailedConditionException("Condition test failed");
         } else {
             behaviour.execute();
         }

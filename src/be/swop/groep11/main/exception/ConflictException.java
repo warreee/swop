@@ -31,10 +31,4 @@ public class ConflictException extends RuntimeException {
         return super.getMessage() + " " + conflictingTasks.toString();
     }
 
-    //
-//    public ConflictException(String message) {
-//        super(message);
-//    }
-
-
 }

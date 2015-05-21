@@ -7,6 +7,7 @@ import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.EmptyListException;
+import be.swop.groep11.main.exception.FailedConditionException;
 import be.swop.groep11.main.exception.IllegalActionException;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
@@ -46,6 +47,8 @@ public class CommandLineInterface implements UserInterface {
                     getControllerStack().executeAction(com);
                 } catch (IllegalActionException ec) {
                     printException(ec);
+                } catch (FailedConditionException fce) {
+                    printException(fce);
                 }
             }
             bufferedReader.close();
