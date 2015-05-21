@@ -20,8 +20,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 /**
@@ -252,26 +253,174 @@ public class ResourcePlannerTest {
 
         assertTrue(start.equals(timeSpans.get(0).getStartTime()));
         assertTrue(end.equals(timeSpans.get(0).getEndTime()));
-        start = start.plusHours(1);
-        end = end.plusHours(19);
 
+        start = start.plusHours(19);
+        end = end.plusHours(19);
         assertTrue(start.equals(timeSpans.get(1).getStartTime()));
         assertTrue(end.equals(timeSpans.get(1).getEndTime()));
-        start = start.plusHours(1);
 
+        start = start.plusHours(1);
+        end = end.plusHours(1);
         assertTrue(start.equals(timeSpans.get(2).getStartTime()));
         assertTrue(end.equals(timeSpans.get(2).getEndTime()));
 
     }
 
     @Test
-    public void testGetNextPossibleStartTimes() throws Exception {
-        fail();
+    public void testGetNextPossibleStartTimesStartTime() throws Exception {
+        RequirementListBuilder builder1 = new RequirementListBuilder(repository1);
+        builder1.addNewRequirement(typeRepository.getResourceTypeByName("type a"), 1);
+        LocalDateTime start = LocalDateTime.of(2015, 5, 20, 20, 0);
+
+        for(LocalDateTime next: planner1.getNextPossibleStartTimes(builder1.getRequirements(), LocalDateTime.of(2015, 5, 20, 10, 58), Duration.ofHours(1), 3)){
+            assertTrue(start.equals(next));
+            start = start.plusHours(1);
+        }
+    }
+
+    @Test
+    public void testGetNextPossibleStartTimesDuration() throws Exception {
+        RequirementListBuilder builder1 = new RequirementListBuilder(repository1);
+        builder1.addNewRequirement(typeRepository.getResourceTypeByName("type a"), 1);
+        LocalDateTime start = LocalDateTime.of(2015, 5, 20, 8, 0);
+
+        List<LocalDateTime> list =  planner1.getNextPossibleStartTimes(builder1.getRequirements(), Duration.ofHours(1), 3);
+
+        assertTrue(start.equals(list.get(0)));
+        start = start.plusHours(1);
+
+        assertTrue(start.equals(list.get(1)));
+        start = start.plusHours(11); // Alle resources van type a zijn niet beschikbaar van 10 tot 20 uur.
+
+        assertTrue(start.equals(list.get(2)));
     }
 
     @Test
     public void testGetAvailableInstances() throws Exception {
-        fail();
+        List<ResourceInstance> resourceInstanceList1 = planner1.getAvailableInstances(
+                typeRepository.getResourceTypeByName("type a"),
+                new TimeSpan(LocalDateTime.of(2015, 5, 20, 9, 0), LocalDateTime.of(2015, 5, 20, 11, 0))
+        );
+        assertTrue(resourceInstanceList1.size() == 0);
+
+        List<ResourceInstance> resourceInstanceList2 = planner1.getAvailableInstances(
+                typeRepository.getResourceTypeByName("type a"),
+                new TimeSpan(LocalDateTime.of(2015, 5, 20, 8, 0), LocalDateTime.of(2015, 5, 20, 9, 0))
+        );
+        assertTrue(resourceInstanceList2.size() == 3);
+        for(ResourceInstance instance : resourceInstanceList2){
+            assertTrue(instance.getResourceType().equals(typeRepository.getResourceTypeByName("type a")));
+        }
+
+        List<ResourceInstance> resourceInstanceList3 = planner1.getAvailableInstances(
+                typeRepository.getResourceTypeByName("type d"),
+                new TimeSpan(LocalDateTime.of(2015, 5, 20, 8, 0), LocalDateTime.of(2015, 5, 20, 9, 0))
+        );
+        assertTrue(resourceInstanceList3.size() == 3);
+        for(ResourceInstance instance : resourceInstanceList3){
+            assertTrue(instance.getResourceType().equals(typeRepository.getResourceTypeByName("type d")));
+        }
+
+        List<ResourceInstance> resourceInstanceList4 = planner1.getAvailableInstances(
+                typeRepository.getResourceTypeByName("type d"),
+                new TimeSpan(LocalDateTime.of(2015, 5, 20, 7, 0), LocalDateTime.of(2015, 5, 20, 15, 0))
+        );
+        assertTrue(resourceInstanceList4.size() == 0);
+    }
+
+    @Test
+    public void testRemovePlan() throws Exception{
+        PlanBuilder builder1 = new PlanBuilder(branchOffice3, task3, LocalDateTime.of(2015, 5, 20, 10, 0));
+        builder1.proposeResources();
+        Plan plan1 = builder1.getPlan();
+        PlanBuilder builder2 = new PlanBuilder(branchOffice1, task1, LocalDateTime.of(2015, 5, 25, 10, 0));
+        builder2.proposeResources();
+        Plan plan2 = builder2.getPlan();
+
+        planner3.addPlan(plan1);
+        planner3.removePlan(plan1);
+        planner3.removePlan(plan2);
+    }
+
+    @Test
+    public void testGetConflictingTasks() throws Exception{
+        RequirementListBuilder builder = new RequirementListBuilder(repository1);
+        builder.addNewRequirement(typeRepository.getResourceTypeByName("type b"), 1);
+        builder.addNewRequirement(typeRepository.getResourceTypeByName("type c"), 1);
+        project1.addNewTask("Task 1 2", .1, Duration.ofHours(12), builder.getRequirements());
+
+        PlanBuilder planBuilder = new PlanBuilder(branchOffice1, project1.getLastAddedTask(), LocalDateTime.of(2015, 5, 20, 11, 0));
+        planBuilder.proposeResources();
+        planner1.addPlan(planBuilder.getPlan());
+
+        ResourceInstance resource1 = repository1.getResources(typeRepository.getResourceTypeByName("type a")).get(0);
+        ResourceInstance resource2 = repository1.getResources(typeRepository.getResourceTypeByName("type b")).get(0);
+        ResourceInstance resource3 = repository1.getResources(typeRepository.getResourceTypeByName("type c")).get(0);
+
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource1), new TimeSpan(LocalDateTime.of(2015, 5, 20, 9, 0), LocalDateTime.of(2015, 5, 20, 10, 0))).size() == 0);
+
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource1), new TimeSpan(LocalDateTime.of(2015, 5, 20, 10, 0), LocalDateTime.of(2015, 5, 20, 11, 0))).size() == 1);
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource1), new TimeSpan(LocalDateTime.of(2015, 5, 20, 10, 0), LocalDateTime.of(2015, 5, 20, 11, 0))).contains(project1.getTasks().get(0)));
+
+
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource2), new TimeSpan(LocalDateTime.of(2015, 5, 20, 10, 0), LocalDateTime.of(2015, 5, 20, 11, 0))).size() == 0);
+
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource2), new TimeSpan(LocalDateTime.of(2015, 5, 20, 10, 0), LocalDateTime.of(2015, 5, 20, 12, 0))).size() == 1);
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource2), new TimeSpan(LocalDateTime.of(2015, 5, 20, 10, 0), LocalDateTime.of(2015, 5, 20, 12, 0))).contains(project1.getTasks().get(1)));
+
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource2, resource1, resource3), new TimeSpan(LocalDateTime.of(2015, 5, 20, 9, 0), LocalDateTime.of(2015, 5, 20, 10, 0))).size() == 0);
+
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource2, resource1, resource3), new TimeSpan(LocalDateTime.of(2015, 5, 20, 9, 0), LocalDateTime.of(2015, 5, 20, 11, 0))).size() == 1);
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource2, resource1, resource3), new TimeSpan(LocalDateTime.of(2015, 5, 20, 9, 0), LocalDateTime.of(2015, 5, 20, 11, 0))).contains(project1.getTasks().get(0)));
+
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource2, resource1, resource3), new TimeSpan(LocalDateTime.of(2015, 5, 20, 9, 0), LocalDateTime.of(2015, 5, 20, 13, 0))).size() == 2);
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource2, resource1, resource3), new TimeSpan(LocalDateTime.of(2015, 5, 20, 9, 0), LocalDateTime.of(2015, 5, 20, 13, 0))).contains(project1.getTasks().get(0)));
+        assertTrue(planner1.getConflictingTasks(Arrays.asList(resource2, resource1, resource3), new TimeSpan(LocalDateTime.of(2015, 5, 20, 9, 0), LocalDateTime.of(2015, 5, 20, 13, 0))).contains(project1.getTasks().get(1)));
+    }
+
+    @Test
+    public void testGetInstances() throws Exception{
+        RequirementListBuilder builder = new RequirementListBuilder(repository1);
+        builder.addNewRequirement(typeRepository.getResourceTypeByName("type b"), 1);
+        builder.addNewRequirement(typeRepository.getResourceTypeByName("type c"), 1);
+        project1.addNewTask("Task 1 2", .1, Duration.ofHours(12), builder.getRequirements());
+
+        PlanBuilder planBuilder = new PlanBuilder(branchOffice1, project1.getLastAddedTask(), LocalDateTime.of(2015, 5, 20, 11, 0));
+        planBuilder.addResourceInstance(repository1.getResources(typeRepository.getResourceTypeByName("type b")).get(1));
+        planBuilder.proposeResources();
+        planner1.addPlan(planBuilder.getPlan());
+
+        List<ResourceInstance> instances = planner1.getAvailableInstances(typeRepository.getResourceTypeByName("type a"),
+                new TimeSpan(LocalDateTime.of(2015, 5, 20, 8, 0), LocalDateTime.of(2015, 5, 20, 10, 0)));
+        assertTrue(instances.size() == 3);
+
+        instances = planner1.getAvailableInstances(typeRepository.getResourceTypeByName("type a"),
+                new TimeSpan(LocalDateTime.of(2015, 5, 20, 8, 0), LocalDateTime.of(2015, 5, 20, 12, 0)));
+        assertTrue(instances.size() == 0);
+
+        instances = planner1.getAvailableInstances(typeRepository.getResourceTypeByName("type b"),
+                new TimeSpan(LocalDateTime.of(2015, 5, 20, 8, 0), LocalDateTime.of(2015, 5, 20, 12, 0)));
+        assertTrue(instances.size() == 1);
+    }
+
+    @Test
+    public void testHasEquivalentPlan() throws Exception{
+        PlanBuilder planBuilder1 = new PlanBuilder(branchOffice2, task2, LocalDateTime.of(2015, 5, 22, 14, 0));
+        planBuilder1.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type a")).get(0));
+        planBuilder1.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type b")).get(0));
+        planBuilder1.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type c")).get(0));
+        Plan plan1 = planBuilder1.getPlan();
+        PlanBuilder planBuilder2 = new PlanBuilder(branchOffice2, task2, LocalDateTime.of(2015, 6, 10, 14, 0));
+        planBuilder2.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type a")).get(0));
+        planBuilder2.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type b")).get(0));
+        planBuilder2.addResourceInstance(repository2.getResources(typeRepository.getResourceTypeByName("type c")).get(1));
+        Plan plan2 = planBuilder2.getPlan();
+        planner2.addPlan(plan2);
+        assertTrue(planner2.hasEquivalentPlan(plan1, LocalDateTime.of(2015, 5, 22, 14, 0)));
+        assertTrue(planner2.hasEquivalentPlan(plan1, LocalDateTime.of(2015, 5, 30, 14, 0)));
+        assertFalse(planner2.hasEquivalentPlan(plan1, LocalDateTime.of(2015, 6, 10, 10, 0)));
+        assertFalse(planner2.hasEquivalentPlan(plan1));
+
     }
 
     @Test

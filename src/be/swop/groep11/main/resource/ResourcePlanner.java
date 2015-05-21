@@ -114,6 +114,10 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     public boolean isAvailable(ResourceInstance resourceInstance, TimeSpan timeSpan) {
         // Haal alle plannen op die beginnen voor de eindtijd van de gegeven timeSpan.
         NavigableMap<LocalDateTime, ArrayList<Plan>> map = planMap.headMap(timeSpan.getEndTime(), true);
+        DailyAvailability da = resourceInstance.getResourceType().getDailyAvailability();
+        if(!da.isAvailableDuring(timeSpan)){
+            return false;
+        }
 
         for (ArrayList<Plan> planList : map.values()) {
             for (Plan plan : planList) {
@@ -175,15 +179,19 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      * @param plan Het plan dat verwijderd wordt.
      */
     public void removePlan(Plan plan){
-        checkPlan(plan);
+        // TODO: mijn gevoel zegt dat hier dingen nog niet 100% kloppen.
+        if(plan == null){
+            throw new IllegalArgumentException("Plan mag niet 'null' zijn.");
+        }
         if(planMap.containsKey(plan.getPlannedStartTime())){
             planMap.get(plan.getPlannedStartTime()).remove(plan);
             if (planMap.get(plan.getPlannedStartTime()).isEmpty()) {
                 planMap.remove(plan.getPlannedStartTime());
             }
+            removeObserver(plan.getTask().getResourcePlannerObserver());
         }
 
-        removeObserver(plan.getTask().getResourcePlannerObserver());
+
     }
 
     /**
@@ -241,6 +249,8 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         ArrayList<TimeSpan> possibleTimeSpans = new ArrayList<>();
         int listSize = possibleTimeSpans.size();
         while ( listSize < amount) {
+
+            fullHour = requirementList.calculateNextPossibleStartTime(fullHour);
 
             TimeSpan timeSpan = requirementList.calculateReservationTimeSpan(fullHour, duration);
             if (hasAvailableRequiredResources(timeSpan, requirementList)) {
