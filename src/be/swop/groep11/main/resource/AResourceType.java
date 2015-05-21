@@ -111,6 +111,7 @@ public abstract class AResourceType {
     /**
      * @return geeft terug hoeveel constraints er van toepassing zijn op dit type.
      */
+    // TODO: wordt niet gebruikt ==> wegdoen?
     public int amountOfConstraints() {
         return constraintMap.size();
     }

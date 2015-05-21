@@ -1,5 +1,6 @@
 package be.swop.groep11.main.core;
 
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.util.Observer;
 import com.rits.cloning.Cloner;
 
@@ -27,6 +28,10 @@ public class ProjectRepositoryMemento implements IProjectRepositoryMemento {
     public void setProjects(List<Project> projects) {
         Cloner cloner = new Cloner();
         cloner.dontCloneInstanceOf(BranchOffice.class);
+        cloner.dontCloneInstanceOf(ResourceRepository.class);
+        cloner.dontCloneInstanceOf(ResourceTypeRepository.class);
+        cloner.dontCloneInstanceOf(AResourceType.class);
+        cloner.dontCloneInstanceOf(ResourceInstance.class);
         cloner.dontCloneInstanceOf(Observer.class);
         List<Project> projectsClone = cloner.deepClone(projects);
         this.projects = projectsClone;

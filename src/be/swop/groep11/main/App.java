@@ -123,7 +123,10 @@ public class App {
         ActionProcedure logout = new ActionProcedure(logonController, logonController::logOut, logonController::hasIdentifiedUserAtBranchOffice, true);
 
         ActionProcedure startSimulation = new ActionProcedure(simulationController, simulationController::startSimulation, logonController::hasIdentifiedProjectManager, false);
-        ActionProcedure cancelSim = new ActionProcedure(simulationController, simulationController::cancel, logonController::hasIdentifiedProjectManager, true);
+        ActionProcedure cancelSim = new ActionProcedure(simulationController, () -> {
+            delegateTaskController.clearDelegations(); // delegaties worden niet uitgevoerd wanneer de simulatie gecanceled wordt
+            simulationController.cancel();
+        }, logonController::hasIdentifiedProjectManager, true);
         ActionProcedure delegateTaskInSimulation = new ActionProcedure(delegateTaskController, delegateTaskController::selectDelegatedTo, logonController::hasIdentifiedProjectManager, true);
         ActionProcedure realizeSim = new ActionProcedure(simulationController, () -> {
             delegateTaskController.performDelegations(); // delegaties worden alleen echt uitgevoerd wanneer de simulatie gerealiseerd wordt

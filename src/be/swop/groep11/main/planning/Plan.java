@@ -180,6 +180,7 @@ public class Plan {
      * @param other
      * @return
      */
+    // TODO: wordt niet gebruikt
     public boolean startsBefore(Plan other){
         return other.getPlannedStartTime().isAfter(getPlannedStartTime());
     }
@@ -189,6 +190,7 @@ public class Plan {
      * @param other
      * @return
      */
+    // TODO: wordt niet gebruikt
     public boolean endsAfter(Plan other){
         return other.getPlannedEndTime().isBefore(getPlannedEndTime());
     }
