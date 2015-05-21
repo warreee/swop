@@ -37,14 +37,18 @@ public class SimulationScenarioTest {
         systemTime = new SystemTime(now);
         BranchOffice branchOffice = mock(BranchOffice.class);
         repository = new ProjectRepository(systemTime);
+        repository.setBranchOffice(branchOffice);
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
-        repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8),mock(IRequirementList.class));
+        repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8), mock(IRequirementList.class));
 
         this.logonController = mock(LogonController.class);
         when(logonController.hasIdentifiedProjectManager()).thenReturn(true);
 
         this.mockedUI = mock(UserInterface.class);
         this.simulationController = new SimulationController(logonController, mockedUI);
+
+        when(logonController.getBranchOffice()).thenReturn(branchOffice);
+        when(branchOffice.getProjectRepository()).thenReturn(repository);
     }
 
     @Test
