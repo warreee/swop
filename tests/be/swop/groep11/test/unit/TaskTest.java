@@ -143,7 +143,7 @@ public class TaskTest {
     @Test
     public void FinishedStatus_early() throws Exception {
         task1.execute(LocalDateTime.of(2015,1,1,1,0));
-        task1.finish(now.plusHours(2));
+        task1.finish(LocalDateTime.of(2015,1,1,1,0).plusHours(2));
         assertEquals(Task.TaskEvaluation.EARLY.toString(), task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
 
     }
@@ -151,7 +151,7 @@ public class TaskTest {
     @Test
     public void FinishedStatus_onTime() throws Exception {
         task1.execute(LocalDateTime.of(2015,1,1,1,0));
-        task1.finish(now.plusHours(8));
+        task1.finish(LocalDateTime.of(2015,1,1,1,0).plusHours(8));
         assertEquals(Task.TaskEvaluation.ONTIME.toString(), task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
 
     }
@@ -159,7 +159,7 @@ public class TaskTest {
     @Test
     public void FinishedStatus_late() throws Exception {
         task1.execute(LocalDateTime.of(2015,1,1,1,0));
-        task1.finish(now.plusHours(18));
+        task1.finish(LocalDateTime.of(2015,1,1,1,0).plusHours(18));
         assertEquals(Task.TaskEvaluation.OVERDUE.toString(), task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
 
     }
@@ -170,14 +170,14 @@ public class TaskTest {
     @Test
     public void Delay_EarlyFinishedTask() {
         task1.execute(LocalDateTime.of(2015,1,1,1,0));
-        task1.finish(now.plusHours(1));
+        task1.finish(LocalDateTime.of(2015,1,1,1,0).plusHours(1));
         assertTrue(task1.getDelay().equals(Duration.ofDays(0)));
     }
 
     @Test
     public void Delay_FinishedAfterEstimatedDuration() {
         task1.execute(LocalDateTime.of(2015, 3, 8, 8, 0));
-        task1.finish(LocalDateTime.of(2015, 3, 8, 16, 0));
+        task1.finish(LocalDateTime.of(2015, 3, 8, 16, 3));
         assertTrue(task1.getDelay().equals(Duration.ofSeconds(180)));
     }
 
