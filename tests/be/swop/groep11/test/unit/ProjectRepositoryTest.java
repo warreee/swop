@@ -1,6 +1,7 @@
 package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ProjectRepositoryTest {
 
@@ -22,11 +24,14 @@ public class ProjectRepositoryTest {
     private LocalDateTime due;
     private String name;
     private String description;
+    private SystemTime systemTime;
 
     @Before
     public void setUp() throws Exception {
+        systemTime = new SystemTime(LocalDateTime.of(2015,1,1,8,0));
         BranchOffice branchOffice = mock(BranchOffice.class);
-        projRep = new ProjectRepository(new SystemTime());
+        projRep = new ProjectRepository(systemTime);
+        projRep.setBranchOffice(branchOffice);
 
         create = LocalDateTime.now();
         due = LocalDateTime.now().plusSeconds(3600);
@@ -53,7 +58,7 @@ public class ProjectRepositoryTest {
         assertEquals(create, proj.getCreationTime());
         assertEquals(due, proj.getDueTime());
         assertEquals(name, proj.getName());
-        assertEquals(description,proj.getDescription());
+        assertEquals(description, proj.getDescription());
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -80,7 +85,15 @@ public class ProjectRepositoryTest {
         proj1.addNewTask("taak 1", 0.1, Duration.ofHours(8), mock(IRequirementList.class));
         proj2.addNewTask("taak 2", 0.0, Duration.ofMinutes(30), mock(IRequirementList.class));
         proj2.addNewTask("taak 3", 0.2, Duration.ofHours(100), mock(IRequirementList.class));
+        // zorg dat alle taken available zijn
+        for (Task task : projRep.getAllTasks()) {
+            Plan plan = mock(Plan.class);
+            when(plan.hasEquivalentPlan()).thenReturn(true);
+            task.setPlan(plan);
+        }
+        systemTime.updateSystemTime(LocalDateTime.of(2015,1,1,10,0));
         proj2.getTasks().get(0).execute(LocalDateTime.now());
+        // nu zouden alle taken available moeten zijn
         ImmutableList<Task> availableTasks = projRep.getAllAvailableTasks();
         assertTrue(availableTasks.size() == 2);
         assertTrue(availableTasks.contains(proj1.getTasks().get(0)));
@@ -98,8 +111,9 @@ public class ProjectRepositoryTest {
         proj2.addNewTask("taak 3", 0.2, Duration.ofHours(100), mock(IRequirementList.class));
         IProjectRepositoryMemento memento = projRep.createMemento();
 
-        BranchOffice branchOffice = mock(BranchOffice.class); //TODO: branchoffice testen
+        BranchOffice branchOffice = mock(BranchOffice.class);
         ProjectRepository projRep2 = new ProjectRepository(new SystemTime());
+        projRep2.setBranchOffice(branchOffice);
         projRep2.setMemento(memento);
         assertTrue(repositoryContainsProject(projRep2, "project 1"));
         assertTrue(repositoryContainsProject(projRep2, "project 2"));
