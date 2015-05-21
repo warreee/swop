@@ -79,6 +79,7 @@ public class ProjectRepositoryTest {
 
     @Test
     public void getAvailableTasksTest() {
+        //TODO fix test, dit is verkeerd.
         projRep.addNewProject("project 1", description, create, due);
         projRep.addNewProject("project 2", description, create, due);
         Project proj1 = projRep.getProjects().get(0);

@@ -33,6 +33,9 @@ public class Plan {
      * @param reservations    De lijst van reservaties van het plan
      */
     protected Plan(Task task, ResourcePlanner resourcePlanner, TimeSpan timeSpan, List<ResourceReservation> reservations) {
+        if (!task.canHaveAsPlan(this)) {
+            throw new IllegalArgumentException("geen geldig plan voor de taak .....");
+        }
         setTask(task);
         this.timeSpan = timeSpan;
         this.resourcePlanner = resourcePlanner;
@@ -52,10 +55,7 @@ public class Plan {
      */
     public void clear() {
         setTask(null);
-        task.setPlan(null);
-
         this.reservations = new ArrayList<>(); // niet echt nodig
-        this.resourcePlanner.removePlan(this);
     }
 
     /**
@@ -132,7 +132,6 @@ public class Plan {
     public Task getTask() {
         return this.task;
     }
-
 
     /**
      * Geeft aan of de gegeven LocalDateTime in de periode valt voor dit plan.

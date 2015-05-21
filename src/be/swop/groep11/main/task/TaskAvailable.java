@@ -47,15 +47,16 @@ public class TaskAvailable extends TaskStatus {
      */
     @Override
     protected void execute(Task task, LocalDateTime startTime) {
-
-        if (!task.getPlan().isWithinPlanTimeSpan(startTime)) {
+        Plan oldPlan = task.getPlan();
+        if (!oldPlan.isWithinPlanTimeSpan(startTime)) {
             PlanBuilder planBuilder = new PlanBuilder(task.getDelegatedTo(), task, startTime);
-            task.getPlan().getSpecificResources().forEach(resourceInstance -> planBuilder.addResourceInstance(resourceInstance));
+            oldPlan.getSpecificResources().forEach(resourceInstance -> planBuilder.addResourceInstance(resourceInstance));
             planBuilder.proposeResources();
-            task.getPlan().getAssignedDevelopers().forEach(resourceInstance -> planBuilder.addResourceInstance(resourceInstance));
+            oldPlan.getAssignedDevelopers().forEach(resourceInstance -> planBuilder.addResourceInstance(resourceInstance));
             Plan newPlan = planBuilder.getPlan();
-            task.getPlan().clear();
-            task.setPlan(newPlan);
+
+            task.getDelegatedTo().getResourcePlanner().removePlan(oldPlan);
+            task.getDelegatedTo().getResourcePlanner().addPlan(newPlan);
         }
 
         task.setStartTime(startTime);
@@ -143,6 +144,5 @@ public class TaskAvailable extends TaskStatus {
                 makeUnavailable(task);
             }
         }
-
     }
 }

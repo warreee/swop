@@ -423,18 +423,20 @@ public class Task {
 //        return plan.getStartTime();
 //    }
 
-
-    public void setPlan(Plan plan) {
-        if (!getStatus().canHaveAsPlan(this,plan)) {
-            throw new IllegalArgumentException("Illegaal plan"); //TODO aparte exception?
-        }
-        this.plan = plan;
-        getStatus().updateStatus(this);
+    public boolean canHaveAsPlan(Plan plan) {
+        return getStatus().canHaveAsPlan(this, plan);
     }
+
+//    public void setPlan(Plan plan) {
+//        if (!getStatus().canHaveAsPlan(this,plan)) {
+//            throw new IllegalArgumentException("Illegaal plan"); //TODO aparte exception?
+//        }
+//        getStatus().updateStatus(this);
+//    }
 
 
     protected Plan getPlan() {
-            return this.plan;
+        return getDelegatedTo().getPlanForTask(this);
     }
 
 
@@ -442,11 +444,9 @@ public class Task {
      * Controleert of deze taak gepland is.
      */
     public boolean isPlanned() {
-        return getPlan() != null;
+        return  getDelegatedTo().isTaskPlanned(this);
 
     }
-
-    private Plan plan;
 
     /**
      * Controleert of deze taak naar een andere branch office gedelegeerd is.
@@ -507,8 +507,6 @@ public class Task {
             if (isFailed() || isFinished()) {
                 resourcePlanner.removeObserver(this.getResourcePlannerObserver());
             }
-
-//        resourcePlanner.
         };
     }
 
@@ -573,8 +571,6 @@ public class Task {
         Duration delay = taskDur.minus(getEstimatedDuration());
         this.delay = !delay.isNegative() ? delay : Duration.ofSeconds(0);// geen negatieve delays!
     }
-
-
 
     /**
      * Berekent hoeveel een task overtijd is zonder rekening te houden met de acceptable deviation.

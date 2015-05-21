@@ -109,9 +109,11 @@ public class PlanTest {
 
     @Test
     public void clearTest() {
-        plan.clear();
         verify(resourcePlanner).removePlan(plan);
-        verify(task).setPlan(null);
+
+
+        plan.clear();
+        assertTrue(plan.getTask().equals(null));
         assertTrue(plan.getReservations().isEmpty());
     }
 

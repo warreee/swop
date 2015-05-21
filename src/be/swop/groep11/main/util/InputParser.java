@@ -16,11 +16,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.mockito.Mockito.mock;
 
 /**
  * Klasse voor het inlezen van de de input file, deze moet staan in /input met de naam input.tman
@@ -331,7 +330,6 @@ public class InputParser {
         if(planning != null){
             Plan plan = readPlan(planning, task);
             project.getBranchOffice().getResourcePlanner().addPlan(plan);
-            task.setPlan(plan);
         }
 
         if(startTime != null){

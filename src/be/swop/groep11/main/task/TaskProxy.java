@@ -224,10 +224,10 @@ public class TaskProxy extends Task {
         return realTask.getDuration(currentSystemTime);
     }
 
-    @Override
-    public void setPlan(Plan plan) {
-        realTask.setPlan(plan);
-    }
+//    @Override
+//    public void setPlan(Plan plan) {
+//        realTask.setPlan(plan);
+//    }
 
     @Override
     protected Plan getPlan() {

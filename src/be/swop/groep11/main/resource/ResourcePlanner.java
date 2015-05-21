@@ -23,7 +23,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     //Sleutel = StartTijd van Plan, waarde is lijst van plannen met zelfde StartTijd
     private TreeMap<LocalDateTime, ArrayList<Plan>> planMap;
 
-//    private HashMap<Plan, Task> planToTask = new HashMap<>();
+    private HashMap<Plan, Task> planToTask = new HashMap<>();
 
     /**
      * Maakt een nieuwe ResourcePlanner object aan. Dit ResourcePlanner object gebruikt de gegeven ResourceRepository om
@@ -164,33 +164,30 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         plans.add(plan);
         planMap.put(plan.getPlannedStartTime(), plans);
 
-//        if (planMap.containsKey(plan.getPlannedStartTime())) {
-//            planMap.get(plan.getTimeSpan().getStartTime()).add(plan);
-//        } else {
-//            ArrayList<Plan> list = new ArrayList<>();
-//            list.add(plan);
-//            planMap.put(plan.getPlannedStartTime(), list);
-//        }
-
-        //
-//        planToTask.put(plan, task);
+        planToTask.put(plan, plan.getTask());
         addObserver(plan.getTask().getResourcePlannerObserver());
+        updateObservers();
     }
 
     /**
      * Verwijdert een plan uit deze ResourcePlanner.
      * @param plan Het plan dat verwijderd wordt.
      */
-    public void removePlan(Plan plan){
-        checkPlan(plan);
-        if(planMap.containsKey(plan.getPlannedStartTime())){
-            planMap.get(plan.getPlannedStartTime()).remove(plan);
-            if (planMap.get(plan.getPlannedStartTime()).isEmpty()) {
-                planMap.remove(plan.getPlannedStartTime());
-            }
-        }
+    public void removePlan(Plan plan) {
 
+//        //Is er nood aan task dependency
+//        checkPlan(plan);
+//        if (planMap.containsKey(plan.getPlannedStartTime())) {
+//            planMap.get(plan.getPlannedStartTime()).remove(plan);
+//            if (planMap.get(plan.getPlannedStartTime()).isEmpty()) {
+//                planMap.remove(plan.getPlannedStartTime());
+//            }
+//        }
+        planMap.getOrDefault(plan.getPlannedStartTime(), new ArrayList<>()).remove(plan);
+        planToTask.remove(plan);
         removeObserver(plan.getTask().getResourcePlannerObserver());
+        plan.clear();
+        updateObservers();
     }
 
     /**
@@ -439,14 +436,14 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
 
     public Plan getPlanForTask(Task task) {
         Plan result = null;
-        List<Plan> plans = getPlans().stream().filter(plan -> plan.getTask().equals(task)).collect(Collectors.toList());
-        System.out.println(plans.size());
-
+        if (hasPlanForTask(task)) {
+            result = getPlans().stream().filter(plan -> plan.getTask().equals(task)).collect(Collectors.toList()).get(0);
+        }
         return result;
     }
 
-    protected Task getTaskForPlan(Plan plan) {
 
-        return null;
+    public boolean hasPlanForTask(Task task) {
+        return planToTask.containsValue(task);
     }
 }

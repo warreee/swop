@@ -1,5 +1,6 @@
 package be.swop.groep11.main.core;
 
+import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskProxy;
@@ -120,7 +121,7 @@ public class BranchOffice {
      * een lijst van de taken die nog niet gepland zijn.
      */
     public List<Task> getUnplannedTasks() {
-        return this.getAllTasks().stream().filter(task -> (! task.isPlanned()) ).collect(Collectors.toList());
+        return this.getAllTasks().stream().filter(task -> (!task.isPlanned())).collect(Collectors.toList());
     }
 
     /**
@@ -222,7 +223,6 @@ public class BranchOffice {
 
     public int amountOfProjectManagers(){
         return Long.valueOf(getEmployees().stream().filter(user -> user instanceof ProjectManager).count()).intValue();
-
     }
 
     /**
@@ -277,4 +277,11 @@ public class BranchOffice {
         }
     }
 
+    public boolean isTaskPlanned(Task task) {
+        return getResourcePlanner().hasPlanForTask(task);
+    }
+
+    public Plan getPlanForTask(Task task) {
+        return getResourcePlanner().getPlanForTask(task);
+    }
 }

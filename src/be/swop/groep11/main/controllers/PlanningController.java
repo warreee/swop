@@ -58,7 +58,6 @@ public class PlanningController extends AbstractController {
                 developers. */
             for (Plan plan : plans) {
                 branchOffice.getResourcePlanner().addPlan(plan);
-                task.setPlan(plan);
                 ui.printMessage("Taak gepland ("+task.getDescription()+")");
             }
 
@@ -66,9 +65,6 @@ public class PlanningController extends AbstractController {
             getUserInterface().printException(e);
         }
     }
-
-
-
 
     private LocalDateTime selectStartTime(Task task, ResourcePlanner resourcePlanner) {
         /* The system shows the first three possible starting times (only consid-
@@ -246,10 +242,9 @@ public class PlanningController extends AbstractController {
         /* The system shows a list of developers. The user selects the developers to perform the task. */
             selectDevelopers(task, branchOffice.getResourcePlanner(), planBuilder, branchOffice);  //checks & can throw ConflictException
 
-            Plan p = planBuilder.getPlan();
+            Plan plan = planBuilder.getPlan();
 
-            branchOffice.getResourcePlanner().addPlan(p);
-            task.setPlan(p);
+            branchOffice.getResourcePlanner().addPlan(plan);
             ui.printMessage("Taak gepland (" + task.getDescription() + ")");
         } catch (ConflictException e) {
 //            resolveConflict()
