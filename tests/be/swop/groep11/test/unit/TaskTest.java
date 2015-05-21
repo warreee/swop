@@ -31,7 +31,7 @@ public class TaskTest {
         now = LocalDateTime.now();
         this.systemTime = new SystemTime(now);
 
-
+        //BrancOffice
         BranchOffice branchOffice = mock(BranchOffice.class);
 
 
@@ -67,6 +67,9 @@ public class TaskTest {
         task2.setPlan(testPlan);
         task3.setPlan(testPlan);
         when(testPlan.hasEquivalentPlan()).thenReturn(true);
+
+        TimeSpan timeSpan = new TimeSpan(startTime, startTime.plusHours(1));
+        when(testPlan.getTimeSpan()).thenReturn(timeSpan);
 
         systemTime.addObserver(task1.getSystemTimeObserver());
         systemTime.addObserver(task2.getSystemTimeObserver());
