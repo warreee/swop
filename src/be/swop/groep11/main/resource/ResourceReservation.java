@@ -70,4 +70,11 @@ public class ResourceReservation{
     public String toString() {
         return getTimeSpan().getStartTime().toString() + "  -  " + getTimeSpan().getEndTime().toString() + " - " + getResourceInstance();
     }
+
+    /**
+     * Controleer of deze ResourceReservation een reservatie is voor een Developer.
+     */
+    public boolean isDeveloperReservation() {
+        return resourceInstance instanceof Developer;
+    }
 }

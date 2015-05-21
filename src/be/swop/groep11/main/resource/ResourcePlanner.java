@@ -358,20 +358,28 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     }
 
     /**
-     * Deze methode gaat na of er een equivalent plan bestaat op het gegeven Tijdstip.
+     * Deze methode gaat na of er voor het gegeven plan een equivalent plan bestaat startend op het gegeven Tijdstip.
      * Waarbij rekening gehouden wordt met reeds specifieke resources.
      * @param localDateTime Het gegeven tijdStip
-     * @return Waar indien er een ander plan gemaakt kan worden met de specifieke resources op het gegeven tijdStip
+     * @param plan          Het gegeven plan
+     * @return  Waar indien er een ander plan gemaakt kan worden met de specifieke resources op het gegeven tijdStip
+     *          Waar indien localDateTime in de periode van het gegeven plan valt.
      */
     public boolean hasEquivalentPlan(Plan plan,LocalDateTime localDateTime) {
-        ImmutableList<ResourceReservation> specificReservations = plan.getSpecificReservations();
+        boolean result;
+        if (!plan.isWithinPlanTimeSpan(localDateTime)) {
+            ImmutableList<ResourceReservation> specificReservations = plan.getSpecificReservations();
 
-        PlanBuilder planBuilder = new PlanBuilder(plan.getTask().getDelegatedTo(), plan.getTask(), localDateTime);
-        //add specific instances
-        specificReservations.forEach(reservation -> planBuilder.addResourceInstance(reservation.getResourceInstance()));
-        //propose rest
-        planBuilder.proposeResources();
-        return planBuilder.isSatisfied() && (! planBuilder.hasConflictingReservations());
+            PlanBuilder planBuilder = new PlanBuilder(plan.getTask().getDelegatedTo(), plan.getTask(), localDateTime);
+            //add specific instances
+            specificReservations.forEach(reservation -> planBuilder.addResourceInstance(reservation.getResourceInstance()));
+            //propose rest
+            planBuilder.proposeResources();
+            result = planBuilder.isSatisfied() && (!planBuilder.hasConflictingReservations());
+        }else{
+            result = true;
+        }
+        return result;
     }
 
     public boolean hasEquivalentPlan(Plan plan) {
@@ -416,7 +424,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
             return dateTime.truncatedTo(ChronoUnit.SECONDS);
         else{
             return dateTime.plusHours(1).truncatedTo(ChronoUnit.HOURS);
-
         }
     }
 
