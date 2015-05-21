@@ -238,7 +238,7 @@ public class Task {
     /**
      * Geeft het project waarin deze taak zit.
      */
-    public Project getProject() {
+    protected Project getProject() {
         return project;
     }
 

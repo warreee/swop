@@ -56,7 +56,7 @@ public class TaskTest {
         tasks.add(task3);
         when(branchOffice.getUnplannedTasks()).thenReturn(tasks);
 
-        LocalDateTime startTime = LocalDateTime.of(2015,1,1,0,0);
+        LocalDateTime startTime = LocalDateTime.of(2015, 1, 1, 0, 0);
 
 
         Plan testPlan = mock(Plan.class);
@@ -135,7 +135,7 @@ public class TaskTest {
      */
     @Test
     public void FinishedStatus_notFinished() throws Exception {
-        assertEquals(Task.TaskEvaluation.NOTFINISHED.toString(),task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
+        assertEquals(Task.TaskEvaluation.NOTFINISHED.toString(), task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
     }
 
     @Test
@@ -235,4 +235,17 @@ public class TaskTest {
         assertTrue(task1.isUnacceptablyOverTime());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void setInvalidDescriptionTest() {
+
+        task1.setDescription(null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void InvalidProjectTest() {
+
+        Task testTask = new Task("Test taak 2", Duration.ofMinutes(120), 0, mock(DependencyGraph.class), mock(IRequirementList.class), null);
+
+    }
 }
