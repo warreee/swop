@@ -337,12 +337,10 @@ public class Task {
     public void setAlternativeTask(Task alternativeTask) throws IllegalArgumentException {
         if (! canSetAlternativeTask(this, alternativeTask))
             throw new IllegalArgumentException("Kan de alternatieve taak niet wijzigen");
-        if (this.getAlternativeTask() == null) {
-            this.alternativeTask = alternativeTask;
-        } else {
+
             dependencyGraph.changeDependingOnAlternativeTask(this, alternativeTask);
             this.alternativeTask = alternativeTask;
-        }
+
     }
 
     /**
