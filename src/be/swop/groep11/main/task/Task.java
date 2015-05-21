@@ -306,6 +306,7 @@ public class Task {
      */
     public void finish(LocalDateTime endTime) {
         status.finish(this, endTime);
+        setDelay(endTime);
     }
 
     protected void makeAvailable() {
@@ -337,12 +338,10 @@ public class Task {
     public void setAlternativeTask(Task alternativeTask) throws IllegalArgumentException {
         if (! canSetAlternativeTask(this, alternativeTask))
             throw new IllegalArgumentException("Kan de alternatieve taak niet wijzigen");
-        if (this.getAlternativeTask() == null) {
-            this.alternativeTask = alternativeTask;
-        } else {
+
             dependencyGraph.changeDependingOnAlternativeTask(this, alternativeTask);
             this.alternativeTask = alternativeTask;
-        }
+
     }
 
     /**
@@ -549,19 +548,21 @@ public class Task {
      *     <br>FinishedStatus.OVERDUE als de taak te laat geëindigd is.
      */
     private void setFinishedStatus(LocalDateTime localDateTime) {
-        if (isExecuting() || isAvailable() || isUnavailable())
+        if (isExecuting() || isAvailable() || isUnavailable()) {
             taskEvaluation = Task.TaskEvaluation.NOTFINISHED;
+        } else {
 
-        long durationInSeconds = getDuration(localDateTime).getSeconds();
+            long durationInSeconds = getDuration(localDateTime).getSeconds();
 
-        long estimatedDurationInSeconds = getEstimatedDuration().getSeconds();
-        double acceptableDeviation = getAcceptableDeviation();
-        if (durationInSeconds < (1- acceptableDeviation)*estimatedDurationInSeconds)
-            taskEvaluation = Task.TaskEvaluation.EARLY;
-        else if (durationInSeconds > (1+acceptableDeviation)*estimatedDurationInSeconds)
-            taskEvaluation = Task.TaskEvaluation.OVERDUE;
-        else
-            taskEvaluation = Task.TaskEvaluation.ONTIME; //Tussen aanvaardbare afwijking
+            long estimatedDurationInSeconds = getEstimatedDuration().getSeconds();
+            double acceptableDeviation = getAcceptableDeviation();
+            if (durationInSeconds < (1 - acceptableDeviation) * estimatedDurationInSeconds)
+                taskEvaluation = Task.TaskEvaluation.EARLY;
+            else if (durationInSeconds > (1 + acceptableDeviation) * estimatedDurationInSeconds)
+                taskEvaluation = Task.TaskEvaluation.OVERDUE;
+            else
+                taskEvaluation = Task.TaskEvaluation.ONTIME; //Tussen aanvaardbare afwijking
+        }
     }
 
     /**
@@ -663,7 +664,7 @@ public class Task {
 
     @Override
     public boolean equals(Object other) {
-        System.out.println("equals van Task opgeroepen");
+
         if (other == null) {
             return false;
         }
