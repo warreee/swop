@@ -48,6 +48,7 @@ public class PlanBuilderTest {
 
         initResources();
         when(branchOffice.getResourcePlanner()).thenReturn(resourcePlanner);
+        when(branchOffice.getResourceRepository()).thenReturn(resourceRepository);
 
         // taak met requirements (2x type1 + 1x type2), duur=1u, niet gedelegeerd en niet gepland
         task = mock(Task.class);
@@ -96,6 +97,8 @@ public class PlanBuilderTest {
         when(resourcePlanner.getInstances(eq(type2), any(TimeSpan.class))).thenReturn(instances2);
         when(resourceRepository.getResources(eq(type1))).thenReturn(instances1);
         when(resourceRepository.getResources(eq(type2))).thenReturn(instances2);
+        when(resourceRepository.amountOfResourceInstances(eq(type1))).thenReturn(instances1.size());
+        when(resourceRepository.amountOfResourceInstances(eq(type2))).thenReturn(instances2.size());
     }
 
     @Test

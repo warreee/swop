@@ -48,9 +48,9 @@ public class PlanTest {
         // branch office en resource planner
         BranchOffice branchOffice = mock(BranchOffice.class);
         resourceRepository = mock(ResourceRepository.class);
-
         initResources();
         when(branchOffice.getResourcePlanner()).thenReturn(resourcePlanner);
+        when(branchOffice.getResourceRepository()).thenReturn(resourceRepository);
 
         // taak met requirements (2x type1 + 1x type2), duur=1u, niet gedelegeerd en niet gepland
         task = mock(Task.class);
@@ -102,6 +102,8 @@ public class PlanTest {
         when(resourcePlanner.getInstances(eq(type2), any(TimeSpan.class))).thenReturn(instances2);
         when(resourceRepository.getResources(eq(type1))).thenReturn(instances1);
         when(resourceRepository.getResources(eq(type2))).thenReturn(instances2);
+        when(resourceRepository.amountOfResourceInstances(eq(type1))).thenReturn(instances1.size());
+        when(resourceRepository.amountOfResourceInstances(eq(type2))).thenReturn(instances2.size());
     }
 
     @Test
@@ -133,6 +135,7 @@ public class PlanTest {
     @Test
     public void hasEquivalentPlan_TrueTest() {
         when(resourcePlanner.isAvailable(any(ResourceInstance.class), eq(new TimeSpan(startTime.plusDays(1), endTime.plusDays(1))))).thenReturn(true);
+        when(resourcePlanner.hasEquivalentPlan(any(), any())).thenCallRealMethod();
         assertTrue(plan.hasEquivalentPlan(startTime.plusDays(1)));
     }
 
@@ -143,6 +146,7 @@ public class PlanTest {
     @Test
     public void hasEquivalentPlan_FalseTest() {
         when(resourcePlanner.isAvailable(any(ResourceInstance.class), eq(new TimeSpan(startTime.plusDays(1),endTime.plusDays(1))))).thenReturn(false);
+        when(resourcePlanner.hasEquivalentPlan(any(), any())).thenCallRealMethod();
         assertFalse(plan.hasEquivalentPlan(startTime.plusDays(1)));
     }
 
