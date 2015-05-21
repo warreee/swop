@@ -89,7 +89,7 @@ public class PlanningController extends AbstractController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             ui.printMessage("Gekozen starttijd: " + planBuilder.getTimeSpan().getStartTime().format(formatter));
             planBuilder.proposeResources(); //Stelt geen developers voor.
-            this.showProposedInstances(task, planBuilder,branchOffice.getResourceRepository());
+            this.showProposedInstances(task, planBuilder);
             this.selectResources(task, planBuilder,branchOffice.getResourceRepository());
 
             // zijn er nu al conflicten?
@@ -142,7 +142,7 @@ public class PlanningController extends AbstractController {
         return startTime;
     }
 
-    private void showProposedInstances(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) {
+    private void showProposedInstances(Task task, PlanBuilder planBuilder) {
         getUserInterface().printMessage("Voorgestelde resources:");
         task.getRequirementList().getRequirements().forEach(resourceRequirement -> {
             if (!resourceRequirement.isDeveloperRequirement()) {
@@ -156,41 +156,49 @@ public class PlanningController extends AbstractController {
     private void selectResources(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) {
 
         /* The user allows the system to select the required resources. */
-
-        if (ui.requestBoolean("Deze resource instanties reserveren?")) {
-            // doe niets en behoud de resource instanties van het plan
-        } else {
-
-            // laat gebruiker resource instanties selecteren
-            List<ResourceInstance> selectedInstances = new ArrayList<>();
-            Iterator<ResourceRequirement> it2 = task.getRequirementList().iterator();
-            while (it2.hasNext()) {
-                ResourceRequirement requirement = it2.next();
-                AResourceType type = requirement.getType();
-                if (! (type instanceof DeveloperType)) {
-                    String msgSelectResourceInstances = "Selecteer instanties voor type " + type.getTypeName() + " (" + requirement.getAmount() + " instanties nodig)";
-
-                    List<ResourceInstance> allInstances = resourceRepository.getResources(type);
-                    List<ResourceInstance> defaultSelectedInstances = new ArrayList<>();
-                    int nbInstances = requirement.getAmount();
-
-                    for (ResourceInstance resourceInstance : resourceRepository.getResources(type)) {
-                        if (planBuilder.getSelectedInstances(resourceInstance.getResourceType()).contains(resourceInstance)) {
-                            defaultSelectedInstances.add(resourceInstance);
-                        }
-                    }
-
-                    Function<ResourceInstance, String> entryPrinter = s -> s.getName();
-                    List<ResourceInstance> instances = ui.selectMultipleFromList(msgSelectResourceInstances, allInstances, defaultSelectedInstances, nbInstances, true, entryPrinter);
-                    selectedInstances.addAll(instances);
-                }
-            }
-
-            // verander de resource instanties:
+        if (ui.requestBoolean("Wilt u zelf resources selecteren?")) {
+            //Clear reeds door het systeem geselecteerde instanties
             planBuilder.clearInstances();
-            for (ResourceInstance instance : selectedInstances) {
-                planBuilder.addResourceInstance(instance);
-            }
+            // laat gebruiker resource instanties selecteren
+            task.getRequirementList().getRequirements().stream().filter(req -> !req.isDeveloperRequirement()).forEach(resourceRequirement -> {
+                AResourceType type = resourceRequirement.getType();
+                List<ResourceInstance> instances = getUserInterface().selectMultipleFromList(
+                        "request", resourceRepository.getResources(type),
+                        new ArrayList<>(), resourceRequirement.getAmount(),
+                        true, ri -> ri.getName()
+                );
+                instances.forEach(resourceInstance -> planBuilder.addResourceInstance(resourceInstance));
+            });
+
+//            List<ResourceInstance> selectedInstances = new ArrayList<>();
+//            Iterator<ResourceRequirement> it2 = task.getRequirementList().iterator();
+//            while (it2.hasNext()) {
+//                ResourceRequirement requirement = it2.next();
+//                AResourceType type = requirement.getType();
+//                if (!(type instanceof DeveloperType)) {
+//                    String msgSelectResourceInstances = "Selecteer instanties voor type " + type.getTypeName() + " (" + requirement.getAmount() + " instanties nodig)";
+//
+//                    List<ResourceInstance> allInstances = resourceRepository.getResources(type);
+//                    List<ResourceInstance> defaultSelectedInstances = new ArrayList<>();
+//                    int nbInstances = requirement.getAmount();
+//
+//                    for (ResourceInstance resourceInstance : resourceRepository.getResources(type)) {
+//                        if (planBuilder.getSelectedInstances(resourceInstance.getResourceType()).contains(resourceInstance)) {
+//                            defaultSelectedInstances.add(resourceInstance);
+//                        }
+//                    }
+//
+//                    Function<ResourceInstance, String> entryPrinter = s -> s.getName();
+//                    List<ResourceInstance> instances = ui.selectMultipleFromList(msgSelectResourceInstances, allInstances, defaultSelectedInstances, nbInstances, true, entryPrinter);
+//                    selectedInstances.addAll(instances);
+//                }
+//            }
+//
+//            // verander de resource instanties:
+//            planBuilder.clearInstances();
+//            for (ResourceInstance instance : selectedInstances) {
+//                planBuilder.addResourceInstance(instance);
+//            }
         }
     }
 
