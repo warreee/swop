@@ -1,6 +1,7 @@
 package be.swop.groep11.main.resource;
 
 import be.swop.groep11.main.core.TimeSpan;
+import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -78,4 +79,6 @@ public interface IRequirementList{
      * @return De starttijd wanneer er gestart kan worden.
      */
     LocalDateTime calculateNextPossibleStartTime(LocalDateTime startTime);
+
+    ImmutableList<ResourceRequirement> getRequirements();
 }

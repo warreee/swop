@@ -137,8 +137,6 @@ public abstract class AResourceType {
 
         @Override
     public String toString() {
-        return "AResourceType{" +
-                "name='" + name + '\'' +
-                '}';
-    }
+            return name ;
+        }
 }

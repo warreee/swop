@@ -4,6 +4,7 @@ import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.exception.IllegalRequirementAmountException;
 import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
+import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -213,6 +214,11 @@ public class RequirementListBuilder {
          */
         public ResourceRequirement getRequirementFor(AResourceType type) {
             return requirements.get(type);
+        }
+
+        @Override
+        public ImmutableList<ResourceRequirement> getRequirements() {
+            return ImmutableList.copyOf(requirements.values());
         }
 
         @Override

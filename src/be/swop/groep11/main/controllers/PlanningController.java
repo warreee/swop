@@ -117,13 +117,12 @@ public class PlanningController extends AbstractController {
         return plans;
     }
 
-    private LocalDateTime selectStartTime(Task task, ResourcePlanner resourcePlanner) {
 
+    private LocalDateTime selectStartTime(Task task, ResourcePlanner resourcePlanner) {
         /* The system shows the first three possible starting times (only consid-
             ering exact hours, e.g. 09:00, and counting from the current system
             time) that a task can be planned (i.e. enough resource instances and
             developers are available) */
-
         List<LocalDateTime> nextStartTimes = resourcePlanner.getNextPossibleStartTimes(
                 task.getRequirementList(),
                 systemTime.getCurrentSystemTime(),
@@ -131,7 +130,7 @@ public class PlanningController extends AbstractController {
                 3);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime startTime = null;
+        LocalDateTime startTime;
         if (ui.requestBoolean("Wilt u mogelijke startTijden laten generen? (N: indien u zelf een startTijd wilt ingeven)")) {
             /* The user selects a proposed time. */
             Function<LocalDateTime, String> dateTimePrinter = localDateTime -> localDateTime.format(formatter);
@@ -144,22 +143,14 @@ public class PlanningController extends AbstractController {
     }
 
     private void showProposedInstances(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) {
-        String msgDefaultResourceInstances = "Voorgestelde reservaties:";
-        Iterator<ResourceRequirement> it1 = task.getRequirementList().iterator();
-        while (it1.hasNext()) {
-            ResourceRequirement requirement = it1.next();
-            AResourceType type = requirement.getType();
-            if (! (type instanceof DeveloperType)) {
-                msgDefaultResourceInstances += "\n - Voor type " + type.getTypeName() + ": (" + requirement.getAmount() + " instanties nodig)";
-
-                for (ResourceInstance resourceInstance : resourceRepository.getResources(type)) {
-                    if (planBuilder.getSelectedInstances(type).contains(resourceInstance)) {
-                        msgDefaultResourceInstances += "\n    - " + resourceInstance.getName();
-                    }
-                }
+        getUserInterface().printMessage("Voorgestelde resources:");
+        task.getRequirementList().getRequirements().forEach(resourceRequirement -> {
+            if (!resourceRequirement.isDeveloperRequirement()) {
+                getUserInterface().printMessage(resourceRequirement.toString());//voor
+                List<ResourceInstance> instances = planBuilder.getSelectedInstances(resourceRequirement.getType());
+                getUserInterface().showList(instances, resourceInstance -> resourceInstance.getName());
             }
-        }
-        ui.printMessage(msgDefaultResourceInstances);
+        });
     }
 
     private void selectResources(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) {
@@ -211,9 +202,7 @@ public class PlanningController extends AbstractController {
             return resourcePlanner.isAvailable(resourceInstance,planBuilder.getTimeSpan())? resourceInstance.getName() + " (beschikbaar)": resourceInstance.getName() + " (niet beschikbaar)";
         };
 
-        ImmutableList<ResourceInstance> allDevelopers = branchOffice.getDevelopers();
-
-        List<ResourceInstance> selectedDevelopers = ui.selectMultipleFromList(msgSelectDevelopers, allDevelopers, new ArrayList<>(), nbDevelopers, true, entryPrinter);
+        List<ResourceInstance> selectedDevelopers = ui.selectMultipleFromList(msgSelectDevelopers,  branchOffice.getDevelopers(), new ArrayList<>(), nbDevelopers, true, entryPrinter);
         selectedDevelopers.forEach(planBuilder::addResourceInstance);
     }
 

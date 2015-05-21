@@ -87,9 +87,6 @@ public class ResourceRequirement {
 
     @Override
     public String toString() {
-        return "ResourceRequirement{" +
-                "amount=" + amount +
-                ", type=" + type +
-                '}';
+        return "Requirement Type: " + type + " amount: " + amount;
     }
 }

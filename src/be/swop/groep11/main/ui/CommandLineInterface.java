@@ -494,7 +494,7 @@ public class CommandLineInterface implements UserInterface {
     }
 
     @Override
-    public <T> List<T> selectMultipleFromList(String request, List<T> list, List<T> preselectedList, int maxSelected,boolean exactAmount, Function<T, String> listEntryPrinter) {
+    public <T> List<T> selectMultipleFromList(String request, List<T> list, List<T> preselectedList, int maxSelected,boolean exactAmount, Function<T, String> listEntryPrinter) throws EmptyListException,CancelException {
         if(list.isEmpty()){//Lijst is leeg, kan niet selecteren.
             throw new EmptyListException("Lege lijst: er kan dus niet geselecteerd worden uit de lijst.");
         }else if (!list.containsAll(preselectedList)) {

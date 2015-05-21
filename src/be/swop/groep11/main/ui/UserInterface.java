@@ -175,7 +175,7 @@ public interface UserInterface {
      * @return                 Geeft een lijst van de elementen die de gebruiker selecteerde.
      * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
      */
-    <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,int maxSelected,boolean exactAmount,Function<T,String> listEntryPrinter) throws CancelException;
+    <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,int maxSelected,boolean exactAmount,Function<T,String> listEntryPrinter) throws EmptyListException,CancelException;
 
     /**
      * Laat de gebruiker meerdere elementen kiezen uit de gegeven lijst.
@@ -187,7 +187,7 @@ public interface UserInterface {
      * @return                 Geeft een lijst van de elementen die de gebruiker selecteerde.
      * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
      */
-    default <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,Function<T,String> listEntryPrinter) throws CancelException {
+    default <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,Function<T,String> listEntryPrinter) throws EmptyListException,CancelException {
         return selectMultipleFromList(request,list, preselectedList, list.size(),false,listEntryPrinter);
     }
 
