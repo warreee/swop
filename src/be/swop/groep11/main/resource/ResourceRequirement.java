@@ -81,6 +81,10 @@ public class ResourceRequirement {
 
     }
 
+    public boolean isDeveloperRequirement() {
+        return getType() instanceof DeveloperType;
+    }
+
     @Override
     public String toString() {
         return "ResourceRequirement{" +

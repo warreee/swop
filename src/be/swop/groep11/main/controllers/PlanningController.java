@@ -46,8 +46,6 @@ public class PlanningController extends AbstractController {
     public void planTask(){
 
         BranchOffice branchOffice = logonController.getBranchOffice();
-
-
         try {
 
             /* The system shows a list of all currently unplanned tasks and the project
@@ -142,26 +140,6 @@ public class PlanningController extends AbstractController {
             /* The user indicates he wants to select another time */
             startTime = ui.requestDatum("Kies een starttijd (moet op een uur vallen en mag niet voor de huidige systeemtijd (" + systemTime.getCurrentSystemTime().format(formatter) + ") vallen:");
         }
-        
-        
-        
-//        String msgTimes = "De eerste 3 mogelijke starttijden zijn:\n";
-//        for (LocalDateTime startTime : nextStartTimes) {
-//            msgTimes += " " + startTime.format(formatter) + "\n";
-//        }
-//        ui.printMessage(msgTimes);
-
-//        LocalDateTime startTime = null;
-//        if (ui.requestBoolean("Een starttijd hieruit selecteren?")) {
-//
-//            startTime = ui.selectLocalDateTimeFromList(new LinkedList<>(nextStartTimes));
-//        } else {
-//        /* The user indicates he wants to select another time */
-//            while (startTime == null || startTime.getMinute() != 0 || startTime.isBefore(systemTime.getCurrentSystemTime())) {
-//                startTime = ui.requestDatum("Kies een starttijd (moet op een uur vallen en mag niet voor de huidige systeemtijd (" + systemTime.getCurrentSystemTime().format(formatter) + ") vallen:");
-//            }
-//        }
-
         return startTime;
     }
 
@@ -227,58 +205,36 @@ public class PlanningController extends AbstractController {
 
     private void selectDevelopers(Task task, ResourcePlanner resourcePlanner, PlanBuilder planBuilder,BranchOffice branchOffice) {
         String msgSelectDevelopers = "Selecteer developers";
-        AResourceType developerType =  resourcePlanner.getResourceRepository().getResourceTypeRepository().getDeveloperType();
-        int nbDevelopers = getNbRequiredDevelopers(task.getRequirementList());
-        ImmutableList<ResourceInstance> allDevelopers = branchOffice.getDevelopers();
-        ImmutableList<ResourceInstance> availableDevelopers = ImmutableList.copyOf(resourcePlanner.getAvailableInstances(developerType, planBuilder.getTimeSpan()));
-        Function<ResourceInstance, String> entryPrinter = s -> {
-            if (availableDevelopers.contains(s)) {
-                return s.getName() + " (beschikbaar)";
-            } else {
-                return s.getName() + " (niet beschikbaar)";
-            }
+        int nbDevelopers = task.getRequirementList().getRequiredDevelopers();
+
+        Function<ResourceInstance, String> entryPrinter = resourceInstance -> {
+            return resourcePlanner.isAvailable(resourceInstance,planBuilder.getTimeSpan())? resourceInstance.getName() + " (beschikbaar)": resourceInstance.getName() + " (niet beschikbaar)";
         };
+
+        ImmutableList<ResourceInstance> allDevelopers = branchOffice.getDevelopers();
+
         List<ResourceInstance> selectedDevelopers = ui.selectMultipleFromList(msgSelectDevelopers, allDevelopers, new ArrayList<>(), nbDevelopers, true, entryPrinter);
-        for (ResourceInstance developer : selectedDevelopers) {
-            planBuilder.addResourceInstance(developer);
-        }
+        selectedDevelopers.forEach(planBuilder::addResourceInstance);
     }
 
-    /**
-     * Bepaald uit de gegeven IRequirementList hoeveel developers er nodig zijn.
-     * @param requirementList De te controlleren IRequirementList.
-     * @return Het aantal benodigde developers.
-     */
-    private int getNbRequiredDevelopers(IRequirementList requirementList) {
-        Iterator<ResourceRequirement> it = requirementList.iterator();
-        while (it.hasNext()) {
-            ResourceRequirement requirement = it.next();
-            AResourceType resourceType = requirement.getType();
-            if (resourceType instanceof DeveloperType) {
-                return requirement.getAmount();
-            }
-        }
-        return 0;
-    }
 
     /**
      * Voer de stappen uit voor de resolveConflict uitbreiding.
      * @param task De taak waarvoor het conflict moet worden opgelost.
-     * @param conflictingtasks De conflicterende taken
+     * @param conflictingTasks De conflicterende taken
      * @return Een lijst met plannen.
      */
-    private List<Plan> resolveConflict(Task task, List<Task> conflictingtasks,BranchOffice branchOffice) {
+    private List<Plan> resolveConflict(Task task, List<Task> conflictingTasks,BranchOffice branchOffice) {
         List<Plan> plans = new ArrayList<>();
 
-        String msgConflictingTasks = "De planning voor de taak "+task.getDescription()+" conflicteert met de volgende taken:";
-        for (Task conflictingTask : conflictingtasks) {
-            msgConflictingTasks += "\n - "+conflictingTask.getDescription();
-        }
+        String msgConflictingTasks = "De planning voor de taak "+task.getDescription()+" is in conflict met de volgende taken:";
         ui.printMessage(msgConflictingTasks);
+        Function<Task,String> conflictEntryPrinter = task1 -> task1.getDescription() ;
+        getUserInterface().showList(conflictingTasks, conflictEntryPrinter);
 
         if (ui.requestBoolean("Verplaats de conflicterende taken?")) {
             int i=1;
-            for (Task conflictingTask : conflictingtasks) {
+            for (Task conflictingTask : conflictingTasks) {
                 try {
                     ui.printMessage("Verplaats conflicterende taak " + i);
                     plans.addAll(planTask(conflictingTask,branchOffice));

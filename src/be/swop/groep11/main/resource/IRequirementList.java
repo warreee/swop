@@ -27,6 +27,18 @@ public interface IRequirementList{
      */
     ResourceRequirement getRequirementFor(AResourceType type);
 
+    /**
+     * Geeft de nodige hoeveelheid voor het gegeven AResourceType terug.
+     * @param type  Het AResourceType waarvan de hoeveelheid opgevraagd wordt.
+     * @return      0 indien er geen requirement voor type is.
+     *              Anders getRequirementFor(type).getAmount()
+     */
+    int getRequiredAmountFor(AResourceType type);
+
+    /**
+     * Geeft aan hoeveel Developers er nodig zijn.
+     */
+    int getRequiredDevelopers();
 
     /**
      * Controleer of deze lijst met Requirements geldig blijft. Indien er een requirement voor het gegeven IResourceType

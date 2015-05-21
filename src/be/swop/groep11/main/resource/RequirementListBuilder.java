@@ -214,5 +214,25 @@ public class RequirementListBuilder {
         public ResourceRequirement getRequirementFor(AResourceType type) {
             return requirements.get(type);
         }
+
+        @Override
+        public int getRequiredAmountFor(AResourceType type) {
+            if (containsRequirementFor(type)) {
+                return getRequirementFor(type).getAmount();
+            } else {
+                return 0;
+            }
+        }
+
+        @Override
+        public int getRequiredDevelopers() {
+            int result = 0;
+            for (ResourceRequirement resourceRequirement : requirements.values()) {
+                if (resourceRequirement.isDeveloperRequirement()) {
+                    result = resourceRequirement.getAmount();
+                }
+            }
+            return result;
+        }
     }
 }

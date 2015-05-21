@@ -194,4 +194,6 @@ public interface UserInterface {
     int requestNumberBetween(String s, int min, int max);
 
     Function<Task,String> getTaskPrinter();
+
+    <T> void showList(List<T> list,Function<T,String> listEntryPrinter);
 }

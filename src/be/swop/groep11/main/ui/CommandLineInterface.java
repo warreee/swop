@@ -101,7 +101,7 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showProjectList(ImmutableList<Project> projects) {
-        printList(projects, showProjectEntry);
+        showList(projects, showProjectEntry);
     }
 
     /**
@@ -111,7 +111,7 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public void showTaskList(ImmutableList<Task> tasks) {
-        printList(tasks, showTaskEntry);
+        showList(tasks, showTaskEntry);
     }
 
     private String taskFormatStr = "%-35s %-20s %-15s %n";
@@ -561,7 +561,7 @@ public class CommandLineInterface implements UserInterface {
             return list.get(selection);
         };
         if (!tList.isEmpty()) {
-            printList(tList, listEntryPrinter);
+            showList(tList, listEntryPrinter);
             T selection = listSelector.apply(tList);
             return selection;
         } else {
@@ -577,7 +577,8 @@ public class CommandLineInterface implements UserInterface {
      * @param listEntryPrinter De manier waarop ieder element van de lijst wordt voorgesteld.
      * @param <T>              Het type van de elementen
      */
-    private <T> void printList(List<T> list, Function<T, String> listEntryPrinter) {
+    @Override
+    public <T> void showList(List<T> list, Function<T, String> listEntryPrinter) {
         Consumer<List<T>> listPrint = listTemp -> {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < listTemp.size(); i++) {
@@ -600,4 +601,6 @@ public class CommandLineInterface implements UserInterface {
         sb.append("| \n");
         printMessage(abstractController.getClass().getSimpleName() + ">  " + sb.toString());
     }
+
+
 }
