@@ -27,7 +27,6 @@ public class ProjectRepository {
     public ProjectRepository(SystemTime systemTime) {
         if (systemTime == null)
             throw new IllegalArgumentException("Systeemtijd mag niet null zijn");
-        this.branchOffice = branchOffice;
         this.systemTime = systemTime;
         projects = new ArrayList<>();
     }
