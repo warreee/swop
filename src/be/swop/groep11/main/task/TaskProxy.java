@@ -296,7 +296,6 @@ public class TaskProxy extends Task {
 
     @Override
     public boolean equals(Object other) {
-        System.out.println("equals van TaskProxy opgeroepen");
         if (! (other instanceof Task)) {
             return false;
         }

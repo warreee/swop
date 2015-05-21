@@ -306,6 +306,7 @@ public class Task {
      */
     public void finish(LocalDateTime endTime) {
         status.finish(this, endTime);
+        setDelay(endTime);
     }
 
     protected void makeAvailable() {
@@ -658,7 +659,7 @@ public class Task {
 
     @Override
     public boolean equals(Object other) {
-        System.out.println("equals van Task opgeroepen");
+
         if (other == null) {
             return false;
         }
