@@ -249,6 +249,9 @@ public class TaskTest {
 
     }
 
+    /**
+     * Controleert ook de methode isDelegatedTo
+     */
     @Test
     public void SetDelegatedToTest() {
         Task testTask = new Task("Test taak X", Duration.ofMinutes(120), 0, mock(DependencyGraph.class), mock(IRequirementList.class), mock(Project.class));
@@ -259,6 +262,7 @@ public class TaskTest {
 
         testTask.setDelegatedTo(branchOffice);
         assertTrue(testTask.getDelegatedTo() == branchOffice);
+        assertTrue(testTask.isDelegated());
     }
 
 
@@ -272,5 +276,18 @@ public class TaskTest {
         task1.setDelegatedTo(mock(BranchOffice.class));
     }
 
+    @Test
+    public void getStatusStringTest() {
+       assertEquals(task1.getStatusString(), "AVAILABLE");
+    }
 
+    @Test
+    public void getDescirptionTest() {
+        assertEquals(task1.getDescription(), "Test taak 1");
+    }
+
+    @Test
+    public void getRequirementListTest() {
+        assertTrue(task1.getRequirementList() != null);
+    }
 }
