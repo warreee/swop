@@ -57,6 +57,7 @@ public class LogonController extends AbstractController{
         setBranchOffice(null);
         setDeveloper(null);
         setProjectManager(null);
+        getUserInterface().printMessage("U bent nu uitgelogd");
     }
 
     /**

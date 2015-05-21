@@ -58,4 +58,12 @@ public interface IRequirementList{
      *          eerst berekenen we de RequiredDuration dewelke men optelt met de gegeven startTijd om de eindTijd te vormen.
      */
     TimeSpan calculateReservationTimeSpan(LocalDateTime selectedStartTime, Duration estimatedDuration);
+
+    /**
+     * Bereken voor de gegeven starttijd wanneer de volgende mogelijke starttijd is rekeninghoudend met alle
+     * DailyAvailabilities van de gekozen Requirements.
+     * @param startTime De gekozen starttijd
+     * @return De starttijd wanneer er gestart kan worden.
+     */
+    LocalDateTime calculateNextPossibleStartTime(LocalDateTime startTime);
 }

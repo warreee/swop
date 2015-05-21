@@ -56,11 +56,8 @@ public class TaskTest {
         tasks.add(task3);
         when(branchOffice.getUnplannedTasks()).thenReturn(tasks);
 
-        LocalDateTime startTime = LocalDateTime.of(2015,1,1,0,0);
+        LocalDateTime startTime = LocalDateTime.of(2015, 1, 1, 0, 0);
 
-        PlanBuilder planBuilder = new PlanBuilder(branchOffice, task1, startTime);
-
-        Plan plan1 = planBuilder.getPlan();
 
         Plan testPlan = mock(Plan.class);
         task1.setPlan(testPlan);
@@ -138,7 +135,7 @@ public class TaskTest {
      */
     @Test
     public void FinishedStatus_notFinished() throws Exception {
-        assertEquals(Task.TaskEvaluation.NOTFINISHED.toString(),task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
+        assertEquals(Task.TaskEvaluation.NOTFINISHED.toString(), task1.getFinishedStatus(systemTime.getCurrentSystemTime()));
     }
 
     @Test
@@ -238,4 +235,59 @@ public class TaskTest {
         assertTrue(task1.isUnacceptablyOverTime());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void setInvalidDescriptionTest() {
+
+        task1.setDescription(null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void InvalidProjectTest() {
+
+        Task testTask = new Task("Test taak 2", Duration.ofMinutes(120), 0, mock(DependencyGraph.class), mock(IRequirementList.class), null);
+
+    }
+
+    /**
+     * Controleert ook de methode isDelegatedTo
+     */
+    @Test
+    public void SetDelegatedToTest() {
+        Task testTask = new Task("Test taak X", Duration.ofMinutes(120), 0, mock(DependencyGraph.class), mock(IRequirementList.class), mock(Project.class));
+        BranchOffice branchOffice = mock(BranchOffice.class);
+        ArrayList<Task> temp = new ArrayList<>();
+        temp.add(testTask);
+        when(branchOffice.getUnplannedTasks()).thenReturn(temp);
+
+        testTask.setDelegatedTo(branchOffice);
+        assertTrue(testTask.getDelegatedTo() == branchOffice);
+        assertTrue(testTask.isDelegated());
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void InvalidSetDelegatedToTest1() {
+        task1.setDelegatedTo(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void InvalidSetDelegatedToTest2() {
+        task1.setDelegatedTo(mock(BranchOffice.class));
+    }
+
+    @Test
+    public void getStatusStringTest() {
+       assertEquals(task1.getStatusString(), "AVAILABLE");
+    }
+
+    @Test
+    public void getDescirptionTest() {
+        assertEquals(task1.getDescription(), "Test taak 1");
+    }
+
+    @Test
+    public void getRequirementListTest() {
+        assertTrue(task1.getRequirementList() != null);
+    }
 }

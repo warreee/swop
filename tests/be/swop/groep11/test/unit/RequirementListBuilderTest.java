@@ -6,6 +6,9 @@ import be.swop.groep11.main.resource.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -108,6 +111,32 @@ public class RequirementListBuilderTest {
         resourceTypeRepository.withRequirementConstraint(typeA,typeB);
         resourceTypeRepository.withConflictConstraint(typeA,typeB);
 
+    }
+
+    @Test
+    public void testGetNextPossibleStartTime() throws Exception{
+        resourceTypeRepository.addNewResourceType("DA 1", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(16, 0)));
+        resourceTypeRepository.addNewResourceType("DA 2", new DailyAvailability(LocalTime.of(12, 0), LocalTime.of(17, 0)));
+
+        resourceRepository.addResourceInstance(new Resource("IDA 1", resourceTypeRepository.getResourceTypeByName("DA 1")));
+        resourceRepository.addResourceInstance(new Resource("IDA 2", resourceTypeRepository.getResourceTypeByName("DA 2")));
+
+        rlb.addNewRequirement(resourceTypeRepository.getResourceTypeByName("DA 1"), 1);
+        rlb.addNewRequirement(resourceTypeRepository.getResourceTypeByName("DA 2"), 1);
+
+        IRequirementList requirementList = rlb.getRequirements();
+
+        LocalDateTime next = requirementList.calculateNextPossibleStartTime(LocalDateTime.of(2015, 4, 10, 8, 0));
+        assertTrue(next.equals(LocalDateTime.of(2015, 4, 10, 12, 0)));
+
+        next = requirementList.calculateNextPossibleStartTime(LocalDateTime.of(2015, 4, 10, 16, 0));
+        assertTrue(next.equals(LocalDateTime.of(2015, 4, 11, 12, 0)));
+
+        next = requirementList.calculateNextPossibleStartTime(LocalDateTime.of(2015, 4, 10, 12, 0));
+        assertTrue(next.equals(LocalDateTime.of(2015, 4, 10, 12, 0)));
+
+        next = requirementList.calculateNextPossibleStartTime(LocalDateTime.of(2015, 4, 10, 14, 0));
+        assertTrue(next.equals(LocalDateTime.of(2015, 4, 10, 14, 0)));
     }
 
     private AResourceType addResourceTypeAndInstance(String name) {
