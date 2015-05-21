@@ -52,6 +52,7 @@ public class ProjectRepositoryTest {
         when(plan.hasEquivalentPlan()).thenReturn(true);
         when(plan.isWithinPlanTimeSpan(any())).thenReturn(true);
         when(branchOffice.getPlanForTask(any())).thenReturn(plan);
+        when(branchOffice.isTaskPlanned(any())).thenReturn(true);
         // update de system time ==> dit zorgt dat elke taak geupdate wordt naar available
         systemTime.updateSystemTime(systemTime.getCurrentSystemTime().plusDays(1));
     }
