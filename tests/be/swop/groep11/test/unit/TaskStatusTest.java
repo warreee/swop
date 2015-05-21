@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +46,8 @@ public class TaskStatusTest {
     public void setUp() throws NoSuchMethodException {
         now = LocalDateTime.of(2015, 3, 12, 8, 0);
         systemTime = new SystemTime(now);
-        project = new Project("Test project", "Mijn eerste project", now, now.plusHours(6), systemTime, mock(BranchOffice.class));
+        BranchOffice branchOffice = mock(BranchOffice.class);
+        project = new Project("Test project", "Mijn eerste project", now, now.plusHours(6), systemTime, branchOffice);
 
         project.addNewTask("Taak1", 0.1, Duration.ofHours(1), mock(IRequirementList.class));
         project.addNewTask("Taak2", 0.1, Duration.ofHours(1), mock(IRequirementList.class));
@@ -54,6 +56,7 @@ public class TaskStatusTest {
         task1 = project.getTasks().get(0);
         task2 = project.getTasks().get(1);
         task3 = project.getTasks().get(2);
+        when(branchOffice.containsTask(any())).thenReturn(true);
 
         //Plan zetten
         Plan testPlan = mock(Plan.class);
@@ -61,6 +64,7 @@ public class TaskStatusTest {
         task2.setPlan(testPlan);
         task3.setPlan(testPlan);
         when(testPlan.hasEquivalentPlan()).thenReturn(true);
+        when(testPlan.isWithinPlanTimeSpan(any())).thenReturn(true);
 
         LocalDateTime startTime = LocalDateTime.of(2015,1,1,0,0);
         TimeSpan timeSpan = new TimeSpan(startTime, startTime.plusHours(1));

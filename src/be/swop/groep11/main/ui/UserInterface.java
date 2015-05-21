@@ -42,10 +42,22 @@ public interface UserInterface {
      */
     void showTaskDetails(Task task,LocalDateTime dateTime);
 
+    /**
+     * Selecteert een branch office uit een lijst van branch offices.
+     * @param branchOffices Lijst van branch offices
+     * @return Geselecteerde branch office
+     * @throws EmptyListException De lijst van branch offices is leeg.
+     * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     */
+    BranchOffice selectBranchOfficeFromList(List<BranchOffice> branchOffices) throws EmptyListException, CancelException;
 
-    BranchOffice selectBranchOfficeFromList(ImmutableList<BranchOffice> branchOffices) throws EmptyListException, CancelException;
-
-
+    /**
+     * Selecteert een user uit een lijst van users.
+     * @param users Lijst van users
+     * @return Geselecteerde user
+     * @throws EmptyListException De lijst van users is leeg.
+     * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     */
     default User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException {
         return selectFromList(users, usr -> usr.getDescription());
     }
@@ -53,25 +65,25 @@ public interface UserInterface {
     /**
      * Selecteert een project uit een lijst van projecten.
      * @param projects Lijst van projecten
-     * @return Nummer van geselecteerde project in lijst
-     * @throws be.swop.groep11.main.ui.EmptyListException De lijst van projecten is leeg.
+     * @return Geselecteerde project
+     * @throws EmptyListException De lijst van projecten is leeg.
      * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    Project selectProjectFromList(ImmutableList<Project> projects) throws EmptyListException, CancelException;
+    Project selectProjectFromList(List<Project> projects) throws EmptyListException, CancelException;
 
     /**
      * Selecteert een taak uit een lijst van taken.
      * @param tasks Lijst van taken
-     * @return Nummer van geselecteerde taak in lijst
-     * @throws be.swop.groep11.main.ui.EmptyListException De lijst van taken is leeg.
+     * @return Geselecteerde taak
+     * @throws EmptyListException De lijst van taken is leeg.
      * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
-    Task selectTaskFromList(ImmutableList<Task> tasks) throws EmptyListException, CancelException;
+    Task selectTaskFromList(List<Task> tasks) throws EmptyListException, CancelException;
 
     /**
      * Selecteerd een localdatetime uit een lijst van localdatetimes
      * @param dateTimes lijst van datetimes
-     * @return nummer van de geselecteerde datime uit de lijst
+     * @return Geselecteerde DateTime
      * @throws EmptyListException De lijst van datetimes is leeg
      * @throws CancelException de gebruiker heeft aangegeven dat hij de usecase wilt stoppen
      */
@@ -173,7 +185,7 @@ public interface UserInterface {
      * @param listEntryPrinter De manier waarop ieder element wordt voorgesteld
      * @param <T>              Het type van het geslecteerde element
      * @return                 Geeft een lijst van de elementen die de gebruiker selecteerde.
-     * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
+     * @throws CancelException indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
      */
     <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,int maxSelected,boolean exactAmount,Function<T,String> listEntryPrinter) throws CancelException;
 
@@ -185,7 +197,7 @@ public interface UserInterface {
      * @param listEntryPrinter De manier waarop ieder element wordt voorgesteld
      * @param <T>              Het type van het geslecteerde element
      * @return                 Geeft een lijst van de elementen die de gebruiker selecteerde.
-     * @throws CancelException  indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
+     * @throws CancelException indien gebruiker Command.CANCEL ingeeft als invoer. Of indien de gegeven lijst leeg is.
      */
     default <T> List<T> selectMultipleFromList(String request,List<T> list,List<T> preselectedList,Function<T,String> listEntryPrinter) throws CancelException {
         return selectMultipleFromList(request,list, preselectedList, list.size(),false,listEntryPrinter);

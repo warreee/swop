@@ -62,6 +62,7 @@ public class PlanTest {
         when(task.isDelegated()).thenReturn(false);
         when(task.getDelegatedTo()).thenReturn(branchOffice);
         when(task.isPlanned()).thenReturn(false);
+        when(branchOffice.containsTask(eq(task))).thenReturn(true);
 
         List<Task> tasks = new ArrayList<>();
         tasks.add(task);

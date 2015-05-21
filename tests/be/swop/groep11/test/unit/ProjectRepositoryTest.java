@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -89,6 +90,7 @@ public class ProjectRepositoryTest {
         for (Task task : projRep.getAllTasks()) {
             Plan plan = mock(Plan.class);
             when(plan.hasEquivalentPlan()).thenReturn(true);
+            when(plan.isWithinPlanTimeSpan(any())).thenReturn(true);
             task.setPlan(plan);
         }
         systemTime.updateSystemTime(LocalDateTime.of(2015,1,1,10,0));

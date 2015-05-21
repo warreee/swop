@@ -10,6 +10,7 @@ import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -75,8 +76,7 @@ public class DelegateTaskController extends AbstractController {
      * En zorgt ervoor dat de gekozen taak als gedelegerde taak wordt gezet.
      */
     private void selectDelegateTask() {
-        ImmutableList<Task> tasks = ImmutableList.copyOf(logonController.getBranchOffice().getUnplannedTasks());
-        setDelegationTask(getUserInterface().selectTaskFromList(tasks));
+        setDelegationTask(getUserInterface().selectTaskFromList(logonController.getBranchOffice().getUnplannedTasks()));
     }
 
     BranchOffice destinationBranchOffice;
@@ -93,9 +93,9 @@ public class DelegateTaskController extends AbstractController {
      * En zorgt ervoor dat de gekozen branchoffice als gedelegerde branchoffice wordt gezet.
      */
     private void selectDestinationBranchOffice() {
-        ImmutableList<BranchOffice> branchOffices = ImmutableList.copyOf(
+        List<BranchOffice> branchOffices =
                 company.getBranchOffices().stream() //Lambda om alle branchoffice te nemen zonder die branchoffice waaruit gedelegeerd wordt
-                        .filter(branchOffice -> branchOffice != logonController.getBranchOffice()).collect(Collectors.toList()));
+                        .filter(branchOffice -> branchOffice != logonController.getBranchOffice()).collect(Collectors.toList());
         setDestinationBranchOffice(getUserInterface().selectBranchOfficeFromList(branchOffices));
     }
 

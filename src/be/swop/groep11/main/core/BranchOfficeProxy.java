@@ -156,6 +156,16 @@ public class BranchOfficeProxy extends BranchOffice {
     }
 
     @Override
+    protected void addDelegatedTask(Task task) {
+        realBranchOffice.addDelegatedTask(task);
+    }
+
+    @Override
+    protected void removeDelegatedTask(Task task) {
+        realBranchOffice.removeDelegatedTask(task);
+    }
+
+    @Override
     public boolean equals(Object other) {
         if (! (other instanceof BranchOffice)) {
             return false;
