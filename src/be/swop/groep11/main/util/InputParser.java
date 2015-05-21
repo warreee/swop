@@ -90,8 +90,13 @@ public class InputParser {
 
     private void handleBranchOffiches(Map<String, Object> branchOfficeMap){
         ArrayList branchOffiches = (ArrayList) branchOfficeMap.get("branchOffice");
-        for(Object branchOffice: branchOffiches){
-            addBranchOffice((Map<String, String>) branchOffice);
+        Integer currentBranchOffice = (Integer) branchOfficeMap.get("currentBranchOffice");
+        for(int i = 0; i < branchOffiches.size(); i++){
+            if(i == currentBranchOffice){
+                addBranchOffice((Map<String, String>) branchOffiches.get(i), false);
+            } else {
+                addBranchOffice((Map<String, String>) branchOffiches.get(i), true);
+            }
         }
     }
 
@@ -185,11 +190,14 @@ public class InputParser {
         }
     }
 
-    private void addBranchOffice(Map<String, String> propertiesList){
+    private void addBranchOffice(Map<String, String> propertiesList, boolean proxy){
         String name = propertiesList.get("name");
         String location = propertiesList.get("location");
         ResourcePlanner planner = new ResourcePlanner(new ResourceRepository(resourceTypeRepository), getSystemTime());
-        BranchOffice branchOffice = new BranchOffice(name, location, new ProjectRepository(getSystemTime()), planner); // TODO: juiste objecten meegeven
+        BranchOffice branchOffice  = new BranchOffice(name, location, new ProjectRepository(getSystemTime()), planner);
+        if(proxy) {
+            branchOffice = new BranchOfficeProxy(branchOffice);
+        }
         branchOfficeList.add(branchOffice);
         company.addBranchOffice(branchOffice);
     }

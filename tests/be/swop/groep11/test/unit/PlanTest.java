@@ -64,6 +64,9 @@ public class PlanTest {
         when(task.isPlanned()).thenReturn(false);
         when(branchOffice.containsTask(eq(task))).thenReturn(true);
 
+        // Plannen moet geldig kunnen zijn.
+        when(task.canHaveAsPlan(any())).thenReturn(true);
+
         List<Task> tasks = new ArrayList<>();
         tasks.add(task);
         when(branchOffice.getUnplannedTasks()).thenReturn(tasks);
@@ -109,12 +112,12 @@ public class PlanTest {
 
     @Test
     public void clearTest() {
-        verify(resourcePlanner).removePlan(plan);
-
 
         plan.clear();
-        assertTrue(plan.getTask().equals(null));
+        verify(resourcePlanner).removePlan(plan);
         assertTrue(plan.getReservations().isEmpty());
+        assertTrue(plan.getTask() == null);
+
     }
 
     @Test

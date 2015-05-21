@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public class Plan {
 
-    private Task task;
+    private Task task = null;
     private ResourcePlanner resourcePlanner;
     private TimeSpan timeSpan;
     private List<ResourceReservation> reservations;

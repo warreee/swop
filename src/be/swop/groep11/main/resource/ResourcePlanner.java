@@ -116,10 +116,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     public boolean isAvailable(ResourceInstance resourceInstance, TimeSpan timeSpan) {
         // Haal alle plannen op die beginnen voor de eindtijd van de gegeven timeSpan.
         NavigableMap<LocalDateTime, ArrayList<Plan>> map = planMap.headMap(timeSpan.getEndTime(), true);
-        DailyAvailability da = resourceInstance.getResourceType().getDailyAvailability();
-        if(!da.isAvailableDuring(timeSpan)){
-            return false;
-        }
 
         for (ArrayList<Plan> planList : map.values()) {
             for (Plan plan : planList) {

@@ -6,6 +6,8 @@ systemTime: "2014-04-01 09:00"
 
 company: "Fluffy Unicorn Inc"
 
+currentBranchOffice: 0
+
 branchOffice:
   - name: "Pink department"
     location: "Pinky Town"
