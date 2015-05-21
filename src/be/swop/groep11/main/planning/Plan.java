@@ -2,6 +2,7 @@ package be.swop.groep11.main.planning;
 
 import be.swop.groep11.main.core.TimeSpan;
 import be.swop.groep11.main.resource.AResourceType;
+import be.swop.groep11.main.resource.ResourceInstance;
 import be.swop.groep11.main.resource.ResourcePlanner;
 import be.swop.groep11.main.resource.ResourceReservation;
 import be.swop.groep11.main.task.Task;
@@ -195,5 +196,33 @@ public class Plan {
     @Override
     public String toString() {
         return "Plan{" +  timeSpan + " - " + getTask() + '}';
+    }
+
+    /**
+     * Geeft de lijst van Specifiek gekozen ResourceInstances voor dit plan.
+     * @return
+     */
+    public List<ResourceInstance> getSpecificResources() {
+        List<ResourceInstance> instances = new ArrayList<>(reservations.stream().filter(
+                reservation -> reservation.isSpecific() && !reservation.isDeveloperReservation()
+        ).map(
+                resv -> resv.getResourceInstance()).collect(Collectors.toList()
+        ));
+
+        return ImmutableList.copyOf(instances);
+    }
+
+    /**
+     * Geeft de lijst van toegewezen Developers voor dit plan.
+     * @return
+     */
+    public List<ResourceInstance> getAssignedDevelopers(){
+        List<ResourceInstance> instances = new ArrayList<>(reservations.stream().filter(
+                reservation -> reservation.isDeveloperReservation()
+        ).map(
+                resv -> resv.getResourceInstance()).collect(Collectors.toList()
+        ));
+
+        return ImmutableList.copyOf(instances);
     }
 }

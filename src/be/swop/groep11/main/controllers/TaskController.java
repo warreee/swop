@@ -17,7 +17,6 @@ import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -132,7 +131,6 @@ public class TaskController extends AbstractController {
             Function<Task,String> taskPrinter = tsk -> tsk.getDescription() + " " + tsk.getStatusString() ;
             Task task = getUserInterface().selectFromList(projectRepository.getAllAvailableOrExecutingTasks(), taskPrinter);
 
-//            Task task =  getUserInterface().selectTaskFromList();
             updateTask(task);
 
         }
@@ -148,7 +146,14 @@ public class TaskController extends AbstractController {
      */
     private void updateTask(Task task) throws CancelException{
         try {
-            ArrayList<String> options = new ArrayList<>(Arrays.asList("FAIL", "FINISH", "EXECUTE"));
+            ArrayList<String> options = new ArrayList<>();
+            if (task.isAvailable()) {
+                options.add("EXECUTE");
+            }else if (task.isExecuting()) {
+                options.add("FAIL");
+                options.add("FINISH");
+            }
+
             String status = getUserInterface().selectFromList(options, x -> x);
             doTransition(status, task);
         }

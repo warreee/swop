@@ -169,7 +169,7 @@ public class PlanBuilder {
      * @throws IllegalArgumentException Het plan heeft conflicterende reservaties of voldoet niet aan de requirements.
      *                                  | hasConflictingReservations() || ! isSatisfied()
      */
-    public Plan getPlan() {
+    public Plan getPlan() throws IllegalArgumentException{
         if (hasConflictingReservations()) {
             throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat er conflicten zijn");
         }
@@ -192,7 +192,7 @@ public class PlanBuilder {
      * @throws IllegalArgumentException Het plan heeft conflicterende reservaties of voldoet niet aan de requirements.
      *                                  | hasConflictingReservations() || ! isSatisfied()
      */
-    public Plan getPlan(LocalDateTime endTime, List<ResourceInstance> nonSpecificInstances) {
+    public Plan getPlan(LocalDateTime endTime, List<ResourceInstance> nonSpecificInstances)throws IllegalArgumentException {
         // eerst de voorgestelde niet-specifieke resource instanties verwijderen
         for (AResourceType resourceType : this.proposedInstances.keySet()) {
             this.proposedInstances.put(resourceType, new ArrayList<>());
@@ -249,7 +249,7 @@ public class PlanBuilder {
         if (branchOffice == null) {
             throw new IllegalArgumentException("BranchOffice moet voor Task gezet worden.");
         }
-        if (!branchOffice.getUnplannedTasks().contains(task)) {
+        if (!branchOffice.containsTask(task)) {
             throw new IllegalArgumentException("Task zit niet in de lijst van ongeplande taken van BranchOffice.");
         }
     }
