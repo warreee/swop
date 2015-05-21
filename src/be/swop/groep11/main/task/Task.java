@@ -238,7 +238,7 @@ public class Task {
     /**
      * Geeft het project waarin deze taak zit.
      */
-    protected Project getProject() {
+    public Project getProject() {
         return project;
     }
 
@@ -475,18 +475,21 @@ public class Task {
     /**
      * Controleert of deze taak een gegeven branch office als delegatedTo mag hebben.
      * @param delegatedTo De te controleren branch office.
-     * @return True als deze taak nog niet gepland is,
+     * @return True als delegatedTo niet null is, en deze taak nog niet gepland is,
      *         en wanneer de ongeplande taken van delegatedTo deze taak bevatten.
      */
-    protected boolean canHaveAsDelegatedTo(BranchOffice delegatedTo) {
-        if (delegatedTo == null){
+    public boolean canHaveAsDelegatedTo(BranchOffice delegatedTo) {
+        if (delegatedTo == null) {
             return false;
         }
         if (this.isPlanned())
             return false;
-        if (! delegatedTo.getUnplannedTasks().contains(this))
-            return false;
-        return true;
+        else if (delegatedTo.equals(this.getProject().getBranchOffice())) {
+            return true;
+        }
+        else {
+            return (delegatedTo.getUnplannedTasks().contains(this));
+        }
     }
 
     private BranchOffice delegatedTo;

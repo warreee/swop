@@ -31,12 +31,6 @@ public class CompanyTest {
         this.branchOffice3 = mock(BranchOffice.class);
     }
 
-    @Test
-    public void test() throws Exception {
-        fail("implement tests");
-
-    }
-
     @Test (expected = IllegalArgumentException.class)
     public void addBranchOfficeTest() throws Exception {
         company1.addBranchOffice(branchOffice1);

@@ -7,17 +7,13 @@ import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.planning.Plan;
-import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourcePlanner;
 import be.swop.groep11.main.task.Task;
-import be.swop.groep11.main.task.TaskProxy;
-import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +29,7 @@ public class BranchOfficeTest {
     ProjectRepository projectRepository1, projectRepository2, projectRepository3;
     ResourcePlanner resourcePlanner1, resourcePlanner2, resourcePlanner3;
     Task task;
-    User user1, user2, user3;
+    User projectManager, developer1, developer2;
     ResourceRepository resourceRepository1;
 
     @Before
@@ -43,8 +39,9 @@ public class BranchOfficeTest {
         ResourceTypeRepository resourceTypeRepository = new ResourceTypeRepository();
         resourceRepository1 = new ResourceRepository(resourceTypeRepository);
         SystemTime systemTime = mock(SystemTime.class);
-        resourcePlanner1 = new ResourcePlanner(resourceRepository1, systemTime);
-
+        resourcePlanner1 = mock(ResourcePlanner.class);
+        when(resourcePlanner1.hasEnoughResourcesToPlan(any())).thenReturn(true);
+        when(resourcePlanner1.getResourceRepository()).thenReturn(resourceRepository1);
         branchOffice1 = new BranchOffice("Branch office 1", "Locatie 1", projectRepository1, resourcePlanner1);
         // branch office 2
         projectRepository2 = mock(ProjectRepository.class);
@@ -68,78 +65,53 @@ public class BranchOfficeTest {
         when(projectRepository3.getAllTasks()).thenReturn(new ArrayList<>());
         task.setDelegatedTo(branchOffice1);
 
-        user1 = mock(User.class);
-        user2 = mock(User.class);
-        user3 = mock(User.class);
+        projectManager = new ProjectManager("pm");
+        developer1 = new Developer("dev1", resourceRepository1.getDeveloperType());
+        developer2 = new Developer("dev2", resourceRepository1.getDeveloperType());
     }
 
     @Test
     public void delegateTask_ProperToOther() throws Exception {
-        //when(task.isUnavailable()).thenReturn(true);
-
-        // branchOffice1 -> branchOffice2 = proper to other
-        //when(task.isDelegated()).thenReturn(false);
-        //when(task.getDelegatedTo()).thenReturn(branchOffice1);
         branchOffice1.delegateTask(task, branchOffice2);
 
-       // verify(task).setDelegatedTo(branchOffice2);
-        //when(task.isDelegated()).thenReturn(true);
-
-        //List<Task> tasks = branchOffice2.getUnplannedTasks();
-        //assertTrue(task.equals(branchOffice2.getDelegatedTasks().get(0)));
-
-        assertTrue(branchOffice1.getAllTasks().contains(task));
+        assertTrue(branchOffice1.getOwnTasks().contains(task));
         assertFalse(branchOffice1.getDelegatedTasks().contains(task));
         assertFalse(branchOffice1.getUnplannedTasks().contains(task));
-        assertFalse(branchOffice2.getAllTasks().contains(task));
+        assertFalse(branchOffice2.getOwnTasks().contains(task));
         assertTrue(branchOffice2.getDelegatedTasks().contains(task));
         assertTrue(branchOffice2.getUnplannedTasks().contains(task));
+        assertTrue(task.getDelegatedTo().equals(branchOffice2));
+        assertTrue(task.isDelegated());
     }
 
     @Test
     public void delegateTask_OtherToProper() throws Exception {
         branchOffice1.delegateTask(task, branchOffice2);
-        branchOffice2.delegateTask(task, branchOffice1); // waarom lukt dit niet?
+        branchOffice2.delegateTask(task, branchOffice1);
 
-        assertTrue(branchOffice1.getAllTasks().contains(task));
+        assertTrue(branchOffice1.getOwnTasks().contains(task));
         assertFalse(branchOffice1.getDelegatedTasks().contains(task));
         assertTrue(branchOffice1.getUnplannedTasks().contains(task));
-        assertFalse(branchOffice2.getAllTasks().contains(task));
+        assertFalse(branchOffice2.getOwnTasks().contains(task));
         assertFalse(branchOffice2.getDelegatedTasks().contains(task));
         assertFalse(branchOffice2.getUnplannedTasks().contains(task));
     }
 
     @Test
     public void delegateTask_OtherToOther() throws Exception {
-       // when(task.isUnavailable()).thenReturn(true);
-
-        // branchOffice1 -> branchOffice2
-        //when(task.isDelegated()).thenReturn(false);
-        //when(task.getDelegatedTo()).thenReturn(branchOffice1);
         branchOffice1.delegateTask(task, branchOffice2);
-        //when(task.isDelegated()).thenReturn(true);
-        //when(task.getDelegatedTo()).thenReturn(branchOffice2);
-        // branchOffice2 -> branchOffice3 = other to other
         branchOffice2.delegateTask(task, branchOffice3);
-        //verify(task).setDelegatedTo(branchOffice3);
-        //when(task.getDelegatedTo()).thenReturn(branchOffice3);
-        //when(task.isDelegated()).thenReturn(true);
 
-        assertFalse(branchOffice2.getAllTasks().contains(task));
+        assertFalse(branchOffice2.getOwnTasks().contains(task));
         assertFalse(branchOffice2.getDelegatedTasks().contains(task));
         assertFalse(branchOffice2.getUnplannedTasks().contains(task));
-        assertFalse(branchOffice3.getAllTasks().contains(task));
+        assertFalse(branchOffice3.getOwnTasks().contains(task));
         assertTrue(branchOffice3.getDelegatedTasks().contains(task));
         assertTrue(branchOffice3.getUnplannedTasks().contains(task));
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void delegateTask_SameBranchOffice() throws Exception {
-        //when(task.isUnavailable()).thenReturn(true);
-
-        // branchOffice1 -> branchOffice1
-        //when(task.isDelegated()).thenReturn(false);
-        //when(task.getDelegatedTo()).thenReturn(branchOffice1);
         task.setPlan(mock(Plan.class));
         branchOffice1.delegateTask(task, branchOffice1);
     }
@@ -147,28 +119,17 @@ public class BranchOfficeTest {
     @Test (expected = IllegalArgumentException.class)
     public void delegateTask_CanNotPlanTask() throws Exception {
         when(resourcePlanner2.hasEnoughResourcesToPlan(task)).thenReturn(false);
-
-        //when(task.isUnavailable()).thenReturn(true);
-
-        // branchOffice1 -> branchOffice2
-        //when(task.isDelegated()).thenReturn(false);
-        //when(task.getDelegatedTo()).thenReturn(branchOffice2);
         branchOffice1.delegateTask(task, branchOffice2);
-    }
-
-
-    @Test
-    public void updateAllStatusTest() {
-        fail("Nog niet geïmplementeerd!");
     }
 
     @Test
     public void addEmployeeTest() {
-        branchOffice1.addEmployee(user1);
-        branchOffice1.addEmployee(user2);
-        branchOffice1.addEmployee(user3);
+        branchOffice1.addEmployee(projectManager);
+        branchOffice1.addEmployee(developer1);
+        branchOffice1.addEmployee(developer2);
 
         assertTrue(branchOffice1.getEmployees().size() == 3);
+        assertTrue(branchOffice1.getDevelopers().size() == 2);
     }
 
 }

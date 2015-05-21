@@ -1,6 +1,9 @@
 package be.swop.groep11.main.resource;
 
+import be.swop.groep11.main.core.TimeSpan;
+
 import java.time.*;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -105,6 +108,19 @@ public class DailyAvailability {
     public static boolean isValidStartTimeEndTime(LocalTime startTime, LocalTime endTime){
         return startTime != null && endTime != null && startTime.isBefore(endTime)
                 && Duration.between(startTime, endTime).compareTo(Duration.ofHours(1)) >= 0;
+    }
+
+    public boolean isAvailableDuring(TimeSpan timeSpan){
+        if(this.getStartTime() == LocalTime.MIN && this.getEndTime() == LocalTime.MAX){
+            return true;
+        }
+        long secondsInTimespan = ChronoUnit.SECONDS.between(timeSpan.getStartTime(), timeSpan.getEndTime());
+        final int SECONDS_IN_DAY = 60*60*24;
+        if(secondsInTimespan > SECONDS_IN_DAY){
+            // De TimeSpan is langer dan een dag, maar de DailyAvailability is geen hele dag.
+            return false;
+        }
+        return containsTime(timeSpan.getStartTime().toLocalTime()) && containsTime(timeSpan.getEndTime().toLocalTime());
     }
 
     /**

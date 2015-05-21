@@ -6,9 +6,7 @@ import be.swop.groep11.main.task.TaskProxy;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -105,7 +103,7 @@ public class BranchOffice {
      * een lijst van de taken die nog niet gepland zijn.
      */
     public List<Task> getUnplannedTasks() {
-        List<Task> allTasks = getAllTasks().stream().filter(task -> (!task.isDelegated())).collect(Collectors.toList());
+        List<Task> allTasks = getOwnTasks().stream().filter(task -> (!task.isDelegated())).collect(Collectors.toList());
         allTasks.addAll(getDelegatedTasks());
         return allTasks.stream().filter(task -> (! task.isPlanned()) ).collect(Collectors.toList());
     }
@@ -114,7 +112,7 @@ public class BranchOffice {
      * Geeft een lijst van alle taken die in deze branch office aangemaakt zijn,
      * zonder de taken die naar andere branch offices gedelegeerd zijn.
      */
-    public List<Task> getAllTasks() {
+    public List<Task> getOwnTasks() {
         List<Task> tasks = this.getProjectRepository().getAllTasks();
         return tasks;
     }
@@ -146,13 +144,13 @@ public class BranchOffice {
             throw new IllegalArgumentException("De taak kan niet naar de andere branch office gedelegeerd worden");
         }
 
-        if (other.getAllTasks().contains(task)) {
+        if (other.getOwnTasks().contains(task)) {
             // delegatie van (branch office die taak niet gemaakt heeft) naar (branch office die taak wel gemaakt heeft)
             this.removeDelegatedTask(task);
             task.setDelegatedTo(other);
         }
 
-        else if (this.getAllTasks().contains(task)) {
+        else if (this.getOwnTasks().contains(task)) {
             // delegatie van (branch office die taak wel gemaakt heeft) naar (branch office die taak niet gemaakt heeft)
 
             // voeg dan een proxy voor task toe aan other!
