@@ -1,6 +1,7 @@
 package be.swop.groep11.main.actions;
 
 import be.swop.groep11.main.controllers.AbstractController;
+import be.swop.groep11.main.exception.FailedConditionException;
 import be.swop.groep11.main.exception.InterruptedAProcedureException;
 
 import java.util.HashMap;
@@ -30,7 +31,6 @@ public class ControllerStack {
         HashSet<Action> actions = new HashSet<>();
         HashMap<Action, ActionProcedure> actionProcedureHashMap = getControllerToActionMap().get(controller);
         actionProcedureHashMap.keySet().forEach(action -> actions.add(action));
-//        System.out.println(actions);
         return actions;
     }
 
@@ -65,6 +65,10 @@ public class ControllerStack {
         } catch (InterruptedAProcedureException e) {
             restoreBackup(backup);
             printStack("restored");
+        }catch (FailedConditionException e) {
+            restoreBackup(backup);
+            printStack("restored");
+            throw e;
         }
     }
 
