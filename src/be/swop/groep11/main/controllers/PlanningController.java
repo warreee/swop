@@ -25,7 +25,6 @@ public class PlanningController extends AbstractController {
 
     private SystemTime systemTime;
 
-    private UserInterface ui;
     private LogonController logonController;
 
     /**
@@ -37,7 +36,6 @@ public class PlanningController extends AbstractController {
         super(userInterface);
         this.logonController = logonController;
         this.systemTime = systemTime;
-        this.ui = getUserInterface();
     }
 
     /**
@@ -50,81 +48,13 @@ public class PlanningController extends AbstractController {
 
             /* The system shows a list of all currently unplanned tasks and the project
                 they belong to. The user selects the task he wants to plan. */
-            Task task = ui.selectTaskFromList(ImmutableList.copyOf(branchOffice.getUnplannedTasks()));
+            Task task = getUserInterface().selectTaskFromList(ImmutableList.copyOf(branchOffice.getUnplannedTasks()));
 
            planTask(task,branchOffice);
         } catch (EmptyListException|CancelException|IllegalStateException e) {
             getUserInterface().printException(e);
+            getUserInterface().showHelp();
         }
-    }
-
-    private LocalDateTime selectStartTime(Task task, ResourcePlanner resourcePlanner) {
-        /* The system shows the first three possible starting times (only consid-
-            ering exact hours, e.g. 09:00, and counting from the current system
-            time) that a task can be planned (i.e. enough resource instances and
-            developers are available) */
-        List<LocalDateTime> nextStartTimes = resourcePlanner.getNextPossibleStartTimes(
-                task.getRequirementList(),
-                systemTime.getCurrentSystemTime(),
-                task.getEstimatedDuration(),
-                3);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime startTime;
-        if (ui.requestBoolean("Wilt u mogelijke startTijden laten generen? (N: indien u zelf een startTijd wilt ingeven)")) {
-            /* The user selects a proposed time. */
-            Function<LocalDateTime, String> dateTimePrinter = localDateTime -> localDateTime.format(formatter);
-            startTime = getUserInterface().selectFromList(nextStartTimes, dateTimePrinter);
-        } else {
-            /* The user indicates he wants to select another time */
-            startTime = ui.requestDatum("Kies een starttijd (moet op een uur vallen en mag niet voor de huidige systeemtijd (" + systemTime.getCurrentSystemTime().format(formatter) + ") vallen:");
-        }
-        return startTime;
-    }
-
-    private void showProposedInstances(Task task, PlanBuilder planBuilder) {
-        getUserInterface().printMessage("Voorgestelde resources:");
-        task.getRequirementList().getRequirements().forEach(resourceRequirement -> {
-            if (!resourceRequirement.isDeveloperRequirement()) {
-                getUserInterface().printMessage(resourceRequirement.toString());//voor
-                List<ResourceInstance> instances = planBuilder.getSelectedInstances(resourceRequirement.getType());
-                getUserInterface().showList(instances, resourceInstance -> resourceInstance.getName());
-            }
-        });
-    }
-
-    private void selectResources(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) throws ConflictException {
-
-        /* The user allows the system to select the required resources. */
-        if (ui.requestBoolean("Wilt u zelf resources selecteren?")) {
-            //Clear reeds door het systeem geselecteerde instanties
-            planBuilder.clearInstances();
-            // laat gebruiker resource instanties selecteren
-            task.getRequirementList().getRequirements().stream().filter(req -> !req.isDeveloperRequirement()).forEach(resourceRequirement -> {
-                AResourceType type = resourceRequirement.getType();
-                List<ResourceInstance> instances = getUserInterface().selectMultipleFromList(
-                        "request", resourceRepository.getResources(type),
-                        new ArrayList<>(), resourceRequirement.getAmount(),
-                        true, ri -> ri.getName()
-                );
-                instances.forEach(resourceInstance -> planBuilder.addResourceInstance(resourceInstance));
-            });
-            //Check for conflicting reservations
-            planBuilder.checkForConflictingReservations();
-        }
-    }
-
-    private void selectDevelopers(Task task, ResourcePlanner resourcePlanner, PlanBuilder planBuilder,BranchOffice branchOffice) throws ConflictException{
-        String msgSelectDevelopers = "Selecteer developers";
-        int nbDevelopers = task.getRequirementList().getRequiredDevelopers();
-
-        Function<ResourceInstance, String> entryPrinter = resourceInstance -> {
-            return resourcePlanner.isAvailable(resourceInstance,planBuilder.getTimeSpan())? resourceInstance.getName() + " (beschikbaar)": resourceInstance.getName() + " (niet beschikbaar)";
-        };
-
-        List<ResourceInstance> selectedDevelopers = ui.selectMultipleFromList(msgSelectDevelopers,  branchOffice.getDevelopers(), new ArrayList<>(), nbDevelopers, true, entryPrinter);
-        selectedDevelopers.forEach(planBuilder::addResourceInstance);
-        planBuilder.checkForConflictingReservations();
     }
 
     /**
@@ -168,9 +98,8 @@ public class PlanningController extends AbstractController {
             resolveConflict(task, conflictException.getConflictingTasks(),branchOffice);
             planTask(task,branchOffice);
         } catch (IllegalArgumentException e) {
-           getUserInterface().printException(e);
+            getUserInterface().printException(e);
         }
-        //TODO cancelException? of in planTask()
     }
 
     /**
@@ -193,14 +122,79 @@ public class PlanningController extends AbstractController {
                 });
             }
         } catch (CancelException e) {
-            System.out.println("restoring memento");
+//            System.out.println("restoring memento");
             branchOffice.getResourcePlanner().setMemento(memento);
             throw e;
-//            e.printStackTrace();
         }
 
 
 
     }
 
+
+    private LocalDateTime selectStartTime(Task task, ResourcePlanner resourcePlanner) {
+        /* The system shows the first three possible starting times (only consid-
+            ering exact hours, e.g. 09:00, and counting from the current system
+            time) that a task can be planned (i.e. enough resource instances and
+            developers are available) */
+        List<LocalDateTime> nextStartTimes = resourcePlanner.getNextPossibleStartTimes(
+                task.getRequirementList(),systemTime.getCurrentSystemTime(),task.getEstimatedDuration(),3);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime startTime;
+        if (getUserInterface().requestBoolean("Wilt u mogelijke startTijden laten generen? (N: indien u zelf een startTijd wilt ingeven)")) {
+            /* The user selects a proposed time. */
+            Function<LocalDateTime, String> dateTimePrinter = localDateTime -> localDateTime.format(formatter);
+            startTime = getUserInterface().selectFromList(nextStartTimes, dateTimePrinter);
+        } else {
+            /* The user indicates he wants to select another time */
+            startTime = getUserInterface().requestDatum("Kies een starttijd (moet op een uur vallen en mag niet voor de huidige systeemtijd (" + systemTime.getCurrentSystemTime().format(formatter) + ") vallen:");
+        }
+        return startTime;
+    }
+
+    private void showProposedInstances(Task task, PlanBuilder planBuilder) {
+        getUserInterface().printMessage("Voorgestelde resources:");
+        task.getRequirementList().getRequirements().forEach(resourceRequirement -> {
+            if (!resourceRequirement.isDeveloperRequirement()) {
+                getUserInterface().printMessage(resourceRequirement.toString());//voor
+                List<ResourceInstance> instances = planBuilder.getSelectedInstances(resourceRequirement.getType());
+                getUserInterface().showList(instances, resourceInstance -> resourceInstance.getName());
+            }
+        });
+    }
+
+    private void selectResources(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) throws ConflictException {
+
+        /* The user allows the system to select the required resources. */
+        if (getUserInterface().requestBoolean("Wilt u zelf resources selecteren?")) {
+            //Clear reeds door het systeem geselecteerde instanties
+            planBuilder.clearInstances();
+            // laat gebruiker resource instanties selecteren
+            task.getRequirementList().getRequirements().stream().filter(req -> !req.isDeveloperRequirement()).forEach(resourceRequirement -> {
+                AResourceType type = resourceRequirement.getType();
+                List<ResourceInstance> instances = getUserInterface().selectMultipleFromList(
+                        "request", resourceRepository.getResources(type),
+                        new ArrayList<>(), resourceRequirement.getAmount(),
+                        true, ri -> ri.getName()
+                );
+                instances.forEach(resourceInstance -> planBuilder.addResourceInstance(resourceInstance));
+            });
+            //Check for conflicting reservations
+            planBuilder.checkForConflictingReservations();
+        }
+    }
+
+    private void selectDevelopers(Task task, ResourcePlanner resourcePlanner, PlanBuilder planBuilder,BranchOffice branchOffice) throws ConflictException{
+        String msgSelectDevelopers = "Selecteer developers";
+        int nbDevelopers = task.getRequirementList().getRequiredDevelopers();
+
+        Function<ResourceInstance, String> entryPrinter = resourceInstance -> {
+            return resourcePlanner.isAvailable(resourceInstance,planBuilder.getTimeSpan())? resourceInstance.getName() + " (beschikbaar)": resourceInstance.getName() + " (niet beschikbaar)";
+        };
+
+        List<ResourceInstance> selectedDevelopers = getUserInterface().selectMultipleFromList(msgSelectDevelopers, branchOffice.getDevelopers(), new ArrayList<>(), nbDevelopers, true, entryPrinter);
+        selectedDevelopers.forEach(planBuilder::addResourceInstance);
+        planBuilder.checkForConflictingReservations();
+    }
 }
