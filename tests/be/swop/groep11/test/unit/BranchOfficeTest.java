@@ -111,12 +111,6 @@ public class BranchOfficeTest {
     }
 
     @Test (expected = IllegalArgumentException.class)
-    public void delegateTask_SameBranchOffice() throws Exception {
-        task.setPlan(mock(Plan.class));
-        branchOffice1.delegateTask(task, branchOffice1);
-    }
-
-    @Test (expected = IllegalArgumentException.class)
     public void delegateTask_CanNotPlanTask() throws Exception {
         when(resourcePlanner2.hasEnoughResourcesToPlan(task)).thenReturn(false);
         branchOffice1.delegateTask(task, branchOffice2);

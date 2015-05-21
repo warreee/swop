@@ -124,7 +124,11 @@ public class App {
 
         ActionProcedure startSimulation = new ActionProcedure(simulationController, simulationController::startSimulation, logonController::hasIdentifiedProjectManager, false);
         ActionProcedure cancelSim = new ActionProcedure(simulationController, simulationController::cancel, logonController::hasIdentifiedProjectManager, true);
-        ActionProcedure realizeSim = new ActionProcedure(simulationController, simulationController::realize, logonController::hasIdentifiedProjectManager, true);
+        ActionProcedure delegateTaskInSimulation = new ActionProcedure(delegateTaskController, delegateTaskController::selectDelegatedTo, logonController::hasIdentifiedProjectManager, true);
+        ActionProcedure realizeSim = new ActionProcedure(simulationController, () -> {
+            delegateTaskController.performDelegations(); // delegaties worden alleen echt uitgevoerd wanneer de simulatie gerealiseerd wordt
+            simulationController.realize();
+        }, logonController::hasIdentifiedProjectManager, true);
 
 
         //set default ActionProcedures
@@ -148,9 +152,9 @@ public class App {
 
         controllerStack.addActionProcedure(simulationController, Action.CREATETASK, createTask);
         controllerStack.addActionProcedure(simulationController, Action.PLANTASK, planTask);
-        controllerStack.addActionProcedure(simulationController, Action.DELEGATETASK, delegateTask);
         controllerStack.addActionProcedure(simulationController, Action.REALIZESIMULATION, realizeSim);
         controllerStack.addActionProcedure(simulationController, Action.CANCEL, cancelSim);
+        controllerStack.addActionProcedure(simulationController, Action.DELEGATETASK, delegateTaskInSimulation);
 
         controllerStack.addActionProcedure(simulationController, Action.SHOWPROJECTS, showProjects);
     }
