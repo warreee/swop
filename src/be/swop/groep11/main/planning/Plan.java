@@ -54,6 +54,9 @@ public class Plan {
      * dit plan uit de resource planner te halen en dit plan uit de bijhorende taak te halen.
      */
     public void clear() {
+        //TODO fix documentatie
+
+        getResourcePlanner().removePlan(this);
         setTask(null);
         this.reservations = new ArrayList<>(); // niet echt nodig
     }
@@ -197,7 +200,12 @@ public class Plan {
 
     @Override
     public String toString() {
-        return "Plan{" +  timeSpan + " - " + getTask() + '}';
+        return "Plan{" +
+                "reservations=" + reservations +
+                ",\n task=" + task +
+                ",\n resourcePlanner=" + resourcePlanner +
+                ",\n timeSpan=" + timeSpan +
+                '}';
     }
 
     /**

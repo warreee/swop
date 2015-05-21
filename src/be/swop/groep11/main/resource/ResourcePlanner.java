@@ -116,10 +116,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
     public boolean isAvailable(ResourceInstance resourceInstance, TimeSpan timeSpan) {
         // Haal alle plannen op die beginnen voor de eindtijd van de gegeven timeSpan.
         NavigableMap<LocalDateTime, ArrayList<Plan>> map = planMap.headMap(timeSpan.getEndTime(), true);
-        DailyAvailability da = resourceInstance.getResourceType().getDailyAvailability();
-        if(!da.isAvailableDuring(timeSpan)){
-            return false;
-        }
 
         for (ArrayList<Plan> planList : map.values()) {
             for (Plan plan : planList) {
@@ -178,13 +174,13 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      * @param plan Het plan dat verwijderd wordt.
      */
     public void removePlan(Plan plan) {
+        //TODO fix documentatie
         if (plan == null) {
             throw new IllegalArgumentException("Plan mag niet null zijn");
         }
         planMap.getOrDefault(plan.getPlannedStartTime(), new ArrayList<>()).remove(plan);
         planToTask.remove(plan);
         removeObserver(plan.getTask().getResourcePlannerObserver());
-        plan.clear();
         updateObservers();
     }
 
@@ -238,7 +234,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      * @return Een lijst met de gevraagde hoeveelheid mogelijke TimeSpans.
      */
     public List<TimeSpan> getNextPossibleTimeSpans(IRequirementList requirementList, LocalDateTime firstPossibleStartTime, Duration duration, int amount) {
-        LocalDateTime fullHour = getNextHour(firstPossibleStartTime);
+        LocalDateTime fullHour = roundToNextHour(firstPossibleStartTime);
 
         ArrayList<TimeSpan> possibleTimeSpans = new ArrayList<>();
         int listSize = possibleTimeSpans.size();
@@ -386,6 +382,13 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         return result;
     }
 
+    /**
+     * Deze methode gaat na of er voor het gegeven plan een equivalent plan bestaat startend op de huidige SysteemTijd.
+     * Waarbij rekening gehouden wordt met reeds specifieke resources.
+     * @param plan          Het gegeven plan
+     * @return  Waar indien er een ander plan gemaakt kan worden met de specifieke resources op de huidige SysteemTijd.
+     *          Waar indien de huidige SysteemTijd in de periode van het gegeven plan valt.
+     */
     public boolean hasEquivalentPlan(Plan plan) {
         return hasEquivalentPlan(plan, getSystemTime().getCurrentSystemTime());
     }
@@ -407,26 +410,27 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      */
     public void setMemento(IResourcePlannerMemento memento) {
         this.planMap = new TreeMap<>();
+        this.planToTask = new HashMap<>();
         TreeMap<LocalDateTime, ArrayList<Plan>> plans = memento.getPlans();
-        plans.forEach((localDateTime, plans1) -> planMap.put(localDateTime,plans1));
-//        for (Plan plan : plans) {
-//            this.addPlan(plan);
-//        }
+        plans.forEach((localDateTime, plans1) -> {
+            planMap.put(localDateTime, plans1);
+            plans1.forEach(plan -> planToTask.put(plan,plan.getTask()));
+
+        });
     }
 
+    /**
+     * Geeft lijst van alle plannen terug.
+     * @return
+     */
     private List<Plan> getPlans() {
         List<Plan> plans = new ArrayList<>();
-
         planMap.values().forEach(plns -> plans.addAll(plns));
-//        for (LocalDateTime startTime : this.planMap.keySet()) {
-//            if (planMap.get(startTime) != null) {
-//                plans.addAll(planMap.get(startTime));
-//            }
-//        }
         return plans;
     }
 
-    private LocalDateTime getNextHour(LocalDateTime dateTime){
+
+    private LocalDateTime roundToNextHour(LocalDateTime dateTime){
         if (dateTime.getMinute() == 0)
             return dateTime.truncatedTo(ChronoUnit.SECONDS);
         else{
@@ -434,6 +438,11 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         }
     }
 
+    /**
+     * Geeft een Plan terug indien er één is voor de gegeven Task.
+     * @param task  De Task waarvoor het plan wordt opgevraagd.
+     * @return  Het plan voor task, of null indien er geen plan is.
+     */
     public Plan getPlanForTask(Task task) {
         Plan result = null;
         if (hasPlanForTask(task)) {

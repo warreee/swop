@@ -1,15 +1,14 @@
 package be.swop.groep11.main.ui;
 
 import be.swop.groep11.main.actions.ControllerStack;
+import be.swop.groep11.main.controllers.AbstractController;
 import be.swop.groep11.main.core.BranchOffice;
+import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.User;
 import be.swop.groep11.main.exception.CancelException;
-import be.swop.groep11.main.controllers.AbstractController;
-import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
-import com.sun.org.apache.bcel.internal.generic.IMUL;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -143,6 +142,10 @@ public interface UserInterface {
      * Toont een exception aan de gebruiker
      */
     void printException(Exception e);
+
+    default void showHelp() {
+        showHelp(getControllerStack().getActiveController());
+    }
 
     /**
      * Toont de beschikbare acties die uitgevoerd kunnen worden in een controller.

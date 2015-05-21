@@ -43,8 +43,6 @@ public class CommandLineInterface implements UserInterface {
                 try {
                     String commandString = bufferedReader.readLine();
                     Action com = Action.getAction(commandString);
-//                    executeCommand(com);
-//                    controllerStack.executeAction(action)
                     getControllerStack().executeAction(com);
                 } catch (IllegalActionException ec) {
                     printException(ec);
@@ -80,10 +78,6 @@ public class CommandLineInterface implements UserInterface {
     public ControllerStack getControllerStack() {
         return controllerStack;
     }
-
-//    private void executeCommand(Action action) {
-//        controllerStack.executeAction(action);
-//    }
 
     @Override
     public void printMessage(String message) {
@@ -231,6 +225,8 @@ public class CommandLineInterface implements UserInterface {
         if (task.getAlternativeTask() != null) {
             java.lang.System.out.printf(format, "Alternatieve taak: ", task.getAlternativeTask().getDescription());
         }
+
+        System.out.println(task.getDelegatedTo().getPlanForTask(task)); //TODO temp
     }
 
     /**
@@ -588,6 +584,10 @@ public class CommandLineInterface implements UserInterface {
             printMessage(sb.toString());
         };
         listPrint.accept(list);
+    }
+
+    public void showHelp() throws IllegalArgumentException{
+        showHelp(getControllerStack().getActiveController());
     }
 
     @Override
