@@ -442,6 +442,7 @@ public class ResourcePlannerTest {
         when(plan.getReservations(anyObject())).thenReturn(ImmutableList.copyOf(reservations));
         when(plan.getTimeSpan()).thenReturn(timeSpan);
         when(task.getResourcePlannerObserver()).thenReturn(resourcePlanner -> { });
+        when(plan.getPlannedStartTime()).thenReturn(LocalDateTime.of(2015,1,1,8,0));
 
         // add plan to resource planner
         planner1.addPlan(plan);

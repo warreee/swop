@@ -13,7 +13,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TimeSpanTest.class, ResourceTypeConstraintTest.class,AbstractControllerTest.class,
         ProjectTest.class, ProjectRepositoryTest.class,MainControllerTest.class,CompanyTest.class,BranchOfficeTest.class,
         ResourceTypeTest.class, DependencyGraphTest.class, DeveloperTypeTest.class, DailyAvailabilityTest.class
-        ,ResourceRepositoryTest.class,ObservableTest.class,TaskProxyTest.class, ProjectProxy.class, BranchOfficeProxy.class,
+        ,ResourceRepositoryTest.class,ObservableTest.class,TaskProxyTest.class, ProjectProxyTest.class, BranchOfficeProxyTest.class,
         ResourcePlannerTest.class})
 public class UnitTests {
 }
