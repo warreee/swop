@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Ronald on 13/05/2015.
+ * Stelt een repository voor die resourceInstances bijhoudt.
  */
 public class ResourceRepository {
 
