@@ -17,8 +17,8 @@ public class CreateProjectController extends AbstractController {
 
     /**
      * Constructor om een nieuwe project controller te maken.
-     * @param projectRepository Project repository om projecten aan toe te voegen
-     * @param userInterface
+     * @param userInterface De userinterface voor deze controller
+     * @param logonController De logonController waarmee deze klasse moet werken.
      */
     public CreateProjectController(UserInterface userInterface, LogonController logonController){
         super(userInterface);
