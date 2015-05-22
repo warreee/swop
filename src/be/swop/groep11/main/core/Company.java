@@ -65,6 +65,10 @@ public class Company {
         return name;
     }
 
+    /**
+     * Zet de naam van deze Company.
+     * @param name de naam
+     */
     public void setName(String name){
         if(!isValidName(name)){
             throw new IllegalArgumentException("Geen geldige naam aan Company gegeven.");
@@ -95,11 +99,17 @@ public class Company {
         return branchOffice != null && !getBranchOffices().contains(branchOffice); // en heeft corresponderende typeRepository?
     }
 
-
+    /**
+     * Haalt de systeemtijd van deze Company op.
+     */
     public SystemTime getSystemTime() {
         return systemTime;
     }
 
+    /**
+     * Zet de systeemtijd van deze Company.
+     * @param systemTime De systeemtijd
+     */
     public void setSystemTime(SystemTime systemTime) throws IllegalArgumentException{
         if (!isValidSystemTime(systemTime)) {
             throw new IllegalArgumentException("Ongeldige systemTime");
@@ -113,7 +123,9 @@ public class Company {
 
     private SystemTime systemTime;
 
-
+    /**
+     * Haalt alle projecten op die binnen deze Company bekend zijn.
+     */
     public ImmutableList<Project> getAllProjects() {
         ArrayList<Project> projs = new ArrayList<>();
         getBranchOffices().forEach(bo -> projs.addAll(bo.getProjects()));
