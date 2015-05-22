@@ -19,7 +19,7 @@ public class ResourceType extends AResourceType {
      * Implementeert calculateEndTime in de interface ResourceInstance.
      * @param startTime De gegeven starttijd
      * @param duration  De gegeven duur
-     * @return TODO: uitleggen hoe dit voor Resource gedaan wordt
+     * @return De eindtijd
      */
     public LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration) {
 
