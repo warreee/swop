@@ -110,6 +110,7 @@ public class DailyAvailability {
                 && Duration.between(startTime, endTime).compareTo(Duration.ofHours(1)) >= 0;
     }
 
+    // TODO: ongebruikt
     public boolean isAvailableDuring(TimeSpan timeSpan){
         if(this.getStartTime() == LocalTime.MIN && this.getEndTime() == LocalTime.MAX){
             return true;

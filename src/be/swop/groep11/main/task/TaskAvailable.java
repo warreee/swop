@@ -134,6 +134,10 @@ public class TaskAvailable extends TaskStatus {
         return plan != null && task.getPlan() == null || (plan == null && task.getPlan() != null && task.getPlan().getTask() == null);
     }
 
+    /**
+     * Update de status van deze taak.
+     * @param task De taak waarvan we de status moeten veranderen.
+     */
     @Override
     public void updateStatus(Task task) {
         //zou per definitie een plan moeten hebben, maar toch ...

@@ -13,6 +13,8 @@ import java.util.Set;
 
 /**
  * Stelt een proxy voor een taak voor, met een referentie naar de echte taak.
+ *
+ * Voor documentatie, zie Task.
  */
 public class TaskProxy extends Task {
 
@@ -36,41 +38,69 @@ public class TaskProxy extends Task {
         this.realTask = realTask;
     }
 
+    /**
+     * Zet de omschrijving van deze taak.
+     * @param description De omschrijving
+     */
     @Override
     public void setDescription(String description) throws IllegalArgumentException {
         realTask.setDescription(description);
     }
 
+    /**
+     * Haalt de omschrijving vand eze taak op.
+     */
     @Override
     public String getDescription() {
         return realTask.getDescription();
     }
 
+    /**
+     * Zet de geschatte tijd van deze taak.
+     * @param estimatedDuration de geschatte tijd.
+     */
     @Override
     public void setEstimatedDuration(Duration estimatedDuration) throws IllegalArgumentException {
         realTask.setEstimatedDuration(estimatedDuration);
     }
 
+    /**
+     * Haalt de verwachte tijd op van deze taak.
+     */
     @Override
     public Duration getEstimatedDuration() {
         return realTask.getEstimatedDuration();
     }
 
+    /**
+     * Zet de acceptablele afwijking.
+     * @param acceptableDeviation de acceptabele afwijking.
+     */
     @Override
     public void setAcceptableDeviation(double acceptableDeviation) throws IllegalArgumentException {
         realTask.setAcceptableDeviation(acceptableDeviation);
     }
 
+    /**
+     * Haalt de acceptabele afwijking op.
+     */
     @Override
     public double getAcceptableDeviation() {
         return realTask.getAcceptableDeviation();
     }
 
+    /**
+     * Haalt de starttijd van deze taak op.
+     */
     @Override
     public LocalDateTime getStartTime() {
         return realTask.getStartTime();
     }
 
+    /**
+     * Zet de starttijd van deze taak.
+     * @param startTime de starttijd
+     */
     @Override
     protected void setStartTime(LocalDateTime startTime) throws IllegalArgumentException {
         realTask.setStartTime(startTime);

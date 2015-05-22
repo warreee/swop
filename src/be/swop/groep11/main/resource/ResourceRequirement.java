@@ -81,6 +81,9 @@ public class ResourceRequirement {
 
     }
 
+    /**
+     * Controlleert of deze ResourceRequirement slaat op een DeveloperType
+     */
     public boolean isDeveloperRequirement() {
         return getType() instanceof DeveloperType;
     }

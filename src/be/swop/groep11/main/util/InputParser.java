@@ -66,7 +66,7 @@ public class InputParser {
     public void parseInputFile() throws FileNotFoundException {
 
         Yaml yaml = new Yaml();
-        String path = Paths.get("input/input_3.yaml").toAbsolutePath().toString();
+        String path = Paths.get("input/input.tman").toAbsolutePath().toString();
 
         try {
             values = (Map<String, Object>) yaml.load(new FileInputStream(new File(path)));

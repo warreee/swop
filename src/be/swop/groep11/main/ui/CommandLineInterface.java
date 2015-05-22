@@ -42,6 +42,9 @@ public class CommandLineInterface implements UserInterface {
         this.exit = false;
     }
 
+    /**
+     * Voert de interface uit.
+     */
     public void run() {
         try {
             while (!exit) {
@@ -65,6 +68,9 @@ public class CommandLineInterface implements UserInterface {
     private BufferedReader bufferedReader;
     private ControllerStack controllerStack;
 
+    /**
+     * true als de gebruiker wil eindigen.
+     */
     @Override
     public void wantsToExit() {
         this.exit = true;
@@ -74,6 +80,10 @@ public class CommandLineInterface implements UserInterface {
         return controllerStack != null && this.controllerStack == null;
     }
 
+    /**
+     * Zet de controllerstack
+     * @param controllerStack De controllerstack
+     */
     public void setControllerStack(ControllerStack controllerStack) {
         if (!canHaveAsActionMapping(controllerStack)) {
             throw new IllegalArgumentException("Gegeven actionMapping is geen geldige voor deze UI.");
@@ -81,16 +91,25 @@ public class CommandLineInterface implements UserInterface {
         this.controllerStack = controllerStack;
     }
 
+    /**
+     * Haalt de controllerStack op.
+     */
     @Override
     public ControllerStack getControllerStack() {
         return controllerStack;
     }
 
+    /**
+     * Print een bericht.
+     */
     @Override
     public void printMessage(String message) {
         System.out.println(message);
     }
 
+    /**
+     * Print een uitzondering.
+     */
     @Override
     public void printException(Exception e) {
         System.out.printf(e.getMessage() + "\n");
