@@ -5,6 +5,7 @@ import be.swop.groep11.main.exception.IllegalRequirementAmountException;
 import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import com.google.common.collect.ImmutableList;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Aanmaken van requirements en bijhouden in een lijst
@@ -148,52 +150,71 @@ public class RequirementListBuilder {
             return new TimeSpan(selectedStartTime, end);
         }
 
+        /**
+         *
+         * @param startTime De gekozen starttijd
+         * @return
+         */
         @Override
         public LocalDateTime calculateNextPossibleStartTime(LocalDateTime startTime) {
-            // TODO: ergens in deze methode zit in fout. Nu ze nog vinden.
+
             Set<AResourceType> types = requirements.keySet();
+            LocalTime latestStartTime = getLatestStartTime(types);
+            LocalTime earliestEndTime = getEarliestEndTime(types);
 
-            LocalTime earliestExecution = LocalTime.MIN;
-            LocalTime latestExecution = LocalTime.MAX;
-            boolean nextDay = false;
-            boolean possible = true;
+            LocalDateTime fullHourStartTime = getNextHour(startTime);
 
-            for(AResourceType type: types){
-                if(!type.getDailyAvailability().containsDateTime(startTime)){
-                    possible = false;
-                }
-                if(Arrays.asList(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).contains(startTime.getDayOfWeek())){
-                    nextDay = true;
-                }
-                if(type.getDailyAvailability().getStartTime().isAfter(earliestExecution)){
-                    earliestExecution = type.getDailyAvailability().getStartTime();
-                }
-                if(type.getDailyAvailability().getEndTime().isBefore(startTime.toLocalTime()) ||
-                        type.getDailyAvailability().getEndTime().equals(startTime.toLocalTime())){
-                    nextDay = true;
-                    //possible = false;
-                }
-/*                if(!type.getDailyAvailability().containsDateTime(startTime) || type.getDailyAvailability().getEndTime().equals(startTime.toLocalTime())){
-                    if(type.getDailyAvailability().getStartTime().isAfter(startTime.toLocalTime())){
-                        // De starttijd ligt voor het beschikbare tijdsbestek van de DailyAvailability. We nemen dus de
-                        // begintijd van de DailyAvailability.
-                        startTime = startTime.with(type.getDailyAvailability().getStartTime());
-                    } else {
-                        // De starttijd ligt na het beschikbare tijdbestek van de DailyAvailability. We nemen dus
-                        // de begintijd van DailyAvailability, maar dan de volgende dag.
-                        startTime = startTime.with(type.getDailyAvailability().getStartTime()).plusDays(1);
-                    }
-                }*/
+            if (fullHourStartTime.toLocalTime().isAfter(latestStartTime) && fullHourStartTime.toLocalTime().isBefore(earliestEndTime)){
+                return checkWeekend(fullHourStartTime);
             }
-            if(possible){
-                return getNextHour(startTime);
+
+            if (fullHourStartTime.toLocalTime().isBefore(latestStartTime)) {
+                fullHourStartTime = fullHourStartTime.with(latestStartTime);
+                return checkWeekend(fullHourStartTime);
             }
-            if(nextDay){
-                return startTime.with(earliestExecution).plusDays(1);
-            } else{
-                return startTime.with(earliestExecution);
+
+            if (fullHourStartTime.toLocalTime().isAfter(earliestEndTime)
+                    || fullHourStartTime.toLocalTime() == earliestEndTime) {
+                fullHourStartTime = fullHourStartTime.with(latestStartTime);
+                fullHourStartTime = fullHourStartTime.plusDays(1);
+                return checkWeekend(fullHourStartTime);
+            }
+
+            if (fullHourStartTime.toLocalTime() == latestStartTime) {
+                return checkWeekend(fullHourStartTime);
+            }
+
+
+
+            throw new UnsupportedOperationException("Oeps hier mochten we niet komen");
+        }
+
+        private LocalDateTime checkWeekend(LocalDateTime startTime){
+            if (startTime.getDayOfWeek() == DayOfWeek.SATURDAY) {
+                return startTime.plusDays(2);
+            } else if (startTime.getDayOfWeek() == DayOfWeek.SUNDAY){
+                return startTime.plusDays(1);
+            } else {
+                return startTime;
             }
         }
+
+        /**
+         * Geeft de laatste starttijd terug van een set van dailyavailabilties van resourcetypes
+         * @param types
+         * @return
+         */
+        private LocalTime getLatestStartTime(Set<AResourceType> types) {
+            Optional<LocalTime> latestStartTime = types.stream().map(entry -> entry.getDailyAvailability().getStartTime()).max(Comparator.<LocalTime>naturalOrder());
+            return latestStartTime.get();
+        }
+
+
+        private LocalTime getEarliestEndTime(Set<AResourceType> types) {
+            Optional<LocalTime> earliestEndTime = types.stream().map(entry -> entry.getDailyAvailability().getEndTime()).min(Comparator.<LocalTime>naturalOrder());
+            return earliestEndTime.get();
+        }
+
 
         /**
          * Controleer of alle DailyAvailabilities van deze lijst overlappen met de DailyAvailability van requestedType.

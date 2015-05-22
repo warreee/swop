@@ -231,6 +231,7 @@ public class PlanBuilder {
         if (task == null) {
             throw new IllegalArgumentException("Task mag niet null zijn.");
         }
+        //getDelegatedto staat ook voor de branchoffice waardat de taak is aangemaakt.
         if (task.getDelegatedTo() == null) {
             throw new IllegalArgumentException("BranchOffice moet voor Task gezet worden.");
         }

@@ -134,7 +134,7 @@ public class RequirementListBuilderTest {
         assertTrue(next.equals(LocalDateTime.of(2015, 4, 10, 12, 0)));
 
         next = requirementList.calculateNextPossibleStartTime(LocalDateTime.of(2015, 4, 10, 16, 0));
-        assertTrue(next.equals(LocalDateTime.of(2015, 4, 11, 12, 0)));
+        assertTrue(next.equals(LocalDateTime.of(2015, 4, 13, 12, 0)));
 
         next = requirementList.calculateNextPossibleStartTime(LocalDateTime.of(2015, 4, 10, 12, 0));
         assertTrue(next.equals(LocalDateTime.of(2015, 4, 10, 12, 0)));
