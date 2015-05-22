@@ -1,5 +1,9 @@
-package be.swop.groep11.main.resource;
+package be.swop.groep11.test.unit;
 
+import be.swop.groep11.main.resource.AResourceType;
+import be.swop.groep11.main.resource.DailyAvailability;
+import be.swop.groep11.main.resource.ResourceType;
+import be.swop.groep11.main.resource.ResourceTypeBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
