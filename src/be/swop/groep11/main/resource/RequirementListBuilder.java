@@ -5,7 +5,6 @@ import be.swop.groep11.main.exception.IllegalRequirementAmountException;
 import be.swop.groep11.main.exception.UnsatisfiableRequirementException;
 import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import com.google.common.collect.ImmutableList;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Aanmaken van requirements en bijhouden in een lijst

@@ -1,17 +1,14 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.DependencyGraph;
+import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.task.TaskProxy;
 import org.junit.Before;
 import org.junit.Test;
-import sun.util.resources.LocaleData;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
