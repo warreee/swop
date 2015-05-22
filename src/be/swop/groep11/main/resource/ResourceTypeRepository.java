@@ -136,6 +136,11 @@ public class ResourceTypeRepository {
         ownerType.addConflictConstraint(conflictType);
     }
 
+    /**
+     * Controlleert if een gegeven ResourceType in deze repository zit.
+     * @param resourceType
+     * @return
+     */
     public boolean containsType(AResourceType resourceType) {
         return resourceTypes.contains(resourceType);
     }
