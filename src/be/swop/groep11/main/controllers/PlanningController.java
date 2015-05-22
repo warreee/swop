@@ -63,6 +63,7 @@ public class PlanningController extends AbstractController {
      * @return Een lijst met plannen.
      */
     private void planTask(Task task,BranchOffice branchOffice) {
+        System.out.println(task.getDescription());
          /* The system confirms the selected planned timespan and shows the re-
                 quired resource types and their necessary quantity as assigned by the
                 project manager when creating the task. For each required resource
@@ -128,10 +129,7 @@ public class PlanningController extends AbstractController {
             throw e;
         }
 
-
-
     }
-
 
     private LocalDateTime selectStartTime(Task task, ResourcePlanner resourcePlanner) {
         /* The system shows the first three possible starting times (only consid-

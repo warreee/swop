@@ -51,14 +51,6 @@ public class PlanBuilder {
             proposedInstances.put(resourceRequirement.getType(), new ArrayList<>());
         }
 
-//        Iterator<ResourceRequirement> it = task.getRequirementList().iterator();
-//        while (it.hasNext()) {
-//            ResourceRequirement resourceRequirement = it.next();
-//            resourceRequirements.add(resourceRequirement);
-//            specificInstances.put(resourceRequirement.getType(), new ArrayList<>());
-//            proposedInstances.put(resourceRequirement.getType(), new ArrayList<>());
-//        }
-
         setEndTime();
     }
 
@@ -169,8 +161,7 @@ public class PlanBuilder {
 
     public void checkForConflictingReservations() throws ConflictException{
         if (hasConflictingReservations()) {
-            throw new ConflictException("con", getResourcePlanner().getConflictingTasks(getSelectedInstances(), getTimeSpan()));
-//            throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat er conflicten zijn");
+            throw new ConflictException("Het plan kan niet aangemaakt worden omwille van conflicterende taken.", getResourcePlanner().getConflictingTasks(getSelectedInstances(), getTimeSpan()));
         }
     }
 
@@ -184,13 +175,9 @@ public class PlanBuilder {
      * @throws IllegalArgumentException Het plan heeft conflicterende reservaties of voldoet niet aan de requirements.
      *                                  | hasConflictingReservations() || ! isSatisfied()
      */
-    public Plan getPlan() throws IllegalArgumentException{
-        if (hasConflictingReservations()) {
-            throw new ConflictException("con", getResourcePlanner().getConflictingTasks(getSelectedInstances(), getTimeSpan()));
-
-//            throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat er conflicten zijn");
-        }
-        if (! isSatisfied()) {
+    public Plan getPlan() throws IllegalArgumentException,ConflictException {
+        checkForConflictingReservations();
+        if (!isSatisfied()) {
             throw new IllegalArgumentException("Plan kan niet gemaakt worden omdat de requirements niet voldaan zijn");
         }
 
@@ -225,25 +212,6 @@ public class PlanBuilder {
 
         return getPlan();
     }
-
-//    private void setBranchOffice(BranchOffice branchOffice) {
-//        if (!isValidBranchOffice(branchOffice)) {
-//            throw new IllegalArgumentException("Branch Office mag niet null zijn bij het aanmaken van een PlanBuilder.");
-//        }
-//        this.branchOffice = branchOffice;
-//    }
-//
-//    private BranchOffice getBranchOffice() {
-//        return this.branchOffice;
-//    }
-//
-//    /**
-//     * Controleert of een branch office geldig is.
-//     * @return branchOffice != null
-//     */
-//    public static boolean isValidBranchOffice(BranchOffice branchOffice) {
-//        return branchOffice != null;
-//    }
 
     private void setTask(Task task) {
         canHaveAsTask(task);
