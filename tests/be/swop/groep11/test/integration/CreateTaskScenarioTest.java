@@ -14,6 +14,7 @@ import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.stubbing.OngoingStubbing;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -37,6 +39,8 @@ public class CreateTaskScenarioTest {
     private ProjectRepository projectRepository;
     private List<Project> projects;
     private ResourcePlanner resourcePlanner;
+    private ResourceRepository resourceRepository;
+    private ResourceTypeRepository resourceTypeRepository;
     private Developer devA, devB;
     private Task taskA, taskB;
 
@@ -60,10 +64,10 @@ public class CreateTaskScenarioTest {
 
 
     private void addTempDomainObjects() {
-        ResourceTypeRepository resourceTypeRepository = new ResourceTypeRepository();
+        resourceTypeRepository = new ResourceTypeRepository();
 
         projectRepository = new ProjectRepository(systemTime);
-        ResourceRepository resourceRepository = new ResourceRepository(resourceTypeRepository);
+        resourceRepository = new ResourceRepository(resourceTypeRepository);
         resourcePlanner = new ResourcePlanner(resourceRepository, systemTime);
         branchOffice = new BranchOffice("Branch Office 1", "Leuven", projectRepository, resourcePlanner);
         branchOffice2 = new BranchOfficeProxy(new BranchOffice("Branch Office 2", "Mechelen", new ProjectRepository(systemTime), resourcePlanner));
@@ -112,6 +116,11 @@ public class CreateTaskScenarioTest {
         planBuilder.addResourceInstance(devA);
         Plan plan = planBuilder.getPlan();
         resourcePlanner.addPlan(plan);
+
+        systemTime.updateSystemTime(systemTime.getCurrentSystemTime().plusMinutes(1));
+
+        taskB.execute(systemTime.getCurrentSystemTime());
+        taskB.fail(systemTime.getCurrentSystemTime().plusMinutes(1));
     }
 
     @Test
@@ -124,6 +133,55 @@ public class CreateTaskScenarioTest {
         when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
 
         taskController.createTask();
+
+        assertTrue(projectRepository.getProjects().get(0).getLastAddedTask().getDescription().equals("beschrijving Test"));
+        assertTrue(projectRepository.getProjects().get(0).getLastAddedTask().getEstimatedDuration().equals(Duration.ofMinutes(1)));
+        assertTrue(new Double(projectRepository.getProjects().get(0).getLastAddedTask().getAcceptableDeviation()).equals(new Double(0.5)));
+    }
+
+    @Test
+    public void createTask_selectResourceTypesTest() throws Exception {
+        //stubbing
+        when(mockedUI.requestString(anyString())).thenReturn("beschrijving Test");
+        when(mockedUI.requestDouble(anyString())).thenReturn(new Double(50));
+        when(mockedUI.requestNumber(anyString())).thenReturn(1);
+        when(mockedUI.requestNumberBetween(anyString(), anyInt(), anyInt())).thenReturn(1);
+        when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
+        when(mockedUI.requestBoolean(contains("resource types"))).thenReturn(true);
+        List<Object> chosenTypes = new ArrayList<>();
+        chosenTypes.add(resourceTypeRepository.getResourceTypes().get(0));
+        when(mockedUI.selectMultipleFromList(contains("types"), any(), any(), any())).thenReturn(chosenTypes);
+
+        taskController.createTask();
+
+        assertTrue(projectRepository.getProjects().get(0).getLastAddedTask().getDescription().equals("beschrijving Test"));
+        assertTrue(projectRepository.getProjects().get(0).getLastAddedTask().getEstimatedDuration().equals(Duration.ofMinutes(1)));
+        assertTrue(new Double(projectRepository.getProjects().get(0).getLastAddedTask().getAcceptableDeviation()).equals(new Double(0.5)));
+        assertTrue(projectRepository.getProjects().get(0).getLastAddedTask().getRequirementList().getRequirements().size() == 1);
+    }
+
+    @Test
+    public void createTask_selectDependentTasksTest() throws Exception {
+        //stubbing
+        when(mockedUI.requestString(anyString())).thenReturn("beschrijving Test");
+        when(mockedUI.requestDouble(anyString())).thenReturn(new Double(50));
+        when(mockedUI.requestNumber(anyString())).thenReturn(1);
+        when(mockedUI.requestNumberBetween(anyString(), anyInt(), anyInt())).thenReturn(1);
+        when(mockedUI.selectProjectFromList(projects)).thenReturn(projects.get(0));
+
+        when(mockedUI.requestBoolean(contains("afhankelijkheid"))).thenReturn(true);
+        List<Object> chosenTasks = new ArrayList<>();
+        chosenTasks.add(taskA);
+        when(mockedUI.selectMultipleFromList(contains("afhankelijkheden"), any(), any(), any())).thenReturn(chosenTasks);
+
+        taskController.createTask();
+
+        assertTrue(projectRepository.getProjects().get(0).getLastAddedTask().getDescription().equals("beschrijving Test"));
+        assertTrue(projectRepository.getProjects().get(0).getLastAddedTask().getEstimatedDuration().equals(Duration.ofMinutes(1)));
+        assertTrue(new Double(projectRepository.getProjects().get(0).getLastAddedTask().getAcceptableDeviation()).equals(new Double(0.5)));
+
+        assertTrue(projectRepository.getProjects().get(0).getLastAddedTask().getDependingOnTasks().contains(taskA));
+        assertTrue(projectRepository.getProjects().get(0).getLastAddedTask().getDependingOnTasks().size() == 1);
     }
 
     @Test(expected = StopTestException.class)
@@ -166,7 +224,7 @@ public class CreateTaskScenarioTest {
 
 
     @Test (expected = StopTestException.class)
-    public void createProject_invalidDescriptionTest() throws Exception {
+    public void createTask_invalidDescriptionTest() throws Exception {
         //stubbing
         when(mockedUI.requestString(anyString())).thenReturn("");
         when(mockedUI.requestDouble(anyString())).thenReturn(new Double(50));
@@ -178,7 +236,7 @@ public class CreateTaskScenarioTest {
     }
 
     @Test (expected = StopTestException.class)
-    public void createProject_invalidDeviationTest() throws Exception {
+    public void createTask_invalidDeviationTest() throws Exception {
         //stubbing
         when(mockedUI.requestString(anyString())).thenReturn("beschrijving Test");
         when(mockedUI.requestDouble(anyString())).thenReturn(new Double(-50));
@@ -190,7 +248,7 @@ public class CreateTaskScenarioTest {
     }
 
     @Test (expected = StopTestException.class)
-    public void createProject_invalidDurationTest() throws Exception {
+    public void createTask_invalidDurationTest() throws Exception {
         //stubbing
         when(mockedUI.requestString(anyString())).thenReturn("beschrijving Test");
         when(mockedUI.requestDouble(anyString())).thenReturn(new Double(50));
