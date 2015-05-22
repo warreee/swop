@@ -7,6 +7,8 @@ import be.swop.groep11.main.core.Project;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.CancelException;
+import be.swop.groep11.main.planning.Plan;
+import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
@@ -40,8 +42,11 @@ public class UpdateTaskStatusScenarioTest {
         BranchOffice branchOffice = mock(BranchOffice.class);
         repository = new ProjectRepository(systemTime);
         repository.setBranchOffice(branchOffice);
-        repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(),now.plusDays(10));
+        repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
         repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8), mock(IRequirementList.class));
+        Task tempTask = spy(repository.getProjects().get(0).getLastAddedTask());
+
+        when(tempTask.isPlanned()).thenReturn(true);
 
         this.mockedUI = mock(UserInterface.class);
 
@@ -55,6 +60,10 @@ public class UpdateTaskStatusScenarioTest {
 
         when(logonController.getBranchOffice()).thenReturn(branchOffice);
         when(branchOffice.getProjectRepository()).thenReturn(repository);
+
+        //De status van de taak staat nu nog op unavailable, door de systeemtijd te laten updaten wordt dit opgelost.
+        systemTime.addObserver(tasks.get(0).getSystemTimeObserver());
+        systemTime.updateSystemTime(systemTime.getCurrentSystemTime().plusDays(1));
     }
 
     @Test
