@@ -1,6 +1,5 @@
 package be.swop.groep11.test.unit;
 
-import be.swop.groep11.main.resource.ResourceTypeBuilderTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
