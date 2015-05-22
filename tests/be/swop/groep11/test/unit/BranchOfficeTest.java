@@ -123,7 +123,25 @@ public class BranchOfficeTest {
         branchOffice1.addEmployee(developer2);
 
         assertTrue(branchOffice1.getEmployees().size() == 3);
+        assertTrue(branchOffice1.amountOfEmployees() == 3);
         assertTrue(branchOffice1.getDevelopers().size() == 2);
+        assertTrue(branchOffice1.amountOfDevelopers() == 2);
+        assertTrue(branchOffice1.amountOfProjectManagers() == 1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void branchOfficeNameTest(){
+        assertTrue(branchOffice1.getName().equals("Branch office 1"));
+        branchOffice1.setName("test");
+        assertTrue(branchOffice1.getName().equals("test"));
+        branchOffice1.setName("");
+        branchOffice1.setName(null);
+    }
+
+    @Test
+    public void containsTaskTest() throws Exception{
+        assertTrue(branchOffice1.containsTask(task));
+        assertFalse(branchOffice1.containsTask(mock(Task.class)));
     }
 
 }
