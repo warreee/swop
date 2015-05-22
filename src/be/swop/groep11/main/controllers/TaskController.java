@@ -120,8 +120,6 @@ public class TaskController extends AbstractController {
             BranchOffice selectedBO = logonController.getBranchOffice();
             ProjectRepository projectRepository = selectedBO.getProjectRepository();
 
-            List<Task> tasks = new LinkedList<>(projectRepository.getAllAvailableTasks());
-            tasks.addAll(projectRepository.getAllExecutingTasks());
             Function<Task,String> taskPrinter = tsk -> tsk.getDescription() + " " + tsk.getStatusString() ;
             Task task = getUserInterface().selectFromList(projectRepository.getAllAvailableOrExecutingTasks(), taskPrinter);
 
