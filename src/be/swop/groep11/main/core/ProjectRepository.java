@@ -70,6 +70,10 @@ public class ProjectRepository {
         return ImmutableList.copyOf(tasks);
     }
 
+    /**
+     * Haalt alle beschikbare en uitvoerende taken op.
+     * @return een lijst met alle gevraagde taken.
+     */
     public List<Task> getAllAvailableOrExecutingTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
         tasks.addAll(getAllAvailableTasks());
