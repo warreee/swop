@@ -22,11 +22,13 @@ import static org.mockito.Mockito.when;
 
 public class TaskTest {
 
-    private Task task1, task2, task3;
-    private Project project;
-    private SystemTime systemTime;
-    private DependencyGraph dependencyGraph;
-    private LocalDateTime now;
+    protected Task task1, task2, task3;
+    protected Project project;
+    protected SystemTime systemTime;
+    protected DependencyGraph dependencyGraph;
+    protected LocalDateTime now;
+    protected Plan testPlan;
+    protected BranchOffice branchOffice;
 
     @Before
     public void setUp() throws Exception {
@@ -34,7 +36,7 @@ public class TaskTest {
         this.systemTime = new SystemTime(now);
 
         //BrancOffice
-        BranchOffice branchOffice = mock(BranchOffice.class);
+        branchOffice = mock(BranchOffice.class);
 
 
         project = new Project("Test project", "Test beschrijving",
@@ -61,7 +63,7 @@ public class TaskTest {
         LocalDateTime startTime = LocalDateTime.of(2015, 1, 1, 0, 0);
 
 
-        Plan testPlan = mock(Plan.class);
+        testPlan = mock(Plan.class);
         when(testPlan.hasEquivalentPlan()).thenReturn(true);
         when(testPlan.isWithinPlanTimeSpan(any())).thenReturn(true);
         when(branchOffice.isTaskPlanned(eq(task1))).thenReturn(true);
@@ -110,10 +112,13 @@ public class TaskTest {
      */
     @Test
     public void SetAlternativeTask_valid() {
+        assertTrue(task1.isAvailable());
         task1.execute(LocalDateTime.of(2015,1,1,1,0));
+        assertTrue(task1.isExecuting());
         task1.fail(now.plusDays(1));
+        assertTrue(task1.isFailed());
         task1.setAlternativeTask(task2);
-        assertTrue(task1.getAlternativeTask() == task2);
+        assertTrue(task1.getAlternativeTask().equals(task2));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -136,6 +141,8 @@ public class TaskTest {
         task1.setAlternativeTask(task2);
         assertTrue(task3.getDependingOnTasks().contains(task2));
         assertFalse(task3.getDependingOnTasks().contains(task1));
+        assertTrue(task2.getDependentTasks().contains(task3));
+        assertFalse(task1.getDependentTasks().contains(task3));
     }
 
     /*
