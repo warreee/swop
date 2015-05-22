@@ -43,15 +43,13 @@ public class TaskStatusTest {
     private Method FmethodmakeUnavailable;
     private Method FamethodmakeAvailable;
     private Method FamethodmakeUnavailable;
-    private Method TSmethodmakeAvailable;
-    private Method TSmethodmakeUnavailable;
+
 
     private Constructor<TaskUnavailable> taskUnavailableConstructor;
     private Constructor<TaskAvailable> taskAvailableConstructor;
     private Constructor<TaskExecuting> taskExecutingConstructor;
     private Constructor<TaskFinished> taskFinishedConstructor;
     private Constructor<TaskFailed> taskFailedConstructor;
-    private Constructor<TaskStatus> taskStatusConstructor;
 
 
 
@@ -138,29 +136,9 @@ public class TaskStatusTest {
         taskFailedConstructor = (Constructor<TaskFailed>) TaskFailed.class.getDeclaredConstructors()[0];
         taskFailedConstructor.setAccessible(true);
 
-        //TaskStatus
-        TSmethodmakeAvailable = TaskStatus.class.getDeclaredMethod("makeAvailable", Task.class);
-        TSmethodmakeUnavailable = TaskStatus.class.getDeclaredMethod("makeUnavailable", Task.class);
-        TSmethodmakeAvailable.setAccessible(true);
-        TSmethodmakeUnavailable.setAccessible(true);
-
-        taskStatusConstructor = (Constructor <TaskStatus>) TaskStatus.class.getDeclaredConstructors()[0];
-        taskStatusConstructor.setAccessible(true);
 
     }
 
-//////////////////////////// TASKSTATUS___TO____ //////////////////////
-
-    @Test(expected = IllegalStateTransitionException.class)
-    public void taskStatusToAvailable() throws Throwable {
-
-        TaskStatus test = taskFinishedConstructor.newInstance();
-        try {
-            TSmethodmakeUnavailable.invoke(test, task2);
-        } catch (InvocationTargetException e) {
-            throw e.getTargetException();
-        }
-    }
 
 
 /////////////////////////// UNAVAILABLE___TO____ //////////////////////
