@@ -9,6 +9,10 @@ import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.exception.EmptyListException;
 import be.swop.groep11.main.exception.FailedConditionException;
 import be.swop.groep11.main.exception.IllegalActionException;
+import be.swop.groep11.main.resource.AResourceType;
+import be.swop.groep11.main.resource.ResourceInstance;
+import be.swop.groep11.main.resource.ResourceRequirement;
+import be.swop.groep11.main.resource.ResourceReservation;
 import be.swop.groep11.main.task.Task;
 import com.google.common.collect.ImmutableList;
 
@@ -139,7 +143,8 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public Task selectTaskFromList(List<Task> tasks) throws EmptyListException, CancelException {
-        printMessage(String.format(taskFormatStr, "Omschrijving", "Status", "On time?"));
+        printMessage("Selecteer een taak uit deze lijst:");
+        printMessage("     "+String.format(taskFormatStr, "Omschrijving", "Status", "On time?"));
         return selectFromList(tasks, showTaskEntry);
     }
 
@@ -150,11 +155,14 @@ public class CommandLineInterface implements UserInterface {
      */
     @Override
     public Project selectProjectFromList(List<Project> projects) throws EmptyListException, CancelException {
+        printMessage("Selecteer een project uit deze lijst:");
+        printMessage("     "+String.format(projectFormatStr, "Omschrijving", "Status", "On time?"));
         return selectFromList(projects, showProjectEntry);
     }
 
     @Override
     public LocalDateTime selectLocalDateTimeFromList(List<LocalDateTime> dateTimes) throws EmptyListException, CancelException {
+        printMessage("Selecteer een datum uit deze lijst:");
         return selectFromList(dateTimes, showLocalDateTimeEntry);
     }
 
@@ -192,7 +200,11 @@ public class CommandLineInterface implements UserInterface {
         System.out.printf(format, "Beschrijving: ", task.getDescription());
 
         String finishedStatus = task.getFinishedStatus(dateTime);
-        System.out.printf(format, "Status: ", task.getStatusString() + " " + finishedStatus); // TODO: hier stond getStatusString.name(), we hadden toch nooit een functie .name() ?
+        System.out.printf(format, "Status: ", task.getStatusString() + " " + finishedStatus);
+
+        if (task.isDelegated()) {
+            System.out.printf(format, "Gedelegeerd naar: ", task.getDelegatedTo().getName() + " in " + task.getDelegatedTo().getLocation());
+        }
 
         // on time?
         String onTime = "ja";
@@ -209,6 +221,26 @@ public class CommandLineInterface implements UserInterface {
 
         double acceptDevPercent = task.getAcceptableDeviation() * 100;
         System.out.printf(format, "Aanvaardbare afwijking: ", acceptDevPercent + "%");
+
+        // toon details van plan voor taak indien nog niet gefinished / of de requirement list indien nog niet gepland
+        if (task.isPlanned() && ! task.isFinished() && ! task.isFailed()) {
+            System.out.printf(format, "Geplande starttijd: ", task.getPlan().getPlannedStartTime().format(formatter));
+            System.out.printf(format, "Geplande eindtijd: ", task.getPlan().getPlannedEndTime().format(formatter));
+            System.out.println("Reservaties:");
+            for (ResourceRequirement requirement : task.getRequirementList().getRequirements()) {
+                AResourceType resourceType = requirement.getType();
+                System.out.println(" - voor " + resourceType.getTypeName() + ":");
+                for (ResourceReservation reservation : task.getPlan().getReservations(resourceType)) {
+                    System.out.println("    - "+reservation.getResourceInstance().getName());
+                }
+            }
+        } else {
+            System.out.println("Vereiste resource types:");
+            for (ResourceRequirement requirement : task.getRequirementList().getRequirements()) {
+                AResourceType resourceType = requirement.getType();
+                System.out.println(" - " + resourceType.getTypeName() + " ("+requirement.getAmount()+" nodig)");
+            }
+        }
 
         if (task.getStartTime() != null) {
             System.out.printf(format, "Starttijd: ", task.getStartTime().format(formatter));
@@ -228,8 +260,6 @@ public class CommandLineInterface implements UserInterface {
         if (task.getAlternativeTask() != null) {
             java.lang.System.out.printf(format, "Alternatieve taak: ", task.getAlternativeTask().getDescription());
         }
-
-        System.out.println(task.getDelegatedTo().getPlanForTask(task)); //TODO temp
     }
 
     /**
@@ -238,6 +268,7 @@ public class CommandLineInterface implements UserInterface {
      */
    @Override
     public BranchOffice selectBranchOfficeFromList(List<BranchOffice> branchOffices) throws EmptyListException, CancelException {
+        printMessage("Selecteer een branch office uit deze lijst:");
         return selectFromList(branchOffices, showBranchOfficeEntry);
     }
 

@@ -58,6 +58,7 @@ public interface UserInterface {
      * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
      */
     default User selectEmployeeFromList(ImmutableList<User> users) throws EmptyListException, CancelException {
+        printMessage("Selecteer een employee uit deze lijst:");
         return selectFromList(users, usr -> usr.getDescription());
     }
 
