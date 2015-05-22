@@ -440,7 +440,7 @@ public class Task {
      * Controleert of deze taak naar een andere branch office gedelegeerd is.
      */
     public boolean isDelegated() {
-        return delegatedTo != project.getBranchOffice();
+        return ! delegatedTo.equals(project.getBranchOffice());
     }
 
     /**

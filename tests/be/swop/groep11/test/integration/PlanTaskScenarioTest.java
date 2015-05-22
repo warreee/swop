@@ -5,6 +5,7 @@ import be.swop.groep11.main.controllers.PlanningController;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
@@ -17,9 +18,13 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Arne De Brabandere_3 on 30/04/2015.
@@ -36,6 +41,8 @@ public class PlanTaskScenarioTest {
     private Developer devB;
     private Developer devA;
     private Task taskC;
+    private ResourcePlanner resourcePlanner ;
+    private LogonController logonController;
 
 
     @Before
@@ -47,7 +54,7 @@ public class PlanTaskScenarioTest {
 
         addTempDomainObjects();
 
-        LogonController logonController = mock(LogonController.class);
+        logonController = mock(LogonController.class);
         when(logonController.hasIdentifiedProjectManager()).thenReturn(true);
         when(logonController.getBranchOffice()).thenReturn(branchOffice);
         when(logonController.getProjectManager()).thenReturn(new ProjectManager("PM"));
@@ -61,8 +68,8 @@ public class PlanTaskScenarioTest {
 
         ProjectRepository projectRepository = new ProjectRepository(systemTime);
         ResourceRepository resourceRepository = new ResourceRepository(resourceTypeRepository);
-        ResourcePlanner resourcePlanner1 = new ResourcePlanner(resourceRepository, systemTime);
-        branchOffice = new BranchOffice("Branch Office 1", "Leuven", projectRepository, resourcePlanner1);
+        resourcePlanner = spy(new ResourcePlanner(resourceRepository, systemTime));
+        branchOffice = new BranchOffice("Branch Office 1", "Leuven", projectRepository, resourcePlanner);
 
         AResourceType devType = resourceTypeRepository.getDeveloperType();
         devA = new Developer("DevA", devType);
@@ -107,7 +114,6 @@ public class PlanTaskScenarioTest {
         taskB = projectRepository.getProjects().get(0).getLastAddedTask();
         projectRepository.getProjects().get(0).addNewTask("Taak 3", 1, Duration.ofMinutes(60), requirementListBuilderC.getRequirements());
         taskC = projectRepository.getProjects().get(0).getLastAddedTask();
-
     }
 
 
@@ -130,7 +136,6 @@ public class PlanTaskScenarioTest {
         planningController.planTask();
         assertTrue(branchOffice.isTaskPlanned(taskA));
 
-
         //Niet zelf selecteren van resources
         ArrayList<ResourceInstance> resourceInstancesB = new ArrayList<>();
         resourceInstancesB.add(devB);
@@ -141,48 +146,52 @@ public class PlanTaskScenarioTest {
         assertTrue(branchOffice.isTaskPlanned(taskB));
     }
 
+
+
     @Test
-    public void testName() throws Exception {
-
-
-
+    public void PlanTask_WithConflictsTest() throws Exception {
         // selecteer de juiste taak:
-        when(mockedUI.selectTaskFromList(anyObject())).thenReturn(taskA).thenReturn(taskC);
+        when(mockedUI.selectTaskFromList(anyObject())).thenReturn(taskA);
         // starttijd uit lijst selecteren:
-        when(mockedUI.requestBoolean(anyString())).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
+        when(mockedUI.requestBoolean(anyString())).thenReturn(true).thenReturn(false);
         // kies als starttijd de eerste in de lijst:
-
-        when(mockedUI.selectFromList(anyListOf(LocalDateTime.class), any()))
-                .thenReturn(now.plusHours(1)).thenReturn(now.plusHours(1));
-
+        when(mockedUI.selectFromList(anyList(), any())).thenReturn(now.plusHours(1));
 
         //Niet zelf selecteren van resources
         ArrayList<ResourceInstance> resourceInstances = new ArrayList<>();
         resourceInstances.add(devA);
         //selectDevelopers
         when(mockedUI.selectMultipleFromList(anyString(), anyList(), anyList(), anyInt(), anyBoolean(), any())).thenReturn(resourceInstances);
-
         planningController.planTask();
+        verify(resourcePlanner).getNextPossibleStartTimes(any(IRequirementList.class), any(Duration.class), anyInt());
+        verify(resourcePlanner,atLeastOnce()).addPlan(any());
         assertTrue(branchOffice.isTaskPlanned(taskA));
 
 
+        when(mockedUI.selectTaskFromList(anyObject())).thenReturn(taskC);
+        // starttijd uit lijst selecteren:
+        when(mockedUI.requestBoolean(anyString()))
+                .thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(true).thenReturn(false)
+                .thenReturn(true).thenReturn(false);
+        // kies als starttijd de eerste in de lijst:
+        when(mockedUI.selectFromList(anyList(), any())).thenReturn(now.plusHours(1)).thenReturn(now.plusDays(1)).thenReturn(now.plusHours(1));
+
         //Niet zelf selecteren van resources
-        when(mockedUI.requestBoolean(anyString())).thenReturn(true).thenReturn(false);
-        when(mockedUI.selectFromList(anyListOf(LocalDateTime.class), any()))
-                .thenReturn(now.plusHours(1)).thenReturn(now.plusHours(1));
         ArrayList<ResourceInstance> resourceInstancesB = new ArrayList<>();
         resourceInstancesB.add(devB);
         //selectDevelopers
-
-        //resolve Conflict move TaskA && plan TaskC again
-        when(mockedUI.selectMultipleFromList(anyString(), anyList(), anyList(), anyInt(), anyBoolean(), any())).thenReturn(new ArrayList<>()).thenReturn(resourceInstancesB);
-
+        when(mockedUI.selectMultipleFromList(anyString(), anyList(), anyList(), anyInt(), anyBoolean(), any()))
+                .thenReturn(resourceInstancesB);
         planningController.planTask();
+        verify(resourcePlanner,atLeastOnce()).getNextPossibleStartTimes(any(IRequirementList.class), any(Duration.class), anyInt());
+        verify(resourcePlanner,atLeastOnce()).addPlan(any());
+
+        assertTrue(branchOffice.isTaskPlanned(taskA));
         assertTrue(branchOffice.isTaskPlanned(taskC));
-
-
+        Plan planC = branchOffice.getPlanForTask(taskC);
+        Plan planA = branchOffice.getPlanForTask(taskA);
+        assertTrue(planC.startsBefore(planA));
 
     }
-
 
 }

@@ -24,6 +24,7 @@ import java.util.function.Function;
 public class PlanningController extends AbstractController {
 
     private SystemTime systemTime;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private LogonController logonController;
 
@@ -63,18 +64,14 @@ public class PlanningController extends AbstractController {
      * @return Een lijst met plannen.
      */
     private void planTask(Task task,BranchOffice branchOffice) {
-        System.out.println(task.getDescription());
          /* The system confirms the selected planned timespan and shows the re-
                 quired resource types and their necessary quantity as assigned by the
                 project manager when creating the task. For each required resource
                 type instance to perform the task, the system proposes a resource instance
                 to make a reservation for. */
 
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         /* The user selects a start time */
         LocalDateTime startTime = selectStartTime(task, branchOffice.getResourcePlanner());
-        System.out.println(startTime);
         PlanBuilder planBuilder = new PlanBuilder(branchOffice, task, startTime);
 
         getUserInterface().printMessage("Een plan maken voor de taak: " + task.getDescription());
@@ -83,10 +80,8 @@ public class PlanningController extends AbstractController {
         planBuilder.proposeResources(); //Stelt geen developers voor.
         showProposedInstances(task, planBuilder);
 
-
         try {
             selectResources(task, planBuilder, branchOffice.getResourceRepository()); //checks & can throw ConflictException
-
          /* The system shows a list of developers. The user selects the developers to perform the task. */
             selectDevelopers(task, branchOffice.getResourcePlanner(), planBuilder, branchOffice);  //checks & can throw ConflictException
 
@@ -94,7 +89,6 @@ public class PlanningController extends AbstractController {
             /* The system makes the required reservations and assigns the selected
                 developers. */
             branchOffice.getResourcePlanner().addPlan(plan);
-
             getUserInterface().printMessage("Taak gepland (" + task.getDescription() + ")");
         } catch (ConflictException conflictException) {
             resolveConflict(task, conflictException.getConflictingTasks(),branchOffice);
@@ -114,9 +108,9 @@ public class PlanningController extends AbstractController {
         IResourcePlannerMemento memento = branchOffice.getResourcePlanner().createMemento();
         getUserInterface().printMessage("De volgende taken vormen een conflict met de in te plannen taak: " + task.getDescription());
         getUserInterface().showList(conflictingTasks, Task::getDescription);
-
         try {
-            if (getUserInterface().requestBoolean("Wilt u de conflicterende taken verplaatsen?")) {
+            boolean test = getUserInterface().requestBoolean("Wilt u de conflicterende taken verplaatsen?");
+            if (test) {
                 conflictingTasks.forEach(taak -> {
                     Plan plan = branchOffice.getPlanForTask(taak);
                     plan.clear();//Taak plan delete!
@@ -124,7 +118,6 @@ public class PlanningController extends AbstractController {
                 });
             }
         } catch (CancelException e) {
-//            System.out.println("restoring memento");
             branchOffice.getResourcePlanner().setMemento(memento);
             throw e;
         }
@@ -137,11 +130,11 @@ public class PlanningController extends AbstractController {
             time) that a task can be planned (i.e. enough resource instances and
             developers are available) */
         List<LocalDateTime> nextStartTimes = resourcePlanner.getNextPossibleStartTimes(
-                task.getRequirementList(),systemTime.getCurrentSystemTime(),task.getEstimatedDuration(),3);
+                task.getRequirementList(),task.getEstimatedDuration(),3);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime startTime;
-        if (getUserInterface().requestBoolean("Wilt u mogelijke startTijden laten generen? (N: indien u zelf een startTijd wilt ingeven)")) {
+        boolean test = getUserInterface().requestBoolean("Wilt u mogelijke startTijden laten generen? (N: indien u zelf een startTijd wilt ingeven)");
+        if (test) {
             /* The user selects a proposed time. */
             Function<LocalDateTime, String> dateTimePrinter = localDateTime -> localDateTime.format(formatter);
             startTime = getUserInterface().selectFromList(nextStartTimes, dateTimePrinter);
@@ -166,7 +159,8 @@ public class PlanningController extends AbstractController {
     private void selectResources(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) throws ConflictException {
 
         /* The user allows the system to select the required resources. */
-        if (getUserInterface().requestBoolean("Wilt u zelf resources selecteren?")) {
+        boolean test = getUserInterface().requestBoolean("Wilt u zelf resources selecteren?");
+        if (test) {
             //Clear reeds door het systeem geselecteerde instanties
             planBuilder.clearInstances();
             // laat gebruiker resource instanties selecteren
