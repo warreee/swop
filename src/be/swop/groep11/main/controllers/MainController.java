@@ -1,13 +1,11 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.ui.UserInterface;
 
 /**
- * Controller die gebruikt wordt wanneer er nog geen usecase geselecteerd is.
+ * Lege controller nodig voor initialisatie controllerStack
  */
 public class MainController extends AbstractController {
-
 
 
     /**
