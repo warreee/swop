@@ -1,7 +1,7 @@
 package be.swop.groep11.main.actions;
 
 /**
- * Created by Ronald on 14/05/2015.
+ * Stelt een conditie voor die eerst moet voldaan zijn voor een action kan worden uitgevoerd.
  */
 public interface ProcedureCondition {
 
