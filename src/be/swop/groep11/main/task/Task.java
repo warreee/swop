@@ -265,22 +265,37 @@ public class Task {
     }
 
 
+    /**
+     * Bepaald of deze taak niet beschikbaar is.
+     */
     public boolean isUnavailable() {
         return this.getStatus().isUnavailable(this);
     }
 
+    /**
+     * Bepaald of deze taak beschikbaar is.
+     */
     public boolean isAvailable() {
         return this.getStatus().isAvailable(this);
     }
 
+    /**
+     * Bepaald of deze taak aan het uitvoeren is.
+     */
     public boolean isExecuting() {
         return this.getStatus().isExecuting(this);
     }
 
+    /**
+     * Bepaald of deze taak gefinished is.
+     */
     public boolean isFinished() {
         return this.getStatus().isFinished(this);
     }
 
+    /**
+     * Bepaald of deze taak gefaald is.
+     */
     public boolean isFailed() {
         return this.getStatus().isFailed(this);
     }
@@ -416,13 +431,17 @@ public class Task {
         return this.status.getDuration(this, currentSystemTime);
     }
 
-
-
+    /**
+     * Controlleert of deze taak het gegeven plan kan hebben.
+     * @param plan Het plan
+     */
     public boolean canHaveAsPlan(Plan plan) {
         return getStatus().canHaveAsPlan(this, plan);
     }
 
-
+    /**
+     * Haalt het plan op dat bij deze taak hoort.
+     */
     public Plan getPlan() {
         return getDelegatedTo().getPlanForTask(this);
     }
@@ -476,7 +495,9 @@ public class Task {
 
     private BranchOffice delegatedTo;
 
-
+    /**
+     * Haalt de huidige SystemTimeObserver op van deze taak.
+     */
     public Observer<SystemTime> getSystemTimeObserver() {
         return sysTime -> {
             getStatus().updateStatus(this);
@@ -489,6 +510,9 @@ public class Task {
         };
     }
 
+    /**
+     * Haalt de huidige ResourcePlannerObserver op van deze taak.
+     */
     public Observer<ResourcePlanner> getResourcePlannerObserver() {
         return resourcePlanner -> {
             getStatus().updateStatus(this);
