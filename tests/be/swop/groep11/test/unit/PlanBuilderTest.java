@@ -2,6 +2,7 @@ package be.swop.groep11.test.unit;
 
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.exception.ConflictException;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.*;
@@ -61,6 +62,7 @@ public class PlanBuilderTest {
         when(task.isPlanned()).thenReturn(false);
         when(branchOffice.containsTask(eq(task))).thenReturn(true);
         when(task.getDelegatedTo()).thenReturn(branchOffice);
+        when(task.canHaveAsPlan(any())).thenReturn(true);
 
         List<Task> tasks = new ArrayList<>();
         tasks.add(task);
@@ -203,7 +205,7 @@ public class PlanBuilderTest {
         Plan plan = planBuilder.getPlan();
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = ConflictException.class)
     public void getPlan_ConflictsTest() {
         when(resourcePlanner.isAvailable(any(ResourceInstance.class), any(TimeSpan.class))).thenReturn(false);
         planBuilder.addResourceInstance(instance1a);
