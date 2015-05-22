@@ -230,7 +230,7 @@ public class TaskProxy extends Task {
 //    }
 
     @Override
-    protected Plan getPlan() {
+    public Plan getPlan() {
         return realTask.getPlan();
     }
 

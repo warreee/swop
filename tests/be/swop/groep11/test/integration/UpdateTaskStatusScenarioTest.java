@@ -44,9 +44,12 @@ public class UpdateTaskStatusScenarioTest {
         repository.setBranchOffice(branchOffice);
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
         repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8), mock(IRequirementList.class));
-        Task tempTask = spy(repository.getProjects().get(0).getLastAddedTask());
 
+        Plan plan = mock(Plan.class);
+        Task tempTask = spy(repository.getProjects().get(0).getLastAddedTask());
         when(tempTask.isPlanned()).thenReturn(true);
+        when(tempTask.getPlan()).thenReturn(plan);
+        when(plan.isWithinPlanTimeSpan(any())).thenReturn(true);
 
         this.mockedUI = mock(UserInterface.class);
 
