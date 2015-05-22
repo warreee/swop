@@ -22,6 +22,12 @@ public class DelegateTaskController extends AbstractController {
     private Company company;
     private LogonController logonController;
 
+    /**
+     * Constructor om een nieuwe delegatedTaskController te maken.
+     * @param userInterface Gebruikersinterface
+     * @param company Company waarvan deze controller gebruik maakt.
+     * @param logonController De logon controller om de gebruiker login te controlleren.
+     */
     public DelegateTaskController(UserInterface userInterface, Company company, LogonController logonController) {
         super(userInterface);
         this.company = company;

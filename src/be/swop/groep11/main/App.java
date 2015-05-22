@@ -1,7 +1,7 @@
 package be.swop.groep11.main;
 
 import be.swop.groep11.main.actions.Action;
-import be.swop.groep11.main.actions.ActionCondition;
+import be.swop.groep11.main.actions.ProcedureCondition;
 import be.swop.groep11.main.actions.ActionProcedure;
 import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.controllers.*;
@@ -86,9 +86,9 @@ public class App {
         //Aanmaken van controllers
         logonController = new LogonController(cli, company);
 
-        taskController = new TaskController(logonController,cli);
+        taskController = new TaskController(cli, logonController);
         showProjectsController = new ShowProjectsController(company, cli, systemTime);
-        createProjectController = new CreateProjectController(logonController, cli);
+        createProjectController = new CreateProjectController(cli, logonController);
         advanceTimeController = new AdvanceTimeController( systemTime, cli);
         simulationController = new SimulationController(logonController, cli);
         planningController = new PlanningController(logonController, systemTime, cli);
@@ -98,15 +98,15 @@ public class App {
 
     private void initActionProcedures() {
 
-        controllerStack.setInvalidActionProcedure(new ActionProcedure(() -> cli.printMessage("Ongeldige action"), () -> true));
+        controllerStack.setInvalidActionProcedure(new ActionProcedure(() -> cli.printMessage("Ongeldige action")));
 
-        ActionCondition returnsTrue = () -> true;
+        ProcedureCondition returnsTrue = () -> true;
 
         ActionProcedure defaultExit = new ActionProcedure(() -> {
             cli.printMessage("wants to exit");
             cli.wantsToExit();
         }, () -> true);
-        ActionProcedure defaultHelp = new ActionProcedure(() -> cli.showHelp(controllerStack.getActiveController()), returnsTrue);
+        ActionProcedure defaultHelp = new ActionProcedure(() -> cli.showHelp(controllerStack.getActiveController()));
 
 
         ActionProcedure createTask = new ActionProcedure(taskController, taskController::createTask, logonController::hasIdentifiedProjectManager);

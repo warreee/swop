@@ -1,17 +1,14 @@
 package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.controllers.LogonController;
-import be.swop.groep11.main.controllers.SimulationController;
 import be.swop.groep11.main.controllers.TaskController;
 import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.*;
-import be.swop.groep11.main.resource.constraint.ResourceTypeConstraint;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
-import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.OngoingStubbing;
@@ -19,7 +16,6 @@ import org.mockito.stubbing.OngoingStubbing;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -59,7 +55,7 @@ public class CreateTaskScenarioTest {
         when(logonController.getBranchOffice()).thenReturn(branchOffice);
         when(logonController.getProjectManager()).thenReturn(new ProjectManager("PM"));
 
-        this.taskController = new TaskController(logonController,mockedUI);
+        this.taskController = new TaskController(mockedUI, logonController);
     }
 
 

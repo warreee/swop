@@ -22,6 +22,10 @@ public class AdvanceTimeController extends AbstractController {
     }
     private SystemTime systemTime;
 
+    /**
+     * Haalt de doorgegeven systeemtijd op.
+     * @return
+     */
     private SystemTime getSystemTime() {
         return systemTime;
     }

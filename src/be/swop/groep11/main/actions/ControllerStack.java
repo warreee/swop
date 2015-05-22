@@ -20,7 +20,7 @@ public class ControllerStack {
      *  Constructor voor aanmaken van een ControllerStack
      */
     public ControllerStack() {
-
+        setInvalidActionProcedure(new ActionProcedure(() -> {}));
     }
 
     /**
@@ -51,14 +51,14 @@ public class ControllerStack {
             ActionProcedure procedure = actionMap.getOrDefault(action, getInvalidProcedure());
             //Step 3 activate controller
 //            printStack("before");
-            if (procedure.hasNewPreController()) {
-                activateController(procedure.getNewPreController());
+            if (procedure.hasToActivateNewController()) {
+                activateController(procedure.getNewController());
             }
             //step 4 uitvoeren
 //            printStack("during");
             procedure.perform();
             //Step 5 deactivateAfter
-            if (procedure.toDeleteFromStack()) {
+            if (procedure.hasToDeleteControllerFromStack()) {
                 deActivateController(getActiveController());
             }
 //            printStack("after");
@@ -157,12 +157,6 @@ public class ControllerStack {
         actionToProcedureMap.put(action, actionProcedure);
         controllerToActionMap.put(topStackController, actionToProcedureMap);
     }
-
-//    public void registerController(AbstractController topStackController) {
-//        if (!controllerToActionMap.containsKey(topStackController)) {
-//            controllerToActionMap.put(topStackController, getDefaultActionProcedureMap());
-//        }
-//    }
 
     private HashMap<AbstractController, HashMap<Action, ActionProcedure>> controllerToActionMap = new HashMap<>();
 

@@ -32,6 +32,7 @@ public class PlanningController extends AbstractController {
      * Constructor om een nieuwe PlanningController aan te maken.
      * @param systemTime De SystemTime.
      * @param userInterface De concrete implementatie van de UserInterface.
+     * @param logonController Een logonController om de gebruiker te authentificeren.
      */
     public PlanningController(LogonController logonController, SystemTime systemTime, UserInterface userInterface) {
         super(userInterface);
@@ -124,6 +125,12 @@ public class PlanningController extends AbstractController {
 
     }
 
+    /**
+     * Laat de gebruiker een starttijd kiezen.
+     * @param task De taak waarvoor een starttijd gekozen moet worden.
+     * @param resourcePlanner De resourcePlanner die gebruikt wordt om de starttijd te bepalen.
+     * @return De gekozen starttijd.
+     */
     private LocalDateTime selectStartTime(Task task, ResourcePlanner resourcePlanner) {
         /* The system shows the first three possible starting times (only consid-
             ering exact hours, e.g. 09:00, and counting from the current system
@@ -145,6 +152,11 @@ public class PlanningController extends AbstractController {
         return startTime;
     }
 
+    /**
+     * Laat de voorgestelde resourceInstances voor een taak zien aan de gebruiker.
+     * @param task De taak waarvoor de resourceInstances moeten voorgesteld worden.
+     * @param planBuilder De planbuilder die gebruikt wordt om een plan te maken.
+     */
     private void showProposedInstances(Task task, PlanBuilder planBuilder) {
         getUserInterface().printMessage("Voorgestelde resources:");
         task.getRequirementList().getRequirements().forEach(resourceRequirement -> {
@@ -156,6 +168,13 @@ public class PlanningController extends AbstractController {
         });
     }
 
+    /**
+     * Laat de gebruiker zelf resourceInstances kiezen.
+     * @param task De taak waarvoor resourceInstances gekozen moeten worden
+     * @param planBuilder De planBuilder die gebruikt wordt om een plan te maken.
+     * @param resourceRepository De resourceRepository die gebruikt wordt om resources te selecteren.
+     * @throws ConflictException
+     */
     private void selectResources(Task task, PlanBuilder planBuilder,ResourceRepository resourceRepository) throws ConflictException {
 
         /* The user allows the system to select the required resources. */
@@ -178,6 +197,14 @@ public class PlanningController extends AbstractController {
         }
     }
 
+    /**
+     * Laat de gebruiker developers selecteren voor een taak.
+     * @param task De taak waarvoor developers geslecteerd moeten worden.
+     * @param resourcePlanner De resourcePlanner die gebruikt wordt om de developers te plannen.
+     * @param planBuilder De planBuilder die alles in goede banen moet leiden.
+     * @param branchOffice Het branchOffice waarvan de developers geselecteerd worden.
+     * @throws ConflictException
+     */
     private void selectDevelopers(Task task, ResourcePlanner resourcePlanner, PlanBuilder planBuilder,BranchOffice branchOffice) throws ConflictException{
         String msgSelectDevelopers = "Selecteer developers";
         int nbDevelopers = task.getRequirementList().getRequiredDevelopers();

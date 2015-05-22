@@ -1,7 +1,7 @@
 package be.swop.groep11.main.exception;
 
 /**
- * Created by Ronald on 21/05/2015.
+ * Exception die gegooid wordt wanneer een conditie faalt.
  */
 public class FailedConditionException extends RuntimeException {
     public FailedConditionException(String message) {

@@ -21,6 +21,12 @@ public class SimulationController extends AbstractController {
         * Resolve Conflict
         * Show Projects
         * */
+
+    /**
+     * Maakt een nieuwe instantie van een simulatie controller.
+     * @param logonController de logoncontroller om de gebruiker te authentificeren.
+     * @param userInterface De userinterface om alles aan de gebruiker te laten zien.
+     */
     public SimulationController (LogonController logonController, UserInterface userInterface) {
         super(userInterface);
         this.logonController = logonController;
@@ -51,8 +57,8 @@ public class SimulationController extends AbstractController {
      */
     public void realize() {
         //projectRepository bezit all alle veranderingen ...
-
-        deActivate(this);
+        this.projectRepositoryMemento = null;
+        this.resourcePlannerMemento = null;
     }
 
     /**
@@ -64,7 +70,6 @@ public class SimulationController extends AbstractController {
         ResourcePlanner resourcePlanner = bo.getResourcePlanner();
         restoreState(projectRepository, resourcePlanner);
         getUserInterface().printMessage("Canceled Simulation");
-        deActivate(this);
     }
 
     /**
@@ -88,19 +93,5 @@ public class SimulationController extends AbstractController {
         if (resourcePlannerMemento != null) {
             resourcePlanner.setMemento(resourcePlannerMemento);
         }
-    }
-
-    /**
-     * Set's this controller on top of stack in UI.
-     */
-    protected void activate(AbstractController controller) {
-//        controllerStack.activateController(controller);
-    }
-
-    /**
-     * Removes this controller from the stack in UI.
-     */
-    protected void deActivate(AbstractController controller) {
-//        controllerStack.deActivateController(controller);
     }
 }

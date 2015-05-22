@@ -23,9 +23,10 @@ public class ShowProjectsController extends AbstractController {
 
     /**
      * Constructor om een nieuwe project controller te maken.
-     * @param projectRepository Project repository om projecten aan toe te voegen
-     * @param userInterface
-     * @param systemTime
+     * @param userInterface Het userInterface object dat gebruikt wordt om alles te laten zien.
+     * @param systemTime de systeemtijd van het systeem.
+     * @param company De company waar alles in zit.
+     *
      */
     public ShowProjectsController(Company company, UserInterface userInterface, SystemTime systemTime){
         super(userInterface);

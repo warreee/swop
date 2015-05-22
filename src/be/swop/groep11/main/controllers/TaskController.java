@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -30,9 +29,10 @@ public class TaskController extends AbstractController {
     /**
      * Constructor om een nieuwe task controller te maken.
      *
-     * @param userInterface
+     * @param userInterface De userInterface om alles aan de gebruiker te laten zien.
+     * @param logonController De logonController om de gebruiker te authentificeren.
      */
-    public TaskController(LogonController logonController, UserInterface userInterface) {
+    public TaskController(UserInterface userInterface, LogonController logonController) {
         super(userInterface);
         this.logonController = logonController;
     }

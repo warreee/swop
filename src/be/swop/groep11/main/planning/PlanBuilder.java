@@ -159,6 +159,10 @@ public class PlanBuilder {
         return true;
     }
 
+    /**
+     * Controlleert of dit plan conflicterende reservaties heeft.
+     * @throws ConflictException
+     */
     public void checkForConflictingReservations() throws ConflictException{
         if (hasConflictingReservations()) {
             throw new ConflictException("Het plan kan niet aangemaakt worden omwille van conflicterende taken.", getResourcePlanner().getConflictingTasks(getSelectedInstances(), getTimeSpan()));
