@@ -37,7 +37,7 @@ public class ControllerStack {
 
     /**
      * Voor de gegeven Action, vraag de ActionProcedure op, en voer deze uit.
-     * @param action    De action waarvoor een ActionProcedure wordt uitgevoerd indien er één is.
+     * @param action    De action waarvoor een ActionProcedure wordt uitgevoerd indien er ï¿½ï¿½n is.
      *                  Anders wordt getInvalidProcedure() uitgevoerd.
      */
     public void executeAction(Action action) {
@@ -126,7 +126,7 @@ public class ControllerStack {
     /**
      * Controleer of de gegeven ActionProcedure een geldige ActionProcedure is.
      * @param actionProcedure   De te controleren ActionProcedure
-     * @return                  Waar indien actionProcedure geïnitialiseerd is, anders niet waar.
+     * @return                  Waar indien actionProcedure geï¿½nitialiseerd is, anders niet waar.
      */
     private boolean isValidActionProcedure(ActionProcedure actionProcedure) {
         return actionProcedure != null;
@@ -146,7 +146,7 @@ public class ControllerStack {
      * @param topStackController    De AbstractController waarvoor deze ActionProcedure uitvoerbaar moet zijn.
      * @param action                De Action waarmee de ActionProcedure wordt opgeroepen.
      * @param actionProcedure       De toe te voegen ActionProcedure.
-     * @throws IllegalArgumentException Gooi indien de gegeven actionProcedure niet geïnitialiseerd is.
+     * @throws IllegalArgumentException Gooi indien de gegeven actionProcedure niet geï¿½nitialiseerd is.
      */
     public void addActionProcedure(AbstractController topStackController, Action action, ActionProcedure actionProcedure) throws IllegalArgumentException{
         if(!isValidActionProcedure(actionProcedure)) {
@@ -164,7 +164,7 @@ public class ControllerStack {
      * Toevoegen van een Default ActionProcedure, die voor alle AbstractControllers uitvoerbaar is.
      * @param action            De Action waarmee de ActionProcedure wordt opgeroepen.
      * @param actionProcedure    De toe te voegen ActionProcedure.
-     * @throws IllegalArgumentException Gooi indien de gegeven actionProcedure niet geïnitialiseerd is.
+     * @throws IllegalArgumentException Gooi indien de gegeven actionProcedure niet geï¿½nitialiseerd is.
      */
     public void addDefaultActionProcedure(Action action, ActionProcedure actionProcedure) {
         if(!isValidActionProcedure(actionProcedure) || action == null) {
@@ -200,7 +200,10 @@ public class ControllerStack {
         this.invalidProcedure = invalidActionProcedure;
     }
 
-
+    /**
+     * Klasse om een memento te kunnen maken van een controller stack
+     * Dit om de controllerstack te kunnen herstellen tijdens de uitvoering.
+     */
     private class ControllerStackMemento{
         private final LinkedList<AbstractController> controllerStack;
 
