@@ -44,6 +44,7 @@ public class TaskStatusTest {
     private Method FamethodmakeAvailable;
     private Method FamethodmakeUnavailable;
 
+
     private Constructor<TaskUnavailable> taskUnavailableConstructor;
     private Constructor<TaskAvailable> taskAvailableConstructor;
     private Constructor<TaskExecuting> taskExecutingConstructor;
@@ -114,8 +115,8 @@ public class TaskStatusTest {
         FmethodmakeUnavailable.setAccessible(true);
 
         //Failed
-        FamethodmakeAvailable = TaskFailed.class.getDeclaredMethod("makeAvailable", Task.class);
-        FamethodmakeUnavailable = TaskFailed.class.getDeclaredMethod("makeUnavailable", Task.class);
+        FamethodmakeAvailable = TaskStatus.class.getDeclaredMethod("makeAvailable", Task.class);
+        FamethodmakeUnavailable = TaskStatus.class.getDeclaredMethod("makeUnavailable", Task.class);
         FamethodmakeAvailable.setAccessible(true);
         FamethodmakeUnavailable.setAccessible(true);
 
@@ -134,6 +135,7 @@ public class TaskStatusTest {
 
         taskFailedConstructor = (Constructor<TaskFailed>) TaskFailed.class.getDeclaredConstructors()[0];
         taskFailedConstructor.setAccessible(true);
+
 
     }
 
@@ -227,7 +229,7 @@ public class TaskStatusTest {
     @Test (expected = IllegalStateTransitionException.class)
     public void availableToAvailable() throws Throwable {
 
-        TaskAvailable test = taskAvailableConstructor.newInstance();
+        TaskStatus test = taskAvailableConstructor.newInstance();
         try {
             TAmethodMakeAvailable.invoke(test, task1);
         } catch (InvocationTargetException e) {
@@ -240,9 +242,9 @@ public class TaskStatusTest {
     @Test
     public void executingToFinishedTest() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
-        assertTrue(task1.getStatusString().equals("EXECUTING"));
+        assertTrue(task1.isExecuting());
         task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(task1.getStatusString().equals("FINISHED"));
+        assertTrue(task1.isFinished());
     }
 
     @Test
@@ -262,7 +264,7 @@ public class TaskStatusTest {
     @Test (expected = IllegalStateTransitionException.class)
     public void executingToAvailable() throws Throwable {
         task1.execute(LocalDateTime.now());
-        TaskExecuting state = taskExecutingConstructor.newInstance();
+        TaskStatus state = taskExecutingConstructor.newInstance();
         try {
             TEmethodmakeAvailable.invoke(state, task1);
         } catch (InvocationTargetException e) {
@@ -273,7 +275,7 @@ public class TaskStatusTest {
     @Test (expected = IllegalStateTransitionException.class)
     public void executingToUnavailable() throws Throwable {
         task1.execute(LocalDateTime.now());
-        TaskExecuting state = taskExecutingConstructor.newInstance();
+        TaskStatus state = taskExecutingConstructor.newInstance();
         try {
             TEmethodmakeUnavailable.invoke(state, task1);
         } catch (InvocationTargetException e) {
@@ -313,7 +315,7 @@ public class TaskStatusTest {
     public void finishedToAvailable() throws Throwable {
         task1.execute(LocalDateTime.now());
         task1.finish(LocalDateTime.now());
-        TaskFinished state = taskFinishedConstructor.newInstance();
+        TaskStatus state = taskFinishedConstructor.newInstance();
         try {
             FmethodmakeAvailable.invoke(state, task1);
         } catch (InvocationTargetException e) {
@@ -325,7 +327,7 @@ public class TaskStatusTest {
     public void finishedToUnavailable() throws Throwable {
         task1.execute(LocalDateTime.now());
         task1.finish(LocalDateTime.now());
-        TaskFinished state = taskFinishedConstructor.newInstance();
+        TaskStatus state = taskFinishedConstructor.newInstance();
         try {
             FmethodmakeUnavailable.invoke(state, task1);
         } catch (InvocationTargetException e) {
@@ -363,7 +365,7 @@ public class TaskStatusTest {
     public void failedToAvailable() throws Throwable {
         task1.execute(LocalDateTime.now());
         task1.fail(LocalDateTime.now());
-        TaskFailed state = taskFailedConstructor.newInstance();
+        TaskStatus state = taskFailedConstructor.newInstance();
         try {
             FamethodmakeAvailable.invoke(state, task1);
         } catch (InvocationTargetException e) {
@@ -375,7 +377,7 @@ public class TaskStatusTest {
     public void failedToUnavailable() throws Throwable {
         task1.execute(LocalDateTime.now());
         task1.fail(LocalDateTime.now());
-        TaskFailed state = taskFailedConstructor.newInstance();
+        TaskStatus state = taskFailedConstructor.newInstance();
         try {
             FamethodmakeUnavailable.invoke(state, task1);
         } catch (InvocationTargetException e) {

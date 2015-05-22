@@ -10,6 +10,7 @@ import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.resource.ResourcePlanner;
 import be.swop.groep11.main.task.Task;
+import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -142,6 +143,14 @@ public class BranchOfficeTest {
     public void containsTaskTest() throws Exception{
         assertTrue(branchOffice1.containsTask(task));
         assertFalse(branchOffice1.containsTask(mock(Task.class)));
+    }
+
+    @Test
+    public void getProjectsTest() throws Exception{
+        when(projectRepository1.getProjects()).thenReturn(ImmutableList.copyOf(new ArrayList<>()));
+
+        assertTrue(branchOffice1.getProjects().size() == 0);
+
     }
 
 }

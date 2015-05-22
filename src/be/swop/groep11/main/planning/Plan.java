@@ -51,7 +51,7 @@ public class Plan {
 
     /**
      * Verwijdert dit plan door alle reservaties ervan te verwijderen,
-     * dit plan uit de resource planner te halen en dit plan uit de bijhorende taak te halen.
+     * dit plan uit de resource planner te halen en dit plan zijn verwijzing naar taak te verwijderen.
      */
     public void clear() {
         //TODO fix documentatie
@@ -113,6 +113,9 @@ public class Plan {
         return ImmutableList.copyOf(this.reservations);
     }
 
+    /**
+     * Geeft een immutable lijst van alle specifieke reservaties van dit plan.
+     */
     public ImmutableList<ResourceReservation> getSpecificReservations() {
         return ImmutableList.copyOf(
                 reservations.stream().filter(reservation -> reservation.isSpecific()).collect(Collectors.toList())
@@ -170,10 +173,16 @@ public class Plan {
         return resourcePlanner;
     }
 
+    /**
+     * Geeft de geplande starttijd terug.
+     */
     public LocalDateTime getPlannedStartTime() {
         return getTimeSpan().getStartTime();
     }
 
+    /**
+     * Geeft de geplande eindtijd.
+     */
     public LocalDateTime getPlannedEndTime() {
         return getTimeSpan().getEndTime();
     }
@@ -193,11 +202,15 @@ public class Plan {
      * @param other
      * @return
      */
-    // TODO: wordt niet gebruikt
-    public boolean endsAfter(Plan other){
-        return other.getPlannedEndTime().isBefore(getPlannedEndTime());
-    }
+//    // TODO: wordt niet gebruikt
+//    public boolean endsAfter(Plan other){
+//        return other.getPlannedEndTime().isBefore(getPlannedEndTime());
+//    }
 
+    /**
+     * Geeft de string represetnatie van een plan terug
+     * @return de stringrepresentatei van een plan
+     */
     @Override
     public String toString() {
         return "Plan{" +
