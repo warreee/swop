@@ -132,6 +132,12 @@ public abstract class AResourceType {
     }
 
 
+    /**
+     * Berekend de eindtijd voor dit AResourceType wanneer de starttijd en duratie gekend zijn.
+     * @param startTime De starttijd wanneer dit moet beginnen.
+     * @param duration Hoelang deze AResourceType beschikbaar moet zijn.
+     * @return De eindtijd
+     */
     public abstract LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration);
 
 
