@@ -77,4 +77,28 @@ public class ResourceReservation{
     public boolean isDeveloperReservation() {
         return resourceInstance instanceof Developer;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ResourceReservation that = (ResourceReservation) o;
+
+        if (isSpecific != that.isSpecific) return false;
+        if (!task.equals(that.task)) return false;
+        if (!TimeSpan.equals(that.TimeSpan)) return false;
+        return resourceInstance.equals(that.resourceInstance);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = task.hashCode();
+        result = 31 * result + TimeSpan.hashCode();
+        result = 31 * result + resourceInstance.hashCode();
+        result = 31 * result + (isSpecific ? 1 : 0);
+        return result;
+    }
 }

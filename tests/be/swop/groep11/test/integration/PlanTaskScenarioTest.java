@@ -5,6 +5,8 @@ import be.swop.groep11.main.controllers.PlanningController;
 import be.swop.groep11.main.core.BranchOffice;
 import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
+import be.swop.groep11.main.core.TimeSpan;
+import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
@@ -16,7 +18,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -191,6 +195,68 @@ public class PlanTaskScenarioTest {
         Plan planC = branchOffice.getPlanForTask(taskC);
         Plan planA = branchOffice.getPlanForTask(taskA);
         assertTrue(planC.startsBefore(planA));
+
+    }
+
+    @Test
+    public void PlanTask_CancelInResolveConflictTest() throws Exception {
+        // selecteer de juiste taak:
+        when(mockedUI.selectTaskFromList(anyObject())).thenReturn(taskA);
+        // starttijd uit lijst selecteren:
+        when(mockedUI.requestBoolean(anyString())).thenReturn(true).thenReturn(false);
+        // kies als starttijd de eerste in de lijst:
+        when(mockedUI.selectFromList(anyList(), any())).thenReturn(now.plusHours(1));
+
+        //Niet zelf selecteren van resources
+        ArrayList<ResourceInstance> resourceInstances = new ArrayList<>();
+        resourceInstances.add(devA);
+        //selectDevelopers
+        when(mockedUI.selectMultipleFromList(anyString(), anyList(), anyList(), anyInt(), anyBoolean(), any())).thenReturn(resourceInstances);
+        planningController.planTask();
+        verify(resourcePlanner).getNextPossibleStartTimes(any(IRequirementList.class), any(Duration.class), anyInt());
+        verify(resourcePlanner,atLeastOnce()).addPlan(any());
+        assertTrue(branchOffice.isTaskPlanned(taskA));
+
+        Plan planAFirst = branchOffice.getPlanForTask(taskA);
+        List<ResourceReservation> resourceReservationList = planAFirst.getReservations();
+        TimeSpan planATS = planAFirst.getTimeSpan();
+        Task planATask = planAFirst.getTask();
+
+        when(mockedUI.selectTaskFromList(anyObject())).thenReturn(taskC);
+        // starttijd uit lijst selecteren:
+        when(mockedUI.requestBoolean(anyString()))
+                .thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(true).thenThrow(new CancelException("Stop test"))
+                .thenReturn(true).thenReturn(false);
+        // kies als starttijd de eerste in de lijst:
+        when(mockedUI.selectFromList(anyList(), any())).thenReturn(now.plusHours(1)).thenReturn(now.plusDays(1)).thenReturn(now.plusHours(1));
+
+        //Niet zelf selecteren van resources
+        ArrayList<ResourceInstance> resourceInstancesB = new ArrayList<>();
+        resourceInstancesB.add(devB);
+        //selectDevelopers
+        when(mockedUI.selectMultipleFromList(anyString(), anyList(), anyList(), anyInt(), anyBoolean(), any()))
+                .thenReturn(resourceInstancesB);
+        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
+        boolean catched = false;
+        try {
+            planningController.planTask();
+        } catch (StopTestException e) {
+            catched = true;
+        }
+
+
+
+        assertTrue(catched);
+        assertEquals(resourceReservationList, branchOffice.getPlanForTask(taskA).getReservations());
+        assertEquals(planATask,branchOffice.getPlanForTask(taskA).getTask());
+        assertEquals(planATS,branchOffice.getPlanForTask(taskA).getTimeSpan());
+
+        verify(resourcePlanner,atLeastOnce()).getNextPossibleStartTimes(any(IRequirementList.class), any(Duration.class), anyInt());
+        verify(resourcePlanner,atLeastOnce()).addPlan(any());
+
+        assertTrue(branchOffice.isTaskPlanned(taskA));
+        assertTrue(!branchOffice.isTaskPlanned(taskC));
+
 
     }
 
