@@ -65,7 +65,7 @@ public class BranchOffice {
 
     public void setLocation(String location) {
         if (isValidLocation(location)) {
-            this.location = name;
+            this.location = location;
         } else {
             throw new IllegalArgumentException("De locatie van een branch office mag niet leeg zijn!");
         }
