@@ -202,11 +202,15 @@ public class Plan {
      * @param other
      * @return
      */
-    // TODO: wordt niet gebruikt
-    public boolean endsAfter(Plan other){
-        return other.getPlannedEndTime().isBefore(getPlannedEndTime());
-    }
+//    // TODO: wordt niet gebruikt
+//    public boolean endsAfter(Plan other){
+//        return other.getPlannedEndTime().isBefore(getPlannedEndTime());
+//    }
 
+    /**
+     * Geeft de string represetnatie van een plan terug
+     * @return de stringrepresentatei van een plan
+     */
     @Override
     public String toString() {
         return "Plan{" +
