@@ -52,7 +52,7 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestString(anyString())).thenReturn("Naam").thenReturn("Omschrijving");
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
 
-        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        this.createProjectController = new CreateProjectController(mockedUI, logonController);
         createProjectController.createProject();
     }
 
@@ -63,7 +63,7 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(IllegalArgumentException.class));
 
-        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        this.createProjectController = new CreateProjectController(mockedUI, logonController);
         createProjectController.createProject();
     }
 
@@ -74,7 +74,7 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(IllegalArgumentException.class));
 
-        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        this.createProjectController = new CreateProjectController(mockedUI, logonController);
         createProjectController.createProject();
     }
 
@@ -85,7 +85,7 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now.plusDays(1)).thenReturn(now);
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
-        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        this.createProjectController = new CreateProjectController(mockedUI, logonController);
         createProjectController.createProject();
     }
 
@@ -96,7 +96,7 @@ public class CreateProjectScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
-        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        this.createProjectController = new CreateProjectController(mockedUI, logonController);
         createProjectController.createProject();
     }
 
@@ -108,7 +108,7 @@ public class CreateProjectScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
-        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        this.createProjectController = new CreateProjectController(mockedUI, logonController);
         createProjectController.createProject();
     }
     @Test(expected = StopTestException.class)
@@ -119,7 +119,7 @@ public class CreateProjectScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
-        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        this.createProjectController = new CreateProjectController(mockedUI, logonController);
         createProjectController.createProject();
     }
     @Test(expected = StopTestException.class)
@@ -130,7 +130,7 @@ public class CreateProjectScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any(CancelException.class));
 
         //Cancel exception wordt opgevangen in de controller.
-        this.createProjectController = new CreateProjectController(logonController,mockedUI);
+        this.createProjectController = new CreateProjectController(mockedUI, logonController);
         createProjectController.createProject();
     }
 

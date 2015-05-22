@@ -1,6 +1,5 @@
 package be.swop.groep11.main.controllers;
 
-import be.swop.groep11.main.actions.ControllerStack;
 import be.swop.groep11.main.ui.UserInterface;
 
 /**
@@ -8,7 +7,6 @@ import be.swop.groep11.main.ui.UserInterface;
  */
 public abstract class AbstractController {
     private final UserInterface userInterface;
-    private ControllerStack controllerStack;
 
     public AbstractController(UserInterface userInterface) {
         this.userInterface = userInterface;
@@ -55,7 +53,6 @@ public abstract class AbstractController {
         throw new IllegalArgumentException("Niet ondersteund");
     }
 
-    //TODO finish associatie AbstractController & ControllerStack Plus nieuwe Testen
     public void logOut() throws IllegalArgumentException  {
         throw new IllegalArgumentException("Niet ondersteund");
     }

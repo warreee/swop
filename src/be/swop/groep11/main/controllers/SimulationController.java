@@ -51,8 +51,8 @@ public class SimulationController extends AbstractController {
      */
     public void realize() {
         //projectRepository bezit all alle veranderingen ...
-
-        deActivate(this);
+        this.projectRepositoryMemento = null;
+        this.resourcePlannerMemento = null;
     }
 
     /**
@@ -64,7 +64,6 @@ public class SimulationController extends AbstractController {
         ResourcePlanner resourcePlanner = bo.getResourcePlanner();
         restoreState(projectRepository, resourcePlanner);
         getUserInterface().printMessage("Canceled Simulation");
-        deActivate(this);
     }
 
     /**
@@ -88,19 +87,5 @@ public class SimulationController extends AbstractController {
         if (resourcePlannerMemento != null) {
             resourcePlanner.setMemento(resourcePlannerMemento);
         }
-    }
-
-    /**
-     * Set's this controller on top of stack in UI.
-     */
-    protected void activate(AbstractController controller) {
-//        controllerStack.activateController(controller);
-    }
-
-    /**
-     * Removes this controller from the stack in UI.
-     */
-    protected void deActivate(AbstractController controller) {
-//        controllerStack.deActivateController(controller);
     }
 }
