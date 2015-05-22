@@ -146,11 +146,11 @@ public class BranchOfficeTest {
     }
 
     @Test
-    public void getProjectsTest() {
-        when(projectRepository1.getProjects()).thenReturn(mock(ImmutableList.class));
+    public void getProjectsTest() throws Exception{
+        when(projectRepository1.getProjects()).thenReturn(ImmutableList.copyOf(new ArrayList<>()));
 
-        branchOffice1.getProjects();
-        verify(projectRepository1.getProjects());
+        assertTrue(branchOffice1.getProjects().size() == 0);
+
     }
 
 }

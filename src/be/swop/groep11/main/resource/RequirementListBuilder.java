@@ -135,7 +135,12 @@ public class RequirementListBuilder {
             return this.requirements.values().iterator();
         }
 
-
+        /**
+         * Berekend hoelang een Reservatie van alle Resources zou duren voor deze RequirementsList.
+         * @param selectedStartTime De gegeven startTijd.
+         * @param estimatedDuration De gegeven geschatte werk duration
+         * @return Een Timespan van hoelang het zou duren.
+         */
         @Override
         public TimeSpan calculateReservationTimeSpan(LocalDateTime selectedStartTime, Duration estimatedDuration) {
             Set<AResourceType> types = requirements.keySet();
@@ -281,11 +286,18 @@ public class RequirementListBuilder {
             return requirements.get(type);
         }
 
+        /**
+         * Geeft alle ResourceRequirements in deze lijst.
+         */
         @Override
         public ImmutableList<ResourceRequirement> getRequirements() {
             return ImmutableList.copyOf(requirements.values());
         }
 
+        /**
+         * Geeft hoeveel resources er nodig zijn voor een bepaalde ResourceType.
+         * @param type  Het AResourceType waarvan de hoeveelheid opgevraagd wordt.
+         */
         @Override
         public int getRequiredAmountFor(AResourceType type) {
             if (containsRequirementFor(type)) {
@@ -295,6 +307,9 @@ public class RequirementListBuilder {
             }
         }
 
+        /**
+         * Geeft hoeveel developers er nodig zijn in deze lijst.
+         */
         @Override
         public int getRequiredDevelopers() {
             int result = 0;

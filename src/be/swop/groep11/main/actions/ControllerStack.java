@@ -42,13 +42,14 @@ public class ControllerStack {
      */
     public void executeAction(Action action) {
         //Step 0, backup current ControllerStack
-        ControllerStackMemento backup = getBackup();
+        ControllerStackMemento backup = getMemento();
 
         try {
-            //step 1 determine action to ActionProcedure map based on current Active Controller.
-            HashMap<Action, ActionProcedure> actionMap = getControllerToActionMap().getOrDefault(getActiveController(), new HashMap<>());
-            //step 2 get the corresponding ActionProcedure
-            ActionProcedure procedure = actionMap.getOrDefault(action, getInvalidProcedure());
+//            //step 1 determine action to ActionProcedure map based on current Active Controller.
+//            HashMap<Action, ActionProcedure> actionMap = getControllerToActionMap().getOrDefault(getActiveController(), new HashMap<>());
+//            //step 2 get the corresponding ActionProcedure
+//            ActionProcedure procedure = actionMap.getOrDefault(action, getInvalidProcedure());
+            ActionProcedure procedure = getActionProcedure(action);
             //Step 3 activate controller
 //            printStack("before");
             if (procedure.hasToActivateNewController()) {
@@ -63,20 +64,35 @@ public class ControllerStack {
             }
 //            printStack("after");
         } catch (InterruptedAProcedureException e) {
-            restoreBackup(backup);
+            setMemento(backup);
 //            printStack("restored");
         }catch (FailedConditionException e) {
-            restoreBackup(backup);
+            setMemento(backup);
 //            printStack("restored");
             throw e;
         }
     }
 
-    private ControllerStackMemento getBackup() {
+    /**
+     * Geeft voor de gegeven Action de corresponderende ActionProcedure terug, voor de huidige actieve Controller.
+     * Indien er geen ActionProcedure is, geef de getInvalidProcedure() terug.
+     * @param action    De Action waarvoor er een ActionProcedure gezocht wordt.
+     * @return          De corresponderende ActionProcedure,
+     *                  of de InvalidProcedure van deze ControllerStack indien er geen ActionProcedure gevonden is.
+     */
+    public ActionProcedure getActionProcedure(Action action) {
+        //step 1 determine action to ActionProcedure map based on current Active Controller.
+        HashMap<Action, ActionProcedure> actionMap = getControllerToActionMap().getOrDefault(getActiveController(), new HashMap<>());
+        //step 2 get the corresponding ActionProcedure
+        ActionProcedure procedure = actionMap.getOrDefault(action, getInvalidProcedure());
+        return procedure;
+    }
+
+    private ControllerStackMemento getMemento() {
         return new ControllerStackMemento(controllerStack);
     }
 
-    private void restoreBackup(ControllerStackMemento memento) {
+    private void setMemento(ControllerStackMemento memento) {
         this.controllerStack = memento.getControllerStack();
     }
 

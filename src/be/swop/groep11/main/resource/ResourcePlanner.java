@@ -57,7 +57,7 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
 
 
     /**
-     * Bepaalt of deze ResourcePlanner in staat is om de gegeven taak in de toekomst mogelijks te plannen is.
+     * Bepaalt of deze ResourcePlanner in staat is om de gegeven taak in de toekomst mogelijks te plannen.
      *
      * @param task De taak die gepland moet worden.
      * @return true als het mogelijk is, anders false.
@@ -129,7 +129,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
 
     /**
      * Berekent alle taken die conflicteren met een lijst van ResourceInstances gedurende een TimeSpan.
-     * Berekend alle taken die conflicteren met een lijst van ResourceInstances gedurende een TimeSpan.
      *
      * @param resourceInstances De lijst met ResourceInstances waarvan alle conflicterende taken gezocht moet worden.
      * @param timeSpan          Wanneer de ResourceInstances moeten conflicteren om in de lijst terecht te komen.
@@ -174,7 +173,6 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
      * @param plan Het plan dat verwijderd wordt.
      */
     public void removePlan(Plan plan) {
-        //TODO fix documentatie
         if (plan == null) {
             throw new IllegalArgumentException("Plan mag niet null zijn");
         }
@@ -186,13 +184,11 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
 
     /**
      * Controleert of een plan niet null is en of dat het geen reservaties bevat voor ResourceInstances die op het
-     * Controleert of een plan niet null is en of dat het geen reservaties bevat voor ResourceInstances die op het
      * moment van die reservatie al gereserveerd zijn.
      *
      * @param plan Het plan dat gecontroleert moet worden.
      * @throws IllegalArgumentException Wordt gegooid wanneer er een fout is.
      */
-    // TODO: controleert deze alles genoeg?
     private void checkPlan(Plan plan) throws IllegalArgumentException {
         if (plan == null) {
             throw new IllegalArgumentException("Plan mag niet 'null' zijn.");
@@ -352,6 +348,9 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         }
     }
 
+    /**
+     * Geeft de ResourceRepository die bij deze planner hoort.
+     */
     public ResourceRepository getResourceRepository() {
         //TODO TEMP? getter, nodig in branch office atm. zoek betere oplossing
         return resourceRepository;
@@ -451,7 +450,10 @@ public class ResourcePlanner extends Observable<ResourcePlanner>{
         return result;
     }
 
-
+    /**
+     * Controlleert of deze ResourcePlanner een plan heeft voor de gegeven taak.
+     * @param task De taak die een plan moet hebben.
+     */
     public boolean hasPlanForTask(Task task) {
         return planToTask.containsValue(task);
     }

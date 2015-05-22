@@ -156,4 +156,14 @@ public class PlanTest {
         assertFalse(plan.hasEquivalentPlan(startTime.plusDays(1)));
     }
 
+    @Test
+    public void planToStringTest() {
+        assertTrue(plan.toString() != null);
+    }
+
+    @Test
+    public void getPlannedEndTimeTest() {
+        assertTrue(plan.getPlannedStartTime().isBefore(plan.getPlannedEndTime()));
+    }
+
 }

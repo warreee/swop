@@ -5,19 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Ronald on 19/05/2015.
+ * Klasse om een ResourceType te builden.
  */
 public class ResourceTypeBuilder {
-
-    /*
-    Default values
-     */
 
     private String name;
     private DailyAvailability availability = new DailyAvailability(LocalTime.MIN, LocalTime.MAX) ;
     private List<AResourceType> requireTypes = new ArrayList<>();
     private List<AResourceType> conflictingTypes = new ArrayList<>();
 
+    /**
+     * Zet de naam voor dit ResourceType.
+     * @param name De naam
+     */
     public void setName(String name) {
         if(!isValidName(name)){
             throw new IllegalArgumentException("Ongeldige naam. ");
@@ -25,6 +25,11 @@ public class ResourceTypeBuilder {
         this.name = name;
     }
 
+    /**
+     * Zet de DailyAvailability voor dit ResourceType.
+     * @param availability De DailyAvailability.
+     * @throws IllegalArgumentException Indien er een fout argument werd doorgegeven.
+     */
     public void setAvailability(DailyAvailability availability) throws IllegalArgumentException {
         if (availability == null) {
             throw new IllegalArgumentException("availability == null");
@@ -32,6 +37,11 @@ public class ResourceTypeBuilder {
         this.availability = availability;
     }
 
+    /**
+     * Zet een lijst met conflicterende types voor dit ResourceType.
+     * @param conflictingTypes De conflicterende types.
+     * @throws IllegalArgumentException  Indien er een fout argument werd doorgegeven.
+     */
     public void setConflictingTypes(List<AResourceType> conflictingTypes) throws IllegalArgumentException{
         if (conflictingTypes == null) {
             throw new IllegalArgumentException("conflictingTypes == null");
@@ -39,6 +49,11 @@ public class ResourceTypeBuilder {
         this.conflictingTypes = conflictingTypes;
     }
 
+    /**
+     * Zet een lijst met requirede types voor dit ResourceType.
+     * @param requireTypes De ruiquirede types.
+     * @throws IllegalArgumentException  Indien er een fout argument werd doorgegeven.
+     */
     public void setRequireTypes(List<AResourceType> requireTypes)throws IllegalArgumentException {
         if (requireTypes == null) {
             throw new IllegalArgumentException("requireTypes == null");
@@ -46,6 +61,10 @@ public class ResourceTypeBuilder {
         this.requireTypes = requireTypes;
     }
 
+    /**
+     * Haalt het geconstrueerde ResourceType uit deze builder.
+     * @return Het geconstrueerde ResourceType.
+     */
     public AResourceType getResourceType(){
         ResourceType type = new ResourceType(name);
         type.setDailyAvailability(availability);
