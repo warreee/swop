@@ -99,6 +99,11 @@ public class DependencyGraph {
         }
     }
 
+    /**
+     * Haalt alle taken op die van de gegeven taak afhangen.
+     * @param task De taak
+     * @return een set van taken.
+     */
     public Set<Task> getDependentTasks(Task task){
         if (dependentMap.containsKey(task)) {
             return new HashSet<>(dependentMap.get(task));

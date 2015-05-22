@@ -30,18 +30,30 @@ public class User {
         this.name = name;
     }
 
+    /**
+     * Bepaald of deze user een developer is.
+     */
     public boolean isDeveloper(){
         return false;
     }
 
+    /**
+     * Bepaald of deze user een projectmanager is.
+     */
     public boolean isProjectManager() {
         return false;
     }
 
+    /**
+     * Haalt de functie op van deze user.
+     */
     protected String getUserFuction(){
         return "";
     }
 
+    /**
+     * Haalt de onschrijving op van deze user.
+     */
     public String getDescription() {
         return "Naam: " + name + " Functie: " + getUserFuction();
     }
