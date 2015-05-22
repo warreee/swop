@@ -70,7 +70,7 @@ public class ProjectRepository {
         return ImmutableList.copyOf(tasks);
     }
 
-    public List<Task> getAllAvailableOrExecutingTasks() {
+        public List<Task> getAllAvailableOrExecutingTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
         tasks.addAll(getAllAvailableTasks());
         tasks.addAll(getAllExecutingTasks());
