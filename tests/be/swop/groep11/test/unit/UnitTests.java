@@ -1,5 +1,6 @@
 package be.swop.groep11.test.unit;
 
+import be.swop.groep11.main.resource.ResourceTypeBuilderTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -11,6 +12,6 @@ import org.junit.runners.Suite.SuiteClasses;
         ProjectTest.class, ProjectRepositoryTest.class,AbstractControllerAndMainControllerTest.class,CompanyTest.class,BranchOfficeTest.class,
         ResourceTypeTest.class, DependencyGraphTest.class, DeveloperTypeTest.class, DailyAvailabilityTest.class
         ,ResourceRepositoryTest.class,ObservableTest.class,TaskProxyTest.class, ProjectProxyTest.class, BranchOfficeProxyTest.class,
-        ResourcePlannerTest.class,PlanBuilderTest.class,PlanTest.class,RequirementListBuilderTest.class})
+        ResourcePlannerTest.class,PlanBuilderTest.class,PlanTest.class,RequirementListBuilderTest.class, ResourceTypeBuilderTest.class})
 public class UnitTests {
 }
