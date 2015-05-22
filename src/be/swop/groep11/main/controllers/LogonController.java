@@ -20,10 +20,20 @@ public class LogonController extends AbstractController{
     private Developer developer = null;
     private ProjectManager projectManager = null;
 
+    /**
+     * Constructor om een nieuwe LogonController te maken.
+     * @param userInterface Het userinterface object waarmee deze controller kan werken.
+     * @param company Het bedrijf waar deze controller zijn info moet uithalen.
+     */
     public LogonController(UserInterface userInterface, Company company) {
         super(userInterface);
         this.company = company;
     }
+
+    /**
+     * Laat de gebruiker inloggen.
+     * @throws InterruptedAProcedureException
+     */
     @Override
     public void logon() throws InterruptedAProcedureException {
         try {
@@ -36,6 +46,9 @@ public class LogonController extends AbstractController{
         }
     }
 
+    /**
+     * Laat de gebruiker een user kiezen.
+     */
     private void identify() {
 
         User user = getUserInterface().selectEmployeeFromList(getBranchOffice().getEmployees());
