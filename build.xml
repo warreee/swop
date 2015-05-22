@@ -9,7 +9,7 @@
     <property name="bin-dir" location="jar"/>
     <property name="base-src" location="src"/>
     <property name="src-dir" location="src/be/swop/groep11/main"/>
-    <property name="base-test-src" location="tests/"/>
+    <property name="base-test-src" location="tests"/>
     <property name="input-dir" location="input"/>
 
     <property name="test-report-dir" location="testreport" />
