@@ -300,6 +300,9 @@ public class Project {
 
     private BranchOffice branchOffice;
 
+    /**
+     * Haalt de laatst toegevoegde taak op.
+     */
     public Task getLastAddedTask() {
         return getTasks().get(getTasks().size() - 1);
     }
