@@ -151,6 +151,8 @@ public class DelegateTaskScenarioTest {
             // ok
         }
 
+        assertFalse(branchOffice2.getUnplannedTasks().contains(taskA));
+        assertFalse(taskA.getDelegatedTo().equals(branchOffice2));
         assertTrue(branchOffice.getUnplannedTasks().contains(taskA));
         assertTrue(taskA.getDelegatedTo().equals(branchOffice));
         verify(mockedUI).printException(any(CancelException.class));
@@ -172,6 +174,8 @@ public class DelegateTaskScenarioTest {
             // ok
         }
 
+        assertFalse(branchOffice2.getUnplannedTasks().contains(taskA));
+        assertFalse(taskA.getDelegatedTo().equals(branchOffice2));
         assertTrue(branchOffice.getUnplannedTasks().contains(taskA));
         assertTrue(taskA.getDelegatedTo().equals(branchOffice));
         verify(mockedUI).printException(any(CancelException.class));
@@ -200,7 +204,21 @@ public class DelegateTaskScenarioTest {
         verify(mockedUI).printException(any(IllegalArgumentException.class));
     }
 
+    @Test
+    public void delegateTask_ClearDelegationsTest() {
+        when(logonController.getBranchOffice()).thenReturn(branchOffice);
 
+        when(mockedUI.selectTaskFromList(any())).thenReturn(taskA);
+        when(mockedUI.selectBranchOfficeFromList(any())).thenReturn(branchOffice2);
+
+        delegateTaskController.selectDelegatedTo();
+        delegateTaskController.clearDelegations();
+
+        assertFalse(branchOffice2.getUnplannedTasks().contains(taskA));
+        assertFalse(taskA.getDelegatedTo().equals(branchOffice2));
+        assertTrue(branchOffice.getUnplannedTasks().contains(taskA));
+        assertTrue(taskA.getDelegatedTo().equals(branchOffice));
+    }
 
 
 }

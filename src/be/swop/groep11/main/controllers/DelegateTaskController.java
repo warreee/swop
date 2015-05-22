@@ -58,11 +58,6 @@ public class DelegateTaskController extends AbstractController {
 
     Task delegationTask;
 
-
-    private BranchOffice getSourceBranchOffice() {
-        return logonController.getBranchOffice();
-    }
-
     private void setDelegationTask(Task delegatedTask) {
         this.delegationTask = delegatedTask;
     }
