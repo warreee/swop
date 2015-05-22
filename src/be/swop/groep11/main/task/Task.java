@@ -423,7 +423,7 @@ public class Task {
     }
 
 
-    protected Plan getPlan() {
+    public Plan getPlan() {
         return getDelegatedTo().getPlanForTask(this);
     }
 
