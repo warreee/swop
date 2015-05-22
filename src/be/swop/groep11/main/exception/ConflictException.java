@@ -22,6 +22,9 @@ public class ConflictException extends RuntimeException {
         this.conflictingTasks = new ArrayList<>(conflictingTasks);
     }
 
+    /**
+     * Haalt alle conflicterende taken op.
+     */
     public ArrayList<Task> getConflictingTasks() {
         return conflictingTasks;
     }

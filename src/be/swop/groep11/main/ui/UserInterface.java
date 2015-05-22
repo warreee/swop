@@ -144,6 +144,9 @@ public interface UserInterface {
      */
     void printException(Exception e);
 
+    /**
+     * Laat de UI een lijst mogelijke Actions weergeven.
+     */
     default void showHelp() {
         showHelp(getControllerStack().getActiveController());
     }
@@ -207,9 +210,28 @@ public interface UserInterface {
         return selectMultipleFromList(request,list, preselectedList, list.size(),false,listEntryPrinter);
     }
 
-    int requestNumberBetween(String s, int min, int max);
+    /**
+     * Vraagt een een getal tussen de gegeven Minimum & Maximum waarde aan de gebruiker.
+     * Toont ook de beschrijving van de verwachte invoer.
+     * @param request Beschrijving van de verwachte invoer
+     * @param min De minimum waarde
+     * @param max De maximum waarde
+     * @return Een getal tussen min & max, (inclusief grenzen)
+     * @throws CancelException De gebruiker heeft aangegeven dat hij de use case wil stoppen
+     */
+    int requestNumberBetween(String request, int min, int max) throws CancelException;
 
+    /**
+     * Geeft de Function<Task,String> die een voorstelling voor een taak kan genereren.
+     */
     Function<Task,String> getTaskPrinter();
 
+    /**
+     * Methode om de gegeven lijst weer te geven via waarbij de voorstelling
+     * van ieder element wordt opgebouwd a.d.h.v. de gegeven listEntryPrinter.
+     * @param list              De weer te gegeven lijst.
+     * @param listEntryPrinter  De Function<T,String> die de voorstelling van een element uit list opbouwd.
+     * @param <T>               De klasse van een element uit list
+     */
     <T> void showList(List<T> list,Function<T,String> listEntryPrinter);
 }

@@ -21,6 +21,12 @@ public class SimulationController extends AbstractController {
         * Resolve Conflict
         * Show Projects
         * */
+
+    /**
+     * Maakt een nieuwe instantie van een simulatie controller.
+     * @param logonController de logoncontroller om de gebruiker te authentificeren.
+     * @param userInterface De userinterface om alles aan de gebruiker te laten zien.
+     */
     public SimulationController (LogonController logonController, UserInterface userInterface) {
         super(userInterface);
         this.logonController = logonController;

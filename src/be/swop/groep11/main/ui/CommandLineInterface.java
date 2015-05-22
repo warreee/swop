@@ -333,8 +333,8 @@ public class CommandLineInterface implements UserInterface {
     }
 
     @Override
-    public int requestNumberBetween(String s, int min, int max) {
-        printMessage(s);
+    public int requestNumberBetween(String request, int min, int max) {
+        printMessage(request);
         return numberBetween(getIntFromUser(), min, max);
     }
 

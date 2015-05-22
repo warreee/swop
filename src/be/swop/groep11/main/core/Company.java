@@ -114,8 +114,6 @@ public class Company {
     private SystemTime systemTime;
 
 
-    //NOTE is deze methode hier welkom?
-
     public ImmutableList<Project> getAllProjects() {
         ArrayList<Project> projs = new ArrayList<>();
         getBranchOffices().forEach(bo -> projs.addAll(bo.getProjects()));

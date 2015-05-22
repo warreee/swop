@@ -29,7 +29,8 @@ public class TaskController extends AbstractController {
     /**
      * Constructor om een nieuwe task controller te maken.
      *
-     * @param userInterface
+     * @param userInterface De userInterface om alles aan de gebruiker te laten zien.
+     * @param logonController De logonController om de gebruiker te authentificeren.
      */
     public TaskController(UserInterface userInterface, LogonController logonController) {
         super(userInterface);

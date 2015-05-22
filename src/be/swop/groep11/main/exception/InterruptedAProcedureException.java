@@ -1,7 +1,7 @@
 package be.swop.groep11.main.exception;
 
 /**
- * Created by Ronald on 17/05/2015.
+ * Exception die gegooid wordt wanneer een procedure onderbroken wordt.
  */
 public class InterruptedAProcedureException extends RuntimeException {
 }
