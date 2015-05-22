@@ -2,10 +2,13 @@ package be.swop.groep11.test.integration;
 
 import be.swop.groep11.main.controllers.DelegateTaskController;
 import be.swop.groep11.main.controllers.LogonController;
+import be.swop.groep11.main.controllers.SimulationController;
 import be.swop.groep11.main.core.*;
 import be.swop.groep11.main.exception.CancelException;
-import be.swop.groep11.main.resource.IRequirementList;
-import be.swop.groep11.main.resource.ResourcePlanner;
+import be.swop.groep11.main.exception.InterruptedAProcedureException;
+import be.swop.groep11.main.planning.Plan;
+import be.swop.groep11.main.planning.PlanBuilder;
+import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
 import com.google.common.collect.ImmutableList;
@@ -14,81 +17,103 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Test om de usecase delegate task scenario na te gaan.
  */
 public class DelegateTaskScenarioTest {
 
+    private LocalDateTime now;
     private UserInterface mockedUI;
-
+    private SystemTime systemTime;
     private DelegateTaskController delegateTaskController;
-    private ImmutableList<BranchOffice> branchOffices;
-    private ImmutableList<Task> unplannedTasks;
-    private LogonController logonController;
-
-    private BranchOffice source;
-    private BranchOffice destination;
-
     private Company company;
+    private BranchOffice branchOffice, branchOffice2, branchOffice3;
+    private ProjectRepository projectRepository;
+    private ResourcePlanner resourcePlanner;
+    private Developer devA, devB;
+    private Task taskA, taskB;
+    private LogonController logonController;
 
 
     @Before
     public void setUp() throws Exception {
-
+        now = LocalDateTime.of(2015, 1, 1, 11, 0);
         this.mockedUI = mock(UserInterface.class);
-        this.company = mock(Company.class);
+
+        systemTime = new SystemTime(now);
+
+        addTempDomainObjects();
+
         logonController = mock(LogonController.class);
+        when(logonController.hasIdentifiedProjectManager()).thenReturn(true);
+        when(logonController.getBranchOffice()).thenReturn(branchOffice);
+        when(logonController.getProjectManager()).thenReturn(new ProjectManager("PM"));
 
-        delegateTaskController = new DelegateTaskController(mockedUI, company, logonController);
-
-        ProjectRepository projectRepository = mock(ProjectRepository.class);
-        ResourcePlanner resourcePlanner = mock(ResourcePlanner.class);
-        //this.source = new BranchOffice("source", "china", projectRepository, resourcePlanner);
-        this.source = mock(BranchOffice.class);
-        this.destination = new BranchOffice("destination", "china", projectRepository, resourcePlanner);
-        BranchOffice branchOffice2 = mock(BranchOffice.class);
-        BranchOffice branchOffice3 = mock(BranchOffice.class);
-
-        List<BranchOffice> BOList = new ArrayList<BranchOffice>();
+        this.delegateTaskController = new DelegateTaskController(mockedUI,company,logonController);
+    }
 
 
+    private void addTempDomainObjects() {
+        ResourceTypeRepository resourceTypeRepository = new ResourceTypeRepository();
+        company = new Company("bedrijf", resourceTypeRepository, systemTime);
 
-        BOList.add(source);
-        BOList.add(destination);
-        BOList.add(branchOffice2);
-        BOList.add(branchOffice3);
+        projectRepository = new ProjectRepository(systemTime);
+        ResourceRepository resourceRepository = new ResourceRepository(resourceTypeRepository);
+        resourcePlanner = new ResourcePlanner(resourceRepository, systemTime);
+        branchOffice = new BranchOffice("Branch Office 1", "Leuven", projectRepository, resourcePlanner);
+        branchOffice2 = new BranchOfficeProxy(new BranchOffice("Branch Office 2", "Mechelen", new ProjectRepository(systemTime), resourcePlanner));
+        branchOffice3 = new BranchOfficeProxy(new BranchOffice("Branch Office 3", "China", new ProjectRepository(systemTime), new ResourcePlanner(new ResourceRepository(resourceTypeRepository), systemTime)));
+        company.addBranchOffice(branchOffice);
+        company.addBranchOffice(new BranchOfficeProxy(branchOffice2));
+        company.addBranchOffice(new BranchOfficeProxy(branchOffice3));
 
-        Duration duration = Duration.ofDays(1);
-        DependencyGraph dependencyGraph = mock(DependencyGraph.class);
+        AResourceType devType = resourceTypeRepository.getDeveloperType();
+        devA = new Developer("DevA", devType);
+        devB = new Developer("DevB", devType);
 
-        IRequirementList requirementList = mock(IRequirementList.class);
+        branchOffice.addEmployee(new Developer("DevA", devType));
+        branchOffice.addEmployee(new Developer("DevB", devType));
+        branchOffice.addEmployee(new ProjectManager("PM1"));
 
-        Project project = mock(Project.class);
+        resourceTypeRepository.addNewResourceType("Auto");
+        AResourceType autoType = resourceTypeRepository.getResourceTypeByName("Auto");
 
-        Task unplannedTask1 = new Task("taak1", duration, 0.1, dependencyGraph, requirementList, project);
-        Task unplannedTask2 = mock(Task.class);
-        Task unplannedTask3 = mock(Task.class);
+        resourceRepository.addResourceInstance(new Resource("Aston Martin Rapide", autoType));
+        resourceRepository.addResourceInstance(new Resource("Toyota Auris", autoType));
+        resourceRepository.addResourceInstance(new Resource("Rolls Royce Phantom", autoType));
 
-        List<Task>UTList = new ArrayList<>();
+        resourceTypeRepository.addNewResourceType("CarWash", new DailyAvailability(LocalTime.of(10, 0), LocalTime.of(14, 0)));
+        AResourceType carWashType = resourceTypeRepository.getResourceTypeByName("CarWash");
 
-        UTList.add(unplannedTask1);
-        UTList.add(unplannedTask2);
-        UTList.add(unplannedTask3);
-
-        // TODO ervoor zorgen dat er in de UI gewerkt wordt met Lists ipv immutable list
-        unplannedTasks = ImmutableList.copyOf(UTList);
-        branchOffices = ImmutableList.copyOf(BOList);
+        resourceRepository.addResourceInstance(new Resource("CarWash A", carWashType));
+        resourceRepository.addResourceInstance(new Resource("CarWash B", carWashType));
+        resourceRepository.addResourceInstance(new Resource("CarWash C", carWashType));
 
 
+        RequirementListBuilder requirementListBuilderA = new RequirementListBuilder(resourceRepository);
+        requirementListBuilderA.addNewRequirement(autoType, 2);
+        requirementListBuilderA.addNewRequirement(carWashType, 1);
+        requirementListBuilderA.addNewRequirement(devType, 1);
+
+        RequirementListBuilder requirementListBuilderB = new RequirementListBuilder(resourceRepository);
+        requirementListBuilderB.addNewRequirement(carWashType, 2);
+        requirementListBuilderB.addNewRequirement(devType, 1);
+
+        projectRepository.addNewProject("Project 11", "Omschrijving1", now, now.plusDays(10));
+        projectRepository.getProjects().get(0).addNewTask("Taak 1", 1, Duration.ofMinutes(120), requirementListBuilderA.getRequirements());
+        taskA = projectRepository.getProjects().get(0).getLastAddedTask();
+        projectRepository.getProjects().get(0).addNewTask("Taak 2", 1, Duration.ofMinutes(120), requirementListBuilderB.getRequirements());
+        taskB = projectRepository.getProjects().get(0).getLastAddedTask();
     }
 
     /**
@@ -98,71 +123,84 @@ public class DelegateTaskScenarioTest {
      */
     @Test
     public void delegateTaskTest() {
-        when(mockedUI.selectTaskFromList(unplannedTasks)).thenReturn(unplannedTasks.get(0));
-        when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenReturn(branchOffices.get(0));
+        when(logonController.getBranchOffice()).thenReturn(branchOffice);
 
+        when(mockedUI.selectTaskFromList(any())).thenReturn(taskA);
+        when(mockedUI.selectBranchOfficeFromList(any())).thenReturn(branchOffice2);
 
-        when(logonController.getBranchOffice()).thenReturn(source);
-        ArrayList<Task> list = new ArrayList<>();
-        list.add(unplannedTasks.get(0));
-        when(source.getUnplannedTasks()).thenReturn(list);
-        ArrayList<BranchOffice> tempList = new ArrayList<>();
-        tempList.add(source);
-        tempList.add(destination);
-        when(company.getBranchOffices()).thenReturn(ImmutableList.copyOf(tempList));
-        Mockito.doNothing().when(source).delegateTask(any(), any());
-
-        ArrayList<Task> tempList2 = new ArrayList<>();
-        tempList2.add(unplannedTasks.get(0));
-
-        when(source.getDelegatedTasks()).thenReturn(ImmutableList.copyOf(tempList2));
         delegateTaskController.delegateTask();
 
-        assertTrue(branchOffices.get(0).getDelegatedTasks().contains(unplannedTasks.get(0)));
-        //assertTrue(unplannedTasks.get(0).getDelegatedTo() == branchOffices.get(1));
+        assertTrue(branchOffice2.getUnplannedTasks().contains(taskA));
+        assertTrue(taskA.getDelegatedTo().equals(branchOffice2));
     }
 
     /**
-     * Test voor het tonen van de branchoffices. Hierna wordt er 1 geselecteerd.
-     * Daarna wordt er gecanceld.
+     * Test voor het tonen van de branch offices en daarna cancel
      */
-    @Test(expected = StopTestException.class)
+
+    @Test
     public void delegateTaskShowBranchOfficesCancelTest() {
-        when(mockedUI.selectTaskFromList(unplannedTasks)).thenReturn(unplannedTasks.get(0));
-        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
+        when(logonController.getBranchOffice()).thenReturn(branchOffice);
 
-        when(logonController.getBranchOffice()).thenReturn(source);
-        ArrayList<Task> list = new ArrayList<>();
-        list.add(unplannedTasks.get(0));
-        when(source.getUnplannedTasks()).thenReturn(list);
-        ArrayList<BranchOffice> tempList = new ArrayList<>();
-        tempList.add(source);
-        tempList.add(destination);
-        when(company.getBranchOffices()).thenThrow(new CancelException("Cancel in Test"));
-        Mockito.doNothing().when(source).delegateTask(any(), any());
+        when(mockedUI.selectTaskFromList(any())).thenReturn(taskA);
+        when(mockedUI.selectBranchOfficeFromList(any())).thenThrow(new CancelException("Cancel in Test"));
 
-        delegateTaskController.delegateTask();
+        try {
+            delegateTaskController.delegateTask();
+        } catch (InterruptedAProcedureException e) {
+            // ok
+        }
+
+        assertTrue(branchOffice.getUnplannedTasks().contains(taskA));
+        assertTrue(taskA.getDelegatedTo().equals(branchOffice));
+        verify(mockedUI).printException(any(CancelException.class));
     }
 
     /**
-     * Test om het tonen van de taken en daarna cancel
+     * Test voor het tonen van de taken en daarna cancel
      */
-    @Test(expected = StopTestException.class)
+    @Test
     public void delegateTaskShowUnplannedTasksCancelTest() {
-        when(mockedUI.selectBranchOfficeFromList(branchOffices)).thenReturn(branchOffices.get(1));
+        when(logonController.getBranchOffice()).thenReturn(branchOffice);
 
-        when(logonController.getBranchOffice()).thenReturn(source);
+        when(mockedUI.selectTaskFromList(any())).thenThrow(new CancelException("Cancel in Test"));
+        when(mockedUI.selectBranchOfficeFromList(any())).thenReturn(branchOffice2);
 
-        when(source.getUnplannedTasks()).thenThrow(new CancelException("Cancel in Test"));
-        ArrayList<BranchOffice> tempList = new ArrayList<>();
-        tempList.add(source);
-        tempList.add(destination);
-        when(company.getBranchOffices()).thenReturn(ImmutableList.copyOf(tempList));
-        Mockito.doNothing().when(source).delegateTask(any(), any());
+        try {
+            delegateTaskController.delegateTask();
+        } catch (InterruptedAProcedureException e) {
+            // ok
+        }
 
-        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
-        delegateTaskController.delegateTask();
+        assertTrue(branchOffice.getUnplannedTasks().contains(taskA));
+        assertTrue(taskA.getDelegatedTo().equals(branchOffice));
+        verify(mockedUI).printException(any(CancelException.class));
     }
+
+    /**
+     * Delegatie naar branch office 3, die geen resource instanties heeft en dus de taak niet kan plannen.
+     */
+    @Test
+    public void delegateTask_InvalidBranchOfficeTest() {
+        when(logonController.getBranchOffice()).thenReturn(branchOffice);
+
+        when(mockedUI.selectTaskFromList(any())).thenReturn(taskA);
+        when(mockedUI.selectBranchOfficeFromList(any())).thenReturn(branchOffice3);
+
+        try {
+            delegateTaskController.delegateTask();
+        } catch (InterruptedAProcedureException e) {
+            // ok
+        }
+
+        assertTrue(branchOffice.getUnplannedTasks().contains(taskA));
+        assertTrue(taskA.getDelegatedTo().equals(branchOffice));
+        assertFalse(branchOffice2.getUnplannedTasks().contains(taskA));
+        assertFalse(taskA.getDelegatedTo().equals(branchOffice2));
+        verify(mockedUI).printException(any(IllegalArgumentException.class));
+    }
+
+
 
 
 }
