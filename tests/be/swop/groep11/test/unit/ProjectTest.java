@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,30 +21,31 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.booleanThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class ProjectTest {
 
-    private User user;
-    private ProjectRepository repository;
-    private LocalDateTime create;
-    private LocalDateTime due;
-    private String name;
-    private String description;
-    private Project project;
-    private SystemTime systemTime;
-    private IRequirementList emptyRequirementList;
-    private BranchOffice branchOffice;
+    protected User user;
+    protected ProjectRepository repository;
+    protected LocalDateTime create;
+    protected LocalDateTime due;
+    protected String name;
+    protected String description;
+    protected Project project;
+    protected SystemTime systemTime;
+    protected IRequirementList emptyRequirementList;
+    protected BranchOffice branchOffice;
 
     @Before
     public void setUp() throws Exception {
         user = new User("ROOT");
 
-        create = LocalDateTime.now();
-        due = LocalDateTime.now().plusSeconds(3600);
+        create = LocalDateTime.of(2015, 1, 1, 0, 0);
+        due = create.plusDays(2).plusHours(6);
         name = "name";
         description = "description";
-        systemTime = new SystemTime(LocalDateTime.of(2015,1,1,0,0));
+        systemTime = new SystemTime(LocalDateTime.of(2014,12,31,16,0));
         branchOffice = mock(BranchOffice.class);
         when(branchOffice.containsTask(any())).thenReturn(true);
         makeAllTasksInBranchOfficeAvailable(branchOffice);
@@ -55,7 +57,7 @@ public class ProjectTest {
         when(emptyRequirementList.iterator()).thenReturn(mock(Iterator.class));
     }
 
-    private void makeAllTasksInBranchOfficeAvailable(BranchOffice branchOffice) {
+    protected void makeAllTasksInBranchOfficeAvailable(BranchOffice branchOffice) {
         // zorg dat elke taak een plan heeft
         Plan plan = mock(Plan.class);
         when(plan.hasEquivalentPlan()).thenReturn(true);
@@ -166,6 +168,18 @@ public class ProjectTest {
     public void NewProject_invalid_DueTimeNull() throws Exception {
         //DueTime mag niet null zijn
         new Project(name, description, create,null, systemTime, mock(BranchOffice.class));
+    }
+
+    @Test
+    public void getFailedTasksTest() throws Exception{
+        project.addNewTask("Taak", 0.1, Duration.ofHours(8), emptyRequirementList);
+        project = spy(project);
+        Task task1 = spy(project.getLastAddedTask());
+        when(project.getTasks()).thenReturn(Arrays.asList(task1));
+        assertTrue(project.getFailedTasks().size() == 0);
+        when(task1.isFailed()).thenReturn(true);
+        assertTrue(project.getFailedTasks().size() == 1);
+        assertTrue(project.getFailedTasks().get(0).equals(task1));
     }
 
 }

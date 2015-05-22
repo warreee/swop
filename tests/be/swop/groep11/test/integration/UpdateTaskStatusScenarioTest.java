@@ -45,11 +45,6 @@ public class UpdateTaskStatusScenarioTest {
         repository.addNewProject("Naam1", "Omschrijving1", LocalDateTime.now(), now.plusDays(10));
         repository.getProjects().get(0).addNewTask("TaakOmschrijving", 0.5, Duration.ofHours(8), mock(IRequirementList.class));
 
-        Plan plan = mock(Plan.class);
-        Task tempTask = spy(repository.getProjects().get(0).getLastAddedTask());
-        when(tempTask.isPlanned()).thenReturn(true);
-        when(tempTask.getPlan()).thenReturn(plan);
-        when(plan.isWithinPlanTimeSpan(any())).thenReturn(true);
 
         this.mockedUI = mock(UserInterface.class);
 
@@ -65,16 +60,25 @@ public class UpdateTaskStatusScenarioTest {
         when(branchOffice.getProjectRepository()).thenReturn(repository);
 
         //De status van de taak staat nu nog op unavailable, door de systeemtijd te laten updaten wordt dit opgelost.
-        systemTime.addObserver(tasks.get(0).getSystemTimeObserver());
+        makeAllTasksInBranchOfficeAvailable(branchOffice);
+    }
+
+    private void makeAllTasksInBranchOfficeAvailable(BranchOffice branchOffice) {
+        // zorg dat elke taak een plan heeft
+        Plan plan = mock(Plan.class);
+        when(plan.hasEquivalentPlan()).thenReturn(true);
+        when(plan.isWithinPlanTimeSpan(any())).thenReturn(true);
+        when(branchOffice.getPlanForTask(any())).thenReturn(plan);
+        when(branchOffice.isTaskPlanned(any())).thenReturn(true);
+        // update de system time ==> dit zorgt dat elke taak geupdate wordt naar available
         systemTime.updateSystemTime(systemTime.getCurrentSystemTime().plusDays(1));
     }
 
     @Test
     public void updateTask_validTest() throws Exception {
         //stubbing
-        when(mockedUI.selectTaskFromList(ImmutableList.copyOf(tasks))).thenReturn(tasks.get(0));
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
-        when(mockedUI.selectFromList(anyListOf(String.class), anyObject())).thenReturn("EXECUTE");
+        when(mockedUI.selectFromList(anyList(), anyObject())).thenReturn(tasks.get(0)).thenReturn("EXECUTE");
 
         this.taskController = new TaskController(logonController,mockedUI);
         taskController.updateTask();
@@ -83,9 +87,9 @@ public class UpdateTaskStatusScenarioTest {
     @Test (expected = StopTestException.class)
     public void updateTask_CancelTest() throws Exception {
         //stubbing
-        when(mockedUI.selectTaskFromList(ImmutableList.copyOf(tasks))).thenReturn(tasks.get(0));
+        when(mockedUI.selectFromList(anyList(), anyObject())).thenReturn(tasks.get(0)).thenReturn("EXECUTE");
         when(mockedUI.requestDatum(anyString())).thenThrow(new CancelException("cancel in test")).thenReturn(now.plusDays(1));
-        when(mockedUI.selectFromList(anyListOf(String.class), anyObject())).thenThrow(new CancelException("cancel in test")).thenReturn("Niks doen");
+
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         //Cancel exception wordt opgevangen in de controller.
@@ -98,9 +102,8 @@ public class UpdateTaskStatusScenarioTest {
         //stubbing
         projects.get(0).addNewTask("description", 0.1, Duration.ofHours(1),mock(IRequirementList.class));
         tasks = projects.get(0).getTasks();
-        when(mockedUI.selectTaskFromList(anyObject())).thenReturn(tasks.get(0));
+        when(mockedUI.selectFromList(anyList(), anyObject())).thenReturn(tasks.get(0)).thenReturn("EXECUTE").thenReturn(tasks.get(0)).thenReturn("FINISH");;
         when(mockedUI.requestDatum(anyString())).thenReturn(now.plusDays(1)).thenReturn(now);
-        when(mockedUI.selectFromList(anyListOf(String.class), anyObject())).thenReturn("EXECUTE").thenReturn("FINISH");
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         this.taskController = new TaskController(logonController,mockedUI);
@@ -108,21 +111,6 @@ public class UpdateTaskStatusScenarioTest {
         taskController.updateTask();
     }
 
-    /*
-    Niet meer nodig omdat gebruiker nu alleen uit "FAIL", "FINISH", "EXECUTE", "Niks doen" kan kiezen?
-
-    @Test (expected = StopTestException.class)
-    public void updateTask_invalidNewStatusUnavailableTest() throws Exception {
-        //stubbing
-        when(mockedUI.selectTaskFromList(tasks)).thenReturn(tasks.get(0));
-        when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
-        when(mockedUI.requestString(anyString())).thenReturn("UNAVAILABLE");
-        doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
-
-        taskController = new TaskController(repository,systemTime,mockedUI, resourceManager);
-        taskController.updateTask();
-    }
-    */
 
     /*
     Niet meer nodig omdat gebruiker nu alleen uit "FAIL", "FINISH", "EXECUTE", "Niks doen" kan kiezen?

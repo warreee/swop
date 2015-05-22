@@ -9,7 +9,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({AdvanceTimeScenarioTest.class,CreateProjectScenarioTest.class,
         CreateTaskScenarioTest.class,UpdateTaskStatusScenarioTest.class,
         ShowProjectsScenarioTest.class,PlanTaskScenarioTest.class,
-        LogonScenarioTest.class,SimulationScenarioTest.class})
+        LogonScenarioTest.class,SimulationScenarioTest.class,DelegateTaskScenarioTest.class})
 /**
  * Dit functioneert als verzameling voor alle IntegrationTests.
  */

@@ -7,6 +7,7 @@ import be.swop.groep11.main.exception.InterruptedAProcedureException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 /**
  * Klasse verantwoordelijk voor het bijhouden van ActionBehaviour's voor Action's, specifiek voor AbstractController's.
@@ -45,29 +46,28 @@ public class ControllerStack {
 
         try {
             //step 1 determine action to ActionProcedure map based on current Active Controller.
-            HashMap<Action, ActionProcedure> actionMap = getControllerToActionMap().get(getActiveController());
+            HashMap<Action, ActionProcedure> actionMap = getControllerToActionMap().getOrDefault(getActiveController(), new HashMap<>());
             //step 2 get the corresponding ActionProcedure
             ActionProcedure procedure = actionMap.getOrDefault(action, getInvalidProcedure());
             //Step 3 activate controller
-            printStack("before");
+//            printStack("before");
             if (procedure.hasNewPreController()) {
                 activateController(procedure.getNewPreController());
             }
             //step 4 uitvoeren
-            printStack("during");
+//            printStack("during");
             procedure.perform();
-
             //Step 5 deactivateAfter
             if (procedure.toDeleteFromStack()) {
                 deActivateController(getActiveController());
             }
-            printStack("after");
+//            printStack("after");
         } catch (InterruptedAProcedureException e) {
             restoreBackup(backup);
-            printStack("restored");
+//            printStack("restored");
         }catch (FailedConditionException e) {
             restoreBackup(backup);
-            printStack("restored");
+//            printStack("restored");
             throw e;
         }
     }
@@ -80,19 +80,19 @@ public class ControllerStack {
         this.controllerStack = memento.getControllerStack();
     }
 
-    private void printStack(String message) {
-        StringBuilder sb = new StringBuilder(message + "\n");
-        for (int i = controllerStack.size() -1 ; i>=0; i--) {
-            AbstractController controller = controllerStack.get(i);
-            sb.append(i + ". " + controller.getClass().getSimpleName() + "\n");
-        }
-//      System.out.println(sb.toString());
-    }
+//    private void printStack(String message) {
+//        StringBuilder sb = new StringBuilder(message + "\n");
+//        for (int i = controllerStack.size() -1 ; i>=0; i--) {
+//            AbstractController controller = controllerStack.get(i);
+//            sb.append(i + ". " + controller.getClass().getSimpleName() + "\n");
+//        }
+////      System.out.println(sb.toString());
+//    }
 
     /**
      * @return  De laatste toegevoegde AbstractController aan de ExecutionStack
      */
-    public AbstractController getActiveController(){
+    public AbstractController getActiveController() throws NoSuchElementException {
         return controllerStack.getLast();
     }
 
@@ -152,11 +152,17 @@ public class ControllerStack {
         if(!isValidActionProcedure(actionProcedure)) {
             throw new IllegalArgumentException("Invalid actionProcedure");
         }
-
         HashMap<Action,ActionProcedure> actionToProcedureMap = controllerToActionMap.getOrDefault(topStackController, new HashMap<>(getDefaultActionProcedureMap()));
+
         actionToProcedureMap.put(action, actionProcedure);
         controllerToActionMap.put(topStackController, actionToProcedureMap);
     }
+
+//    public void registerController(AbstractController topStackController) {
+//        if (!controllerToActionMap.containsKey(topStackController)) {
+//            controllerToActionMap.put(topStackController, getDefaultActionProcedureMap());
+//        }
+//    }
 
     private HashMap<AbstractController, HashMap<Action, ActionProcedure>> controllerToActionMap = new HashMap<>();
 
@@ -167,7 +173,7 @@ public class ControllerStack {
      * @throws IllegalArgumentException Gooi indien de gegeven actionProcedure niet geïnitialiseerd is.
      */
     public void addDefaultActionProcedure(Action action, ActionProcedure actionProcedure) {
-        if(!isValidActionProcedure(actionProcedure)) {
+        if(!isValidActionProcedure(actionProcedure) || action == null) {
             throw new IllegalArgumentException("Invalid actionProcedure");
         }
         this.defaultActionProcedureMap.put(action, actionProcedure);

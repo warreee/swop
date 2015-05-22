@@ -11,6 +11,8 @@ import be.swop.groep11.main.task.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -42,7 +44,13 @@ public class TaskStatusTest {
     private Method FamethodmakeAvailable;
     private Method FamethodmakeUnavailable;
 
-    //TODO fix testen, correct controleren van status overgangen.
+    private Constructor<TaskUnavailable> taskUnavailableConstructor;
+    private Constructor<TaskAvailable> taskAvailableConstructor;
+    private Constructor<TaskExecuting> taskExecutingConstructor;
+    private Constructor<TaskFinished> taskFinishedConstructor;
+    private Constructor<TaskFailed> taskFailedConstructor;
+
+
 
     @Before
     public void setUp() throws NoSuchMethodException {
@@ -110,6 +118,23 @@ public class TaskStatusTest {
         FamethodmakeUnavailable = TaskFailed.class.getDeclaredMethod("makeUnavailable", Task.class);
         FamethodmakeAvailable.setAccessible(true);
         FamethodmakeUnavailable.setAccessible(true);
+
+        //Constructors
+        taskUnavailableConstructor = (Constructor<TaskUnavailable>) TaskUnavailable.class.getDeclaredConstructors()[0];
+        taskUnavailableConstructor.setAccessible(true);
+
+        taskAvailableConstructor = (Constructor<TaskAvailable>) TaskAvailable.class.getDeclaredConstructors()[0];
+        taskAvailableConstructor.setAccessible(true);
+
+        taskExecutingConstructor = (Constructor<TaskExecuting>) TaskExecuting.class.getDeclaredConstructors()[0];
+        taskExecutingConstructor.setAccessible(true);
+
+        taskFinishedConstructor = (Constructor<TaskFinished>) TaskFinished.class.getDeclaredConstructors()[0];
+        taskFinishedConstructor.setAccessible(true);
+
+        taskFailedConstructor = (Constructor<TaskFailed>) TaskFailed.class.getDeclaredConstructors()[0];
+        taskFailedConstructor.setAccessible(true);
+
     }
 
 
@@ -152,20 +177,20 @@ public class TaskStatusTest {
         assertTrue(task2.isUnavailable());
         task2.finish(LocalDateTime.now());
     }
-//
-//    @Test (expected = IllegalStateTransitionException.class)
-//    public void unavailableToUnavailable() throws Throwable {
-//        task2.addNewDependencyConstraint(task1);
-//        assertTrue(task1.isAvailable());
-//        assertTrue(task2.isUnavailable());
-//        TaskUnavailable test = (TaskUnavailable) task2.getStatusString();
-//        try {
-//            TUmethodMakeUnAvailable.invoke(test, task2);
-//        } catch (InvocationTargetException e) {
-//            throw e.getTargetException();
-//        }
-//        assertTrue(task2.isUnavailable());
-//    }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void unavailableToUnavailable() throws Throwable {
+        task2.addNewDependencyConstraint(task1);
+        assertTrue(task1.isAvailable());
+        assertTrue(task2.isUnavailable());
+        TaskUnavailable test = taskUnavailableConstructor.newInstance();
+        try {
+            TUmethodMakeUnAvailable.invoke(test, task2);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+        assertTrue(task2.isUnavailable());
+    }
 
 
 
@@ -199,16 +224,16 @@ public class TaskStatusTest {
         task1.finish(now);
     }
 
-//    @Test (expected = IllegalStateTransitionException.class)
-//    public void availableToAvailable() throws Throwable {
-//
-//        TaskAvailable test = (TaskAvailable) task1.getStatusString();
-//        try {
-//            TAmethodMakeAvailable.invoke(test, task1);
-//        } catch (InvocationTargetException e) {
-//            throw e.getTargetException();
-//        }
-//    }
+    @Test (expected = IllegalStateTransitionException.class)
+    public void availableToAvailable() throws Throwable {
+
+        TaskAvailable test = taskAvailableConstructor.newInstance();
+        try {
+            TAmethodMakeAvailable.invoke(test, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
 
     //////////////////////// EXECUTING___TO____ //////////////////////
 
@@ -234,27 +259,27 @@ public class TaskStatusTest {
         task1.execute(LocalDateTime.of(2015, 3, 12, 18, 0));
     }
 
-//    @Test (expected = IllegalStateTransitionException.class)
-//    public void executingToAvailable() throws Throwable {
-//        task1.execute(LocalDateTime.now());
-//        TaskExecuting state = (TaskExecuting) task1.getStatusString();
-//        try {
-//            TEmethodmakeAvailable.invoke(state, task1);
-//        } catch (InvocationTargetException e) {
-//            throw e.getTargetException();
-//        }
-//    }
-//
-//    @Test (expected = IllegalStateTransitionException.class)
-//    public void executingToUnavailable() throws Throwable {
-//        task1.execute(LocalDateTime.now());
-//        TaskExecuting state = (TaskExecuting) task1.getStatusString();
-//        try {
-//            TEmethodmakeUnavailable.invoke(state, task1);
-//        } catch (InvocationTargetException e) {
-//            throw e.getTargetException();
-//        }
-//    }
+    @Test (expected = IllegalStateTransitionException.class)
+    public void executingToAvailable() throws Throwable {
+        task1.execute(LocalDateTime.now());
+        TaskExecuting state = taskExecutingConstructor.newInstance();
+        try {
+            TEmethodmakeAvailable.invoke(state, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void executingToUnavailable() throws Throwable {
+        task1.execute(LocalDateTime.now());
+        TaskExecuting state = taskExecutingConstructor.newInstance();
+        try {
+            TEmethodmakeUnavailable.invoke(state, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
 
 
 
@@ -283,30 +308,30 @@ public class TaskStatusTest {
         assertTrue(task1.isFinished());
         task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
-//
-//    @Test (expected = IllegalStateTransitionException.class)
-//    public void finishedToAvailable() throws Throwable {
-//        task1.execute(LocalDateTime.now());
-//        task1.finish(LocalDateTime.now());
-//        TaskFinished state = (TaskFinished) task1.getStatusString();
-//        try {
-//            FmethodmakeAvailable.invoke(state, task1);
-//        } catch (InvocationTargetException e) {
-//            throw e.getTargetException();
-//        }
-//    }
-//
-//    @Test (expected = IllegalStateTransitionException.class)
-//    public void finishedToUnavailable() throws Throwable {
-//        task1.execute(LocalDateTime.now());
-//        task1.finish(LocalDateTime.now());
-//        TaskFinished state = (TaskFinished) task1.getStatusString();
-//        try {
-//            FmethodmakeUnavailable.invoke(state, task1);
-//        } catch (InvocationTargetException e) {
-//            throw e.getTargetException();
-//        }
-//    }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void finishedToAvailable() throws Throwable {
+        task1.execute(LocalDateTime.now());
+        task1.finish(LocalDateTime.now());
+        TaskFinished state = taskFinishedConstructor.newInstance();
+        try {
+            FmethodmakeAvailable.invoke(state, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void finishedToUnavailable() throws Throwable {
+        task1.execute(LocalDateTime.now());
+        task1.finish(LocalDateTime.now());
+        TaskFinished state = taskFinishedConstructor.newInstance();
+        try {
+            FmethodmakeUnavailable.invoke(state, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
 
     //////////////////////// FAILED___TO____ //////////////////////
 
@@ -334,28 +359,28 @@ public class TaskStatusTest {
         task1.fail(LocalDateTime.of(2015, 3, 12, 10, 0));
     }
 
-//    @Test (expected = IllegalStateTransitionException.class)
-//    public void failedToAvailable() throws Throwable {
-//        task1.execute(LocalDateTime.now());
-//        task1.fail(LocalDateTime.now());
-//        TaskFailed state = (TaskFailed) task1.getStatusString();
-//        try {
-//            FamethodmakeAvailable.invoke(state, task1);
-//        } catch (InvocationTargetException e) {
-//            throw e.getTargetException();
-//        }
-//    }
-//
-//    @Test (expected = IllegalStateTransitionException.class)
-//    public void failedToUnavailable() throws Throwable {
-//        task1.execute(LocalDateTime.now());
-//        task1.fail(LocalDateTime.now());
-//        TaskFailed state = (TaskFailed) task1.getStatusString();
-//        try {
-//            FamethodmakeUnavailable.invoke(state, task1);
-//        } catch (InvocationTargetException e) {
-//            throw e.getTargetException();
-//        }
-//    }
+    @Test (expected = IllegalStateTransitionException.class)
+    public void failedToAvailable() throws Throwable {
+        task1.execute(LocalDateTime.now());
+        task1.fail(LocalDateTime.now());
+        TaskFailed state = taskFailedConstructor.newInstance();
+        try {
+            FamethodmakeAvailable.invoke(state, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
+
+    @Test (expected = IllegalStateTransitionException.class)
+    public void failedToUnavailable() throws Throwable {
+        task1.execute(LocalDateTime.now());
+        task1.fail(LocalDateTime.now());
+        TaskFailed state = taskFailedConstructor.newInstance();
+        try {
+            FamethodmakeUnavailable.invoke(state, task1);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
 
 }
