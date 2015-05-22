@@ -25,6 +25,13 @@ public class BranchOffice {
     private ProjectRepository projectRepository;
     private ResourceRepository resourceRepository;
 
+    /**
+     * De constructor voor een Branchoffice, bestaat uit de volgende parameters
+     * @param name de naam van de branchoffice
+     * @param location de locatie van de branchoffice
+     * @param projectRepository de projcectrepository van de branchoffice
+     * @param resourcePlanner de resoucrceplanner van de branchoffice
+     */
     public BranchOffice(String name, String location, ProjectRepository projectRepository, ResourcePlanner resourcePlanner) {
         this.setName(name);
         this.setLocation(location);
@@ -38,19 +45,27 @@ public class BranchOffice {
     }
 
 
-    // TODO: deze methode wordt niet gebruikt
-    public static BranchOffice createBranchOffice(String name,String location,SystemTime systemTime,ResourceTypeRepository resourceTypeRepository) {
-        ProjectRepository projectRepository = new ProjectRepository(systemTime);
-        ResourceRepository resourceRepository = new ResourceRepository(resourceTypeRepository);
-        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository, systemTime);
+//    // TODO: deze methode wordt niet gebruikt
+//    public static BranchOffice createBranchOffice(String name,String location,SystemTime systemTime,ResourceTypeRepository resourceTypeRepository) {
+//        ProjectRepository projectRepository = new ProjectRepository(systemTime);
+//        ResourceRepository resourceRepository = new ResourceRepository(resourceTypeRepository);
+//        ResourcePlanner resourcePlanner = new ResourcePlanner(resourceRepository, systemTime);
+//
+//        return new BranchOffice(name, location, projectRepository,resourcePlanner);
+//    }
 
-        return new BranchOffice(name, location, projectRepository,resourcePlanner);
-    }
-
+    /**
+     * Geeft naam terug van de branchoffice
+     * @return de naam van de branchoffice
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Setter voor de naam van de branchoffice
+     * @param name de naam van de branchoffice
+     */
     public void setName(String name) {
         if (isValidName(name)) {
             this.name = name;
@@ -59,10 +74,18 @@ public class BranchOffice {
         }
     }
 
+    /**
+     * Geeft de Locatie terug van de branchoffice
+     * @return de locatie van de branchoffice
+     */
     public String getLocation() {
         return location;
     }
 
+    /**
+     * Setter voor de locatie van een branchoffice
+     * @param location de locatie van een branchoffice
+     */
     public void setLocation(String location) {
         if (isValidLocation(location)) {
             this.location = location;
@@ -71,10 +94,18 @@ public class BranchOffice {
         }
     }
 
+    /**
+     * Getter voor de projectrepository van een branchoffice
+     * @return de projectrepository
+     */
     public ProjectRepository getProjectRepository() {
         return projectRepository;
     }
 
+    /**
+     * Setter voor de projectrepository van een branchoffice
+     * @param projectRepository de projectrepository die wordt geset indien hij niet null is.
+     */
     public void setProjectRepository(ProjectRepository projectRepository) {
         if (projectRepository == null) {
             throw new IllegalArgumentException("Project repository mag niet null zijn");
@@ -83,6 +114,11 @@ public class BranchOffice {
         this.projectRepository = projectRepository;
     }
 
+    /**
+     * Gaat na een of een valid is
+     * @param name
+     * @return name != null && !name.isEmpty();
+     */
     private boolean isValidName(String name) {
         return name != null && !name.isEmpty();
     }
@@ -92,7 +128,10 @@ public class BranchOffice {
     }
 
 
-
+    /**
+     * Getter voor de resourceplanner van een branchoffice
+     * @return
+     */
     public ResourcePlanner getResourcePlanner(){
         return resourcePlanner;
     }
@@ -204,7 +243,7 @@ public class BranchOffice {
 
     /**
      * Geeft een immutable list terug van alle employees in deze branch office.
-     * @return
+     * @return alle employees
      */
     public ImmutableList<User> getEmployees() {
         List<User> allEmployees = new ArrayList<>(this.employees);
@@ -214,14 +253,26 @@ public class BranchOffice {
         return ImmutableList.copyOf(allEmployees);
     }
 
+    /**
+     * Geeft het totaal employees, dus de som van het aantal ontwikkelaars en het aan projectmanagers
+     * @return totaal aantal employees
+     */
     public int amountOfEmployees() {
         return Long.valueOf(getEmployees().stream().count()).intValue();
     }
 
+    /**
+     * Geeft het aantal ontwikkelaars terug voor deze branchoffice
+     * @return # of Developers
+     */
     public int amountOfDevelopers(){
         return Long.valueOf(getDevelopers().stream().count()).intValue();
     }
 
+    /**
+     * Geeft het aantal projectmanagers terug
+     * @return # of ProjectMangaers
+     */
     public int amountOfProjectManagers(){
         return Long.valueOf(getEmployees().stream().filter(user -> user instanceof ProjectManager).count()).intValue();
     }
@@ -255,10 +306,18 @@ public class BranchOffice {
 
     private ArrayList<User> employees = new ArrayList<>();
 
+    /**
+     * Geeft alle projecten van deze branchoffice terug
+     * @return de projecten van deze branchoffice
+     */
     public ImmutableList<Project> getProjects() {
         return getProjectRepository().getProjects();
     }
 
+    /**
+     * Getter voor de resourcerepository van deze branchoffice
+     * @return de resourcerepository
+     */
     public ResourceRepository getResourceRepository() {
         return resourceRepository;
     }
@@ -268,6 +327,10 @@ public class BranchOffice {
         return ImmutableList.copyOf(getResourceRepository().getResources(developerType));
     }
 
+    /**
+     * Equels methode vooor branchoffice
+
+     */
     @Override
     public boolean equals(Object other) {
         if (! (other instanceof BranchOffice)) {
@@ -278,10 +341,20 @@ public class BranchOffice {
         }
     }
 
+    /**
+     * Gaat na of een taak een plan heeft en dus gepland zou zijn.
+     * @param task de taak waarvoor wordt gekeken of ze gepland zou zijn
+     * @return true indien getResourcePlanner().hasPlanForTask(task)
+     */
     public boolean isTaskPlanned(Task task) {
         return getResourcePlanner().hasPlanForTask(task);
     }
 
+    /**
+     * Geeft het plan terug voor de meegegeven taak.
+     * @param task de taak waarvan het plan wordt opgevoerd.
+     * @return het plan van de taak
+     */
     public Plan getPlanForTask(Task task) {
         return getResourcePlanner().getPlanForTask(task);
     }
