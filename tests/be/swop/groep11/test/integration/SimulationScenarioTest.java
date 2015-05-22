@@ -2,16 +2,16 @@ package be.swop.groep11.test.integration;
 
 
 import be.swop.groep11.main.controllers.LogonController;
-import be.swop.groep11.main.controllers.PlanningController;
 import be.swop.groep11.main.controllers.SimulationController;
-import be.swop.groep11.main.core.*;
+import be.swop.groep11.main.core.BranchOffice;
+import be.swop.groep11.main.core.BranchOfficeProxy;
+import be.swop.groep11.main.core.ProjectRepository;
+import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.planning.Plan;
 import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.*;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
-import com.google.common.collect.ImmutableList;
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

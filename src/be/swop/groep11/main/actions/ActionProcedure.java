@@ -8,22 +8,26 @@ import be.swop.groep11.main.exception.FailedConditionException;
  */
 public class ActionProcedure {
 
-    private ActionCondition condition;
+    private ProcedureCondition condition;
     private boolean deleteFromStack;
-    private AbstractController controller;
+    private AbstractController newController;
     private ActionBehaviour behaviour;
 
-    public ActionProcedure(ActionBehaviour behaviour, ActionCondition condition) {
+    public ActionProcedure(ActionBehaviour behaviour) {
+        this(null,behaviour, () -> true, false);
+    }
+
+    public ActionProcedure(ActionBehaviour behaviour, ProcedureCondition condition) {
         this(null,behaviour, condition, false);
     }
 
-    public ActionProcedure(AbstractController controller, ActionBehaviour behaviour, ActionCondition condition) {
-        this(controller,behaviour, condition, true);
+    public ActionProcedure(AbstractController newController, ActionBehaviour behaviour, ProcedureCondition condition) {
+        this(newController,behaviour, condition, true);
     }
 
-    public ActionProcedure(AbstractController controller, ActionBehaviour behaviour, ActionCondition condition, boolean deleteFromStack) {
-        // TODO check valid prameters
-        this.controller = controller;
+    public ActionProcedure(AbstractController newController, ActionBehaviour behaviour, ProcedureCondition condition, boolean deleteFromStack) {
+        // TODO check valid parameters
+        this.newController = newController;
         this.behaviour = behaviour;
         this.condition = condition;
         this.deleteFromStack = deleteFromStack;
@@ -42,23 +46,15 @@ public class ActionProcedure {
 
     }
 
-    public boolean test(){
-        return condition.test();
+    public boolean hasToDeleteControllerFromStack() {
+        return deleteFromStack && getNewController()!= null;
     }
 
-    public void execute(){
-        behaviour.execute();
+    public boolean hasToActivateNewController() {
+        return getNewController() != null;
     }
 
-    public boolean toDeleteFromStack() {
-        return deleteFromStack;
-    }
-
-    public boolean hasNewPreController() {
-        return getNewPreController() != null;
-    }
-
-    public AbstractController getNewPreController() {
-        return controller;
+    public AbstractController getNewController() {
+        return newController;
     }
 }

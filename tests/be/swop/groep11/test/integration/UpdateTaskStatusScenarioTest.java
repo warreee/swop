@@ -8,7 +8,6 @@ import be.swop.groep11.main.core.ProjectRepository;
 import be.swop.groep11.main.core.SystemTime;
 import be.swop.groep11.main.exception.CancelException;
 import be.swop.groep11.main.planning.Plan;
-import be.swop.groep11.main.planning.PlanBuilder;
 import be.swop.groep11.main.resource.IRequirementList;
 import be.swop.groep11.main.task.Task;
 import be.swop.groep11.main.ui.UserInterface;
@@ -51,7 +50,7 @@ public class UpdateTaskStatusScenarioTest {
         this.logonController = mock(LogonController.class);
         when(logonController.hasIdentifiedDeveloper()).thenReturn(true);
 
-        this.taskController = new TaskController(logonController,mockedUI);
+        this.taskController = new TaskController(mockedUI, logonController);
 
         projects = repository.getProjects();
         tasks = projects.get(0).getTasks();
@@ -80,7 +79,7 @@ public class UpdateTaskStatusScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now).thenReturn(now.plusDays(1));
         when(mockedUI.selectFromList(anyList(), anyObject())).thenReturn(tasks.get(0)).thenReturn("EXECUTE");
 
-        this.taskController = new TaskController(logonController,mockedUI);
+        this.taskController = new TaskController(mockedUI, logonController);
         taskController.updateTask();
     }
 
@@ -93,7 +92,7 @@ public class UpdateTaskStatusScenarioTest {
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
         //Cancel exception wordt opgevangen in de controller.
-        this.taskController = new TaskController(logonController,mockedUI);
+        this.taskController = new TaskController(mockedUI, logonController);
         taskController.updateTask();
     }
 
@@ -106,7 +105,7 @@ public class UpdateTaskStatusScenarioTest {
         when(mockedUI.requestDatum(anyString())).thenReturn(now.plusDays(1)).thenReturn(now);
         doThrow(new StopTestException("Stop test")).when(mockedUI).printException(any());
 
-        this.taskController = new TaskController(logonController,mockedUI);
+        this.taskController = new TaskController(mockedUI, logonController);
         taskController.updateTask();
         taskController.updateTask();
     }
