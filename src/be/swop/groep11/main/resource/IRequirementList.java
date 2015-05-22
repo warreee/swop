@@ -80,5 +80,9 @@ public interface IRequirementList{
      */
     LocalDateTime calculateNextPossibleStartTime(LocalDateTime startTime);
 
+    /**
+     * Geeft een RequirementsList met ResourceRequirements terug die voldoen aan de vereisten.
+     * @return
+     */
     ImmutableList<ResourceRequirement> getRequirements();
 }
