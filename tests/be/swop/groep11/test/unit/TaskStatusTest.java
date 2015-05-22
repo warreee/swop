@@ -242,9 +242,9 @@ public class TaskStatusTest {
     @Test
     public void executingToFinishedTest() throws Exception {
         task1.execute(LocalDateTime.of(2015, 3, 12, 8, 0));
-        assertTrue(task1.getStatusString().equals("EXECUTING"));
+        assertTrue(task1.isExecuting());
         task1.finish(LocalDateTime.of(2015, 3, 12, 10, 0));
-        assertTrue(task1.getStatusString().equals("FINISHED"));
+        assertTrue(task1.isFinished());
     }
 
     @Test
