@@ -97,6 +97,6 @@ public class TaskFailed extends TaskStatus {
      */
     @Override
     protected boolean canSetAlternativeTask(Task task,Task alternative) {
-        return  task != null &&( alternative == null || (alternative != null && task != alternative && (! alternative.dependsOn(task))));
+        return  task != null &&( alternative == null || (alternative != null && !task.equals(alternative) && (! alternative.dependsOn(task))));
     }
 }

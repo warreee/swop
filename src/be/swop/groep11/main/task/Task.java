@@ -336,9 +336,9 @@ public class Task {
      * @throws java.lang.Exception alternativeTask kan niet als alternatieve taak voor deze taak gezet worden.
      */
     public void setAlternativeTask(Task alternativeTask) throws IllegalArgumentException {
-        if (! canSetAlternativeTask(this, alternativeTask))
+        if (! canSetAlternativeTask(this, alternativeTask)) {
             throw new IllegalArgumentException("Kan de alternatieve taak niet wijzigen");
-
+        }
             dependencyGraph.changeDependingOnAlternativeTask(this, alternativeTask);
             this.alternativeTask = alternativeTask;
 
