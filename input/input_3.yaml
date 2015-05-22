@@ -1,0 +1,164 @@
+# The file format is a simple subset of YAML.
+# Everything after '#' is ignored (i.e. single line comment)
+
+# Systeemtijd moet steeds na de laatste gefinishte of gefailde taak liggen.
+systemTime: "2014-01-01 10:00"
+
+company: "Fluffy Unicorn Inc"
+
+currentBranchOffice: 0
+
+branchOffice:
+  - name: "Pink department"
+    location: "Pinky Town"
+
+dailyAvailability :
+  - startTime : "12:00"
+    endTime   : "17:00"
+
+resourceTypes:
+  - name              : "car"
+    # Inner lists are between "[" and "]". Their items are seperated by ",".
+    requires          : []
+    conflictsWith     : []
+    dailyAvailability :
+  - name              : "demo kit"
+    requires          : []
+    conflictsWith     : [1]
+    dailyAvailability :
+  - name              : "beamer"
+    requires          : []
+    conflictsWith     : []
+    dailyAvailability :
+  - name              : "conference room"
+    requires          : [2]
+    conflictsWith     : [1]
+    dailyAvailability :
+  - name              : "data center"
+    requires          : []
+    conflictsWith     : []
+    dailyAvailability : 0
+
+resources:
+  - name: "Car 1"
+    type: 0
+    branchOffice: 0
+  - name: "Car 2"
+    type: 0
+    branchOffice: 0
+  - name: "Car 3"
+    type: 0
+    branchOffice: 0
+
+  - name: "Demo Kit 1"
+    type: 1
+    branchOffice: 0
+  - name: "Demo Kit 2"
+    type: 1
+    branchOffice: 0
+  - name: "Demo Kit 3"
+    type: 1
+    branchOffice: 0
+
+  - name: "beamer 1"
+    type: 2
+    branchOffice: 0
+  - name: "beamer 2"
+    type: 2
+    branchOffice: 0
+  - name: "beamer 3"
+    type: 2
+    branchOffice: 0
+
+  - name: "The Big Conference Room"
+    type: 3
+    branchOffice: 0
+  - name: "The Small Conference Room"
+    type: 3
+    branchOffice: 0
+
+  - name: "Data Center X"
+    type: 4
+    branchOffice: 0
+  - name: "Data Center Y"
+    type: 4
+    branchOffice: 0
+
+developers:
+  - name : "John Deere"
+    branchOffice: 0
+  - name : "Tom Hawk"
+    branchOffice: 0
+  - name : "Dave Devver"
+    branchOffice: 0
+
+projectManager:
+  - name: "Joske"
+    branchOffice: 0
+
+  - name: "Josefien"
+    branchOffice: 0
+
+projects:
+  - name         : "project Plan Sjarel Probleem"
+    description  : "Plan Sjarels plannen"
+    creationTime : "2014-01-01 09:00" # YYYY-MM-DD HH:MM
+    dueTime      : "2014-02-01 18:00"
+    branchOffice : 0
+
+tasks:
+  - project            : 0
+    description        : "LOKO's first Sunday"
+    estimatedDuration  : 500
+    acceptableDeviation: 50
+    alternativeFor     :
+    prerequisiteTasks  : []
+    planning           : 0
+    status             : finished
+    startTime          : "2014-01-01 10:00"
+    endTime            : "2014-01-02 17:00"
+    resourceRequirements: [{type: 0,  amount: 2}, {type: 1,  amount: 1}]
+    numberDevelopers   : 1
+    # Alleen als hier iets staat is de taak gedelegeerd.
+    delegatedTo        :
+
+  - project            : 0
+    description        : "LOKO's second Sunday"
+    estimatedDuration  : 5000
+    acceptableDeviation: 10
+    alternativeFor     :
+    prerequisiteTasks  : [0]
+    planning           :
+    status             :
+    resourceRequirements: [{type: 0, amount: 2}, {type: 2, amount: 1}, {type: 3, amount: 1}, {type: 4, amount: 1}]
+    numberDevelopers   : 2
+    delegatedTo        :
+
+  - project            : 0
+    description        : "LOKO's last Sunday"
+    estimatedDuration  : 750
+    acceptableDeviation: 10
+    alternativeFor     :
+    prerequisiteTasks  : []
+    planning           : 1
+    status             :
+    startTime          :
+    endTime            :
+    resourceRequirements: [{type: 0, amount: 1}, {type: 2, amount: 1}, {type: 4, amount: 2}]
+    numberDevelopers   : 1
+    delegatedTo        :
+
+plans:
+  - branchOffice       : 0
+    specificResources  : [1, 0]
+    nonSpecificResources: [4]
+    developers         : [2]
+    startTime          : "2014-01-01 10:00"
+    endTime            : "2014-01-02 10:20"
+
+  - branchOffice       : 0
+    specificResources  : [2, 6]
+    nonSpecificResources: [11, 12]
+    developers         : [1]
+    startTime          : "2014-01-03 12:00"
+    endTime            : "2014-01-09 12:30"
