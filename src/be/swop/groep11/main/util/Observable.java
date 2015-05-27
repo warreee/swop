@@ -51,9 +51,11 @@ public abstract class Observable<T extends Observable<T>> {
 
     /**
      * Notify/update alle observers van deze Observable.
+     *
+     * De entry staat hier normaal voor een resourcePlanner
      */
     public void updateObservers() {
-        getObservers().forEach(resourcePlannerObserver -> resourcePlannerObserver.update((T)this));
+        getObservers().forEach(entryObserver -> entryObserver.update((T)this));
     }
 
     private ArrayList<Observer<T>> getObservers() {
