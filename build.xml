@@ -1,7 +1,7 @@
 <project default="all">
     <property name="handin-dir" location="group11"/>
     <property name="doc-dir" location="javadoc"/>
-    <property name="uml-dir" location="uml/it2"/>
+    <property name="uml-dir" location="uml/umls"/>
 
     <property name="out-main" location="out\production"/>
     <property name="out-test" location="out\test"/>
